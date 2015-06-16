@@ -84,7 +84,7 @@ public class PiwikTracker{
         JsonArrayBuilder ab = Json.createArrayBuilder();
         
         for (PiwikRequest request : requests){
-            ab.add(request.getQueryString());
+            ab.add("?"+request.getQueryString());
         }
         
         ob.add(REQUESTS, ab);
@@ -95,7 +95,8 @@ public class PiwikTracker{
         
         HttpClient client = getHttpClient();
         HttpPost post = new HttpPost(uriBuilder.build());
-        post.setEntity(new StringEntity(ob.build().toString(), ContentType.APPLICATION_JSON));
+        post.setEntity(new StringEntity(ob.build().toString(),
+                ContentType.APPLICATION_JSON));
         
         return client.execute(post);
     }

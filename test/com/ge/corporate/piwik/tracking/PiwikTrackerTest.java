@@ -139,7 +139,7 @@ public class PiwikTrackerTest{
         doReturn("query").when(request).getQueryString();
         requests.add(request);        
         doReturn(client).when(piwikTracker).getHttpClient();
-        doReturn(response).when(client).execute(argThat(new CorrectPostRequest("{\"requests\":[\"query\"]}")));
+        doReturn(response).when(client).execute(argThat(new CorrectPostRequest("{\"requests\":[\"?query\"]}")));
         
         assertEquals(response, piwikTracker.sendBulkRequest(requests, null));
     }
@@ -153,7 +153,7 @@ public class PiwikTrackerTest{
         doReturn("query").when(request).getQueryString();
         requests.add(request);        
         doReturn(client).when(piwikTracker).getHttpClient();
-        doReturn(response).when(client).execute(argThat(new CorrectPostRequest("{\"requests\":[\"query\"],\"token_auth\":\"12345678901234567890123456789012\"}")));
+        doReturn(response).when(client).execute(argThat(new CorrectPostRequest("{\"requests\":[\"?query\"],\"token_auth\":\"12345678901234567890123456789012\"}")));
         
         assertEquals(response, piwikTracker.sendBulkRequest(requests, "12345678901234567890123456789012"));
     }
