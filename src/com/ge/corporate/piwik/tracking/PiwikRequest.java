@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import javax.json.JsonValue;
-import org.apache.commons.codec.binary.Hex;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * A class that implements the <a href="https://developer.piwik.org/api-reference/tracking-api">
@@ -1451,7 +1451,7 @@ public class PiwikRequest{
     public static String getRandomHexString(int length){
         byte[] bytes = new byte[length/2];
         new Random().nextBytes(bytes);
-        return new String(Hex.encodeHex(bytes));
+        return DatatypeConverter.printHexBinary(bytes);
     }
     
     /**

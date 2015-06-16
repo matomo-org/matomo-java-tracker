@@ -1142,7 +1142,7 @@ public class PiwikRequestTest{
      */
     @Test
     public void testGetRandomHexString(){
-        String s = request.getRandomHexString(10);
+        String s = PiwikRequest.getRandomHexString(10);
         
         assertEquals(10, s.length());
         Long.parseLong(s, 16);
