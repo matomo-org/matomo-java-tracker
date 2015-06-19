@@ -263,7 +263,7 @@ public class PiwikRequestTest{
     @Test
     public void testEnableEcommerce(){
         request.enableEcommerce();
-        assertEquals("0", request.getGoalId());
+        assertEquals(new Integer(0), request.getGoalId());
     }
 
     /**
@@ -548,7 +548,7 @@ public class PiwikRequestTest{
     @Test
     public void testEventValue(){
         request.setEventValue(1);
-        assertEquals(new Integer(1), request.getEventValue());
+        assertEquals(1, request.getEventValue());
     }
 
     /**
@@ -556,8 +556,8 @@ public class PiwikRequestTest{
      */
     @Test
     public void testGoalId(){
-        request.setGoalId("id");
-        assertEquals("id", request.getGoalId());
+        request.setGoalId(1);
+        assertEquals(new Integer(1), request.getGoalId());
     }
 
     /**
@@ -576,7 +576,7 @@ public class PiwikRequestTest{
     }
     @Test
     public void testGoalRevenue(){
-        request.setGoalId("id");
+        request.setGoalId(1);
         request.setGoalRevenue(20.0);
         
         assertEquals(new Double(20.0), request.getGoalRevenue());

@@ -436,7 +436,7 @@ public class PiwikRequest{
      * cart update or an ecommerce order.
      */
     public void enableEcommerce(){
-        setGoalId("0");
+        setGoalId(0);
     }
     
     /**
@@ -444,7 +444,7 @@ public class PiwikRequest{
      * {@link IllegalStateException} if not.
      */
     public void verifyEcommerceEnabled(){
-        if (!"0".equals(getGoalId())){
+        if (getGoalId() == null || getGoalId() != 0){
             throw new IllegalStateException("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.");
         }
     }
@@ -680,8 +680,8 @@ public class PiwikRequest{
      * Get the goal id
      * @return the goal id
      */
-    public String getGoalId(){
-        return (String)getParameter(GOAL_ID);
+    public Integer getGoalId(){
+        return (Integer)getParameter(GOAL_ID);
     }
     
     /**
@@ -689,7 +689,7 @@ public class PiwikRequest{
      * conversion for the goal of the website being tracked with this id.
      * @param goalId the goal id to set
      */
-    public void setGoalId(String goalId){
+    public void setGoalId(Integer goalId){
         setParameter(GOAL_ID, goalId);
     }
     
@@ -1052,8 +1052,8 @@ public class PiwikRequest{
     }
     
     /**
-     * When <strong>Query</strong> is specified, you can optionally specify a search category
-     * with this parameter.
+     * Specify a search category with this parameter.  SearchQuery must first be
+     * set.
      * @param searchCategory the search category to set
      */
     public void setSearchCategory(String searchCategory){
@@ -1089,10 +1089,10 @@ public class PiwikRequest{
     }
     
     /**
-     * When <strong>Query</strong> is specified, we also recommend to set the 
+     * We recommend to set the 
      * search count to the number of search results displayed on the results page. 
      * When keywords are tracked with {@code Search Results Count=0} they will appear in 
-     * the "No Result Search Keyword" report.
+     * the "No Result Search Keyword" report.  SearchQuery must first be set.
      * @param searchResultsCount the search results count to set
      */
     public void setSearchResultsCount(Long searchResultsCount){
