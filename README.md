@@ -22,6 +22,12 @@ responseAsImage = false;
 
 Overwrite these properties as desired.
 
+Note that if you want to be able to track campaigns using <em>Referrers &gt; Campaigns</em>, you must add the correct URL parameters to your actionUrl.  For example, 
+```java
+URL actionUrl = new URL("http://example.org/landing.html?pk_campaign=Email-Nov2011&pk_kwd=LearnMore");
+```
+See [Tracking Campaigns](http://piwik.org/docs/tracking-campaigns/) for more information. 
+
 All HTTP query parameters denoted on the [Piwik Tracking HTTP API](http://developer.piwik.org/api-reference/tracking-api) can be set using the appropriate getters and setters.  See <strong>PiwikRequest.java</strong> for the mappings of the parameters to their corresponding Java getters/setters.
 
 ####Some parameters are dependent on the state of other parameters:
