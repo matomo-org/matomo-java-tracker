@@ -1,4 +1,4 @@
-Java Piwik API
+Piwik Java Tracking API
 ================
 
 Java implementation of the [Piwik Tracking HTTP API](http://developer.piwik.org/api-reference/tracking-api).
