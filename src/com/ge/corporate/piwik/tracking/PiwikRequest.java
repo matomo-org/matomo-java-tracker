@@ -94,6 +94,8 @@ public class PiwikRequest{
     private static final String VISITOR_REGION = "region";
     private static final String VISITOR_VISIT_COUNT = "_idvc";
     
+    private static final int ID_LENGTH = 16;
+    private static final int RANDOM_VALUE_LENGTH = 20;
     private static final long REQUEST_DATETIME_AUTH_LIMIT = 14400000L;
     
     private final Map<String, Object> parameters = new HashMap<>();
@@ -118,8 +120,8 @@ public class PiwikRequest{
         setParameter(SITE_ID, siteId);
         setBooleanParameter(REQUIRED, true);
         setParameter(ACTION_URL, actionUrl);
-        setParameter(VISITOR_ID, getRandomHexString(16));
-        setParameter(RANDOM_VALUE, getRandomHexString(20));
+        setParameter(VISITOR_ID, getRandomHexString(ID_LENGTH));
+        setParameter(RANDOM_VALUE, getRandomHexString(RANDOM_VALUE_LENGTH));
         setParameter(API_VERSION, "1");
         setBooleanParameter(RESPONSE_AS_IMAGE, false);
     }
@@ -1250,8 +1252,8 @@ public class PiwikRequest{
      */
     public void setVisitorCustomId(String visitorCustomId){
         if (visitorCustomId != null){
-            if (visitorCustomId.length() != 16){            
-                throw new IllegalArgumentException(visitorCustomId+" is not 16 characters long.");
+            if (visitorCustomId.length() != ID_LENGTH){            
+                throw new IllegalArgumentException(visitorCustomId+" is not "+ID_LENGTH+" characters long.");
             }
             // Verify visitorID is a 16 character hexadecimal string
             else if (!visitorCustomId.matches("[0-9A-Fa-f]+")){
@@ -1297,8 +1299,8 @@ public class PiwikRequest{
      */
     public void setVisitorId(String visitorId){
         if (visitorId != null){
-            if (visitorId.length() != 16){            
-                throw new IllegalArgumentException(visitorId+" is not 16 characters long.");
+            if (visitorId.length() != ID_LENGTH){            
+                throw new IllegalArgumentException(visitorId+" is not "+ID_LENGTH+" characters long.");
             }
             // Verify visitorID is a 16 character hexadecimal string
             else if (!visitorId.matches("[0-9A-Fa-f]+")){
