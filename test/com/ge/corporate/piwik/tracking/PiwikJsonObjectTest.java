@@ -12,7 +12,9 @@ package com.ge.corporate.piwik.tracking;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -48,11 +50,17 @@ public class PiwikJsonObjectTest{
      * Test of get method, of class PiwikJsonObject.
      */
     @Test
-    public void testPutGetRemove(){
+    public void testMethods(){
+        assertTrue(obj.isEmpty());
+        assertEquals(0, obj.size());
         assertNull(obj.put("key", "value"));
+        assertFalse(obj.isEmpty());
+        assertEquals(1, obj.size());
         assertEquals("value", obj.get("key"));
         assertEquals("value", obj.remove("key"));
         assertNull(obj.remove("key"));
+        assertTrue(obj.isEmpty());
+        assertEquals(0, obj.size());
     }
 
     /**

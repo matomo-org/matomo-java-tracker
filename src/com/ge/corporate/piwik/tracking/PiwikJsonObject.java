@@ -37,7 +37,15 @@ public class PiwikJsonObject{
     }
     
     /**
-     * Puts a custom variable at this custom key.
+     * Returns true if this object contains no custom key-value pairs.
+     * @return true if this object contains no custom key-value pairs
+     */
+    public boolean isEmpty(){
+        return size() == 0;
+    }
+    
+    /**
+     * Puts a custom value at this custom key.
      * @param key key to store value at
      * @param value value to store at specified key
      * @return previous value stored at key if present, null otherwise
@@ -53,6 +61,14 @@ public class PiwikJsonObject{
      */
     public String remove(String key){
         return map.remove(key);
+    }
+    
+    /** 
+     * Returns the number of custom key-value pairs.
+     * @return the number of custom key-value pairs
+     */
+    public int size(){
+        return map.size();
     }
     
     /**

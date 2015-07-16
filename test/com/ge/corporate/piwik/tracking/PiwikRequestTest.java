@@ -73,6 +73,8 @@ public class PiwikRequestTest{
     public void testActionName(){
         request.setActionName("action");
         assertEquals("action", request.getActionName());
+        request.setActionName(null);
+        assertNull(request.getActionName());
     }
 
     /**
@@ -107,17 +109,7 @@ public class PiwikRequestTest{
      * Test of getAuthToken method, of class PiwikRequest.
      */
     @Test
-    public void testAuthTokenT(){
-        try{
-            request.setAuthToken(null);
-            fail("Exception should have been thrown.");
-        }
-        catch(NullPointerException e){
-            assertEquals("AuthToken cannot be null.", e.getLocalizedMessage());
-        }
-    }
-    @Test
-    public void testAuthTokenFT(){
+    public void testAuthTokenTT(){
         try{
             request.setAuthToken("1234");
             fail("Exception should have been thrown.");
@@ -127,9 +119,15 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testAuthTokenFF(){
+    public void testAuthTokenTF(){
         request.setAuthToken("12345678901234567890123456789012");
         assertEquals("12345678901234567890123456789012", request.getAuthToken());
+    }
+    @Test
+    public void testAuthTokenF(){
+        request.setAuthToken("12345678901234567890123456789012");
+        request.setAuthToken(null);
+        assertNull(request.getAuthToken());
     }
 
     /**
@@ -270,7 +268,7 @@ public class PiwikRequestTest{
      * Test of verifyEcommerceEnabled method, of class PiwikRequest.
      */
     @Test
-    public void testVerifyEcommerceEnabled(){
+    public void testVerifyEcommerceEnabledT(){
         try{
             request.verifyEcommerceEnabled();
             fail("Exception should have been thrown.");
@@ -279,6 +277,23 @@ public class PiwikRequestTest{
             assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
                     e.getLocalizedMessage());
         }
+    }
+    @Test
+    public void testVerifyEcommerceEnabledFT(){
+        try{
+            request.setGoalId(1);
+            request.verifyEcommerceEnabled();
+            fail("Exception should have been thrown.");
+        }
+        catch(IllegalStateException e){
+            assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
+                    e.getLocalizedMessage());
+        }
+    }
+    @Test
+    public void testVerifyEcommerceEnabledFF(){
+        request.enableEcommerce();
+        request.verifyEcommerceEnabled();
     }
 
     /**
@@ -308,7 +323,7 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testVerifyEcommerceStateTF(){
+    public void testVerifyEcommerceStateFT(){
         try{
             request.enableEcommerce();
             request.setEcommerceId("1");
@@ -320,12 +335,28 @@ public class PiwikRequestTest{
                     e.getLocalizedMessage());
         }
     }
+    @Test
+    public void testVerifyEcommerceStateFF(){
+        request.enableEcommerce();
+        request.setEcommerceId("1");
+        request.setEcommerceRevenue(2.0);
+        request.verifyEcommerceState();
+    }
 
     /**
      * Test of getEcommerceDiscount method, of class PiwikRequest.
      */
     @Test
-    public void testEcommerceDiscountE(){
+    public void testEcommerceDiscountT(){
+        request.enableEcommerce();
+        request.setEcommerceId("1");
+        request.setEcommerceRevenue(2.0);
+        request.setEcommerceDiscount(1.0);
+        
+        assertEquals(new Double(1.0), request.getEcommerceDiscount());
+    }
+    @Test
+    public void testEcommerceDiscountTE(){
         try{
             request.setEcommerceDiscount(1.0);
             fail("Exception should have been thrown.");
@@ -336,20 +367,24 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testEcommerceDiscount(){
-        request.enableEcommerce();
-        request.setEcommerceId("1");
-        request.setEcommerceRevenue(2.0);
-        request.setEcommerceDiscount(1.0);
+    public void testEcommerceDiscountF(){
+        request.setEcommerceDiscount(null);
         
-        assertEquals(new Double(1.0), request.getEcommerceDiscount());
+        assertNull(request.getEcommerceDiscount());
     }
 
     /**
      * Test of getEcommerceId method, of class PiwikRequest.
      */
     @Test
-    public void testEcommerceIdE(){
+    public void testEcommerceIdT(){
+        request.enableEcommerce();
+        request.setEcommerceId("1");
+        
+        assertEquals("1", request.getEcommerceId());
+    }
+    @Test
+    public void testEcommerceIdTE(){
         try{
             request.setEcommerceId("1");
             fail("Exception should have been thrown.");
@@ -360,11 +395,10 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testEcommerceId(){
-        request.enableEcommerce();
-        request.setEcommerceId("1");
+    public void testEcommerceIdF(){
+        request.setEcommerceId(null);
         
-        assertEquals("1", request.getEcommerceId());
+        assertNull(request.getEcommerceId());
     }
 
     /**
@@ -383,6 +417,19 @@ public class PiwikRequestTest{
         }
     }
     @Test
+    public void testEcommerceItemE2(){
+        try{
+            request.enableEcommerce();
+            request.setEcommerceId("1");
+            request.setEcommerceRevenue(2.0);
+            request.addEcommerceItem(null);
+            fail("Exception should have been thrown.");
+        }
+        catch(NullPointerException e){
+            assertEquals("Value cannot be null.", e.getLocalizedMessage());
+        }
+    }
+    @Test
     public void testEcommerceItem(){
         assertNull(request.getEcommerceItem(0));
         
@@ -393,13 +440,25 @@ public class PiwikRequestTest{
         request.addEcommerceItem(item);
         
         assertEquals(item, request.getEcommerceItem(0));
+        
+        request.clearEcommerceItems();
+        assertNull(request.getEcommerceItem(0));
     }
 
     /**
      * Test of getEcommerceLastOrderTimestamp method, of class PiwikRequest.
      */
     @Test
-    public void testEcommerceLastOrderTimestampE(){
+    public void testEcommerceLastOrderTimestampT(){
+        request.enableEcommerce();
+        request.setEcommerceId("1");
+        request.setEcommerceRevenue(2.0);
+        request.setEcommerceLastOrderTimestamp(1000L);
+        
+        assertEquals(new Long(1000L), request.getEcommerceLastOrderTimestamp());
+    }
+    @Test
+    public void testEcommerceLastOrderTimestampTE(){
         try{
             request.setEcommerceLastOrderTimestamp(1000L);
             fail("Exception should have been thrown.");
@@ -410,20 +469,25 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testEcommerceLastOrderTimestamp(){
-        request.enableEcommerce();
-        request.setEcommerceId("1");
-        request.setEcommerceRevenue(2.0);
-        request.setEcommerceLastOrderTimestamp(1000L);
+    public void testEcommerceLastOrderTimestampF(){
+        request.setEcommerceLastOrderTimestamp(null);
         
-        assertEquals(new Long(1000L), request.getEcommerceLastOrderTimestamp());
+        assertNull(request.getEcommerceLastOrderTimestamp());
     }
 
     /**
      * Test of getEcommerceRevenue method, of class PiwikRequest.
      */
     @Test
-    public void testEcommerceRevenueE(){
+    public void testEcommerceRevenueT(){
+        request.enableEcommerce();
+        request.setEcommerceId("1");
+        request.setEcommerceRevenue(20.0);
+        
+        assertEquals(new Double(20.0), request.getEcommerceRevenue());
+    }
+    @Test
+    public void testEcommerceRevenueTE(){
         try{
             request.setEcommerceRevenue(20.0);
             fail("Exception should have been thrown.");
@@ -434,19 +498,26 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testEcommerceRevenue(){
-        request.enableEcommerce();
-        request.setEcommerceId("1");
-        request.setEcommerceRevenue(20.0);
+    public void testEcommerceRevenueF(){
+        request.setEcommerceRevenue(null);
         
-        assertEquals(new Double(20.0), request.getEcommerceRevenue());
+        assertNull(request.getEcommerceRevenue());
     }
 
     /**
      * Test of getEcommerceShippingCost method, of class PiwikRequest.
      */
     @Test
-    public void testEcommerceShippingCostE(){
+    public void testEcommerceShippingCostT(){
+        request.enableEcommerce();
+        request.setEcommerceId("1");
+        request.setEcommerceRevenue(2.0);
+        request.setEcommerceShippingCost(20.0);
+        
+        assertEquals(new Double(20.0), request.getEcommerceShippingCost());
+    }
+    @Test
+    public void testEcommerceShippingCostTE(){
         try{
             request.setEcommerceShippingCost(20.0);
             fail("Exception should have been thrown.");
@@ -457,20 +528,26 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testEcommerceShippingCost(){
-        request.enableEcommerce();
-        request.setEcommerceId("1");
-        request.setEcommerceRevenue(2.0);
-        request.setEcommerceShippingCost(20.0);
+    public void testEcommerceShippingCostF(){
+        request.setEcommerceShippingCost(null);
         
-        assertEquals(new Double(20.0), request.getEcommerceShippingCost());
+        assertNull(request.getEcommerceShippingCost());
     }
 
     /**
      * Test of getEcommerceSubtotal method, of class PiwikRequest.
      */
     @Test
-    public void testEcommerceSubtotalE(){
+    public void testEcommerceSubtotalT(){
+        request.enableEcommerce();
+        request.setEcommerceId("1");
+        request.setEcommerceRevenue(2.0);
+        request.setEcommerceSubtotal(20.0);
+        
+        assertEquals(new Double(20.0), request.getEcommerceSubtotal());
+    }
+    @Test
+    public void testEcommerceSubtotalTE(){
         try{
             request.setEcommerceSubtotal(20.0);
             fail("Exception should have been thrown.");
@@ -481,20 +558,26 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testEcommerceSubtotal(){
-        request.enableEcommerce();
-        request.setEcommerceId("1");
-        request.setEcommerceRevenue(2.0);
-        request.setEcommerceSubtotal(20.0);
+    public void testEcommerceSubtotalF(){
+        request.setEcommerceSubtotal(null);
         
-        assertEquals(new Double(20.0), request.getEcommerceSubtotal());
+        assertNull(request.getEcommerceSubtotal());
     }
 
     /**
      * Test of getEcommerceTax method, of class PiwikRequest.
      */
     @Test
-    public void testEcommerceTaxE(){
+    public void testEcommerceTaxT(){
+        request.enableEcommerce();
+        request.setEcommerceId("1");
+        request.setEcommerceRevenue(2.0);
+        request.setEcommerceTax(20.0);
+        
+        assertEquals(new Double(20.0), request.getEcommerceTax());
+    }
+    @Test
+    public void testEcommerceTaxTE(){
         try{
             request.setEcommerceTax(20.0);
             fail("Exception should have been thrown.");
@@ -505,13 +588,10 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testEcommerceTax(){
-        request.enableEcommerce();
-        request.setEcommerceId("1");
-        request.setEcommerceRevenue(2.0);
-        request.setEcommerceTax(20.0);
+    public void testEcommerceTaxF(){
+        request.setEcommerceTax(null);
         
-        assertEquals(new Double(20.0), request.getEcommerceTax());
+        assertNull(request.getEcommerceTax());
     }
 
     /**
@@ -521,6 +601,18 @@ public class PiwikRequestTest{
     public void testEventAction(){
         request.setEventAction("action");
         assertEquals("action", request.getEventAction());
+        request.setEventAction(null);
+        assertNull(request.getEventAction());
+    }
+    @Test
+    public void testEventActionException(){
+        try{
+            request.setEventAction("");
+            fail("Exception should have been thrown");
+        }
+        catch(IllegalArgumentException e){
+            assertEquals("Value cannot be empty.", e.getLocalizedMessage());
+        }
     }
 
     /**
@@ -564,7 +656,7 @@ public class PiwikRequestTest{
      * Test of getGoalRevenue method, of class PiwikRequest.
      */
     @Test
-    public void testGoalRevenueT(){
+    public void testGoalRevenueTT(){
         try{
             request.setGoalRevenue(20.0);
             fail("Exception should have been thrown.");
@@ -575,11 +667,17 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testGoalRevenue(){
+    public void testGoalRevenueTF(){
         request.setGoalId(1);
         request.setGoalRevenue(20.0);
         
         assertEquals(new Double(20.0), request.getGoalRevenue());
+    }
+    @Test
+    public void testGoalRevenueF(){
+        request.setGoalRevenue(null);
+        
+        assertNull(request.getGoalRevenue());
     }
 
     /**
@@ -607,6 +705,8 @@ public class PiwikRequestTest{
     public void testNewVisit(){
         request.setNewVisit(true);
         assertEquals(true, request.getNewVisit());
+        request.setNewVisit(null);
+        assertNull(request.getNewVisit());
     }
 
     /**
@@ -623,7 +723,21 @@ public class PiwikRequestTest{
      * Test of getPageCustomVariable method, of class PiwikRequest.
      */
     @Test
+    public void testPageCustomVariableE(){
+        try{
+            request.setPageCustomVariable(null, "pageVal");
+            fail("Exception should have been thrown");
+        }
+        catch(NullPointerException e){
+            assertEquals("Key cannot be null.", e.getLocalizedMessage());
+        }        
+    }
+    @Test
     public void testPageCustomVariable(){
+        assertNull(request.getPageCustomVariable("pageKey"));
+        request.setPageCustomVariable("pageKey", "pageVal");
+        assertEquals("pageVal", request.getPageCustomVariable("pageKey"));
+        request.setPageCustomVariable("pageKey", null);
         assertNull(request.getPageCustomVariable("pageKey"));
         request.setPageCustomVariable("pageKey", "pageVal");
         assertEquals("pageVal", request.getPageCustomVariable("pageKey"));
@@ -733,18 +847,15 @@ public class PiwikRequestTest{
      * Test of getRequestDatetime method, of class PiwikRequest.
      */
     @Test
-    public void testRequestDatetimeT(){
-        try{
-            request.setRequestDatetime(null);
-            fail("Exception should have been thrown.");
-        }
-        catch(NullPointerException e){
-            assertEquals("Datetime cannot be null.",
-                    e.getLocalizedMessage());
-        }
+    public void testRequestDatetimeTTT(){
+        request.setAuthToken("12345678901234567890123456789012");
+        PiwikDate date = new PiwikDate(1000L);
+        request.setRequestDatetime(date);
+        
+        assertEquals(date, request.getRequestDatetime());
     }
     @Test
-    public void testRequestDatetimeFT(){
+    public void testRequestDatetimeTTF(){
         try{
             PiwikDate date = new PiwikDate(1000L);
             request.setRequestDatetime(date);
@@ -756,18 +867,17 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testRequestDatetimeFF(){
-        request.setAuthToken("12345678901234567890123456789012");
-        PiwikDate date = new PiwikDate(1000L);
-        request.setRequestDatetime(date);
-        
-        assertEquals(date, request.getRequestDatetime());
-    }
-    @Test
-    public void testRequestDatetime(){
+    public void testRequestDatetimeTF(){
         PiwikDate date = new PiwikDate();
         request.setRequestDatetime(date);
         assertEquals(date, request.getRequestDatetime());
+    }
+    @Test
+    public void testRequestDatetimeF(){
+        PiwikDate date = new PiwikDate();
+        request.setRequestDatetime(date);
+        request.setRequestDatetime(null);
+        assertNull(request.getRequestDatetime());
     }
 
     /**
@@ -775,8 +885,8 @@ public class PiwikRequestTest{
      */
     @Test
     public void testRequired(){
-        request.setRequired(true);
-        assertEquals(true, request.getRequired());
+        request.setRequired(false);
+        assertEquals(false, request.getRequired());
     }
 
     /**
@@ -792,7 +902,7 @@ public class PiwikRequestTest{
      * Test of getSearchCategory method, of class PiwikRequest.
      */
     @Test
-    public void testSearchCategoryT(){
+    public void testSearchCategoryTT(){
         try{
             request.setSearchCategory("category");
             fail("Exception should have been thrown.");
@@ -803,10 +913,15 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testSearchCategory(){
+    public void testSearchCategoryTF(){
         request.setSearchQuery("query");
         request.setSearchCategory("category");
         assertEquals("category", request.getSearchCategory());
+    }
+    @Test
+    public void testSearchCategoryF(){
+        request.setSearchCategory(null);
+        assertNull(request.getSearchCategory());
     }
 
     /**
@@ -822,7 +937,7 @@ public class PiwikRequestTest{
      * Test of getSearchResultsCount method, of class PiwikRequest.
      */
     @Test
-    public void testSearchResultsCountT(){
+    public void testSearchResultsCountTT(){
         try{
             request.setSearchResultsCount(100L);
             fail("Exception should have been thrown.");
@@ -833,10 +948,15 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testSearchResultsCount(){
+    public void testSearchResultsCountTF(){
         request.setSearchQuery("query");
         request.setSearchResultsCount(100L);
         assertEquals(new Long(100L), request.getSearchResultsCount());
+    }
+    @Test
+    public void testSearchResultsCountF(){
+        request.setSearchResultsCount(null);
+        assertNull(request.getSearchResultsCount());
     }
 
     /**
@@ -880,7 +1000,13 @@ public class PiwikRequestTest{
      * Test of getVisitorCity method, of class PiwikRequest.
      */
     @Test
-    public void testVisitorCityE(){
+    public void testVisitorCityT(){
+        request.setAuthToken("12345678901234567890123456789012");
+        request.setVisitorCity("city");
+        assertEquals("city", request.getVisitorCity());
+    }
+    @Test
+    public void testVisitorCityTE(){
         try{
             request.setVisitorCity("city");
             fail("Exception should have been thrown.");
@@ -891,17 +1017,24 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testVisitorCity(){
-        request.setAuthToken("12345678901234567890123456789012");
-        request.setVisitorCity("city");
-        assertEquals("city", request.getVisitorCity());
+    public void testVisitorCityF(){
+        request.setVisitorCity(null);
+        assertNull(request.getVisitorCity());
     }
 
     /**
      * Test of getVisitorCountry method, of class PiwikRequest.
      */
     @Test
-    public void testVisitorCountryE(){
+    public void testVisitorCountryT(){
+        PiwikLocale country = new PiwikLocale(Locale.US);
+        request.setAuthToken("12345678901234567890123456789012");
+        request.setVisitorCountry(country);
+        
+        assertEquals(country, request.getVisitorCountry());
+    }
+    @Test
+    public void testVisitorCountryTE(){
         try{
             PiwikLocale country = new PiwikLocale(Locale.US);
             request.setVisitorCountry(country);
@@ -913,30 +1046,17 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testVisitorCountry(){
-        PiwikLocale country = new PiwikLocale(Locale.US);
-        request.setAuthToken("12345678901234567890123456789012");
-        request.setVisitorCountry(country);
+    public void testVisitorCountryF(){
+        request.setVisitorCountry(null);
         
-        assertEquals(country, request.getVisitorCountry());
+        assertNull(request.getVisitorCountry());
     }
 
     /**
      * Test of getVisitorCustomId method, of class PiwikRequest.
      */
     @Test
-    public void testVisitorCustomIdT(){
-        try{
-            request.setVisitorCustomId(null);
-            fail("Exception should have been thrown.");
-        }
-        catch(NullPointerException e){
-            assertEquals("VisitorCustomId cannot be null.",
-                    e.getLocalizedMessage());
-        }
-    }
-    @Test
-    public void testVisitorCustomFT(){
+    public void testVisitorCustomTT(){
         try{
             request.setVisitorCustomId("1");
             fail("Exception should have been thrown.");
@@ -947,7 +1067,7 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testVisitorCustomFFT(){
+    public void testVisitorCustomTFT(){
         try{
             request.setVisitorCustomId("1234567890abcdeg");
             fail("Exception should have been thrown.");
@@ -958,9 +1078,15 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testVisitorCustomIdFFF(){
+    public void testVisitorCustomIdTFF(){
         request.setVisitorCustomId("1234567890abcdef");
         assertEquals("1234567890abcdef", request.getVisitorCustomId());
+    }
+    @Test
+    public void testVisitorCustomIdF(){
+        request.setVisitorCustomId("1234567890abcdef");
+        request.setVisitorCustomId(null);
+        assertNull(request.getVisitorCustomId());
     }
 
     /**
@@ -976,18 +1102,7 @@ public class PiwikRequestTest{
      * Test of getVisitorId method, of class PiwikRequest.
      */
     @Test
-    public void testVisitorIdT(){
-        try{
-            request.setVisitorId(null);
-            fail("Exception should have been thrown.");
-        }
-        catch(NullPointerException e){
-            assertEquals("VisitorId cannot be null.",
-                    e.getLocalizedMessage());
-        }
-    }
-    @Test
-    public void testVisitorIdFT(){
+    public void testVisitorIdTT(){
         try{
             request.setVisitorId("1");
             fail("Exception should have been thrown.");
@@ -998,7 +1113,7 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testVisitorIdFFT(){
+    public void testVisitorIdTFT(){
         try{
             request.setVisitorId("1234567890abcdeg");
             fail("Exception should have been thrown.");
@@ -1009,16 +1124,28 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testVisitorIdFFF(){
+    public void testVisitorIdTFF(){
         request.setVisitorId("1234567890abcdef");
         assertEquals("1234567890abcdef", request.getVisitorId());
+    }
+    @Test
+    public void testVisitorIdF(){
+        request.setVisitorId("1234567890abcdef");
+        request.setVisitorId(null);
+        assertNull(request.getVisitorId());
     }
 
     /**
      * Test of getVisitorIp method, of class PiwikRequest.
      */
     @Test
-    public void testVisitorIpE(){
+    public void testVisitorIpT(){
+        request.setAuthToken("12345678901234567890123456789012");
+        request.setVisitorIp("ip");
+        assertEquals("ip", request.getVisitorIp());
+    }
+    @Test
+    public void testVisitorIpTE(){
         try{
             request.setVisitorIp("ip");
             fail("Exception should have been thrown.");
@@ -1029,17 +1156,22 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testVisitorIp(){
-        request.setAuthToken("12345678901234567890123456789012");
-        request.setVisitorIp("ip");
-        assertEquals("ip", request.getVisitorIp());
+    public void testVisitorIpF(){
+        request.setVisitorIp(null);
+        assertNull(request.getVisitorIp());
     }
 
     /**
      * Test of getVisitorLatitude method, of class PiwikRequest.
      */
     @Test
-    public void testVisitorLatitudeE(){
+    public void testVisitorLatitudeT(){
+        request.setAuthToken("12345678901234567890123456789012");
+        request.setVisitorLatitude(10.5);
+        assertEquals(new Double(10.5), request.getVisitorLatitude());
+    }
+    @Test
+    public void testVisitorLatitudeTE(){
         try{
             request.setVisitorLatitude(10.5);
             fail("Exception should have been thrown.");
@@ -1050,17 +1182,22 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testVisitorLatitude(){
-        request.setAuthToken("12345678901234567890123456789012");
-        request.setVisitorLatitude(10.5);
-        assertEquals(new Double(10.5), request.getVisitorLatitude());
+    public void testVisitorLatitudeF(){
+        request.setVisitorLatitude(null);
+        assertNull(request.getVisitorLatitude());
     }
 
     /**
      * Test of getVisitorLongitude method, of class PiwikRequest.
      */
     @Test
-    public void testVisitorLongitudeE(){
+    public void testVisitorLongitudeT(){
+        request.setAuthToken("12345678901234567890123456789012");
+        request.setVisitorLongitude(20.5);
+        assertEquals(new Double(20.5), request.getVisitorLongitude());
+    }
+    @Test
+    public void testVisitorLongitudeTE(){
         try{
             request.setVisitorLongitude(20.5);
             fail("Exception should have been thrown.");
@@ -1071,10 +1208,9 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testVisitorLongitude(){
-        request.setAuthToken("12345678901234567890123456789012");
-        request.setVisitorLongitude(20.5);
-        assertEquals(new Double(20.5), request.getVisitorLongitude());
+    public void testVisitorLongitudeF(){
+        request.setVisitorLongitude(null);
+        assertNull(request.getVisitorLongitude());
     }
 
     /**
@@ -1090,7 +1226,14 @@ public class PiwikRequestTest{
      * Test of getVisitorRegion method, of class PiwikRequest.
      */
     @Test
-    public void testGetVisitorRegionE(){
+    public void testVisitorRegionT(){
+        request.setAuthToken("12345678901234567890123456789012");
+        request.setVisitorRegion("region");
+        
+        assertEquals("region", request.getVisitorRegion());
+    }
+    @Test
+    public void testGetVisitorRegionTE(){
         try{
             request.setVisitorRegion("region");
             fail("Exception should have been thrown.");
@@ -1101,11 +1244,10 @@ public class PiwikRequestTest{
         }
     }
     @Test
-    public void testVisitorRegion(){
-        request.setAuthToken("12345678901234567890123456789012");
-        request.setVisitorRegion("region");
+    public void testVisitorRegionF(){
+        request.setVisitorRegion(null);
         
-        assertEquals("region", request.getVisitorRegion());
+        assertNull(request.getVisitorRegion());
     }
 
     /**
@@ -1124,6 +1266,11 @@ public class PiwikRequestTest{
     public void testGetQueryString(){
         request.setRandomValue("random");
         request.setVisitorId("1234567890123456");
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com", request.getQueryString());
+        request.setPageCustomVariable("key", "val");
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&cvar={\"1\":[\"key\",\"val\"]}&_id=1234567890123456&url=http://test.com",
+                request.getQueryString());
+        request.setPageCustomVariable("key", null);
         assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com", request.getQueryString());
     }
 
@@ -1147,5 +1294,4 @@ public class PiwikRequestTest{
         assertEquals(10, s.length());
         Long.parseLong(s, 16);
     }
-    
 }

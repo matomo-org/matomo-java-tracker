@@ -140,7 +140,7 @@ public class PiwikRequest{
      * For example, <strong>Help / Feedback </strong>
      * will create the Action <strong>Feedback</strong> in the category Help.
      *
-     * @param actionName the title of the action to set
+     * @param actionName the title of the action to set.  A null value will remove this parameter
      */
     public void setActionName(String actionName){
         setParameter(ACTION_NAME, actionName);
@@ -160,7 +160,7 @@ public class PiwikRequest{
      * <a href=http://piwik.org/docs/page-speed/>Page speed report</a> 
      * <strong>Avg. generation time</strong> column in the Page URL and Page Title reports,
      * as well as a site wide running average of the speed of your server. 
-     * @param actionTime the amount of time to set
+     * @param actionTime the amount of time to set.  A null value will remove this parameter
      */
     public void setActionTime(Long actionTime){
         setParameter(ACTION_TIME, actionTime);
@@ -176,7 +176,7 @@ public class PiwikRequest{
     
     /**
      * Set the full URL for the current action.
-     * @param actionUrl the full URL to set
+     * @param actionUrl the full URL to set.  A null value will remove this parameter
      */
     public void setActionUrl(URL actionUrl){
         setParameter(ACTION_URL, actionUrl);
@@ -192,7 +192,7 @@ public class PiwikRequest{
     
     /**
      * Set the api version to use (currently always set to 1)
-     * @param apiVersion the api version to set
+     * @param apiVersion the api version to set.  A null value will remove this parameter
      */
     public void setApiVersion(String apiVersion){
         setParameter(API_VERSION, apiVersion);
@@ -208,13 +208,10 @@ public class PiwikRequest{
     
     /**
      * Set the 32 character authorization key used to authenticate the API request.
-     * @param authToken the authorization key to set
+     * @param authToken the authorization key to set.  A null value will remove this parameter
      */
     public void setAuthToken(String authToken){
-        if (authToken == null){
-            throw new NullPointerException("AuthToken cannot be null.");
-        }
-        if (authToken.length() != 32){            
+        if (authToken != null && authToken.length() != 32){            
             throw new IllegalArgumentException(authToken+" is not 32 characters long.");
         }
         setParameter(AUTH_TOKEN, authToken);
@@ -244,7 +241,7 @@ public class PiwikRequest{
      * Used to populate the <em>Referrers &gt; Campaigns</em> report (clicking on a 
      * campaign loads all keywords for this campaign). <em>Note: this parameter 
      * will only be used for the first pageview of a visit.</em>
-     * @param campaignKeyword the campaign keyword to set
+     * @param campaignKeyword the campaign keyword to set.  A null value will remove this parameter
      */
     public void setCampaignKeyword(String campaignKeyword){
         setParameter(CAMPAIGN_KEYWORD, campaignKeyword);
@@ -263,7 +260,7 @@ public class PiwikRequest{
      * <a href=http://piwik.org/docs/tracking-campaigns/>Tracking Campaigns</a>). 
      * Used to populate the <em>Referrers &gt; Campaigns</em> report. <em>Note: this parameter 
      * will only be used for the first pageview of a visit.</em>
-     * @param campaignName the campaign name to set
+     * @param campaignName the campaign name to set.  A null value will remove this parameter
      */
     public void setCampaignName(String campaignName){
         setParameter(CAMPAIGN_NAME, campaignName);
@@ -281,7 +278,7 @@ public class PiwikRequest{
      * The charset of the page being tracked. Specify the charset if the data 
      * you send to Piwik is encoded in a different character set than the default
      * <strong>utf-8</strong>.
-     * @param characterSet the charset to set
+     * @param characterSet the charset to set.  A null value will remove this parameter
      */
     public void setCharacterSet(Charset characterSet){
         setParameter(CHARACTER_SET, characterSet);
@@ -297,7 +294,7 @@ public class PiwikRequest{
     
     /**
      * Set the name of the interaction with the content. For instance a 'click'.
-     * @param contentInteraction the name of the interaction to set
+     * @param contentInteraction the name of the interaction to set.  A null value will remove this parameter
      */
     public void setContentInteraction(String contentInteraction){
         setParameter(CONTENT_INTERACTION, contentInteraction);
@@ -313,7 +310,7 @@ public class PiwikRequest{
     
     /**
      * Set the name of the content. For instance 'Ad Foo Bar'.
-     * @param contentName the name to set
+     * @param contentName the name to set.  A null value will remove this parameter
      */
     public void setContentName(String contentName){
         setParameter(CONTENT_NAME, contentName);
@@ -329,7 +326,7 @@ public class PiwikRequest{
     
     /**
      * Set the actual content piece. For instance the path to an image, video, audio, any text.
-     * @param contentPiece the content piece to set
+     * @param contentPiece the content piece to set.  A null value will remove this parameter
      */
     public void setContentPiece(String contentPiece){
         setParameter(CONTENT_PIECE, contentPiece);
@@ -344,7 +341,7 @@ public class PiwikRequest{
     
     /**
      * Set the target of the content. For instance the URL of a landing page.
-     * @param contentTarget the target to set
+     * @param contentTarget the target to set.  A null value will remove this parameter
      */
     public void setContentTarget(URL contentTarget){
         setParameter(CONTENT_TARGET, contentTarget);
@@ -360,7 +357,7 @@ public class PiwikRequest{
     
     /**
      * Set the current hour (local time).
-     * @param currentHour the hour to set
+     * @param currentHour the hour to set.  A null value will remove this parameter
      */
     public void setCurrentHour(Integer currentHour){
         setParameter(CURRENT_HOUR, currentHour);
@@ -376,7 +373,7 @@ public class PiwikRequest{
     
     /**
      * Set the current minute (local time).
-     * @param currentMinute the minute to set
+     * @param currentMinute the minute to set.  A null value will remove this parameter
      */
     public void setCurrentMinute(Integer currentMinute){
         setParameter(CURRENT_MINUTE, currentMinute);
@@ -392,7 +389,7 @@ public class PiwikRequest{
     
     /**
      * Set the current second (local time).
-     * @param currentSecond the second to set
+     * @param currentSecond the second to set.  A null value will remove this parameter
      */
     public void setCurrentSecond(Integer currentSecond){
         setParameter(CURRENT_SECOND, currentSecond);
@@ -408,7 +405,7 @@ public class PiwikRequest{
     
     /**
      * Set the resolution of the device the visitor is using, eg <strong>1280x1024</strong>.
-     * @param deviceResolution the resolution to set
+     * @param deviceResolution the resolution to set.  A null value will remove this parameter
      */
     public void setDeviceResolution(String deviceResolution){
         setParameter(DEVICE_RESOLUTION, deviceResolution);
@@ -425,7 +422,7 @@ public class PiwikRequest{
     /**
      * Set the url of a file the user has downloaded. Used for tracking downloads.
      * We recommend to also set the <strong>url</strong> parameter to this same value.
-     * @param downloadUrl the url to set
+     * @param downloadUrl the url to set.  A null value will remove this parameter
      */
     public void setDownloadUrl(URL downloadUrl){
         setParameter(DOWNLOAD_URL, downloadUrl);
@@ -476,10 +473,12 @@ public class PiwikRequest{
     /**
      * Set the discount offered.  Ecommerce must be enabled, and EcommerceId and
      * EcommerceRevenue must first be set.
-     * @param discount the discount to set
+     * @param discount the discount to set.  A null value will remove this parameter
      */
     public void setEcommerceDiscount(Double discount){
-        verifyEcommerceState();
+        if (discount != null){
+            verifyEcommerceState();
+        }
         setParameter(ECOMMERCE_DISCOUNT, discount);
     }
     
@@ -494,10 +493,12 @@ public class PiwikRequest{
     /**
      * Set the unique string identifier for the ecommerce order (required when 
      * tracking an ecommerce order).  Ecommerce must be enabled.
-     * @param id the id to set
+     * @param id the id to set.  A null value will remove this parameter
      */
     public void setEcommerceId(String id){
-        verifyEcommerceEnabled();
+        if (id != null){
+            verifyEcommerceEnabled();
+        }
         setParameter(ECOMMERCE_ID, id);
     }
     
@@ -513,11 +514,20 @@ public class PiwikRequest{
     /**
      * Add an {@link EcommerceItem} to this order.  Ecommerce must be enabled,
      * and EcommerceId and EcommerceRevenue must first be set.
-     * @param item the {@link EcommerceItem} to add
+     * @param item the {@link EcommerceItem} to add.  Cannot be null
      */
     public void addEcommerceItem(EcommerceItem item){
-        verifyEcommerceState();
+        if (item != null){
+            verifyEcommerceState();
+        }
         addToJsonArray(ECOMMERCE_ITEMS, item);
+    }
+    
+    /**
+     * Clears all {@link EcommerceItem} from this order.
+     */
+    public void clearEcommerceItems(){
+        removeJsonArray(ECOMMERCE_ITEMS);
     }
     
     /**
@@ -532,10 +542,12 @@ public class PiwikRequest{
      * Set the UNUX timestamp of this customer's last ecommerce order. This value
      * is used to process the "Days since last order" report.  Ecommerce must be
      * enabled, and EcommerceId and EcommerceRevenue must first be set.
-     * @param timestamp the timestamp to set
+     * @param timestamp the timestamp to set.  A null value will remove this parameter
      */
     public void setEcommerceLastOrderTimestamp(Long timestamp){
-        verifyEcommerceState();
+        if (timestamp != null){
+            verifyEcommerceState();
+        }
         setParameter(ECOMMERCE_LAST_ORDER_TIMESTAMP, timestamp);
     }
     
@@ -550,10 +562,12 @@ public class PiwikRequest{
     /**
      * Set the grand total of the ecommerce order (required when tracking an 
      * ecommerce order).  Ecommerce must be enabled.
-     * @param revenue the grand total to set
+     * @param revenue the grand total to set.  A null value will remove this parameter
      */
     public void setEcommerceRevenue(Double revenue){
-        verifyEcommerceEnabled();
+        if (revenue != null){
+            verifyEcommerceEnabled();
+        }
         setParameter(ECOMMERCE_REVENUE, revenue);
     }
     
@@ -568,10 +582,12 @@ public class PiwikRequest{
     /**
      * Set the shipping cost of the ecommerce order.  Ecommerce must be enabled, 
      * and EcommerceId and EcommerceRevenue must first be set.
-     * @param shippingCost the shipping cost to set
+     * @param shippingCost the shipping cost to set.  A null value will remove this parameter
      */
     public void setEcommerceShippingCost(Double shippingCost){
-        verifyEcommerceState();
+        if (shippingCost != null){
+            verifyEcommerceState();
+        }
         setParameter(ECOMMERCE_SHIPPING_COST, shippingCost);
     }
     
@@ -586,10 +602,12 @@ public class PiwikRequest{
     /**
      * Set the subtotal of the ecommerce order; excludes shipping.  Ecommerce 
      * must be enabled and EcommerceId and EcommerceRevenue must first be set.
-     * @param subtotal the subtotal to set
+     * @param subtotal the subtotal to set.  A null value will remove this parameter
      */
     public void setEcommerceSubtotal(Double subtotal){
-        verifyEcommerceState();
+        if (subtotal != null){
+            verifyEcommerceState();
+        }
         setParameter(ECOMMERCE_SUBTOTAL, subtotal);
     }
     
@@ -604,10 +622,12 @@ public class PiwikRequest{
     /**
      * Set the tax amount of the ecommerce order.  Ecommerce must be enabled, and
      * EcommerceId and EcommerceRevenue must first be set.
-     * @param tax the tax amount to set
+     * @param tax the tax amount to set.  A null value will remove this parameter
      */
     public void setEcommerceTax(Double tax){
-        verifyEcommerceState();
+        if (tax != null){
+            verifyEcommerceState();
+        }
         setParameter(ECOMMERCE_TAX, tax);
     }
     
@@ -622,7 +642,7 @@ public class PiwikRequest{
     /**
      * Set the event action. Must not be empty. (eg. Play, Pause, Duration, 
      * Add Playlist, Downloaded, Clicked...).
-     * @param eventAction the event action to set
+     * @param eventAction the event action to set.  A null value will remove this parameter
      */
     public void setEventAction(String eventAction){
         setNonEmptyStringParameter(EVENT_ACTION, eventAction);
@@ -638,7 +658,7 @@ public class PiwikRequest{
     
     /**
      * Set the event category. Must not be empty. (eg. Videos, Music, Games...).
-     * @param eventCategory the event category to set
+     * @param eventCategory the event category to set.  A null value will remove this parameter
      */
     public void setEventCategory(String eventCategory){
         setNonEmptyStringParameter(EVENT_CATEGORY, eventCategory);
@@ -654,7 +674,7 @@ public class PiwikRequest{
     
     /**
      * Set the event name. (eg. a Movie name, or Song name, or File name...).
-     * @param eventName the event name to set
+     * @param eventName the event name to set.  A null value will remove this parameter
      */
     public void setEventName(String eventName){
         setParameter(EVENT_NAME, eventName);
@@ -670,7 +690,7 @@ public class PiwikRequest{
     
     /**
      * Set the event value. Must be a float or integer value (numeric), not a string.
-     * @param eventValue the event value to set
+     * @param eventValue the event value to set.  A null value will remove this parameter
      */
     public void setEventValue(Number eventValue){
         setParameter(EVENT_VALUE, eventValue);
@@ -687,7 +707,7 @@ public class PiwikRequest{
     /**
      * Set the goal id.  If specified, the tracking request will trigger a 
      * conversion for the goal of the website being tracked with this id.
-     * @param goalId the goal id to set
+     * @param goalId the goal id to set.  A null value will remove this parameter
      */
     public void setGoalId(Integer goalId){
         setParameter(GOAL_ID, goalId);
@@ -704,10 +724,10 @@ public class PiwikRequest{
     /**
      * Set a monetary value that was generated as revenue by this goal conversion.
      * Only used if idgoal is specified in the request.
-     * @param goalRevenue the goal revenue to set
+     * @param goalRevenue the goal revenue to set.  A null value will remove this parameter
      */
     public void setGoalRevenue(Double goalRevenue){
-        if (getGoalId() == null){
+        if (goalRevenue != null && getGoalId() == null){
             throw new IllegalStateException("GoalId must be set before GoalRevenue can be set.");
         }
         setParameter(GOAL_REVENUE, goalRevenue);
@@ -725,7 +745,7 @@ public class PiwikRequest{
      * Set an override value for the <strong>Accept-Language</strong> HTTP header
      * field. This value is used to detect the visitor's country if 
      * <a href="http://piwik.org/faq/troubleshooting/#faq_65">GeoIP </a>is not enabled.
-     * @param acceptLangage the Accept-Language HTTP header to set
+     * @param acceptLangage the Accept-Language HTTP header to set.  A null value will remove this parameter
      */
     public void setHeaderAcceptLanguage(String acceptLangage){
         setParameter(HEADER_ACCEPT_LANGUAGE, acceptLangage);
@@ -775,7 +795,7 @@ public class PiwikRequest{
     /**
      * Set an external URL the user has opened. Used for tracking outlink clicks.
      * We recommend to also set the <strong>url</strong> parameter to this same value.
-     * @param outlinkUrl the outlink url to set
+     * @param outlinkUrl the outlink url to set.  A null value will remove this parameter
      */
     public void setOutlinkUrl(URL outlinkUrl){
         setParameter(OUTLINK_URL, outlinkUrl);
@@ -793,7 +813,7 @@ public class PiwikRequest{
     /**
      * Set a page custom variable at the specified key.
      * @param key the key of the variable to set
-     * @param value the value of the variable to set at the specified key
+     * @param value the value of the variable to set at the specified key.  A null value will remove this custom variable
      */
     public void setPageCustomVariable(String key, String value){
         setJsonParameter(PAGE_CUSTOM_VARIABLE, key, value);
@@ -954,7 +974,7 @@ public class PiwikRequest{
     /**
      * Set a random value that is generated before each request. Using it helps 
      * avoid the tracking request being cached by the browser or a proxy.
-     * @param randomValue the random value to set
+     * @param randomValue the random value to set.  A null value will remove this parameter
      */
     public void setRandomValue(String randomValue){
         setParameter(RANDOM_VALUE, randomValue);
@@ -971,7 +991,7 @@ public class PiwikRequest{
     /**
      * Set the full HTTP Referrer URL. This value is used to determine how someone
      * got to your website (ie, through a website, search engine or campaign).
-     * @param refferrerUrl the referrer url to set
+     * @param refferrerUrl the referrer url to set.  A null value will remove this parameter
      */
     public void setReferrerUrl(URL refferrerUrl){
         setParameter(REFERRER_URL, refferrerUrl);
@@ -994,15 +1014,11 @@ public class PiwikRequest{
      * older than four hours then <em>Auth Token</em> must be set. If you set 
      * <em>Request Datetime</em> with a datetime in the last four hours then you
      * don't need to pass <em>Auth Token</em>.
-     * @param datetime the datetime of the request to set
+     * @param datetime the datetime of the request to set.  A null value will remove this parameter
      */
     public void setRequestDatetime(PiwikDate datetime){
-        if (datetime == null){
-            throw new NullPointerException("Datetime cannot be null.");            
-        }
-        if (new Date().getTime()-datetime.getTime() > REQUEST_DATETIME_AUTH_LIMIT && getAuthToken() == null){
-            throw new IllegalStateException("Because you are trying to set RequestDatetime for a time greater than 4 hours ago, AuthToken must be set first.");
-            
+        if (datetime != null && new Date().getTime()-datetime.getTime() > REQUEST_DATETIME_AUTH_LIMIT && getAuthToken() == null){
+            throw new IllegalStateException("Because you are trying to set RequestDatetime for a time greater than 4 hours ago, AuthToken must be set first.");            
         }
         setParameter(REQUEST_DATETIME, datetime);
     }
@@ -1054,10 +1070,10 @@ public class PiwikRequest{
     /**
      * Specify a search category with this parameter.  SearchQuery must first be
      * set.
-     * @param searchCategory the search category to set
+     * @param searchCategory the search category to set.  A null value will remove this parameter
      */
     public void setSearchCategory(String searchCategory){
-        if (getSearchQuery() == null){
+        if (searchCategory != null && getSearchQuery() == null){
             throw new IllegalStateException("SearchQuery must be set before SearchCategory can be set.");
         }
         setParameter(SEARCH_CATEGORY, searchCategory);
@@ -1074,7 +1090,7 @@ public class PiwikRequest{
     /**
      * Set the search query.  When specified, the request will not be tracked as
      * a normal pageview but will instead be tracked as a Site Search request.
-     * @param searchQuery the search query to set
+     * @param searchQuery the search query to set.  A null value will remove this parameter
      */
     public void setSearchQuery(String searchQuery){
         setParameter(SEARCH_QUERY, searchQuery);
@@ -1093,10 +1109,10 @@ public class PiwikRequest{
      * search count to the number of search results displayed on the results page. 
      * When keywords are tracked with {@code Search Results Count=0} they will appear in 
      * the "No Result Search Keyword" report.  SearchQuery must first be set.
-     * @param searchResultsCount the search results count to set
+     * @param searchResultsCount the search results count to set.  A null value will remove this parameter
      */
     public void setSearchResultsCount(Long searchResultsCount){
-        if (getSearchQuery() == null){
+        if (searchResultsCount != null && getSearchQuery() == null){
             throw new IllegalStateException("SearchQuery must be set before SearchResultsCount can be set.");
         }
         setParameter(SEARCH_RESULTS_COUNT, searchResultsCount);
@@ -1112,7 +1128,7 @@ public class PiwikRequest{
     
     /**
      * Set the ID of the website we're tracking a visit/action for.
-     * @param siteId the id of the website to set
+     * @param siteId the id of the website to set.  A null value will remove this parameter
      */
     public void setSiteId(Integer siteId){
         setParameter(SITE_ID, siteId);
@@ -1148,7 +1164,7 @@ public class PiwikRequest{
     /**
      * Set a user custom variable at the specified key.
      * @param key the key of the variable to set
-     * @param value the value of the variable to set at the specified key
+     * @param value the value of the variable to set at the specified key.  A null value will remove this parameter
      */
     public void setUserCustomVariable(String key, String value){
         setJsonParameter(USER_CUSTOM_VARIABLE, key, value);
@@ -1173,7 +1189,7 @@ public class PiwikRequest{
      * "enforced". This means that if there is no recent visit with this user id,
      * a new one will be created. If a visit is found in the last 30 minutes with
      * your specified user id, then the new action will be recorded to this existing visit.
-     * @param userId the user id to set
+     * @param userId the user id to set.  A null value will remove this parameter
      */
     public void setUserId(String userId){
         setNonEmptyStringParameter(USER_ID, userId);
@@ -1190,10 +1206,12 @@ public class PiwikRequest{
     /**
      * Set an override value for the city. The name of the city the visitor is 
      * located in, eg, Tokyo.  AuthToken must first be set.
-     * @param city the visitor's city to set
+     * @param city the visitor's city to set.  A null value will remove this parameter
      */
     public void setVisitorCity(String city){
-        verifyAuthTokenSet();
+        if (city != null){
+            verifyAuthTokenSet();
+        }
         setParameter(VISITOR_CITY, city);
     }
     
@@ -1207,10 +1225,12 @@ public class PiwikRequest{
     
     /**
      * Set an override value for the country.  AuthToken must first be set.
-     * @param country the visitor's country to set
+     * @param country the visitor's country to set.  A null value will remove this parameter
      */
     public void setVisitorCountry(PiwikLocale country){
-        verifyAuthTokenSet();
+        if (country != null){
+            verifyAuthTokenSet();
+        }
         setParameter(VISITOR_COUNTRY, country);
     }
     
@@ -1226,18 +1246,17 @@ public class PiwikRequest{
      * Set a custom visitor ID for this request. You must set this value to exactly
      * a 16 character hexadecimal string (containing only characters 01234567890abcdefABCDEF).
      * We recommended to set the UserId rather than the VisitorCustomId.
-     * @param visitorCustomId the visitor's custom id to set
+     * @param visitorCustomId the visitor's custom id to set.  A null value will remove this parameter
      */
     public void setVisitorCustomId(String visitorCustomId){
-        if (visitorCustomId == null){
-            throw new NullPointerException("VisitorCustomId cannot be null.");
-        }
-        if (visitorCustomId.length() != 16){            
-            throw new IllegalArgumentException(visitorCustomId+" is not 16 characters long.");
-        }
-        // Verify visitorID is a 16 character hexadecimal string
-        if (!visitorCustomId.matches("[0-9A-Fa-f]+")){
-            throw new IllegalArgumentException(visitorCustomId+" is not a hexadecimal string.");
+        if (visitorCustomId != null){
+            if (visitorCustomId.length() != 16){            
+                throw new IllegalArgumentException(visitorCustomId+" is not 16 characters long.");
+            }
+            // Verify visitorID is a 16 character hexadecimal string
+            else if (!visitorCustomId.matches("[0-9A-Fa-f]+")){
+                throw new IllegalArgumentException(visitorCustomId+" is not a hexadecimal string.");
+            }
         }
         setParameter(VISITOR_CUSTOM_ID, visitorCustomId);
     }
@@ -1255,7 +1274,7 @@ public class PiwikRequest{
      * to the date where the user first started using your software/app, or when
      * he/she created an account. This parameter is used to populate the 
      * <em>Goals &gt; Days to Conversion</em> report.
-     * @param timestamp the timestamp of the visitor's first visit to set
+     * @param timestamp the timestamp of the visitor's first visit to set.  A null value will remove this parameter
      */
     public void setVisitorFirstVisitTimestamp(Long timestamp){
         setParameter(VISITOR_FIRST_VISIT_TIMESTAMP, timestamp);
@@ -1274,18 +1293,17 @@ public class PiwikRequest{
      * Every unique visitor must be assigned a different ID and this ID must not
      * change after it is assigned. If this value is not set Piwik will still 
      * track visits, but the unique visitors metric might be less accurate.
-     * @param visitorId the visitor id to set
+     * @param visitorId the visitor id to set.  A null value will remove this parameter
      */
     public void setVisitorId(String visitorId){
-        if (visitorId == null){
-            throw new NullPointerException("VisitorId cannot be null.");
-        }
-        if (visitorId.length() != 16){            
-            throw new IllegalArgumentException(visitorId+" is not 16 characters long.");
-        }
-        // Verify visitorID is a 16 character hexadecimal string
-        if (!visitorId.matches("[0-9A-Fa-f]+")){
-            throw new IllegalArgumentException(visitorId+" is not a hexadecimal string.");
+        if (visitorId != null){
+            if (visitorId.length() != 16){            
+                throw new IllegalArgumentException(visitorId+" is not 16 characters long.");
+            }
+            // Verify visitorID is a 16 character hexadecimal string
+            else if (!visitorId.matches("[0-9A-Fa-f]+")){
+                throw new IllegalArgumentException(visitorId+" is not a hexadecimal string.");
+            }
         }
         setParameter(VISITOR_ID, visitorId);
     }
@@ -1301,10 +1319,12 @@ public class PiwikRequest{
     /**
      * Set the override value for the visitor IP (both IPv4 and IPv6 notations 
      * supported).  AuthToken must first be set.
-     * @param visitorIp the visitor's ip to set
+     * @param visitorIp the visitor's ip to set.  A null value will remove this parameter
      */
     public void setVisitorIp(String visitorIp){
-        verifyAuthTokenSet();
+        if (visitorIp != null){
+            verifyAuthTokenSet();
+        }
         setParameter(VISITOR_IP, visitorIp);
     }
     
@@ -1319,10 +1339,12 @@ public class PiwikRequest{
     /**
      * Set an override value for the visitor's latitude, eg 22.456.  AuthToken 
      * must first be set.
-     * @param latitude the visitor's latitude to set
+     * @param latitude the visitor's latitude to set.  A null value will remove this parameter
      */
     public void setVisitorLatitude(Double latitude){
-        verifyAuthTokenSet();
+        if (latitude != null){
+            verifyAuthTokenSet();
+        }
         setParameter(VISITOR_LATITUDE, latitude);
     }
     
@@ -1337,10 +1359,12 @@ public class PiwikRequest{
     /**
      * Set an override value for the visitor's longitude, eg 22.456.  AuthToken 
      * must first be set.
-     * @param longitude the visitor's longitude to set
+     * @param longitude the visitor's longitude to set.  A null value will remove this parameter
      */
     public void setVisitorLongitude(Double longitude){
-        verifyAuthTokenSet();
+        if (longitude != null){
+            verifyAuthTokenSet();
+        }
         setParameter(VISITOR_LONGITUDE, longitude);
     }
     
@@ -1356,7 +1380,7 @@ public class PiwikRequest{
      * Set the UNIX timestamp of this visitor's previous visit. This parameter 
      * is used to populate the report 
      * <em>Visitors &gt; Engagement &gt; Visits</em> by days since last visit.
-     * @param timestamp the timestamp of the visitor's previous visit to set
+     * @param timestamp the timestamp of the visitor's previous visit to set.  A null value will remove this parameter
      */
     public void setVisitorPreviousVisitTimestamp(Long timestamp){
         setParameter(VISITOR_PREVIOUS_VISIT_TIMESTAMP, timestamp);
@@ -1378,10 +1402,12 @@ public class PiwikRequest{
      * for a list of them for every country (the region codes are located in the 
      * second column, to the left of the region name and to the right of the country
      * code).
-     * @param region the visitor's region to set
+     * @param region the visitor's region to set.  A null value will remove this parameter
      */
     public void setVisitorRegion(String region){
-        verifyAuthTokenSet();
+        if (region != null){
+            verifyAuthTokenSet();
+        }
         setParameter(VISITOR_REGION, region);
     }
     
@@ -1400,7 +1426,7 @@ public class PiwikRequest{
      * the counts by one on each new visit or "session", depending on how you choose
      * to define a visit. This value is used to populate the report 
      * <em>Visitors &gt; Engagement &gt; Visits by visit number</em>.
-     * @param visitorVisitCount the count of visits for this visitor to set
+     * @param visitorVisitCount the count of visits for this visitor to set.  A null value will remove this parameter
      */
     public void setVisitorVisitCount(Integer visitorVisitCount){
         setParameter(VISITOR_VISIT_COUNT, visitorVisitCount);
@@ -1466,13 +1492,15 @@ public class PiwikRequest{
     /**
      * Set a stored parameter.
      * @param key the parameter's key
-     * @param value the parameter's value.  Cannot be null
+     * @param value the parameter's value.  Removes the parameter if null
      */
     private void setParameter(String key, Object value){
         if (value == null){
-            throw new NullPointerException("Value cannot be null.");
-        }        
-        parameters.put(key, value);
+            parameters.remove(key);
+        }     
+        else{
+            parameters.put(key, value);
+        }
     }
     
     /**
@@ -1487,17 +1515,19 @@ public class PiwikRequest{
     /**
      * Set a stored parameter and verify it is a non-empty string.
      * @param key the parameter's key
-     * @param value the parameter's value.  Cannot be null.  Cannot be the empty
+     * @param value the parameter's value.  Cannot be the empty.  Removes the parameter if null
      * string
      */
     private void setNonEmptyStringParameter(String key, String value){
         if (value == null){
-            throw new NullPointerException("Value cannot be null.");
+            parameters.remove(key);
         }
-        if (value.length() == 0){
+        else if (value.length() == 0){
             throw new IllegalArgumentException("Value cannot be empty.");
         }
-        parameters.put(key, value);
+        else{
+            parameters.put(key, value);
+        }
     }
     
     /**
@@ -1505,8 +1535,11 @@ public class PiwikRequest{
      * @param key the parameter's key
      * @return the stored parameter's value
      */
-    private Boolean getBooleanParameter(String key){        
+    private Boolean getBooleanParameter(String key){
         Integer i = (Integer)parameters.get(key);
+        if (i == null){
+            return null;
+        }
         return i.equals(1);
     }
     
@@ -1514,13 +1547,13 @@ public class PiwikRequest{
      * Set a stored parameter that is a boolean.  This value will be stored as "1"
      * for true and "0" for false.
      * @param key the parameter's key
-     * @param value the parameter's value.  Cannot be null
+     * @param value the parameter's value.  Removes the parameter if null
      */
     private void setBooleanParameter(String key, Boolean value){
         if (value == null){
-            throw new NullPointerException("Value cannot be null.");
+            parameters.remove(key);
         }
-        if (value){
+        else if (value){
             parameters.put(key, 1);
         }
         else{
@@ -1551,33 +1584,39 @@ public class PiwikRequest{
      * Store a value in a json object at the specified parameter.
      * @param parameter the parameter to store the json object at
      * @param key the key of the value.  Cannot be null
-     * @param value the value.  Cannot be null
+     * @param value the value.  Removes the parameter if null
      */
     private void setJsonParameter(String parameter, String key, String value){
         if (key == null){
             throw new NullPointerException("Key cannot be null.");
         }
-        if (value == null){
-            throw new NullPointerException("Value cannot be null.");
-        }
-        
         PiwikJsonObject o = (PiwikJsonObject)parameters.get(parameter);
-        if (o == null){
-            o = new PiwikJsonObject();
-            parameters.put(parameter, o);
+        if (value == null){
+            if (o != null){
+                o.remove(key);
+                if (o.isEmpty()){
+                    parameters.remove(parameter);
+                }
+            }
         }
-        o.put(key, value);
+        else{
+            if (o == null){
+                o = new PiwikJsonObject();
+                parameters.put(parameter, o);
+            }
+            o.put(key, value);
+        }
     }
     
     /**
      * Get the value at the specified index from the json array at the specified
      * parameter.
-     * @param parameter the parameter of the json array to access
+     * @param key the key of the json array to access
      * @param index the index of the value in the json array
      * @return the value at the index in the json array
      */
-    private JsonValue getFromJsonArray(String parameter, int index){
-        PiwikJsonArray a = (PiwikJsonArray)parameters.get(parameter);
+    private JsonValue getFromJsonArray(String key, int index){
+        PiwikJsonArray a = (PiwikJsonArray)parameters.get(key);
         if (a == null){
             return null;
         }
@@ -1586,19 +1625,27 @@ public class PiwikRequest{
     }
     /**
      * Add a value to the json array at the specified parameter
-     * @param parameter the parameter of the json array to add to
+     * @param key the key of the json array to add to
      * @param value the value to add.  Cannot be null
      */
-    private void addToJsonArray(String parameter, JsonValue value){
+    private void addToJsonArray(String key, JsonValue value){
         if (value == null){
             throw new NullPointerException("Value cannot be null.");
         }
         
-        PiwikJsonArray a = (PiwikJsonArray)parameters.get(parameter);
+        PiwikJsonArray a = (PiwikJsonArray)parameters.get(key);
         if (a == null){
             a = new PiwikJsonArray();
-            parameters.put(parameter, a);
+            parameters.put(key, a);
         }
         a.add(value);
+    }
+    
+    /**
+     * Removes the json array at the specified parameter
+     * @param key the key of the json array to remove
+     */
+    private void removeJsonArray(String key){
+        parameters.remove(key);
     }
 }
