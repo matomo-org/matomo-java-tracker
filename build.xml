@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="piwik-java-api" default="default" basedir=".">
-    <description>Builds, tests, and runs the project Piwik Java API.</description>
+<project name="piwik-java-tracking-api" default="default" basedir=".">
+    <description>Builds, tests, and runs the project Piwik Java Tracking API.</description>
     <import file="nbproject/build-impl.xml"/>
     
     <target depends="-javadoc-build" name="-post-jar">
@@ -10,9 +10,9 @@
     
     <!-- Define the Analyze target -->
     <target depends="init" name="analyze" description="Analyzes the project with SonarQube.">
-        <property name="sonar.projectKey" value="com.ge.corporate.piwik" />
-        <property name="sonar.projectName" value="Piwik Java API" />
-        <property name="sonar.projectVersion" value="1.0" />
+        <property name="sonar.projectKey" value="com.ge.corporate.piwik.tracking" />
+        <property name="sonar.projectName" value="Piwik Java Tracking API" />
+        <property name="sonar.projectVersion" value="1.1" />
         <property name="sonar.language" value="java" />
         <property name="sonar.sources" value="${src.dir}" />
         <taskdef name="sonar" classname="org.sonar.ant.SonarTask">
