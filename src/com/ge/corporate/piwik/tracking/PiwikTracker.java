@@ -76,8 +76,8 @@ public class PiwikTracker{
      * @throws IOException thrown if there was a problem with this connection
      */
     public HttpResponse sendBulkRequest(Iterable<PiwikRequest> requests, String authToken) throws IOException{
-        if (authToken != null && authToken.length() != 32){            
-            throw new IllegalArgumentException(authToken+" is not 32 characters long.");
+        if (authToken != null && authToken.length() != PiwikRequest.AUTH_TOKEN_LENGTH){            
+            throw new IllegalArgumentException(authToken+" is not "+PiwikRequest.AUTH_TOKEN_LENGTH+" characters long.");
         }
         
         JsonObjectBuilder ob = Json.createObjectBuilder();

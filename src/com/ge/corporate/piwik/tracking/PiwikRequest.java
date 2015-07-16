@@ -25,6 +25,9 @@ import javax.xml.bind.DatatypeConverter;
  * @author brettcsorba
  */
 public class PiwikRequest{
+    public static final int ID_LENGTH = 16;
+    public static final int AUTH_TOKEN_LENGTH = 32;
+    
     private static final String ACTION_NAME = "action_name";
     private static final String ACTION_TIME = "gt_ms";
     private static final String ACTION_URL = "url";
@@ -94,7 +97,6 @@ public class PiwikRequest{
     private static final String VISITOR_REGION = "region";
     private static final String VISITOR_VISIT_COUNT = "_idvc";
     
-    private static final int ID_LENGTH = 16;
     private static final int RANDOM_VALUE_LENGTH = 20;
     private static final long REQUEST_DATETIME_AUTH_LIMIT = 14400000L;
     
@@ -209,12 +211,12 @@ public class PiwikRequest{
     }
     
     /**
-     * Set the 32 character authorization key used to authenticate the API request.
+     * Set the {@value #AUTH_TOKEN_LENGTH} character authorization key used to authenticate the API request.
      * @param authToken the authorization key to set.  A null value will remove this parameter
      */
     public void setAuthToken(String authToken){
-        if (authToken != null && authToken.length() != 32){            
-            throw new IllegalArgumentException(authToken+" is not 32 characters long.");
+        if (authToken != null && authToken.length() != AUTH_TOKEN_LENGTH){            
+            throw new IllegalArgumentException(authToken+" is not "+AUTH_TOKEN_LENGTH+" characters long.");
         }
         setParameter(AUTH_TOKEN, authToken);
     }
@@ -1246,7 +1248,7 @@ public class PiwikRequest{
     
     /**
      * Set a custom visitor ID for this request. You must set this value to exactly
-     * a 16 character hexadecimal string (containing only characters 01234567890abcdefABCDEF).
+     * a {@value #ID_LENGTH} character hexadecimal string (containing only characters 01234567890abcdefABCDEF).
      * We recommended to set the UserId rather than the VisitorCustomId.
      * @param visitorCustomId the visitor's custom id to set.  A null value will remove this parameter
      */
@@ -1291,7 +1293,7 @@ public class PiwikRequest{
     }
     
     /**
-     * Set the unique visitor ID, must be a 16 characters hexadecimal string. 
+     * Set the unique visitor ID, must be a {@value #ID_LENGTH} characters hexadecimal string. 
      * Every unique visitor must be assigned a different ID and this ID must not
      * change after it is assigned. If this value is not set Piwik will still 
      * track visits, but the unique visitors metric might be less accurate.
