@@ -57,5 +57,9 @@ If some of the parameters that you've specified in the bulk request requre AuthT
 ```java
 HttpResponse response = tracker.sendBulkRequest(requests, authToken);
 ```
+
+## License
+This software is released under the GPL v3 (or later) license.  See [LICENSE](LICENSE).
+
 ## Copyright
 Copyright (c) 2015 General Electric Company. All rights reserved.
