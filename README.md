@@ -61,7 +61,7 @@ HttpResponse response = tracker.sendBulkRequest(requests, authToken);
 brett.csorba@ge.com
 
 ## License
-This software is released under the GPL v3 (or later) license.  See [LICENSE](LICENSE).
+This software is released under the BSD 3-Clause license.  See [LICENSE](LICENSE).
 
 ## Copyright
 Copyright (c) 2015 General Electric Company. All rights reserved.

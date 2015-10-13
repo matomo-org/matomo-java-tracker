@@ -10,7 +10,7 @@
     
     <!-- Define the Analyze target -->
     <target depends="init" name="analyze" description="Analyzes the project with SonarQube.">
-        <property name="sonar.projectKey" value="com.ge.corporate.piwik.tracking" />
+        <property name="sonar.projectKey" value="org.piwik.java" />
         <property name="sonar.projectName" value="Piwik Java Tracking API" />
         <property name="sonar.projectVersion" value="1.1" />
         <property name="sonar.language" value="java" />
@@ -23,7 +23,7 @@
     
     <!-- Define the Mutate target -->
     <target depends="test" name="mutate" description="Performs mutation testing on the project with Pitest.">
-        <property name="pitest.target" value="com.ge.corporate.piwik.*" />
+        <property name="pitest.target" value="org.piwik.java.*" />
         <property name="pitest.excludedClasses" value="*IT" />
         <property name="pitest.excludedMethods" value="hashCode" />
         <property name="pitest.format" value="html,xml" />

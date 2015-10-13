@@ -1,13 +1,10 @@
-/*
- * Copyright (c) 2015 General Electric Company. All rights reserved.
+/* 
+ * Piwik Java Tracking API
  * 
- * The copyright to the computer software herein is the property of
- * General Electric Company. The software may be used and/or copied only
- * with the written permission of General Electric Company or in accordance
- * with the terms and conditions stipulated in the agreement/contract
- * under which the software has been supplied.
+ * @link https://github.com/piwik/piwik-java-tracking-api
+ * @license https://github.com/piwik/piwik-java-tracking-api/blob/master/LICENSE BSD 3-Clause
  */
-package com.ge.corporate.piwik.tracking;
+package org.piwik.java;
 
 import javax.json.JsonValue;
 import org.junit.After;
