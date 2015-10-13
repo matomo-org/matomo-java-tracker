@@ -34,8 +34,8 @@
         </path>
         <path id="pitest.path">
             <pathelement location="${javac.test.classpath}" />
-            <pathelement location="${file.reference.pitest-1.1.1.jar}" />
-            <pathelement location="${file.reference.pitest-ant-1.1.1.jar}" />
+            <pathelement location="${file.reference.pitest-1.1.6.jar}" />
+            <pathelement location="${file.reference.pitest-ant-1.1.6.jar}" />
         </path>
         
         <taskdef name="pitest"
