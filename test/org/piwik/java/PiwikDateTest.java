@@ -6,6 +6,7 @@
  */
 package org.piwik.java;
 
+import java.util.TimeZone;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
@@ -53,13 +54,18 @@ public class PiwikDateTest{
         PiwikDate date = new PiwikDate(1433186085092L);
         
         assertNotNull(date);
+        
+        assertEquals("2015-06-01 07:14:45", date.toString());
     }
+    
     /**
-     * Test of toString method, of class PiwikDate.
+     * Test of setTimeZone method, of class PiwikDate.
      */
     @Test
-    public void testToString(){
+    public void testSetTimeZone(){
         PiwikDate date = new PiwikDate(1433186085092L);
+        
+        date.setTimeZone(TimeZone.getTimeZone("America/New_York"));
         
         assertEquals("2015-06-01 03:14:45", date.toString());
     }

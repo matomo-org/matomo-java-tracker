@@ -8,14 +8,15 @@ package org.piwik.java;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
- * A datetime object that will return the datetime in the format {@code yyyy-MM-dd hh:mm:ss }.
+ * A datetime object that will return the datetime in the format {@code yyyy-MM-dd hh:mm:ss}.
  * 
  * @author brettcsorba
  */
 public class PiwikDate extends Date{
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    SimpleDateFormat format;
     
     /**
      * Allocates a Date object and initializes it so that it represents the time
@@ -23,6 +24,8 @@ public class PiwikDate extends Date{
      */
     public PiwikDate(){
         super();
+        format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     /**
@@ -33,11 +36,23 @@ public class PiwikDate extends Date{
      */
     public PiwikDate(long date){
         super(date);
+        format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
+    
+    /**
+     * Sets the time zone of the String that will be returned by {@link toString()}.
+     * Defaults to UTC.
+     * @param zone the TimeZone to set
+     */
+    public void setTimeZone(TimeZone zone){
+        format.setTimeZone(zone);
+    }
+    
     /**
      * Converts this PiwikDate object to a String of the form:<br>
      * <br>
-     * {@code yyyy-MM-dd hh:mm:ss }.
+     * {@code yyyy-MM-dd hh:mm:ss}.
      * @return a string representation of this PiwikDate
      */
     @Override
