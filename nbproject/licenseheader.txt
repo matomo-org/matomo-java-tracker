@@ -1,10 +1,10 @@
 <#if licenseFirst??>
 ${licenseFirst}
 </#if>
-${licensePrefix}Piwik Java Tracking API
+${licensePrefix}Piwik Java Tracker
 ${licensePrefix}
-${licensePrefix}@link https://github.com/piwik/piwik-java-tracking-api
-${licensePrefix}@license https://github.com/piwik/piwik-java-tracking-api/blob/master/LICENSE BSD-3 Clause
+${licensePrefix}@link https://github.com/piwik/piwik-java-tracker
+${licensePrefix}@license https://github.com/piwik/piwik-java-tracker/blob/master/LICENSE BSD-3 Clause
 <#if licenseLast??>
 ${licenseLast}
 </#if>

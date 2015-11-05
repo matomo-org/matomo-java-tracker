@@ -1,8 +1,8 @@
 /* 
- * Piwik Java Tracking API
+ * Piwik Java Tracker
  * 
- * @link https://github.com/piwik/piwik-java-tracking-api
- * @license https://github.com/piwik/piwik-java-tracking-api/blob/master/LICENSE BSD 3-Clause
+ * @link https://github.com/piwik/piwik-java-tracker
+ * @license https://github.com/piwik/piwik-java-tracker/blob/master/LICENSE BSD-3 Clause
  */
 package org.piwik.java;
 
