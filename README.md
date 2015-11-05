@@ -74,6 +74,10 @@ Clean this project using
 ```shell
 ant clean
 ```
+
+## Dependencies
+All dependencies used to compile and test this project can be found in [lib/](lib).  Include these as needed in your project.
+
 ## Contact
 brett.csorba@ge.com
 
