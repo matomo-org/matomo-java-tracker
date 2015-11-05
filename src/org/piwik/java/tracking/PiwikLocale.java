@@ -4,7 +4,7 @@
  * @link https://github.com/piwik/piwik-java-tracker
  * @license https://github.com/piwik/piwik-java-tracker/blob/master/LICENSE BSD-3 Clause
  */
-package org.piwik.java;
+package org.piwik.java.tracking;
 
 import java.util.Locale;
 
