@@ -78,6 +78,17 @@ ant clean
 ## Dependencies
 All dependencies used to compile and test this project can be found in [lib/](lib).  Include these as needed in your project.
 
+## Contribute
+Have a fantastic feature idea?  Spot a bug?  We would absolutely love for you to contribute to this project!  Please feel free to:
+* Fork this project
+* Create a feature branch from the <strong>dev</strong> branch
+* Write awesome code that does awesome things
+* Write awesome test that test your awesome code
+* Verify that everything is working as it should by running <strong>ant test</strong>.  If everything passes, you may want to make sure that your tests are covering everything you think they are!  Run <strong>ant mutate</strong> to find out!
+* Commit this code to your repository
+* Submit a pull request from your branch to our dev branch and let us know why you made the changes you did
+* We'll take a look at your request and work to get it integrated with the repo!
+
 ## Contact
 brett.csorba@ge.com
 
