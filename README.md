@@ -2,7 +2,7 @@ Piwik Java Tracker
 ================
 [![Build Status](https://travis-ci.org/piwik/piwik-java-tracker.svg?branch=master)](https://travis-ci.org/piwik/piwik-java-tracker)
 
-Java implementation of the [Piwik Tracking HTTP API](http://developer.piwik.org/api-reference/tracking-api).
+Official Java implementation of the [Piwik Tracking HTTP API](http://developer.piwik.org/api-reference/tracking-api).
 
 ## Javadoc
 The Javadoc for this project is hosted as a Github page for this repo.  The latest Javadoc can be found [here](http://piwik.github.io/piwik-java-tracker/javadoc/1.0.0/index.html).
