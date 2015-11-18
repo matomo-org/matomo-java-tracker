@@ -6,6 +6,7 @@
  */
 package org.piwik.java.tracking;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -1464,7 +1465,11 @@ public class PiwikRequest{
             }
             sb.append(parameter.getKey());
             sb.append("=");
-            sb.append(URLEncoder.encode(parameter.getValue().toString()));
+            try {
+                sb.append(URLEncoder.encode(parameter.getValue().toString(), "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                System.err.println(e.getMessage());
+            }
         }
         
         return sb.toString();
