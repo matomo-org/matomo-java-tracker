@@ -17,7 +17,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
  * A class that sends {@link PiwikRequest}s to a specified Piwik server.
@@ -103,6 +103,7 @@ public class PiwikTracker{
      * @return a HTTP client
      */
     protected HttpClient getHttpClient(){
-        return new DefaultHttpClient();
+        HttpClient client = HttpClientBuilder.create().build();
+        return client;
     }
 }
