@@ -1456,7 +1456,7 @@ public class PiwikRequest{
      * Get the url encoded query string represented by this object.
      * @return the url encoded query string represented by this object
      */
-    public String getUrlEncodedQueryString(){
+    public String getUrlEncodedQueryString() throws UnsupportedEncodingException{
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, Object> parameter : parameters.entrySet()){
             if (sb.length() > 0){
@@ -1464,7 +1464,7 @@ public class PiwikRequest{
             }
             sb.append(parameter.getKey());
             sb.append("=");
-            sb.append(URLEncoder.encode(parameter.getValue().toString()));
+            sb.append(URLEncoder.encode(parameter.getValue().toString(),"UTF-8"));
         }
         
         return sb.toString();
