@@ -18,10 +18,19 @@
     </license>
   </licenses>
 
-  <scm>
-    <url>https://github.com/piwik/piwik-java-tracker/tree/master</url>
-  </scm>
+  <developers>
+    <developer>
+      <id>bcsorba</id>
+      <name>Brett Csorba</name>
+      <email>brett.csorba@gmail.com</email>
+    </developer>
+  </developers>
 
+  <scm>
+    <connection>scm:git@github.com:piwik/piwik-java-tracker.git</connection>
+    <developerConnection>scm:git@github.com:piwik/piwik-java-tracker.git</developerConnection>
+    <url>git@github.com:piwik/piwik-java-tracker.git</url>
+  </scm>
 
   <build>
     <plugins>
