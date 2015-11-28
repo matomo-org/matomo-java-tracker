@@ -5,16 +5,8 @@
 *.swp
 info
 
-# Build and Package Files #
-**/build/
-**/dist/
-
-# NetBeans Files #
-**/nbbuild/
-**/nbdist/
-**/nbproject/private/
-**/nbactions.xml
-**/nb-configuration.xml
+# Package Files #
+**/target/
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
