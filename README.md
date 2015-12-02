@@ -85,9 +85,6 @@ Clean this project using
 mvn clean
 ```
 
-## Dependencies
-All dependencies used to compile and test this project can be found in [lib/](lib).  Include these as needed in your project.
-
 ## Contribute
 Have a fantastic feature idea?  Spot a bug?  We would absolutely love for you to contribute to this project!  Please feel free to:
 * Fork this project
