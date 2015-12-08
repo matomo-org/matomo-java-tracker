@@ -91,7 +91,7 @@ Have a fantastic feature idea?  Spot a bug?  We would absolutely love for you to
 * Create a feature branch from the <strong>dev</strong> branch
 * Write awesome code that does awesome things
 * Write awesome test that test your awesome code
-* Verify that everything is working as it should by running <strong>mv test</strong>.  If everything passes, you may want to make sure that your tests are covering everything you think they are!  Run <strong>mvn org.pitest:pitest-maven:mutationCoverage</strong> to find out!
+* Verify that everything is working as it should by running <strong>mvn test</strong>.  If everything passes, you may want to make sure that your tests are covering everything you think they are!  Run <strong>mvn org.pitest:pitest-maven:mutationCoverage</strong> to find out!
 * Commit this code to your repository
 * Submit a pull request from your branch to our dev branch and let us know nwhy you made the changes you did
 * We'll take a look at your request and work to get it integrated with the repo!
