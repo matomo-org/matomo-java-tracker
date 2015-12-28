@@ -6,7 +6,7 @@
  */
 package org.piwik.java.tracking;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.json.Json;
@@ -22,7 +22,7 @@ import javax.json.JsonObjectBuilder;
  * @author brettcsorba
  */
 public class PiwikJsonObject{
-    Map<String, String> map = new HashMap<>();
+    Map<String, String> map = new LinkedHashMap<>();
     
     /**
      * Gets the custom value stored at this custom key.
@@ -77,11 +77,20 @@ public class PiwikJsonObject{
      * <br>
      * {@code {"1": ["key1", "value1"], "2": ["key2": "value2"]} }<br>
      * <br>
-     * could be produced.  Note that there is no guarantee about the ordering of
-     * the produced JSON based.  The following JSON is also valid and could also
-     * be produced:<br>
+     * would be produced.  The produced JSON will be ordered according to the
+     * order the values were put in.  Removing an object will cause the values
+     * to backfill accordingly.<br>
      * <br>
-     * {@code {"1": ["key2", "value2"], "2": ["key1": "value1"]} }.
+     * For example, if the following values were put into the object<br>
+     * <br>
+     * {@code ("key1", "value1")}, {@code ("key2", "value2")}, and {@code ("key3", "value3")}<br>
+     * <br>
+     * and {@code ("key2", "value2") } was then removed, then<br>
+     * <br>
+     * {@code {"1": ["key1", "value1"], "2": ["key3": "value3"]} }<br>
+     * <br>
+     * would be produced. 
+     * <br>
      * @return the JSON string representation of this object
      */
     @Override

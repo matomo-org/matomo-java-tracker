@@ -67,8 +67,10 @@ public class PiwikJsonObjectTest{
     public void testToString(){
         obj.put("key", "value");
         obj.put("key2", "value2");
+        obj.put("key3", "value3");
+        obj.remove("key2");
         
-        assertEquals("{\"1\":[\"key2\",\"value2\"],\"2\":[\"key\",\"value\"]}", obj.toString());
+        assertEquals("{\"1\":[\"key\",\"value\"],\"2\":[\"key3\",\"value3\"]}", obj.toString());
     }
     
 }
