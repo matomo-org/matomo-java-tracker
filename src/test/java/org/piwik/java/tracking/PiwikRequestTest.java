@@ -1269,6 +1269,24 @@ public class PiwikRequestTest{
                 request.getQueryString());
         request.setPageCustomVariable("key", null);
         assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com", request.getQueryString());
+        request.addCustomTrackingParameter("key", "test");
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com&key=test", request.getQueryString());
+        request.addCustomTrackingParameter("key", "test2");
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com&key=test&key=test2", request.getQueryString());
+        request.setCustomTrackingParameter("key2", "test3");
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com&key2=test3&key=test&key=test2", request.getQueryString());
+        request.setCustomTrackingParameter("key", "test4");
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com&key2=test3&key=test4", request.getQueryString());
+        request.setRandomValue(null);
+        request.setSiteId(null);
+        request.setRequired(null);
+        request.setApiVersion(null);
+        request.setResponseAsImage(null);
+        request.setVisitorId(null);
+        request.setActionUrl(null);
+        assertEquals("key2=test3&key=test4", request.getQueryString());
+        request.clearCustomTrackingParameter();
+        assertEquals("", request.getQueryString());
     }
 
     /**
@@ -1279,6 +1297,24 @@ public class PiwikRequestTest{
         request.setRandomValue("random");
         request.setVisitorId("1234567890123456");
         assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http%3A%2F%2Ftest.com", request.getUrlEncodedQueryString());
+        request.addCustomTrackingParameter("ke/y", "te:st");
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http%3A%2F%2Ftest.com&ke%2Fy=te%3Ast", request.getUrlEncodedQueryString());
+        request.addCustomTrackingParameter("ke/y", "te:st2");
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http%3A%2F%2Ftest.com&ke%2Fy=te%3Ast&ke%2Fy=te%3Ast2", request.getUrlEncodedQueryString());
+        request.setCustomTrackingParameter("ke/y2", "te:st3");
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http%3A%2F%2Ftest.com&ke%2Fy=te%3Ast&ke%2Fy=te%3Ast2&ke%2Fy2=te%3Ast3", request.getUrlEncodedQueryString());
+        request.setCustomTrackingParameter("ke/y", "te:st4");
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http%3A%2F%2Ftest.com&ke%2Fy=te%3Ast4&ke%2Fy2=te%3Ast3", request.getUrlEncodedQueryString());
+        request.setRandomValue(null);
+        request.setSiteId(null);
+        request.setRequired(null);
+        request.setApiVersion(null);
+        request.setResponseAsImage(null);
+        request.setVisitorId(null);
+        request.setActionUrl(null);
+        assertEquals("ke%2Fy=te%3Ast4&ke%2Fy2=te%3Ast3", request.getUrlEncodedQueryString());
+        request.clearCustomTrackingParameter();
+        assertEquals("", request.getUrlEncodedQueryString());
     }
 
     /**
