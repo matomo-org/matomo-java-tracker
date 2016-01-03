@@ -6,7 +6,7 @@ Piwik Java Tracker
 Official Java implementation of the [Piwik Tracking HTTP API](http://developer.piwik.org/api-reference/tracking-api).
 
 ## Javadoc
-The Javadoc for this project is hosted as a Github page for this repo.  The latest Javadoc can be found [here](http://piwik.github.io/piwik-java-tracker/javadoc/HEAD/index.html).
+The Javadoc for this project is hosted as a Github page for this repo.  The latest Javadoc can be found [here](http://piwik.github.io/piwik-java-tracker/javadoc/HEAD/index.html).  Javadoc for the latest and all releases can be found [here](http://piwik.github.io/piwik-java-tracker/javadoc/index.html).
 
 ## Using this API
 ### Create a Request
