@@ -10,9 +10,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import javax.json.JsonValue;
 import javax.xml.bind.DatatypeConverter;
@@ -99,6 +102,7 @@ public class PiwikRequest{
     private static final long REQUEST_DATETIME_AUTH_LIMIT = 14400000L;
     
     private final Map<String, Object> parameters = new HashMap<>();
+    private final Map<String, List> customTrackingParameters = new HashMap<>();
     
     /**
      * Create a new request from the id of the site being tracked and the full
@@ -395,6 +399,78 @@ public class PiwikRequest{
      */
     public void setCurrentSecond(Integer currentSecond){
         setParameter(CURRENT_SECOND, currentSecond);
+    }
+    
+    /**
+     * Gets the list of objects currently stored at the specified custom tracking
+     * parameter.  An empty list will be returned if there are no objects set at
+     * that key.
+     * @param key the key of the parameter whose list of objects to get.  Cannot be null
+     * @return the list of objects currently stored at the specified key
+     */
+    public List getCustomTrackingParameter(String key){
+        if (key == null){
+            throw new NullPointerException("Key cannot be null.");
+        }
+        List l = customTrackingParameters.get(key);
+        if (l == null){
+            return new ArrayList(0);
+        }
+        return new ArrayList(l);
+    }
+        
+    /**
+     * Set a custom tracking parameter whose toString() value will be sent to
+     * the Piwik server.  These parameters are stored separately from named Piwik
+     * parameters, meaning it is not possible to overwrite or clear named Piwik
+     * parameters with this method.  A custom parameter that has the same name
+     * as a named Piwik parameter will be sent in addition to that named parameter.
+     * @param key the parameter's key.  Cannot be null
+     * @param value the parameter's value.  Removes the parameter if null
+     */
+    public void setCustomTrackingParameter(String key, Object value){
+        if (key == null){
+            throw new NullPointerException("Key cannot be null.");
+        }
+        if (value == null){
+            customTrackingParameters.remove(key);
+        }
+        else{
+            List l = new ArrayList();
+            l.add(value);
+            customTrackingParameters.put(key, l);
+        }
+    }
+    
+    /**
+     * Add a custom tracking parameter to the specified key.  This allows users
+     * to have multiple parameters with the same name and different values,
+     * commonly used during situations where list parameters are needed
+     * @param key the parameter's key.  Cannot be null
+     * @param value the parameter's value.  Cannot be null
+     */
+    public void addCustomTrackingParameter(String key, Object value){
+        if (key == null){
+            throw new NullPointerException("Key cannot be null.");
+        }
+        if (value == null){
+            throw new NullPointerException("Cannot add a null custom tracking parameter.");
+        }     
+        else{
+            List l = customTrackingParameters.get(key);
+            if (l == null){
+                l = new ArrayList();
+                customTrackingParameters.put(key, l);                
+            }
+            l.add(value);
+        }
+    }
+    
+    /**
+     * Removes all custom tracking parameters
+     */
+    public void clearCustomTrackingParameter(){
+        customTrackingParameters.clear();
     }
     
     /**
@@ -1441,13 +1517,23 @@ public class PiwikRequest{
     
     public String getQueryString(){
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, Object> parameter : parameters.entrySet()){
+        for (Entry<String, Object> parameter : parameters.entrySet()){
             if (sb.length() > 0){
                 sb.append("&");
             }
             sb.append(parameter.getKey());
             sb.append("=");
             sb.append(parameter.getValue().toString());
+        }
+        for (Entry<String, List> customTrackingParameter : customTrackingParameters.entrySet()){
+            for (Object o : customTrackingParameter.getValue()){
+                if (sb.length() > 0){
+                    sb.append("&");
+                }
+                sb.append(customTrackingParameter.getKey());
+                sb.append("=");
+                sb.append(o.toString());
+            }
         }
         
         return sb.toString();
@@ -1459,16 +1545,36 @@ public class PiwikRequest{
      */
     public String getUrlEncodedQueryString(){
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, Object> parameter : parameters.entrySet()){
+        for (Entry<String, Object> parameter : parameters.entrySet()){
             if (sb.length() > 0){
                 sb.append("&");
             }
-            sb.append(parameter.getKey());
-            sb.append("=");
             try {
-                sb.append(URLEncoder.encode(parameter.getValue().toString(), "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
+                StringBuilder sb2 = new StringBuilder();
+                sb2.append(parameter.getKey());
+                sb2.append("=");
+                sb2.append(URLEncoder.encode(parameter.getValue().toString(), "UTF-8"));
+                sb.append(sb2);
+            }
+            catch (UnsupportedEncodingException e) {
                 System.err.println(e.getMessage());
+            }
+        }
+        for (Entry<String, List> customTrackingParameter : customTrackingParameters.entrySet()){
+            for (Object o : customTrackingParameter.getValue()){
+                if (sb.length() > 0){
+                    sb.append("&");
+                }
+                try {
+                    StringBuilder sb2 = new StringBuilder();
+                    sb2.append(URLEncoder.encode(customTrackingParameter.getKey(), "UTF-8"));
+                    sb2.append("=");
+                    sb2.append(URLEncoder.encode(o.toString(), "UTF-8"));
+                    sb.append(sb2);
+                }
+                catch (UnsupportedEncodingException e) {
+                    System.err.println(e.getMessage());
+                }
             }
         }
         

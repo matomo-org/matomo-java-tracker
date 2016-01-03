@@ -8,6 +8,7 @@ package org.piwik.java.tracking;
 
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Locale;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -231,6 +232,90 @@ public class PiwikRequestTest{
     public void testCurrentSecond(){
         request.setCurrentSecond(3);
         assertEquals(new Integer(3), request.getCurrentSecond());
+    }
+    
+    /**
+     * Test of getCustomTrackingParameter method, of class PiwikRequest.
+     */
+    @Test
+    public void testGetCustomTrackingParameter_T(){
+        try{
+            request.getCustomTrackingParameter(null);
+            fail("Exception should have been thrown.");
+        }
+        catch(NullPointerException e){
+            assertEquals("Key cannot be null.", e.getLocalizedMessage());
+        }        
+    }
+    @Test
+    public void testGetCustomTrackingParameter_FT(){
+        assertTrue(request.getCustomTrackingParameter("key").isEmpty());
+    }
+    @Test
+    public void testSetCustomTrackingParameter_T(){
+        try{
+            request.setCustomTrackingParameter(null, null);
+            fail("Exception should have been thrown.");
+        }
+        catch(NullPointerException e){
+            assertEquals("Key cannot be null.", e.getLocalizedMessage());
+        }        
+    }
+    @Test
+    public void testSetCustomTrackingParameter_F(){
+        request.setCustomTrackingParameter("key", "value");
+        List l = request.getCustomTrackingParameter("key");
+        assertEquals(1, l.size());
+        assertEquals("value", l.get(0));
+        
+        request.setCustomTrackingParameter("key", "value2");
+        l = request.getCustomTrackingParameter("key");
+        assertEquals(1, l.size());
+        assertEquals("value2", l.get(0));
+        
+        request.setCustomTrackingParameter("key", null);
+        l = request.getCustomTrackingParameter("key");
+        assertTrue(l.isEmpty());
+    }
+    @Test
+    public void testAddCustomTrackingParameter_T(){
+        try{
+            request.addCustomTrackingParameter(null, null);
+            fail("Exception should have been thrown.");
+        }
+        catch(NullPointerException e){
+            assertEquals("Key cannot be null.", e.getLocalizedMessage());
+        }        
+    }
+    @Test
+    public void testAddCustomTrackingParameter_FT(){
+        try{
+            request.addCustomTrackingParameter("key", null);
+            fail("Exception should have been thrown.");
+        }
+        catch(NullPointerException e){
+            assertEquals("Cannot add a null custom tracking parameter.", e.getLocalizedMessage());
+        }        
+    }
+    @Test
+    public void testAddCustomTrackingParameter_FF(){
+        request.addCustomTrackingParameter("key", "value");
+        List l = request.getCustomTrackingParameter("key");
+        assertEquals(1, l.size());
+        assertEquals("value", l.get(0));
+        
+        request.addCustomTrackingParameter("key", "value2");
+        l = request.getCustomTrackingParameter("key");
+        assertEquals(2, l.size());
+        assertTrue(l.contains("value"));
+        assertTrue(l.contains("value2"));
+    }
+    @Test
+    public void testClearCustomTrackingParameter(){
+        request.setCustomTrackingParameter("key", "value");
+        request.clearCustomTrackingParameter();
+        List l = request.getCustomTrackingParameter("key");
+        assertTrue(l.isEmpty());
     }
 
     /**
@@ -1269,6 +1354,24 @@ public class PiwikRequestTest{
                 request.getQueryString());
         request.setPageCustomVariable("key", null);
         assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com", request.getQueryString());
+        request.addCustomTrackingParameter("key", "test");
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com&key=test", request.getQueryString());
+        request.addCustomTrackingParameter("key", "test2");
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com&key=test&key=test2", request.getQueryString());
+        request.setCustomTrackingParameter("key2", "test3");
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com&key2=test3&key=test&key=test2", request.getQueryString());
+        request.setCustomTrackingParameter("key", "test4");
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com&key2=test3&key=test4", request.getQueryString());
+        request.setRandomValue(null);
+        request.setSiteId(null);
+        request.setRequired(null);
+        request.setApiVersion(null);
+        request.setResponseAsImage(null);
+        request.setVisitorId(null);
+        request.setActionUrl(null);
+        assertEquals("key2=test3&key=test4", request.getQueryString());
+        request.clearCustomTrackingParameter();
+        assertEquals("", request.getQueryString());
     }
 
     /**
@@ -1279,6 +1382,24 @@ public class PiwikRequestTest{
         request.setRandomValue("random");
         request.setVisitorId("1234567890123456");
         assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http%3A%2F%2Ftest.com", request.getUrlEncodedQueryString());
+        request.addCustomTrackingParameter("ke/y", "te:st");
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http%3A%2F%2Ftest.com&ke%2Fy=te%3Ast", request.getUrlEncodedQueryString());
+        request.addCustomTrackingParameter("ke/y", "te:st2");
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http%3A%2F%2Ftest.com&ke%2Fy=te%3Ast&ke%2Fy=te%3Ast2", request.getUrlEncodedQueryString());
+        request.setCustomTrackingParameter("ke/y2", "te:st3");
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http%3A%2F%2Ftest.com&ke%2Fy=te%3Ast&ke%2Fy=te%3Ast2&ke%2Fy2=te%3Ast3", request.getUrlEncodedQueryString());
+        request.setCustomTrackingParameter("ke/y", "te:st4");
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http%3A%2F%2Ftest.com&ke%2Fy=te%3Ast4&ke%2Fy2=te%3Ast3", request.getUrlEncodedQueryString());
+        request.setRandomValue(null);
+        request.setSiteId(null);
+        request.setRequired(null);
+        request.setApiVersion(null);
+        request.setResponseAsImage(null);
+        request.setVisitorId(null);
+        request.setActionUrl(null);
+        assertEquals("ke%2Fy=te%3Ast4&ke%2Fy2=te%3Ast3", request.getUrlEncodedQueryString());
+        request.clearCustomTrackingParameter();
+        assertEquals("", request.getUrlEncodedQueryString());
     }
 
     /**
