@@ -92,6 +92,11 @@
 	</configuration>
       </plugin>
       <plugin>
+	<groupId>org.eluder.coveralls</groupId>
+	<artifactId>coveralls-maven-plugin</artifactId>
+	<version>4.1.0</version>
+      </plugin>
+      <plugin>
 	<groupId>org.apache.maven.plugins</groupId>
 	<artifactId>maven-gpg-plugin</artifactId>
 	<version>1.6</version>
