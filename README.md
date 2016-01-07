@@ -2,8 +2,9 @@ Piwik Java Tracker
 ================
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.piwik.java.tracking/piwik-java-tracker/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.piwik.java.tracking/piwik-java-tracker)
 ## Code Status
-[![Build Status](https://travis-ci.org/piwik/piwik-java-tracker.svg?branch=master)](https://travis-ci.org/piwik/piwik-java-tracker) 
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/piwik/piwik-java-tracker.svg)](http://isitmaintained.com/project/piwik/piwik-java-tracker "Average time to resolve an issue") 
+[![Build Status](https://travis-ci.org/piwik/piwik-java-tracker.svg?branch=master)](https://travis-ci.org/piwik/piwik-java-tracker)
+[![Coverage Status](https://coveralls.io/repos/piwik/piwik-java-tracker/badge.svg?branch=master&service=github)](https://coveralls.io/github/piwik/piwik-java-tracker?branch=master)
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/piwik/piwik-java-tracker.svg)](http://isitmaintained.com/project/piwik/piwik-java-tracker "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/piwik/piwik-java-tracker.svg)](http://isitmaintained.com/project/piwik/piwik-java-tracker "Percentage of issues still open")
 
 Official Java implementation of the [Piwik Tracking HTTP API](http://developer.piwik.org/api-reference/tracking-api).
