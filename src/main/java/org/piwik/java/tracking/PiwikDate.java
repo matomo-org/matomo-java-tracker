@@ -41,7 +41,7 @@ public class PiwikDate extends Date{
     }
     
     /**
-     * Sets the time zone of the String that will be returned by {@link toString()}.
+     * Sets the time zone of the String that will be returned by {@link #toString()}.
      * Defaults to UTC.
      * @param zone the TimeZone to set
      */
