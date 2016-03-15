@@ -63,9 +63,10 @@ public class PiwikJsonArrayTest{
     @Test
     public void testToString(){
         array.add(JsonValue.TRUE);
+        array.add(new EcommerceItem("a", "b", "c", 1.0, 2));
         array.add(JsonValue.FALSE);
         
-        assertEquals("[true,false]", array.toString());
+        assertEquals("[true,[\"a\",\"b\",\"c\",1.0,2],false]", array.toString());
     }
     
 }

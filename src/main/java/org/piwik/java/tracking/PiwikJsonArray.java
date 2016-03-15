@@ -55,7 +55,13 @@ public class PiwikJsonArray{
         JsonArrayBuilder ab = Json.createArrayBuilder();
         
         for (int x = 0; x < list.size(); ++x){
-            ab.add(list.get(x));
+            JsonValue value = list.get(x);
+            if (value instanceof EcommerceItem){
+                ab.add(((EcommerceItem)value).toJsonArray());
+            }
+            else{
+                ab.add(value);
+            }
         }
         
         return ab.build().toString();

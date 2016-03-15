@@ -7,6 +7,7 @@
 package org.piwik.java.tracking;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonValue;
 
@@ -129,11 +130,18 @@ public class EcommerceItem implements JsonValue{
     }
     
     /**
-     * Returns the value of this EcommerceItem as a JSON Object string.
-     * @return JSON object string
+     * Returns the value of this EcommerceItem as a JSON Array string.
+     * @return this as a JSON array string
      */
     @Override
     public String toString(){
+        return toJsonArray().toString();
+    }
+    /**
+     * Returns the value of this EcommerceItem as a JsonArray.
+     * @return this as a JsonArray
+     */
+    protected JsonArray toJsonArray(){
         JsonArrayBuilder ab = Json.createArrayBuilder();
         ab.add(sku);
         ab.add(name);
@@ -141,6 +149,6 @@ public class EcommerceItem implements JsonValue{
         ab.add(price);
         ab.add(quantity);
         
-        return ab.build().toString();
+        return ab.build();        
     }
 }
