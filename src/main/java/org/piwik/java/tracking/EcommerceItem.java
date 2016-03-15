@@ -141,7 +141,7 @@ public class EcommerceItem implements JsonValue{
      * Returns the value of this EcommerceItem as a JsonArray.
      * @return this as a JsonArray
      */
-    protected JsonArray toJsonArray(){
+    JsonArray toJsonArray(){
         JsonArrayBuilder ab = Json.createArrayBuilder();
         ab.add(sku);
         ab.add(name);
