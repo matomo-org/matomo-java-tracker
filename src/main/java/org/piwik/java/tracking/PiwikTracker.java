@@ -6,11 +6,7 @@
  */
 package org.piwik.java.tracking;
 
-import java.io.IOException;
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.core.UriBuilder;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -18,6 +14,13 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
+import javax.ws.rs.core.UriBuilder;
+import java.io.IOException;
 
 /**
  * A class that sends {@link PiwikRequest}s to a specified Piwik server.
@@ -27,7 +30,9 @@ public class PiwikTracker{
     private static final String AUTH_TOKEN = "token_auth";
     private static final String REQUESTS = "requests";
     private final UriBuilder uriBuilder;
-    
+    private String proxyHost = null;
+    private int proxyPort = 0;
+
     /**
      * Creates a tracker that will send {@link PiwikRequest}s to the specified
      * Tracking HTTP API endpoint.
@@ -37,7 +42,22 @@ public class PiwikTracker{
     public PiwikTracker(String hostUrl){
         uriBuilder = UriBuilder.fromPath(hostUrl);
     }
-    
+
+    /**
+     * Creates a tracker that will send {@link PiwikRequest}s to the specified
+     * Tracking HTTP API endpoint via the provided proxy
+     *
+     * @param hostUrl url endpoint to send requests to.  Usually in the format
+     * <strong>http://your-piwik-domain.tld/piwik.php</strong>.
+     * @param proxyHost url endpoint for the proxy
+     * @param proxyPort proxy server port number
+     */
+    public PiwikTracker(String hostUrl, String proxyHost, int proxyPort){
+        uriBuilder = UriBuilder.fromPath(hostUrl);
+        this.proxyHost = proxyHost;
+        this.proxyPort = proxyPort;
+    }
+
     /**
      * Send a request.
      * @param request request to send
@@ -48,10 +68,10 @@ public class PiwikTracker{
         HttpClient client = getHttpClient();
         uriBuilder.replaceQuery(request.getUrlEncodedQueryString());
         HttpGet get = new HttpGet(uriBuilder.build());
-        
+
         return client.execute(get);
     }
-    
+
     /**
      * Send multiple requests in a single HTTP call.  More efficient than sending
      * several individual requests.
@@ -62,7 +82,7 @@ public class PiwikTracker{
     public HttpResponse sendBulkRequest(Iterable<PiwikRequest> requests) throws IOException{
         return sendBulkRequest(requests, null);
     }
-    
+
     /**
      * Send multiple requests in a single HTTP call.  More efficient than sending
      * several individual requests.  Specify the AuthToken if parameters that require
@@ -73,37 +93,44 @@ public class PiwikTracker{
      * @throws IOException thrown if there was a problem with this connection
      */
     public HttpResponse sendBulkRequest(Iterable<PiwikRequest> requests, String authToken) throws IOException{
-        if (authToken != null && authToken.length() != PiwikRequest.AUTH_TOKEN_LENGTH){            
+        if (authToken != null && authToken.length() != PiwikRequest.AUTH_TOKEN_LENGTH){
             throw new IllegalArgumentException(authToken+" is not "+PiwikRequest.AUTH_TOKEN_LENGTH+" characters long.");
         }
-        
+
         JsonObjectBuilder ob = Json.createObjectBuilder();
         JsonArrayBuilder ab = Json.createArrayBuilder();
-        
+
         for (PiwikRequest request : requests){
             ab.add("?"+request.getQueryString());
         }
-        
+
         ob.add(REQUESTS, ab);
-        
+
         if (authToken != null){
             ob.add(AUTH_TOKEN, authToken);
         }
-        
+
         HttpClient client = getHttpClient();
         HttpPost post = new HttpPost(uriBuilder.build());
         post.setEntity(new StringEntity(ob.build().toString(),
                 ContentType.APPLICATION_JSON));
-        
+
         return client.execute(post);
     }
-    
+
     /**
-     * Get a HTTP client.
+     * Get a HTTP client. With proxy if a proxy is provided in the constructor.
      * @return a HTTP client
      */
     protected HttpClient getHttpClient(){
-        HttpClient client = HttpClientBuilder.create().build();
+        HttpClient client;
+        if(proxyHost != null && proxyPort != 0) {
+            HttpHost proxy = new HttpHost(proxyHost, proxyPort);
+            DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+            client = HttpClientBuilder.create().setRoutePlanner(routePlanner).build();
+        } else {
+            client = HttpClientBuilder.create().build();
+        }
         return client;
     }
 }
