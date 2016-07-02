@@ -187,4 +187,14 @@ public class PiwikTrackerTest{
         assertNotNull(piwikTracker.getHttpClient());
     }
     
+    /**
+     * Test of getHttpClient method, of class PiwikTracker, with proxy.
+     */
+    @Test
+    public void testGetHttpClientWithProxy(){
+        piwikTracker = new PiwikTracker("http://test.com", "http://proxy", 8080);
+        HttpClient httpClient = piwikTracker.getHttpClient();
+
+        assertNotNull(piwikTracker.getHttpClient());
+    }
 }
