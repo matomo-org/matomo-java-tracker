@@ -24,7 +24,7 @@ public class PiwikDate extends Date{
      */
     public PiwikDate(){
         super();
-        format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         format.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
@@ -36,7 +36,7 @@ public class PiwikDate extends Date{
      */
     public PiwikDate(long date){
         super(date);
-        format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         format.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
     

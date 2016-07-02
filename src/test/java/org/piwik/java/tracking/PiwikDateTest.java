@@ -20,26 +20,6 @@ import org.junit.Test;
  * @author brettcsorba
  */
 public class PiwikDateTest{
-    
-    public PiwikDateTest(){
-    }
-    
-    @BeforeClass
-    public static void setUpClass(){
-    }
-    
-    @AfterClass
-    public static void tearDownClass(){
-    }
-    
-    @Before
-    public void setUp(){
-    }
-    
-    @After
-    public void tearDown(){
-    }
-
     /**
      * Test of constructor, of class PiwikDate.
      */
@@ -55,7 +35,11 @@ public class PiwikDateTest{
         
         assertNotNull(date);
         
-        assertEquals("2015-06-01 07:14:45", date.toString());
+        assertEquals("2015-06-01 19:14:45", date.toString());
+        
+        date = new PiwikDate(1467437553000L);
+        
+        assertEquals("2016-07-02 05:32:33", date.toString());
     }
     
     /**
@@ -67,7 +51,7 @@ public class PiwikDateTest{
         
         date.setTimeZone(TimeZone.getTimeZone("America/New_York"));
         
-        assertEquals("2015-06-01 03:14:45", date.toString());
+        assertEquals("2015-06-01 15:14:45", date.toString());
     }
     
 }
