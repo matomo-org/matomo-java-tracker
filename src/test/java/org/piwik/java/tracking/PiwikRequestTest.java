@@ -38,23 +38,11 @@ public class PiwikRequestTest{
     }
     
     @Test
-    public void testConstructor_Integer_URL() throws Exception{
+    public void testConstructor() throws Exception{
         request = new PiwikRequest(3, new URL("http://test.com"));
         assertEquals(new Integer(3), request.getSiteId());
         assertTrue(request.getRequired());
         assertEquals(new URL("http://test.com"), request.getActionUrl());
-        assertNotNull(request.getVisitorId());
-        assertNotNull(request.getRandomValue());
-        assertEquals("1", request.getApiVersion());
-        assertFalse(request.getResponseAsImage());
-    }
-    
-    @Test
-    public void testConstructor_Integer_String() throws Exception{
-        request = new PiwikRequest(3, "test");
-        assertEquals(new Integer(3), request.getSiteId());
-        assertTrue(request.getRequired());
-        assertEquals("test", request.getActionUrlAsString());
         assertNotNull(request.getVisitorId());
         assertNotNull(request.getRandomValue());
         assertEquals("1", request.getApiVersion());
@@ -1473,7 +1461,7 @@ public class PiwikRequestTest{
     }
     @Test
     public void testGetQueryString2(){
-        request = new PiwikRequest(3, "http://test.com");
+        request.setActionUrlWithString("http://test.com");
         request.setRandomValue("random");
         request.setVisitorId("1234567890123456");
         assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com", request.getQueryString());
@@ -1508,7 +1496,7 @@ public class PiwikRequestTest{
     }
     @Test
     public void testGetUrlEncodedQueryString2(){
-        request = new PiwikRequest(3, "http://test.com");
+        request.setActionUrlWithString("http://test.com");
         request.setRandomValue("random");
         request.setVisitorId("1234567890123456");
         assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http%3A%2F%2Ftest.com", request.getUrlEncodedQueryString());

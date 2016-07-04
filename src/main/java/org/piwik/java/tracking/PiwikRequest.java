@@ -122,29 +122,14 @@ public class PiwikRequest{
      * @param actionUrl the full URL for the current action
      */
     public PiwikRequest(Integer siteId, URL actionUrl){
-        initialize(siteId, actionUrl);
-    }
-    
-    /**
-     * Create a new request from the id of the site being tracked and the full
-     * url for the current action.  This constructor also sets:
-     * <pre>
-     * {@code
-     * Required = true
-     * Visior Id = random 16 character hex string
-     * Random Value = random 20 character hex string
-     * API version = 1
-     * Response as Image = false
-     * }
-     * </pre>
-     * Overwrite these values yourself as desired.
-     * @param siteId the id of the website we're tracking a visit/action for
-     * @param actionUrl the full URL for the current action
-     */
-    public PiwikRequest(Integer siteId, String actionUrl){
-        initialize(siteId, actionUrl);
-    }
-    
+        setParameter(SITE_ID, siteId);
+        setBooleanParameter(REQUIRED, true);
+        setParameter(ACTION_URL, actionUrl);
+        setParameter(VISITOR_ID, getRandomHexString(ID_LENGTH));
+        setParameter(RANDOM_VALUE, getRandomHexString(RANDOM_VALUE_LENGTH));
+        setParameter(API_VERSION, "1");
+        setBooleanParameter(RESPONSE_AS_IMAGE, false);     
+    }    
     
     /**
      * Get the title of the action being tracked
@@ -1700,21 +1685,6 @@ public class PiwikRequest{
         byte[] bytes = new byte[length/2];
         new Random().nextBytes(bytes);
         return DatatypeConverter.printHexBinary(bytes);
-    }
-    
-    /**
-     * Helper function for constructors
-     * @param siteId the id of the website we're tracking a visit/action for
-     * @param actionUrl the full URL for the current action
-     */
-    private void initialize(Integer siteId, Object actionUrl){
-        setParameter(SITE_ID, siteId);
-        setBooleanParameter(REQUIRED, true);
-        setParameter(ACTION_URL, actionUrl);
-        setParameter(VISITOR_ID, getRandomHexString(ID_LENGTH));
-        setParameter(RANDOM_VALUE, getRandomHexString(RANDOM_VALUE_LENGTH));
-        setParameter(API_VERSION, "1");
-        setBooleanParameter(RESPONSE_AS_IMAGE, false);        
     }
     
     /**
