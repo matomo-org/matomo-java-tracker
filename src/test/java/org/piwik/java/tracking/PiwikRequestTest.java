@@ -10,8 +10,8 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Locale;
+import javax.xml.bind.TypeConstraintException;
 import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -19,7 +19,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -27,18 +26,7 @@ import org.junit.Test;
  * @author brettcsorba
  */
 public class PiwikRequestTest{
-    PiwikRequest request;
-    
-    public PiwikRequestTest(){
-    }
-    
-    @BeforeClass
-    public static void setUpClass(){
-    }
-    
-    @AfterClass
-    public static void tearDownClass(){
-    }
+    private PiwikRequest request;
     
     @Before
     public void setUp() throws Exception{
@@ -48,16 +36,25 @@ public class PiwikRequestTest{
     @After
     public void tearDown(){
     }
-
-    /**
-     * Test of getActionName method, of class PiwikRequest.
-     */
+    
     @Test
-    public void testConstructor() throws Exception{
+    public void testConstructor_Integer_URL() throws Exception{
         request = new PiwikRequest(3, new URL("http://test.com"));
         assertEquals(new Integer(3), request.getSiteId());
         assertTrue(request.getRequired());
         assertEquals(new URL("http://test.com"), request.getActionUrl());
+        assertNotNull(request.getVisitorId());
+        assertNotNull(request.getRandomValue());
+        assertEquals("1", request.getApiVersion());
+        assertFalse(request.getResponseAsImage());
+    }
+    
+    @Test
+    public void testConstructor_Integer_String() throws Exception{
+        request = new PiwikRequest(3, "test");
+        assertEquals(new Integer(3), request.getSiteId());
+        assertTrue(request.getRequired());
+        assertEquals("test", request.getActionUrlAsString());
         assertNotNull(request.getVisitorId());
         assertNotNull(request.getRandomValue());
         assertEquals("1", request.getApiVersion());
@@ -89,9 +86,34 @@ public class PiwikRequestTest{
      */
     @Test
     public void testActionUrl() throws Exception{
+        request.setActionUrl(null);
+        assertNull(request.getActionUrl());
+        assertNull(request.getActionUrlAsString());
+        
         URL url = new URL("http://action.com");
         request.setActionUrl(url);
         assertEquals(url, request.getActionUrl());
+        try{
+            request.getActionUrlAsString();
+            fail("Exception should have been thrown.");
+        }
+        catch(TypeConstraintException e){
+            assertEquals("The stored Action URL is a URL, not a String.  Use \"getActionUrl\" instead.", e.getLocalizedMessage());
+        }
+        
+        request.setActionUrlWithString(null);
+        assertNull(request.getActionUrl());
+        assertNull(request.getActionUrlAsString());
+        
+        request.setActionUrlWithString("actionUrl");
+        assertEquals("actionUrl", request.getActionUrlAsString());
+        try{
+            request.getActionUrl();
+            fail("Exception should have been thrown.");
+        }
+        catch(TypeConstraintException e){
+            assertEquals("The stored Action URL is a String, not a URL.  Use \"getActionUrlAsString\" instead.", e.getLocalizedMessage());
+        }
     }
 
     /**
@@ -205,6 +227,25 @@ public class PiwikRequestTest{
         URL url = new URL("http://target.com");
         request.setContentTarget(url);
         assertEquals(url, request.getContentTarget());
+        
+        try{
+            request.getContentTargetAsString();
+            fail("Exception should have been thrown.");
+        }
+        catch(TypeConstraintException e){
+            assertEquals("The stored Content Target is a URL, not a String.  Use \"getContentTarget\" instead.", e.getLocalizedMessage());
+        }
+        
+        request.setContentTargetWithString("contentTarget");
+        assertEquals("contentTarget", request.getContentTargetAsString());
+        
+        try{
+            request.getContentTarget();
+            fail("Exception should have been thrown.");
+        }
+        catch(TypeConstraintException e){
+            assertEquals("The stored Content Target is a String, not a URL.  Use \"getContentTargetAsString\" instead.", e.getLocalizedMessage());
+        }
     }
 
     /**
@@ -335,6 +376,25 @@ public class PiwikRequestTest{
         URL url = new URL("http://download.com");
         request.setDownloadUrl(url);
         assertEquals(url, request.getDownloadUrl());
+        
+        try{
+            request.getDownloadUrlAsString();
+            fail("Exception should have been thrown.");
+        }
+        catch(TypeConstraintException e){
+            assertEquals("The stored Download URL is a URL, not a String.  Use \"getDownloadUrl\" instead.", e.getLocalizedMessage());
+        }
+        
+        request.setDownloadUrlWithString("downloadUrl");
+        assertEquals("downloadUrl", request.getDownloadUrlAsString());
+        
+        try{
+            request.getDownloadUrl();
+            fail("Exception should have been thrown.");
+        }
+        catch(TypeConstraintException e){
+            assertEquals("The stored Download URL is a String, not a URL.  Use \"getDownloadUrlAsString\" instead.", e.getLocalizedMessage());
+        }
     }
 
     /**
@@ -799,6 +859,25 @@ public class PiwikRequestTest{
         URL url = new URL("http://outlink.com");
         request.setOutlinkUrl(url);
         assertEquals(url, request.getOutlinkUrl());
+        
+        try{
+            request.getOutlinkUrlAsString();
+            fail("Exception should have been thrown.");
+        }
+        catch(TypeConstraintException e){
+            assertEquals("The stored Outlink URL is a URL, not a String.  Use \"getOutlinkUrl\" instead.", e.getLocalizedMessage());
+        }
+        
+        request.setOutlinkUrlWithString("outlinkUrl");
+        assertEquals("outlinkUrl", request.getOutlinkUrlAsString());
+        
+        try{
+            request.getOutlinkUrl();
+            fail("Exception should have been thrown.");
+        }
+        catch(TypeConstraintException e){
+            assertEquals("The stored Outlink URL is a String, not a URL.  Use \"getOutlinkUrlAsString\" instead.", e.getLocalizedMessage());
+        }
     }
 
     /**
@@ -923,6 +1002,25 @@ public class PiwikRequestTest{
         URL url = new URL("http://referrer.com");
         request.setReferrerUrl(url);
         assertEquals(url, request.getReferrerUrl());
+        
+        try{
+            request.getReferrerUrlAsString();
+            fail("Exception should have been thrown.");
+        }
+        catch(TypeConstraintException e){
+            assertEquals("The stored Referrer URL is a URL, not a String.  Use \"getReferrerUrl\" instead.", e.getLocalizedMessage());
+        }
+        
+        request.setReferrerUrlWithString("referrerUrl");
+        assertEquals("referrerUrl", request.getReferrerUrlAsString());
+        
+        try{
+            request.getReferrerUrl();
+            fail("Exception should have been thrown.");
+        }
+        catch(TypeConstraintException e){
+            assertEquals("The stored Referrer URL is a String, not a URL.  Use \"getReferrerUrlAsString\" instead.", e.getLocalizedMessage());
+        }
     }
 
     /**
@@ -1373,6 +1471,13 @@ public class PiwikRequestTest{
         request.clearCustomTrackingParameter();
         assertEquals("", request.getQueryString());
     }
+    @Test
+    public void testGetQueryString2(){
+        request = new PiwikRequest(3, "http://test.com");
+        request.setRandomValue("random");
+        request.setVisitorId("1234567890123456");
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com", request.getQueryString());
+    }
 
     /**
      * Test of getUrlEncodedQueryString method, of class PiwikRequest.
@@ -1400,6 +1505,13 @@ public class PiwikRequestTest{
         assertEquals("ke%2Fy=te%3Ast4&ke%2Fy2=te%3Ast3", request.getUrlEncodedQueryString());
         request.clearCustomTrackingParameter();
         assertEquals("", request.getUrlEncodedQueryString());
+    }
+    @Test
+    public void testGetUrlEncodedQueryString2(){
+        request = new PiwikRequest(3, "http://test.com");
+        request.setRandomValue("random");
+        request.setVisitorId("1234567890123456");
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http%3A%2F%2Ftest.com", request.getUrlEncodedQueryString());
     }
 
     /**

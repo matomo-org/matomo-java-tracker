@@ -19,6 +19,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import javax.json.JsonValue;
 import javax.xml.bind.DatatypeConverter;
+import javax.xml.bind.TypeConstraintException;
 
 /**
  * A class that implements the <a href="https://developer.piwik.org/api-reference/tracking-api">
@@ -121,14 +122,29 @@ public class PiwikRequest{
      * @param actionUrl the full URL for the current action
      */
     public PiwikRequest(Integer siteId, URL actionUrl){
-        setParameter(SITE_ID, siteId);
-        setBooleanParameter(REQUIRED, true);
-        setParameter(ACTION_URL, actionUrl);
-        setParameter(VISITOR_ID, getRandomHexString(ID_LENGTH));
-        setParameter(RANDOM_VALUE, getRandomHexString(RANDOM_VALUE_LENGTH));
-        setParameter(API_VERSION, "1");
-        setBooleanParameter(RESPONSE_AS_IMAGE, false);
+        initialize(siteId, actionUrl);
     }
+    
+    /**
+     * Create a new request from the id of the site being tracked and the full
+     * url for the current action.  This constructor also sets:
+     * <pre>
+     * {@code
+     * Required = true
+     * Visior Id = random 16 character hex string
+     * Random Value = random 20 character hex string
+     * API version = 1
+     * Response as Image = false
+     * }
+     * </pre>
+     * Overwrite these values yourself as desired.
+     * @param siteId the id of the website we're tracking a visit/action for
+     * @param actionUrl the full URL for the current action
+     */
+    public PiwikRequest(Integer siteId, String actionUrl){
+        initialize(siteId, actionUrl);
+    }
+    
     
     /**
      * Get the title of the action being tracked
@@ -175,9 +191,19 @@ public class PiwikRequest{
     /**
      * Get the full URL for the current action.
      * @return the full URL
+     * @throws TypeConstraintException if the stored Action URL is a string
      */
     public URL getActionUrl(){
-        return (URL)getParameter(ACTION_URL);
+        return returnAsUrl(ACTION_URL, "Action URL", "getActionUrlAsString");
+    }
+    
+    /**
+     * Get the full URL for the current action.
+     * @return the full URL
+     * @throws TypeConstraintException if the stored Action URL is a URL
+     */
+    public String getActionUrlAsString(){
+        return returnAsString(ACTION_URL, "Action URL", "getActionUrl");
     }
     
     /**
@@ -185,6 +211,14 @@ public class PiwikRequest{
      * @param actionUrl the full URL to set.  A null value will remove this parameter
      */
     public void setActionUrl(URL actionUrl){
+        setParameter(ACTION_URL, actionUrl);
+    }
+    
+    /**
+     * Set the full URL for the current action.
+     * @param actionUrl the full URL to set.  A null value will remove this parameter
+     */
+    public void setActionUrlWithString(String actionUrl){
         setParameter(ACTION_URL, actionUrl);
     }
     
@@ -337,12 +371,23 @@ public class PiwikRequest{
     public void setContentPiece(String contentPiece){
         setParameter(CONTENT_PIECE, contentPiece);
     }
+    
     /**
      * Get the content target
      * @return the target
+     * @throws TypeConstraintException if the stored Content Target is a string
      */
     public URL getContentTarget(){
-        return (URL)getParameter(CONTENT_TARGET);
+        return returnAsUrl(CONTENT_TARGET, "Content Target", "getContentTargetAsString");
+    }
+    
+    /**
+     * Get the content target
+     * @return the target
+     * @throws TypeConstraintException if the stored Content Target is a URL
+     */
+    public String getContentTargetAsString(){
+        return returnAsString(CONTENT_TARGET, "Content Target", "getContentTarget");
     }
     
     /**
@@ -350,6 +395,14 @@ public class PiwikRequest{
      * @param contentTarget the target to set.  A null value will remove this parameter
      */
     public void setContentTarget(URL contentTarget){
+        setParameter(CONTENT_TARGET, contentTarget);
+    }
+    
+    /**
+     * Set the target of the content. For instance the URL of a landing page.
+     * @param contentTarget the target to set.  A null value will remove this parameter
+     */
+    public void setContentTargetWithString(String contentTarget){
         setParameter(CONTENT_TARGET, contentTarget);
     }
     
@@ -492,9 +545,19 @@ public class PiwikRequest{
     /**
      * Get the url of a file the user had downloaded
      * @return the url
+     * @throws TypeConstraintException if the stored Download URL is a String
      */
     public URL getDownloadUrl(){
-        return (URL)getParameter(DOWNLOAD_URL);
+        return returnAsUrl(DOWNLOAD_URL, "Download URL", "getDownloadUrlAsString");
+    }
+    
+    /**
+     * Get the url of a file the user had downloaded
+     * @return the url
+     * @throws TypeConstraintException if the stored Download URL is a URL
+     */
+    public String getDownloadUrlAsString(){
+        return returnAsString(DOWNLOAD_URL, "Download URL", "getDownloadUrl");
     }
     
     /**
@@ -503,6 +566,15 @@ public class PiwikRequest{
      * @param downloadUrl the url to set.  A null value will remove this parameter
      */
     public void setDownloadUrl(URL downloadUrl){
+        setParameter(DOWNLOAD_URL, downloadUrl);
+    }
+    
+    /**
+     * Set the url of a file the user has downloaded. Used for tracking downloads.
+     * We recommend to also set the <strong>url</strong> parameter to this same value.
+     * @param downloadUrl the url to set.  A null value will remove this parameter
+     */
+    public void setDownloadUrlWithString(String downloadUrl){
         setParameter(DOWNLOAD_URL, downloadUrl);
     }
     
@@ -865,9 +937,19 @@ public class PiwikRequest{
     /**
      * Get the outlink url
      * @return the outlink url
+     * @throws TypeConstraintException if the stored Outlink URL is a String
      */
     public URL getOutlinkUrl(){
-        return (URL)getParameter(OUTLINK_URL);
+        return returnAsUrl(OUTLINK_URL, "Outlink URL", "getOutlinkUrlAsString");        
+    }
+    
+    /**
+     * Get the outlink url
+     * @return the outlink url
+     * @throws TypeConstraintException if the stored Outlink URL is a URL
+     */
+    public String getOutlinkUrlAsString(){
+        return returnAsString(OUTLINK_URL, "Outlink URL", "getOutlinkUrl");        
     }
     
     /**
@@ -876,6 +958,15 @@ public class PiwikRequest{
      * @param outlinkUrl the outlink url to set.  A null value will remove this parameter
      */
     public void setOutlinkUrl(URL outlinkUrl){
+        setParameter(OUTLINK_URL, outlinkUrl);
+    }
+    
+    /**
+     * Set an external URL the user has opened. Used for tracking outlink clicks.
+     * We recommend to also set the <strong>url</strong> parameter to this same value.
+     * @param outlinkUrl the outlink url to set.  A null value will remove this parameter
+     */
+    public void setOutlinkUrlWithString(String outlinkUrl){
         setParameter(OUTLINK_URL, outlinkUrl);
     }
     
@@ -1061,18 +1152,37 @@ public class PiwikRequest{
     /**
      * Get the referrer url
      * @return the referrer url
+     * @throws TypeConstraintException if the stored Referrer URL is a String
      */
     public URL getReferrerUrl(){
-        return (URL)getParameter(REFERRER_URL);
+        return returnAsUrl(REFERRER_URL, "Referrer URL", "getReferrerUrlAsString");
+    }
+    
+    /**
+     * Get the referrer url
+     * @return the referrer url
+     * @throws TypeConstraintException if the stored Referrer URL is a URL
+     */
+    public String getReferrerUrlAsString(){
+        return returnAsString(REFERRER_URL, "Referrer URL", "getReferrerUrl");
     }
     
     /**
      * Set the full HTTP Referrer URL. This value is used to determine how someone
      * got to your website (ie, through a website, search engine or campaign).
-     * @param refferrerUrl the referrer url to set.  A null value will remove this parameter
+     * @param referrerUrl the referrer url to set.  A null value will remove this parameter
      */
-    public void setReferrerUrl(URL refferrerUrl){
-        setParameter(REFERRER_URL, refferrerUrl);
+    public void setReferrerUrl(URL referrerUrl){
+        setParameter(REFERRER_URL, referrerUrl);
+    }
+    
+    /**
+     * Set the full HTTP Referrer URL. This value is used to determine how someone
+     * got to your website (ie, through a website, search engine or campaign).
+     * @param referrerUrl the referrer url to set.  A null value will remove this parameter
+     */
+    public void setReferrerUrlWithString(String referrerUrl){
+        setParameter(REFERRER_URL, referrerUrl);
     }
     
     /**
@@ -1593,6 +1703,21 @@ public class PiwikRequest{
     }
     
     /**
+     * Helper function for constructors
+     * @param siteId the id of the website we're tracking a visit/action for
+     * @param actionUrl the full URL for the current action
+     */
+    private void initialize(Integer siteId, Object actionUrl){
+        setParameter(SITE_ID, siteId);
+        setBooleanParameter(REQUIRED, true);
+        setParameter(ACTION_URL, actionUrl);
+        setParameter(VISITOR_ID, getRandomHexString(ID_LENGTH));
+        setParameter(RANDOM_VALUE, getRandomHexString(RANDOM_VALUE_LENGTH));
+        setParameter(API_VERSION, "1");
+        setBooleanParameter(RESPONSE_AS_IMAGE, false);        
+    }
+    
+    /**
      * Get a stored parameter.
      * @param key the parameter's key
      * @return the stored parameter's value
@@ -1759,5 +1884,31 @@ public class PiwikRequest{
      */
     private void removeJsonArray(String key){
         parameters.remove(key);
+    }
+    
+    private URL returnAsUrl(String parameter, String name, String altMethod){
+        Object obj = getParameter(parameter);
+        if (obj == null){
+            return null;
+        }
+        if (obj instanceof URL){
+            return (URL)obj;
+        }
+        throw new TypeConstraintException("The stored " + name +
+                " is a String, not a URL.  Use \""+
+                altMethod + "\" instead.");
+    }
+    
+    private String returnAsString(String parameter, String name, String altMethod){
+        Object obj = getParameter(parameter);
+        if (obj == null){
+            return null;
+        }
+        if (obj instanceof String){
+            return (String)obj;
+        }
+        throw new TypeConstraintException("The stored " + name +
+                " is a URL, not a String.  Use \""+
+                altMethod + "\" instead.");
     }
 }
