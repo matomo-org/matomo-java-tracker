@@ -959,7 +959,7 @@ public class PiwikRequest{
      * Get the page custom variable at the specified key.
      * @param key the key of the variable to get
      * @return the variable at the specified key, null if key is not present
-     * @deprecated Use the {@link #getPageCustomVariable(int) getPageCustomVariable(int)} method instead.
+     * @deprecated Use the {@link #getPageCustomVariable(int)} method instead.
      */
     @Deprecated
     public String getPageCustomVariable(String key){
@@ -980,7 +980,7 @@ public class PiwikRequest{
      * All page custom variables with this key will be overwritten or deleted
      * @param key the key of the variable to set
      * @param value the value of the variable to set at the specified key.  A null value will remove this custom variable
-     * @deprecated Use the {@link #setPageCustomVariable(CustomVariable) getPageCustomVariable(CustomVariable)} method instead.
+     * @deprecated Use the {@link #setPageCustomVariable(CustomVariable, int)} method instead.
      */
     @Deprecated
     public void setPageCustomVariable(String key, String value){
@@ -1356,7 +1356,7 @@ public class PiwikRequest{
      * Get the visit custom variable at the specified key.
      * @param key the key of the variable to get
      * @return the variable at the specified key, null if key is not present
-     * @deprecated Use the {@link #getVisitCustomVariable(CustomVariable) getVisitCustomVariable(CustomVariable)} method instead.
+     * @deprecated Use the {@link #getVisitCustomVariable(int)} method instead.
      */
     @Deprecated
     public String getUserCustomVariable(String key){
@@ -1377,7 +1377,7 @@ public class PiwikRequest{
      * All visit custom variables with this key will be overwritten or deleted
      * @param key the key of the variable to set
      * @param value the value of the variable to set at the specified key.  A null value will remove this parameter
-     * @deprecated Use the {@link #setVisitCustomVariable(CustomVariable) setVisitCustomVariable(CustomVariable)} method instead.
+     * @deprecated Use the {@link #setVisitCustomVariable(CustomVariable, int)} method instead.
      */
     @Deprecated
     public void setUserCustomVariable(String key, String value){
