@@ -872,7 +872,17 @@ public class PiwikRequestTest{
      * Test of getPageCustomVariable method, of class PiwikRequest.
      */
     @Test
-    public void testPageCustomVariableE(){
+    public void testPageCustomVariableStringStringE(){
+        try{
+            request.setPageCustomVariable(null, null);
+            fail("Exception should have been thrown");
+        }
+        catch(NullPointerException e){
+            assertEquals("Key cannot be null.", e.getLocalizedMessage());
+        }        
+    }
+    @Test
+    public void testPageCustomVariableStringStringE2(){
         try{
             request.setPageCustomVariable(null, "pageVal");
             fail("Exception should have been thrown");
@@ -882,7 +892,17 @@ public class PiwikRequestTest{
         }        
     }
     @Test
-    public void testPageCustomVariable(){
+    public void testPageCustomVariableStringStringE3(){
+        try{
+            request.getPageCustomVariable(null);
+            fail("Exception should have been thrown");
+        }
+        catch(NullPointerException e){
+            assertEquals("Key cannot be null.", e.getLocalizedMessage());
+        }        
+    }
+    @Test
+    public void testPageCustomVariableStringString(){
         assertNull(request.getPageCustomVariable("pageKey"));
         request.setPageCustomVariable("pageKey", "pageVal");
         assertEquals("pageVal", request.getPageCustomVariable("pageKey"));
@@ -890,6 +910,17 @@ public class PiwikRequestTest{
         assertNull(request.getPageCustomVariable("pageKey"));
         request.setPageCustomVariable("pageKey", "pageVal");
         assertEquals("pageVal", request.getPageCustomVariable("pageKey"));
+    }
+    @Test
+    public void testPageCustomVariableCustomVariable(){
+        assertNull(request.getPageCustomVariable(1));
+        CustomVariable cv = new CustomVariable("pageKey", "pageVal");
+        request.setPageCustomVariable(cv, 1);
+        assertEquals(cv, request.getPageCustomVariable(1));
+        request.setPageCustomVariable(null, 1);
+        assertNull(request.getPageCustomVariable(1));
+        request.setPageCustomVariable(cv, 2);
+        assertEquals(cv, request.getPageCustomVariable(2));
     }
 
     /**
@@ -1147,12 +1178,37 @@ public class PiwikRequestTest{
 
 
     /**
-     * Test of getUserCustomVariable method, of class PiwikRequest.
+     * Test of getUserrCustomVariable method, of class PiwikRequest.
      */
     @Test
-    public void testUserCustomVariable(){
+    public void testUserCustomVariableStringString(){
         request.setUserCustomVariable("userKey", "userValue");
         assertEquals("userValue", request.getUserCustomVariable("userKey"));
+    }
+    @Test
+    public void testVisitCustomVariableCustomVariable(){
+        request.setRandomValue("random");
+        request.setVisitorId("1234567890123456");
+        
+        assertNull(request.getVisitCustomVariable(1));
+        CustomVariable cv = new CustomVariable("visitKey", "visitVal");
+        request.setVisitCustomVariable(cv, 1);
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_cvar={\"1\":[\"visitKey\",\"visitVal\"]}&_id=1234567890123456&url=http://test.com", request.getQueryString());
+        
+        request.setUserCustomVariable("key", "val");
+        assertEquals(cv, request.getVisitCustomVariable(1));
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_cvar={\"1\":[\"visitKey\",\"visitVal\"],\"2\":[\"key\",\"val\"]}&_id=1234567890123456&url=http://test.com", request.getQueryString());
+        
+        request.setVisitCustomVariable(null, 1);
+        assertNull(request.getVisitCustomVariable(1));
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_cvar={\"2\":[\"key\",\"val\"]}&_id=1234567890123456&url=http://test.com", request.getQueryString());
+        
+        request.setVisitCustomVariable(cv, 2);
+        assertEquals(cv, request.getVisitCustomVariable(2));
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_cvar={\"2\":[\"visitKey\",\"visitVal\"]}&_id=1234567890123456&url=http://test.com", request.getQueryString());
+        
+        request.setUserCustomVariable("visitKey", null);
+        assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com", request.getQueryString());
     }
 
     /**

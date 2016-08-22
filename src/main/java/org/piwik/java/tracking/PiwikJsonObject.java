@@ -21,6 +21,7 @@ import javax.json.JsonObjectBuilder;
  * 
  * @author brettcsorba
  */
+@Deprecated
 public class PiwikJsonObject{
     Map<String, String> map = new LinkedHashMap<>();
     

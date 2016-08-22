@@ -85,7 +85,7 @@ public class PiwikRequest{
     private static final String SEARCH_RESULTS_COUNT = "search_count";
     private static final String SITE_ID = "idsite";
     private static final String TRACK_BOT_REQUESTS = "bots";
-    private static final String USER_CUSTOM_VARIABLE = "_cvar";
+    private static final String VISIT_CUSTOM_VARIABLE = "_cvar";
     private static final String USER_ID = "uid";
     private static final String VISITOR_CITY = "city";
     private static final String VISITOR_COUNTRY = "country";
@@ -959,18 +959,45 @@ public class PiwikRequest{
      * Get the page custom variable at the specified key.
      * @param key the key of the variable to get
      * @return the variable at the specified key, null if key is not present
+     * @deprecated Use the {@link #getPageCustomVariable(int) getPageCustomVariable(int)} method instead.
      */
+    @Deprecated
     public String getPageCustomVariable(String key){
-        return getJsonParameter(PAGE_CUSTOM_VARIABLE, key);
+        return getCustomVariable(PAGE_CUSTOM_VARIABLE, key);
     }
     
     /**
-     * Set a page custom variable at the specified key.
+     * Get the page custom variable at the specified index.
+     * @param index the index of the variable to get.  Must be greater than 0
+     * @return the variable at the specified key, null if nothing at this index
+     */
+    public CustomVariable getPageCustomVariable(int index){
+        return getCustomVariable(PAGE_CUSTOM_VARIABLE, index);
+    }
+    
+    /**
+     * Set a page custom variable with the specified key and value at the first available index.
+     * All page custom variables with this key will be overwritten or deleted
      * @param key the key of the variable to set
      * @param value the value of the variable to set at the specified key.  A null value will remove this custom variable
+     * @deprecated Use the {@link #setPageCustomVariable(CustomVariable) getPageCustomVariable(CustomVariable)} method instead.
      */
+    @Deprecated
     public void setPageCustomVariable(String key, String value){
-        setJsonParameter(PAGE_CUSTOM_VARIABLE, key, value);
+        if (value == null){
+            removeCustomVariable(PAGE_CUSTOM_VARIABLE, key);
+        } else {
+            setCustomVariable(PAGE_CUSTOM_VARIABLE, new CustomVariable(key, value), null);
+        }
+    }
+    
+    /**
+     * Set a page custom variable at the specified index.
+     * @param customVariable the CustomVariable to set.  A null value will remove the CustomVariable at the specified index
+     * @param index the index of he CustomVariable to set
+     */
+    public void setPageCustomVariable(CustomVariable customVariable, int index){
+        setCustomVariable(PAGE_CUSTOM_VARIABLE, customVariable, index);
     }
     
     /**
@@ -1326,21 +1353,47 @@ public class PiwikRequest{
     }
     
     /**
-     * Get the user custom variable at the specified key.
+     * Get the visit custom variable at the specified key.
      * @param key the key of the variable to get
      * @return the variable at the specified key, null if key is not present
+     * @deprecated Use the {@link #getVisitCustomVariable(CustomVariable) getVisitCustomVariable(CustomVariable)} method instead.
      */
+    @Deprecated
     public String getUserCustomVariable(String key){
-        return getJsonParameter(USER_CUSTOM_VARIABLE, key);
+        return getCustomVariable(VISIT_CUSTOM_VARIABLE, key);
     }
     
     /**
-     * Set a user custom variable at the specified key.
+     * Get the visit custom variable at the specified index.
+     * @param index the index of the variable to get
+     * @return the variable at the specified index, null if nothing at this index
+     */
+    public CustomVariable getVisitCustomVariable(int index){
+        return getCustomVariable(VISIT_CUSTOM_VARIABLE, index);
+    }
+    
+    /**
+     * Set a visit custom variable with the specified key and value at the first available index.
+     * All visit custom variables with this key will be overwritten or deleted
      * @param key the key of the variable to set
      * @param value the value of the variable to set at the specified key.  A null value will remove this parameter
+     * @deprecated Use the {@link #setVisitCustomVariable(CustomVariable) setVisitCustomVariable(CustomVariable)} method instead.
      */
+    @Deprecated
     public void setUserCustomVariable(String key, String value){
-        setJsonParameter(USER_CUSTOM_VARIABLE, key, value);
+        if (value == null){
+            removeCustomVariable(VISIT_CUSTOM_VARIABLE, key);
+        } else {
+            setCustomVariable(VISIT_CUSTOM_VARIABLE, new CustomVariable(key, value), null);
+        }
+    }
+    /**
+     * Set a user custom variable at the specified key.
+     * @param customVariable the CustomVariable to set.  A null value will remove the custom variable at the specified index
+     * @param index the index to set the customVariable at.
+     */
+    public void setVisitCustomVariable(CustomVariable customVariable, int index){
+        setCustomVariable(VISIT_CUSTOM_VARIABLE, customVariable, index);
     }
     
     /**
@@ -1774,17 +1827,26 @@ public class PiwikRequest{
      * @param key the key of the value.  Cannot be null
      * @return the value
      */
-    private String getJsonParameter(String parameter, String key){
-        if (key == null){
-            throw new NullPointerException("Key cannot be null.");
-        }
-        
-        PiwikJsonObject o = (PiwikJsonObject)parameters.get(parameter);
-        if (o == null){
+    private CustomVariable getCustomVariable(String parameter, int index){        
+        CustomVariableList cvl = (CustomVariableList)parameters.get(parameter);
+        if (cvl == null){
             return null;
         }
         
-        return o.get(key);
+        return cvl.get(index);
+    }
+    
+    private String getCustomVariable(String parameter, String key){
+        if (key == null){            
+            throw new NullPointerException("Key cannot be null.");
+        }
+        
+        CustomVariableList cvl = (CustomVariableList)parameters.get(parameter);
+        if (cvl == null){
+            return null;
+        }
+        
+        return cvl.get(key);
     }
     
     /**
@@ -1793,25 +1855,37 @@ public class PiwikRequest{
      * @param key the key of the value.  Cannot be null
      * @param value the value.  Removes the parameter if null
      */
-    private void setJsonParameter(String parameter, String key, String value){
-        if (key == null){
+    private void setCustomVariable(String parameter, CustomVariable customVariable, Integer index){
+        CustomVariableList cvl = (CustomVariableList)parameters.get(parameter);
+        if (cvl == null){
+            cvl = new CustomVariableList();
+            parameters.put(parameter, cvl);
+        }
+        
+        if (customVariable == null){
+            cvl.remove(index);
+            if (cvl.isEmpty()){
+                parameters.remove(parameter);
+            }
+        }
+        else if (index == null){
+            cvl.add(customVariable);
+        }
+        else {
+            cvl.add(customVariable, index);
+        }
+    }
+    
+    private void removeCustomVariable(String parameter, String key){
+        if (key == null){            
             throw new NullPointerException("Key cannot be null.");
         }
-        PiwikJsonObject o = (PiwikJsonObject)parameters.get(parameter);
-        if (value == null){
-            if (o != null){
-                o.remove(key);
-                if (o.isEmpty()){
-                    parameters.remove(parameter);
-                }
+        CustomVariableList cvl = (CustomVariableList)parameters.get(parameter);
+        if (cvl != null){
+            cvl.remove(key);
+            if (cvl.isEmpty()){
+                parameters.remove(parameter);
             }
-        }
-        else{
-            if (o == null){
-                o = new PiwikJsonObject();
-                parameters.put(parameter, o);
-            }
-            o.put(key, value);
         }
     }
     
