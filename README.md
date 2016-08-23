@@ -101,7 +101,7 @@ Have a fantastic feature idea?  Spot a bug?  We would absolutely love for you to
 * We'll take a look at your request and work to get it integrated with the repo!
 
 ## Contact
-brett.csorba@ge.com
+brett.csorba@gmail.com
 
 ## License
 This software is released under the BSD 3-Clause license.  See [LICENSE](LICENSE).
