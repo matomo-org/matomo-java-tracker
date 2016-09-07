@@ -9,6 +9,7 @@ package org.piwik.java.tracking;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -29,7 +30,9 @@ import java.io.IOException;
 public class PiwikTracker{
     private static final String AUTH_TOKEN = "token_auth";
     private static final String REQUESTS = "requests";
+    private static final int DEFAULT_TIMEOUT = 5000;
     private final UriBuilder uriBuilder;
+    private final int timeout;
     private String proxyHost = null;
     private int proxyPort = 0;
 
@@ -40,7 +43,12 @@ public class PiwikTracker{
      * <strong>http://your-piwik-domain.tld/piwik.php</strong>.
      */
     public PiwikTracker(String hostUrl){
+        this(hostUrl, DEFAULT_TIMEOUT);
+    }
+
+    public PiwikTracker(String hostUrl, int timeout){
         uriBuilder = UriBuilder.fromPath(hostUrl);
+        this.timeout = timeout;
     }
 
     /**
@@ -53,9 +61,14 @@ public class PiwikTracker{
      * @param proxyPort proxy server port number
      */
     public PiwikTracker(String hostUrl, String proxyHost, int proxyPort){
+        this(hostUrl, proxyHost, proxyPort, DEFAULT_TIMEOUT);
+    }
+
+    public PiwikTracker(String hostUrl, String proxyHost, int proxyPort, int timeout){
         uriBuilder = UriBuilder.fromPath(hostUrl);
         this.proxyHost = proxyHost;
         this.proxyPort = proxyPort;
+        this.timeout = timeout;
     }
 
     /**
@@ -69,7 +82,13 @@ public class PiwikTracker{
         uriBuilder.replaceQuery(request.getUrlEncodedQueryString());
         HttpGet get = new HttpGet(uriBuilder.build());
 
-        return client.execute(get);
+        try {
+            return client.execute(get);
+        } catch (IOException e) {
+            throw e;
+        } finally {
+            get.releaseConnection();
+        }
     }
 
     /**
@@ -115,7 +134,13 @@ public class PiwikTracker{
         post.setEntity(new StringEntity(ob.build().toString(),
                 ContentType.APPLICATION_JSON));
 
-        return client.execute(post);
+        try {
+            return client.execute(post);
+        } catch (IOException e) {
+            throw e;
+        } finally {
+            post.releaseConnection();
+        }
     }
 
     /**
@@ -123,14 +148,22 @@ public class PiwikTracker{
      * @return a HTTP client
      */
     protected HttpClient getHttpClient(){
-        HttpClient client;
+
+        HttpClientBuilder builder = HttpClientBuilder.create();
+
         if(proxyHost != null && proxyPort != 0) {
             HttpHost proxy = new HttpHost(proxyHost, proxyPort);
             DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
-            client = HttpClientBuilder.create().setRoutePlanner(routePlanner).build();
-        } else {
-            client = HttpClientBuilder.create().build();
+            builder.setRoutePlanner(routePlanner);
         }
-        return client;
+
+        RequestConfig.Builder config = RequestConfig.custom()
+                .setConnectTimeout(timeout)
+                .setConnectionRequestTimeout(timeout)
+                .setSocketTimeout(timeout);
+
+        builder.setDefaultRequestConfig(config.build());
+
+        return builder.build();
     }
 }
