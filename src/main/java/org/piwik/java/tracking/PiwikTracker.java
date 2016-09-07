@@ -84,8 +84,6 @@ public class PiwikTracker{
 
         try {
             return client.execute(get);
-        } catch (IOException e) {
-            throw e;
         } finally {
             get.releaseConnection();
         }
@@ -136,8 +134,6 @@ public class PiwikTracker{
 
         try {
             return client.execute(post);
-        } catch (IOException e) {
-            throw e;
         } finally {
             post.releaseConnection();
         }
