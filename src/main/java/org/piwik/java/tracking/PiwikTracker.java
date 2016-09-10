@@ -46,6 +46,13 @@ public class PiwikTracker{
         this(hostUrl, DEFAULT_TIMEOUT);
     }
 
+    /**
+     * Creates a tracker that will send {@link PiwikRequest}s to the specified
+     * Tracking HTTP API endpoint.
+     * @param hostUrl url endpoint to send requests to.  Usually in the format
+     * <strong>http://your-piwik-domain.tld/piwik.php</strong>.
+     * @param timeout the timeout of the sent request in milliseconds
+     */
     public PiwikTracker(String hostUrl, int timeout){
         uriBuilder = UriBuilder.fromPath(hostUrl);
         this.timeout = timeout;
