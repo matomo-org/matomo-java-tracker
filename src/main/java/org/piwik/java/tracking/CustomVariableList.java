@@ -6,20 +6,19 @@
  */
 package org.piwik.java.tracking;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
  * @author brettcsorba
  */
 class CustomVariableList{
-    private final Map<Integer, CustomVariable> map = new HashMap<>();
+    private final ConcurrentHashMap<Integer, CustomVariable> map = new ConcurrentHashMap<>();
 
     void add(CustomVariable cv){
         boolean found = false;
