@@ -72,7 +72,7 @@ public class PiwikTrackerTest{
         HttpResponse response = mock(HttpResponse.class);
         
         doReturn(client).when(piwikTracker).getHttpClient();
-        doReturn("query").when(request).getUrlEncodedQueryString();
+        doReturn("query").when(request).getQueryString();
         doReturn(response).when(client).execute(argThat(new CorrectGetRequest("http://test.com?query")));
         
         assertEquals(response, piwikTracker.sendRequest(request));
