@@ -1,6 +1,6 @@
-/* 
+/*
  * Piwik Java Tracker
- * 
+ *
  * @link https://github.com/piwik/piwik-java-tracker
  * @license https://github.com/piwik/piwik-java-tracker/blob/master/LICENSE BSD-3 Clause
  */
@@ -34,23 +34,23 @@ import static org.mockito.Mockito.spy;
  */
 public class PiwikTrackerTest{
     PiwikTracker piwikTracker;
-    
+
     public PiwikTrackerTest(){
     }
-    
+
     @BeforeClass
     public static void setUpClass(){
     }
-    
+
     @AfterClass
     public static void tearDownClass(){
     }
-    
+
     @Before
     public void setUp(){
         piwikTracker = spy(new PiwikTracker("http://test.com"));
     }
-    
+
     @After
     public void tearDown(){
     }
@@ -70,24 +70,23 @@ public class PiwikTrackerTest{
         PiwikRequest request = mock(PiwikRequest.class);
         HttpClient client = mock(HttpClient.class);
         HttpResponse response = mock(HttpResponse.class);
-        
+
         doReturn(client).when(piwikTracker).getHttpClient();
-        doReturn("query").when(request).getUrlEncodedQueryString();
+        doReturn("query").when(request).getQueryString();
         doReturn(response).when(client).execute(argThat(new CorrectGetRequest("http://test.com?query")));
-        
+
         assertEquals(response, piwikTracker.sendRequest(request));
     }
-    
-    class CorrectGetRequest extends ArgumentMatcher<HttpGet>{
+
+    static class CorrectGetRequest implements ArgumentMatcher<HttpGet> {
         String url;
-        
+
         public CorrectGetRequest(String url){
             this.url = url;
         }
 
         @Override
-        public boolean matches(Object argument){
-            HttpGet get = (HttpGet)argument;
+        public boolean matches(HttpGet get){
             return url.equals(get.getURI().toString());
         }
     }
@@ -99,9 +98,9 @@ public class PiwikTrackerTest{
     public void testSendBulkRequest_Iterable() throws Exception{
         List<PiwikRequest> requests = new ArrayList<>();
         HttpResponse response = mock(HttpResponse.class);
-        
+
         doReturn(response).when(piwikTracker).sendBulkRequest(requests, null);
-        
+
         assertEquals(response, piwikTracker.sendBulkRequest(requests));
     }
 
@@ -114,11 +113,11 @@ public class PiwikTrackerTest{
             List<PiwikRequest> requests = new ArrayList<>();
             HttpClient client = mock(HttpClient.class);
             PiwikRequest request = mock(PiwikRequest.class);
-            
+
             doReturn("query").when(request).getQueryString();
-            requests.add(request);        
+            requests.add(request);
             doReturn(client).when(piwikTracker).getHttpClient();
-            
+
             piwikTracker.sendBulkRequest(requests, "1");
             fail("Exception should have been thrown.");
         }
@@ -132,12 +131,12 @@ public class PiwikTrackerTest{
         HttpClient client = mock(HttpClient.class);
         PiwikRequest request = mock(PiwikRequest.class);
         HttpResponse response = mock(HttpResponse.class);
-        
+
         doReturn("query").when(request).getQueryString();
-        requests.add(request);        
+        requests.add(request);
         doReturn(client).when(piwikTracker).getHttpClient();
         doReturn(response).when(client).execute(argThat(new CorrectPostRequest("{\"requests\":[\"?query\"]}")));
-        
+
         assertEquals(response, piwikTracker.sendBulkRequest(requests, null));
     }
     @Test
@@ -146,26 +145,25 @@ public class PiwikTrackerTest{
         HttpClient client = mock(HttpClient.class);
         PiwikRequest request = mock(PiwikRequest.class);
         HttpResponse response = mock(HttpResponse.class);
-        
+
         doReturn("query").when(request).getQueryString();
-        requests.add(request);        
+        requests.add(request);
         doReturn(client).when(piwikTracker).getHttpClient();
         doReturn(response).when(client).execute(argThat(new CorrectPostRequest("{\"requests\":[\"?query\"],\"token_auth\":\"12345678901234567890123456789012\"}")));
-        
+
         assertEquals(response, piwikTracker.sendBulkRequest(requests, "12345678901234567890123456789012"));
     }
-    
-    class CorrectPostRequest extends ArgumentMatcher<HttpPost>{
+
+    static class CorrectPostRequest implements ArgumentMatcher<HttpPost> {
         String body;
-        
+
         public CorrectPostRequest(String body){
             this.body = body;
         }
 
         @Override
-        public boolean matches(Object argument){
+        public boolean matches(HttpPost post){
             try{
-                HttpPost post = (HttpPost)argument;
                 InputStream bais = post.getEntity().getContent();
                 byte[] bytes = new byte[bais.available()];
                 bais.read(bytes);
@@ -186,7 +184,7 @@ public class PiwikTrackerTest{
     public void testGetHttpClient(){
         assertNotNull(piwikTracker.getHttpClient());
     }
-    
+
     /**
      * Test of getHttpClient method, of class PiwikTracker, with proxy.
      */
@@ -195,6 +193,6 @@ public class PiwikTrackerTest{
         piwikTracker = new PiwikTracker("http://test.com", "http://proxy", 8080);
         HttpClient httpClient = piwikTracker.getHttpClient();
 
-        assertNotNull(piwikTracker.getHttpClient());
+        assertNotNull(httpClient);
     }
 }
