@@ -14,6 +14,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
@@ -183,6 +184,14 @@ public class PiwikTrackerTest{
     @Test
     public void testGetHttpClient(){
         assertNotNull(piwikTracker.getHttpClient());
+    }
+
+    /**
+     * Test of getHttpAsyncClient method, of class PiwikTracker.
+     */
+    @Test
+    public void testGetHttpAsyncClient(){
+        assertNotNull(piwikTracker.getHttpAsyncClient());
     }
 
     /**
