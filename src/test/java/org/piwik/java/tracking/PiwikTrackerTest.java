@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -24,6 +26,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -74,9 +78,30 @@ public class PiwikTrackerTest{
 
         doReturn(client).when(piwikTracker).getHttpClient();
         doReturn("query").when(request).getQueryString();
-        doReturn(response).when(client).execute(argThat(new CorrectGetRequest("http://test.com?query")));
+        doReturn(response).when(client)
+                .execute(argThat(new CorrectGetRequest("http://test.com?query")));
 
         assertEquals(response, piwikTracker.sendRequest(request));
+    }
+
+    /**
+     * Test of sendRequestAsync method, of class PiwikTracker.
+     */
+    @Test
+    public void testSendRequestAsync() throws Exception{
+        PiwikRequest request = mock(PiwikRequest.class);
+        CloseableHttpAsyncClient client = mock(CloseableHttpAsyncClient.class);
+        HttpResponse response = mock(HttpResponse.class);
+        Future<HttpResponse> future = mock(Future.class);
+
+        doReturn(client).when(piwikTracker).getHttpAsyncClient();
+        doReturn("query").when(request).getQueryString();
+        doReturn(response).when(future).get();
+        doReturn(true).when(future).isDone();
+        doReturn(future).when(client)
+                .execute(argThat(new CorrectGetRequest("http://test.com?query")), any());
+
+        assertEquals(response, piwikTracker.sendRequestAsync(request).get());
     }
 
     static class CorrectGetRequest implements ArgumentMatcher<HttpGet> {
