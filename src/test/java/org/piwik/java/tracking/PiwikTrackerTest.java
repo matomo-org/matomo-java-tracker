@@ -175,9 +175,84 @@ public class PiwikTrackerTest{
         doReturn("query").when(request).getQueryString();
         requests.add(request);
         doReturn(client).when(piwikTracker).getHttpClient();
-        doReturn(response).when(client).execute(argThat(new CorrectPostRequest("{\"requests\":[\"?query\"],\"token_auth\":\"12345678901234567890123456789012\"}")));
+        doReturn(response).when(client)
+                .execute(argThat(new CorrectPostRequest("{\"requests\":[\"?query\"],\"token_auth\":\"12345678901234567890123456789012\"}")));
 
         assertEquals(response, piwikTracker.sendBulkRequest(requests, "12345678901234567890123456789012"));
+    }
+
+    /**
+     * Test of sendBulkRequestAsync method, of class PiwikTracker.
+     */
+    @Test
+    public void testSendBulkRequestAsync_Iterable() throws Exception{
+        List<PiwikRequest> requests = new ArrayList<>();
+        HttpResponse response = mock(HttpResponse.class);
+        Future<HttpResponse> future = mock(Future.class);
+        doReturn(response).when(future).get();
+        doReturn(true).when(future).isDone();
+
+        doReturn(future).when(piwikTracker).sendBulkRequestAsync(requests, null);
+
+        assertEquals(response, piwikTracker.sendBulkRequestAsync(requests).get());
+    }
+
+    /**
+     * Test of sendBulkRequestAsync method, of class PiwikTracker.
+     */
+    @Test
+    public void testSendBulkRequestAsync_Iterable_StringTT() throws Exception{
+        try{
+            List<PiwikRequest> requests = new ArrayList<>();
+            CloseableHttpAsyncClient client = mock(CloseableHttpAsyncClient.class);
+            PiwikRequest request = mock(PiwikRequest.class);
+
+            doReturn("query").when(request).getQueryString();
+            requests.add(request);
+            doReturn(client).when(piwikTracker).getHttpAsyncClient();
+
+            piwikTracker.sendBulkRequestAsync(requests, "1");
+            fail("Exception should have been thrown.");
+        }
+        catch(IllegalArgumentException e){
+            assertEquals("1 is not 32 characters long.", e.getLocalizedMessage());
+        }
+    }
+    @Test
+    public void testSendBulkRequestAsync_Iterable_StringFF() throws Exception{
+        List<PiwikRequest> requests = new ArrayList<>();
+        CloseableHttpAsyncClient client = mock(CloseableHttpAsyncClient.class);
+        PiwikRequest request = mock(PiwikRequest.class);
+        HttpResponse response = mock(HttpResponse.class);
+        Future<HttpResponse> future = mock(Future.class);
+        doReturn(response).when(future).get();
+        doReturn(true).when(future).isDone();
+
+        doReturn("query").when(request).getQueryString();
+        requests.add(request);
+        doReturn(client).when(piwikTracker).getHttpAsyncClient();
+        doReturn(future).when(client)
+                .execute(argThat(new CorrectPostRequest("{\"requests\":[\"?query\"]}")), any());
+
+        assertEquals(response, piwikTracker.sendBulkRequestAsync(requests, null).get());
+    }
+    @Test
+    public void testSendBulkRequestAsync_Iterable_StringFT() throws Exception{
+        List<PiwikRequest> requests = new ArrayList<>();
+        CloseableHttpAsyncClient client = mock(CloseableHttpAsyncClient.class);
+        PiwikRequest request = mock(PiwikRequest.class);
+        HttpResponse response = mock(HttpResponse.class);
+        Future<HttpResponse> future = mock(Future.class);
+        doReturn(response).when(future).get();
+        doReturn(true).when(future).isDone();
+
+        doReturn("query").when(request).getQueryString();
+        requests.add(request);
+        doReturn(client).when(piwikTracker).getHttpAsyncClient();
+        doReturn(future).when(client)
+                .execute(argThat(new CorrectPostRequest("{\"requests\":[\"?query\"],\"token_auth\":\"12345678901234567890123456789012\"}")), any());
+
+        assertEquals(response, piwikTracker.sendBulkRequestAsync(requests, "12345678901234567890123456789012").get());
     }
 
     static class CorrectPostRequest implements ArgumentMatcher<HttpPost> {
