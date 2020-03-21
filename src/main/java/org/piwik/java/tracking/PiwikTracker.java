@@ -16,6 +16,8 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 
 import javax.json.Json;
@@ -165,6 +167,30 @@ public class PiwikTracker{
     protected HttpClient getHttpClient(){
 
         HttpClientBuilder builder = HttpClientBuilder.create();
+
+        if(proxyHost != null && proxyPort != 0) {
+            HttpHost proxy = new HttpHost(proxyHost, proxyPort);
+            DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+            builder.setRoutePlanner(routePlanner);
+        }
+
+        RequestConfig.Builder config = RequestConfig.custom()
+                .setConnectTimeout(timeout)
+                .setConnectionRequestTimeout(timeout)
+                .setSocketTimeout(timeout);
+
+        builder.setDefaultRequestConfig(config.build());
+
+        return builder.build();
+    }
+
+    /**
+     * Get an async HTTP client. With proxy if a proxy is provided in the constructor.
+     * @return an async HTTP client
+     */
+    protected CloseableHttpAsyncClient getHttpAsyncClient(){
+
+        HttpAsyncClientBuilder builder = HttpAsyncClientBuilder.create();
 
         if(proxyHost != null && proxyPort != 0) {
             HttpHost proxy = new HttpHost(proxyHost, proxyPort);
