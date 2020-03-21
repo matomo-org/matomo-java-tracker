@@ -26,6 +26,7 @@ import javax.json.JsonObjectBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.concurrent.Future;
 
 /**
  * A class that sends {@link PiwikRequest}s to a specified Piwik server.
@@ -96,6 +97,29 @@ public class PiwikTracker{
         try {
             get = new HttpGet(uriBuilder.build());
             return client.execute(get);
+        } catch (URISyntaxException e) {
+            throw new IOException(e);
+        } finally {
+            if (get != null) {
+                get.releaseConnection();
+            }
+        }
+    }
+
+    /**
+     * Send a request.
+     * @param request request to send
+     * @return future with response from this request
+     * @throws IOException thrown if there was a problem with this connection
+     */
+    public Future<HttpResponse> sendRequestAsync(PiwikRequest request) throws IOException{
+        CloseableHttpAsyncClient client = getHttpAsyncClient();
+        uriBuilder.setCustomQuery(request.getQueryString());
+        HttpGet get = null;
+
+        try {
+            get = new HttpGet(uriBuilder.build());
+            return client.execute(get,null);
         } catch (URISyntaxException e) {
             throw new IOException(e);
         } finally {
