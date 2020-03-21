@@ -142,6 +142,17 @@ public class PiwikTracker{
 
     /**
      * Send multiple requests in a single HTTP call.  More efficient than sending
+     * several individual requests.
+     * @param requests the requests to send
+     * @return future with response from these requests
+     * @throws IOException thrown if there was a problem with this connection
+     */
+    public Future<HttpResponse> sendBulkRequestAsync(Iterable<PiwikRequest> requests) throws IOException{
+        return sendBulkRequestAsync(requests, null);
+    }
+
+    /**
+     * Send multiple requests in a single HTTP call.  More efficient than sending
      * several individual requests.  Specify the AuthToken if parameters that require
      * an auth token is used.
      * @param requests the requests to send
@@ -175,6 +186,50 @@ public class PiwikTracker{
             post.setEntity(new StringEntity(ob.build().toString(),
                     ContentType.APPLICATION_JSON));
             return client.execute(post);
+        } catch (URISyntaxException e) {
+            throw new IOException(e);
+        } finally {
+            if (post != null) {
+                post.releaseConnection();
+            }
+        }
+    }
+
+    /**
+     * Send multiple requests in a single HTTP call.  More efficient than sending
+     * several individual requests.  Specify the AuthToken if parameters that require
+     * an auth token is used.
+     * @param requests the requests to send
+     * @param authToken specify if any of the parameters use require AuthToken
+     * @return the response from these requests
+     * @throws IOException thrown if there was a problem with this connection
+     */
+    public Future<HttpResponse> sendBulkRequestAsync(Iterable<PiwikRequest> requests, String authToken) throws IOException{
+        if (authToken != null && authToken.length() != PiwikRequest.AUTH_TOKEN_LENGTH){
+            throw new IllegalArgumentException(authToken+" is not "+PiwikRequest.AUTH_TOKEN_LENGTH+" characters long.");
+        }
+
+        JsonObjectBuilder ob = Json.createObjectBuilder();
+        JsonArrayBuilder ab = Json.createArrayBuilder();
+
+        for (PiwikRequest request : requests){
+            ab.add("?"+request.getQueryString());
+        }
+
+        ob.add(REQUESTS, ab);
+
+        if (authToken != null){
+            ob.add(AUTH_TOKEN, authToken);
+        }
+
+        CloseableHttpAsyncClient client = getHttpAsyncClient();
+        HttpPost post = null;
+
+        try {
+            post = new HttpPost(uriBuilder.build());
+            post.setEntity(new StringEntity(ob.build().toString(),
+                    ContentType.APPLICATION_JSON));
+            return client.execute(post,null);
         } catch (URISyntaxException e) {
             throw new IOException(e);
         } finally {
