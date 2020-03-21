@@ -88,7 +88,9 @@ public class PiwikTracker{
      * @param request request to send
      * @return the response from this request
      * @throws IOException thrown if there was a problem with this connection
+     * @deprecated use sendRequestAsync instead
      */
+    @Deprecated
     public HttpResponse sendRequest(PiwikRequest request) throws IOException{
         HttpClient client = getHttpClient();
         uriBuilder.setCustomQuery(request.getQueryString());
@@ -135,7 +137,9 @@ public class PiwikTracker{
      * @param requests the requests to send
      * @return the response from these requests
      * @throws IOException thrown if there was a problem with this connection
+     * @deprecated use sendBulkRequestAsync instead
      */
+    @Deprecated
     public HttpResponse sendBulkRequest(Iterable<PiwikRequest> requests) throws IOException{
         return sendBulkRequest(requests, null);
     }
@@ -159,7 +163,9 @@ public class PiwikTracker{
      * @param authToken specify if any of the parameters use require AuthToken
      * @return the response from these requests
      * @throws IOException thrown if there was a problem with this connection
+     * @deprecated use sendBulkRequestAsync instead
      */
+    @Deprecated
     public HttpResponse sendBulkRequest(Iterable<PiwikRequest> requests, String authToken) throws IOException{
         if (authToken != null && authToken.length() != PiwikRequest.AUTH_TOKEN_LENGTH){
             throw new IllegalArgumentException(authToken+" is not "+PiwikRequest.AUTH_TOKEN_LENGTH+" characters long.");
