@@ -6,61 +6,49 @@
  */
 package org.piwik.java.tracking;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.Future;
-
-import com.sun.net.httpserver.HttpServer;
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
-
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
-
-import org.apache.http.util.EntityUtils;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.junit.After;
-import org.junit.AfterClass;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.http.util.EntityUtils;
+import org.junit.*;
 import org.mockito.ArgumentMatcher;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Future;
+
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-
-// https://stackoverflow.com/a/3732328
-class Handler implements HttpHandler {
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        String response = "OK";
-        exchange.sendResponseHeaders(200, response.length());
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
-    }
-}
+import static org.mockito.Mockito.*;
 
 /**
  * @author brettcsorba
  */
 public class PiwikTrackerTest {
+    // https://stackoverflow.com/a/3732328
+    static class Handler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            String response = "OK";
+            exchange.sendResponseHeaders(200, response.length());
+            OutputStream os = exchange.getResponseBody();
+            os.write(response.getBytes());
+            os.close();
+        }
+    }
+
     PiwikTracker piwikTracker;
     PiwikTracker localTracker;
     HttpServer server;
@@ -153,7 +141,7 @@ public class PiwikTrackerTest {
         assertEquals("OK", msg);
 
         // bulk
-        List<PiwikRequest> requests = Arrays.asList(request);
+        List<PiwikRequest> requests = Collections.singletonList(request);
         HttpResponse responseBulk = localTracker.sendBulkRequest(requests);
         String msgBulk = EntityUtils.toString(responseBulk.getEntity());
         assertEquals("OK", msgBulk);
@@ -171,7 +159,7 @@ public class PiwikTrackerTest {
         assertEquals("OK", msg);
 
         // bulk
-        List<PiwikRequest> requests = Arrays.asList(request);
+        List<PiwikRequest> requests = Collections.singletonList(request);
         HttpResponse responseBulk = localTracker.sendBulkRequestAsync(requests).get();
         String msgBulk = EntityUtils.toString(responseBulk.getEntity());
         assertEquals("OK", msgBulk);
