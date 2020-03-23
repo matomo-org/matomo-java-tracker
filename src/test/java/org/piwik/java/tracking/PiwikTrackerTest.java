@@ -8,10 +8,20 @@ package org.piwik.java.tracking;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpExchange;
+
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+
+import org.apache.http.util.EntityUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -19,9 +29,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.junit.After;
 import org.junit.AfterClass;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,12 +45,26 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
+// https://stackoverflow.com/a/3732328
+class Handler implements HttpHandler {
+    @Override
+    public void handle(HttpExchange exchange) throws IOException {
+        String response = "OK";
+        exchange.sendResponseHeaders(200, response.length());
+        OutputStream os = exchange.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+    }
+}
+
 /**
  *
  * @author brettcsorba
  */
 public class PiwikTrackerTest{
     PiwikTracker piwikTracker;
+    PiwikTracker localTracker;
+    HttpServer server;
 
     public PiwikTrackerTest(){
     }
@@ -52,12 +78,24 @@ public class PiwikTrackerTest{
     }
 
     @Before
-    public void setUp(){
+    public void setUp() {
+        // test with mocks
         piwikTracker = spy(new PiwikTracker("http://test.com"));
+
+        // test with local server
+        localTracker = new PiwikTracker("http://localhost:8001/test");
+        try {
+            server = HttpServer.create(new InetSocketAddress(8001), 0);
+            server.createContext("/test", new Handler());
+            server.setExecutor(null); // creates a default executor
+            server.start();
+        } catch (IOException ex) {
+        }
     }
 
     @After
-    public void tearDown(){
+    public void tearDown() {
+        server.stop(0);
     }
 
     /**
@@ -102,6 +140,42 @@ public class PiwikTrackerTest{
                 .execute(argThat(new CorrectGetRequest("http://test.com?query")), any());
 
         assertEquals(response, piwikTracker.sendRequestAsync(request).get());
+    }
+
+    /**
+     * Test sync API with local server
+     */
+    @Test
+    public void testWithLocalServer() throws Exception {
+        // one
+        PiwikRequest request = new PiwikRequest(3, new URL("http://test.com"));
+        HttpResponse response = localTracker.sendRequest(request);
+        String msg = EntityUtils.toString(response.getEntity());
+        assertEquals("OK", msg);
+
+        // bulk
+        List<PiwikRequest> requests = Arrays.asList(request);
+        HttpResponse responseBulk = localTracker.sendBulkRequest(requests);
+        String msgBulk = EntityUtils.toString(responseBulk.getEntity());
+        assertEquals("OK", msgBulk);
+    }
+
+    /**
+     * Test async API with local server
+     */
+    @Test
+    public void testWithLocalServerAsync() throws Exception {
+        // one
+        PiwikRequest request = new PiwikRequest(3, new URL("http://test.com"));
+        HttpResponse response = localTracker.sendRequestAsync(request).get();
+        String msg = EntityUtils.toString(response.getEntity());
+        assertEquals("OK", msg);
+
+        // bulk
+        List<PiwikRequest> requests = Arrays.asList(request);
+        HttpResponse responseBulk = localTracker.sendBulkRequestAsync(requests).get();
+        String msgBulk = EntityUtils.toString(responseBulk.getEntity());
+        assertEquals("OK", msgBulk);
     }
 
     static class CorrectGetRequest implements ArgumentMatcher<HttpGet> {
