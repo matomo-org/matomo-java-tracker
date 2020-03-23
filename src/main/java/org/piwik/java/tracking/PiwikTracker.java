@@ -101,10 +101,6 @@ public class PiwikTracker{
             return client.execute(get);
         } catch (URISyntaxException e) {
             throw new IOException(e);
-        } finally {
-            if (get != null) {
-                get.releaseConnection();
-            }
         }
     }
 
@@ -124,10 +120,6 @@ public class PiwikTracker{
             return client.execute(get,null);
         } catch (URISyntaxException e) {
             throw new IOException(e);
-        } finally {
-            if (get != null) {
-                get.releaseConnection();
-            }
         }
     }
 
@@ -194,10 +186,6 @@ public class PiwikTracker{
             return client.execute(post);
         } catch (URISyntaxException e) {
             throw new IOException(e);
-        } finally {
-            if (post != null) {
-                post.releaseConnection();
-            }
         }
     }
 
@@ -238,10 +226,6 @@ public class PiwikTracker{
             return client.execute(post,null);
         } catch (URISyntaxException e) {
             throw new IOException(e);
-        } finally {
-            if (post != null) {
-                post.releaseConnection();
-            }
         }
     }
 
