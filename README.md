@@ -2,15 +2,14 @@ Piwik Java Tracker
 ================
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.piwik.java.tracking/piwik-java-tracker/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.piwik.java.tracking/piwik-java-tracker)
 ## Code Status
-[![Build Status](https://travis-ci.org/piwik/piwik-java-tracker.svg?branch=master)](https://travis-ci.org/piwik/piwik-java-tracker)
-[![Coverage Status](https://coveralls.io/repos/piwik/piwik-java-tracker/badge.svg?branch=master&service=github)](https://coveralls.io/github/piwik/piwik-java-tracker?branch=master)
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/piwik/piwik-java-tracker.svg)](http://isitmaintained.com/project/piwik/piwik-java-tracker "Average time to resolve an issue")
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/piwik/piwik-java-tracker.svg)](http://isitmaintained.com/project/piwik/piwik-java-tracker "Percentage of issues still open")
+[![Build Status](https://travis-ci.org/matomo-org/piwik-java-tracker.svg?branch=master)](https://travis-ci.org/piwik/piwik-java-tracker)<!--[![Coverage Status](https://coveralls.io/repos/piwik/piwik-java-tracker/badge.svg?branch=master&service=github)](https://coveralls.io/github/piwik/piwik-java-tracker?branch=master)-->
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/matomo-org/piwik-java-tracker.svg)](http://isitmaintained.com/project/matomo-org/piwik-java-tracker "Average time to resolve an issue")
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/matomo-org/piwik-java-tracker.svg)](http://isitmaintained.com/project/matomo-org/piwik-java-tracker "Percentage of issues still open")
 
-Official Java implementation of the [Piwik Tracking HTTP API](http://developer.piwik.org/api-reference/tracking-api).
+Official Java implementation of the [Piwik Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api).
 
 ## Javadoc
-The Javadoc for this project is hosted as a Github page for this repo.  The latest Javadoc can be found [here](http://piwik.github.io/piwik-java-tracker/javadoc/HEAD/index.html).  Javadoc for the latest and all releases can be found [here](http://piwik.github.io/piwik-java-tracker/javadoc/index.html).
+The Javadoc for this project is hosted as a Github page for this repo.  The latest Javadoc can be found [here](https://matomo-org.github.io/piwik-java-tracker/javadoc/HEAD/index.html).  Javadoc for the latest and all releases can be found [here](https://matomo-org.github.io/piwik-java-tracker/javadoc/index.html).
 
 ## Using this API
 ### Create a Request
@@ -35,11 +34,11 @@ Note that if you want to be able to track campaigns using <em>Referrers &gt; Cam
 ```java
 URL actionUrl = new URL("http://example.org/landing.html?pk_campaign=Email-Nov2011&pk_kwd=LearnMore");
 ```
-See [Tracking Campaigns](http://piwik.org/docs/tracking-campaigns/) for more information. 
+See [Tracking Campaigns](https://matomo.org/docs/tracking-campaigns/) for more information. 
 
-All HTTP query parameters denoted on the [Piwik Tracking HTTP API](http://developer.piwik.org/api-reference/tracking-api) can be set using the appropriate getters and setters.  See <strong>PiwikRequest.java</strong> for the mappings of the parameters to their corresponding Java getters/setters.
+All HTTP query parameters denoted on the [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api) can be set using the appropriate getters and setters.  See <strong>PiwikRequest.java</strong> for the mappings of the parameters to their corresponding Java getters/setters.
 
-####Some parameters are dependent on the state of other parameters:
+Some parameters are dependent on the state of other parameters:
 <strong>EcommerceEnabled</strong> must be called before the following parameters are set:  <em>EcommerceId</em> and <em>EcommerceRevenue</em>.
 
 <strong>EcommerceId</strong> and <strong>EcommerceRevenue</strong> must be set before the following parameters are set:  <em>EcommerceDiscount</em>, <em>EcommerceItem</em>, <em>EcommerceLastOrderTimestamp</em>, <em>EcommerceShippingCost</em>, <em>EcommerceSubtotal</em>, and <em>EcommerceTax</em>.
