@@ -16,6 +16,8 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 
 import javax.json.Json;
@@ -24,6 +26,7 @@ import javax.json.JsonObjectBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.concurrent.Future;
 
 /**
  * A class that sends {@link PiwikRequest}s to a specified Piwik server.
@@ -85,7 +88,9 @@ public class PiwikTracker{
      * @param request request to send
      * @return the response from this request
      * @throws IOException thrown if there was a problem with this connection
+     * @deprecated use sendRequestAsync instead
      */
+    @Deprecated
     public HttpResponse sendRequest(PiwikRequest request) throws IOException{
         HttpClient client = getHttpClient();
         uriBuilder.setCustomQuery(request.getQueryString());
@@ -96,10 +101,26 @@ public class PiwikTracker{
             return client.execute(get);
         } catch (URISyntaxException e) {
             throw new IOException(e);
-        } finally {
-            if (get != null) {
-                get.releaseConnection();
-            }
+        }
+    }
+
+    /**
+     * Send a request.
+     * @param request request to send
+     * @return future with response from this request
+     * @throws IOException thrown if there was a problem with this connection
+     */
+    public Future<HttpResponse> sendRequestAsync(PiwikRequest request) throws IOException{
+        CloseableHttpAsyncClient client = getHttpAsyncClient();
+        client.start();
+        uriBuilder.setCustomQuery(request.getQueryString());
+        HttpGet get = null;
+
+        try {
+            get = new HttpGet(uriBuilder.build());
+            return client.execute(get,null);
+        } catch (URISyntaxException e) {
+            throw new IOException(e);
         }
     }
 
@@ -109,9 +130,22 @@ public class PiwikTracker{
      * @param requests the requests to send
      * @return the response from these requests
      * @throws IOException thrown if there was a problem with this connection
+     * @deprecated use sendBulkRequestAsync instead
      */
+    @Deprecated
     public HttpResponse sendBulkRequest(Iterable<PiwikRequest> requests) throws IOException{
         return sendBulkRequest(requests, null);
+    }
+
+    /**
+     * Send multiple requests in a single HTTP call.  More efficient than sending
+     * several individual requests.
+     * @param requests the requests to send
+     * @return future with response from these requests
+     * @throws IOException thrown if there was a problem with this connection
+     */
+    public Future<HttpResponse> sendBulkRequestAsync(Iterable<PiwikRequest> requests) throws IOException{
+        return sendBulkRequestAsync(requests, null);
     }
 
     /**
@@ -122,7 +156,9 @@ public class PiwikTracker{
      * @param authToken specify if any of the parameters use require AuthToken
      * @return the response from these requests
      * @throws IOException thrown if there was a problem with this connection
+     * @deprecated use sendBulkRequestAsync instead
      */
+    @Deprecated
     public HttpResponse sendBulkRequest(Iterable<PiwikRequest> requests, String authToken) throws IOException{
         if (authToken != null && authToken.length() != PiwikRequest.AUTH_TOKEN_LENGTH){
             throw new IllegalArgumentException(authToken+" is not "+PiwikRequest.AUTH_TOKEN_LENGTH+" characters long.");
@@ -151,10 +187,47 @@ public class PiwikTracker{
             return client.execute(post);
         } catch (URISyntaxException e) {
             throw new IOException(e);
-        } finally {
-            if (post != null) {
-                post.releaseConnection();
-            }
+        }
+    }
+
+    /**
+     * Send multiple requests in a single HTTP call.  More efficient than sending
+     * several individual requests.  Specify the AuthToken if parameters that require
+     * an auth token is used.
+     * @param requests the requests to send
+     * @param authToken specify if any of the parameters use require AuthToken
+     * @return the response from these requests
+     * @throws IOException thrown if there was a problem with this connection
+     */
+    public Future<HttpResponse> sendBulkRequestAsync(Iterable<PiwikRequest> requests, String authToken) throws IOException{
+        if (authToken != null && authToken.length() != PiwikRequest.AUTH_TOKEN_LENGTH){
+            throw new IllegalArgumentException(authToken+" is not "+PiwikRequest.AUTH_TOKEN_LENGTH+" characters long.");
+        }
+
+        JsonObjectBuilder ob = Json.createObjectBuilder();
+        JsonArrayBuilder ab = Json.createArrayBuilder();
+
+        for (PiwikRequest request : requests){
+            ab.add("?"+request.getQueryString());
+        }
+
+        ob.add(REQUESTS, ab);
+
+        if (authToken != null){
+            ob.add(AUTH_TOKEN, authToken);
+        }
+
+        CloseableHttpAsyncClient client = getHttpAsyncClient();
+        client.start();
+        HttpPost post = null;
+
+        try {
+            post = new HttpPost(uriBuilder.build());
+            post.setEntity(new StringEntity(ob.build().toString(),
+                    ContentType.APPLICATION_JSON));
+            return client.execute(post,null);
+        } catch (URISyntaxException e) {
+            throw new IOException(e);
         }
     }
 
@@ -165,6 +238,30 @@ public class PiwikTracker{
     protected HttpClient getHttpClient(){
 
         HttpClientBuilder builder = HttpClientBuilder.create();
+
+        if(proxyHost != null && proxyPort != 0) {
+            HttpHost proxy = new HttpHost(proxyHost, proxyPort);
+            DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+            builder.setRoutePlanner(routePlanner);
+        }
+
+        RequestConfig.Builder config = RequestConfig.custom()
+                .setConnectTimeout(timeout)
+                .setConnectionRequestTimeout(timeout)
+                .setSocketTimeout(timeout);
+
+        builder.setDefaultRequestConfig(config.build());
+
+        return builder.build();
+    }
+
+    /**
+     * Get an async HTTP client. With proxy if a proxy is provided in the constructor.
+     * @return an async HTTP client
+     */
+    protected CloseableHttpAsyncClient getHttpAsyncClient(){
+
+        HttpAsyncClientBuilder builder = HttpAsyncClientBuilder.create();
 
         if(proxyHost != null && proxyPort != 0) {
             HttpHost proxy = new HttpHost(proxyHost, proxyPort);
