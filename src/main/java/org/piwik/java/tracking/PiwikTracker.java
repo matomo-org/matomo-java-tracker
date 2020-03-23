@@ -112,6 +112,7 @@ public class PiwikTracker{
      */
     public Future<HttpResponse> sendRequestAsync(PiwikRequest request) throws IOException{
         CloseableHttpAsyncClient client = getHttpAsyncClient();
+        client.start();
         uriBuilder.setCustomQuery(request.getQueryString());
         HttpGet get = null;
 
@@ -217,6 +218,7 @@ public class PiwikTracker{
         }
 
         CloseableHttpAsyncClient client = getHttpAsyncClient();
+        client.start();
         HttpPost post = null;
 
         try {
