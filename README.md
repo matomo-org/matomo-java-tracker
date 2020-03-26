@@ -1,12 +1,12 @@
-Piwik Java Tracker
+Matomo Java Tracker
 ================
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.piwik.java.tracking/piwik-java-tracker/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.piwik.java.tracking/piwik-java-tracker)
 ## Code Status
-[![Build Status](https://travis-ci.org/matomo-org/piwik-java-tracker.svg?branch=master)](https://travis-ci.org/matomo-org/piwik-java-tracker)<!--[![Coverage Status](https://coveralls.io/repos/piwik/piwik-java-tracker/badge.svg?branch=master&service=github)](https://coveralls.io/github/piwik/piwik-java-tracker?branch=master)-->
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/matomo-org/piwik-java-tracker.svg)](http://isitmaintained.com/project/matomo-org/piwik-java-tracker "Average time to resolve an issue")
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/matomo-org/piwik-java-tracker.svg)](http://isitmaintained.com/project/matomo-org/piwik-java-tracker "Percentage of issues still open")
+[![Build Status](https://travis-ci.org/matomo-org/matomo-java-tracker.svg?branch=master)](https://travis-ci.org/matomo-org/piwik-java-tracker)<!--[![Coverage Status](https://coveralls.io/repos/piwik/piwik-java-tracker/badge.svg?branch=master&service=github)](https://coveralls.io/github/piwik/piwik-java-tracker?branch=master)-->
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/matomo-org/matomo-java-tracker.svg)](http://isitmaintained.com/project/matomo-org/matomo-java-tracker "Average time to resolve an issue")
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/matomo-org/matomo-java-tracker.svg)](http://isitmaintained.com/project/matomo-org/matomo-java-tracker "Percentage of issues still open")
 
-Official Java implementation of the [Piwik Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api).
+Official Java implementation of the [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api).
 
 ## Javadoc
 The Javadoc for this project is hosted as a Github page for this repo.  The latest Javadoc can be found [here](https://matomo-org.github.io/piwik-java-tracker/javadoc/HEAD/index.html).  Javadoc for the latest and all releases can be found [here](https://matomo-org.github.io/piwik-java-tracker/javadoc/index.html).
