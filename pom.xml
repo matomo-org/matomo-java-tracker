@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.piwik.java.tracking</groupId>
   <artifactId>matomo-java-tracker</artifactId>
-  <version>1.4-SNAPSHOT</version>
+  <version>1.5</version>
   <packaging>jar</packaging>
 
   <name>Matomo Java Tracker</name>
@@ -64,86 +64,89 @@
         </configuration>
       </plugin>
       <plugin>
-	<groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-source-plugin</artifactId>
-    <version>3.2.1</version>
-	<executions>
-	  <execution>
-	    <id>attach-sources</id>
-	    <goals>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
               <goal>jar</goal>
-	    </goals>
-	  </execution>
-	</executions>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
-	<groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-javadoc-plugin</artifactId>
-    <version>3.2.0</version>
-	<executions>
-	  <execution>
-	    <id>attach-javadocs</id>
-	    <goals>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.2.0</version>
+        <configuration>
+<!--          <release>8</release>-->
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
               <goal>jar</goal>
-	    </goals>
-	  </execution>
-	</executions>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
-	<groupId>org.pitest</groupId>
-	<artifactId>pitest-maven</artifactId>
-	<version>1.4.11</version>
-	<configuration>
+        <groupId>org.pitest</groupId>
+        <artifactId>pitest-maven</artifactId>
+        <version>1.4.11</version>
+        <configuration>
           <targetClasses>
             <param>org.piwik.java.tracking*</param>
           </targetClasses>
           <targetTests>
             <param>org.piwik.java.tracking*</param>
           </targetTests>
-	</configuration>
+        </configuration>
       </plugin>
       <plugin>
-	<groupId>org.eluder.coveralls</groupId>
-	<artifactId>coveralls-maven-plugin</artifactId>
-	<version>4.3.0</version>
+        <groupId>org.eluder.coveralls</groupId>
+        <artifactId>coveralls-maven-plugin</artifactId>
+        <version>4.3.0</version>
       </plugin>
       <plugin>
-	<groupId>org.jacoco</groupId>
-	<artifactId>jacoco-maven-plugin</artifactId>
-	<version>0.8.5</version>
-	<executions>
-	  <execution>
-	    <id>prepare-agent</id>
-	    <goals>
-	      <goal>prepare-agent</goal>
-	    </goals>
-	  </execution>
-	</executions>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.5</version>
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
-	<groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-gpg-plugin</artifactId>
-	<version>1.6</version>
-	<executions>
-	  <execution>
-	    <id>sign-artifacts</id>
-	    <phase>verify</phase>
-	    <goals>
-	      <goal>sign</goal>
-	    </goals>
-	  </execution>
-	</executions>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
-	<groupId>org.sonatype.plugins</groupId>
-	<artifactId>nexus-staging-maven-plugin</artifactId>
-	<version>1.6.8</version>
-	<extensions>true</extensions>
-	<configuration>
-	  <serverId>ossrh</serverId>
-	  <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-	  <autoReleaseAfterClose>false</autoReleaseAfterClose>
-	</configuration>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.8</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>false</autoReleaseAfterClose>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -167,7 +170,7 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>3.3.3</version>
+      <version>3.4.6</version>
       <scope>test</scope>
     </dependency>
     <dependency>
