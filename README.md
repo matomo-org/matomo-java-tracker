@@ -1,15 +1,16 @@
 Matomo Java Tracker
 ================
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.piwik.java.tracking/piwik-java-tracker/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.piwik.java.tracking/piwik-java-tracker)
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.piwik.java.tracking/matomo-java-tracker/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.piwik.java.tracking/matomo-java-tracker)
 ## Code Status
-[![Build Status](https://travis-ci.org/matomo-org/matomo-java-tracker.svg?branch=master)](https://travis-ci.org/matomo-org/piwik-java-tracker)<!--[![Coverage Status](https://coveralls.io/repos/piwik/piwik-java-tracker/badge.svg?branch=master&service=github)](https://coveralls.io/github/piwik/piwik-java-tracker?branch=master)-->
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/matomo-org/matomo-java-tracker.svg)](http://isitmaintained.com/project/matomo-org/matomo-java-tracker "Average time to resolve an issue")
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/matomo-org/matomo-java-tracker.svg)](http://isitmaintained.com/project/matomo-org/matomo-java-tracker "Percentage of issues still open")
+[![Build Status](https://travis-ci.org/matomo-org/matomo-java-tracker.svg?branch=master)](https://travis-ci.org/matomo-org/matomo-java-tracker)
+[![Average time to resolve an issue](https://isitmaintained.com/badge/resolution/matomo-org/matomo-java-tracker.svg)](https://isitmaintained.com/project/matomo-org/matomo-java-tracker "Average time to resolve an issue")
+[![Percentage of issues still open](https://isitmaintained.com/badge/open/matomo-org/matomo-java-tracker.svg)](https://isitmaintained.com/project/matomo-org/matomo-java-tracker "Percentage of issues still open")
 
 Official Java implementation of the [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api).
 
 ## Javadoc
-The Javadoc for this project is hosted as a Github page for this repo.  The latest Javadoc can be found [here](https://matomo-org.github.io/piwik-java-tracker/javadoc/HEAD/index.html).  Javadoc for the latest and all releases can be found [here](https://matomo-org.github.io/piwik-java-tracker/javadoc/index.html).
+The Javadoc for this project is hosted as a Github page for this repo. The latest Javadoc can be found [here](https://matomo-org.github.io/matomo-java-tracker/javadoc/HEAD/index.html). Javadoc for the latest and all releases can be found [here](https://matomo-org.github.io/matomo-java-tracker/javadoc/index.html).
 
 ## Using this API
 ### Create a Request
@@ -30,20 +31,20 @@ responseAsImage = false;
 
 Overwrite these properties as desired.
 
-Note that if you want to be able to track campaigns using <em>Referrers &gt; Campaigns</em>, you must add the correct URL parameters to your actionUrl.  For example, 
+Note that if you want to be able to track campaigns using <em>Referrers &gt; Campaigns</em>, you must add the correct URL parameters to your actionUrl. For example, 
 ```java
 URL actionUrl = new URL("http://example.org/landing.html?pk_campaign=Email-Nov2011&pk_kwd=LearnMore");
 ```
 See [Tracking Campaigns](https://matomo.org/docs/tracking-campaigns/) for more information. 
 
-All HTTP query parameters denoted on the [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api) can be set using the appropriate getters and setters.  See <strong>PiwikRequest.java</strong> for the mappings of the parameters to their corresponding Java getters/setters.
+All HTTP query parameters denoted on the [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api) can be set using the appropriate getters and setters. See <strong>PiwikRequest.java</strong> for the mappings of the parameters to their corresponding Java getters/setters.
 
 Some parameters are dependent on the state of other parameters:
-<strong>EcommerceEnabled</strong> must be called before the following parameters are set:  <em>EcommerceId</em> and <em>EcommerceRevenue</em>.
+<strong>EcommerceEnabled</strong> must be called before the following parameters are set: <em>EcommerceId</em> and <em>EcommerceRevenue</em>.
 
 <strong>EcommerceId</strong> and <strong>EcommerceRevenue</strong> must be set before the following parameters are set:  <em>EcommerceDiscount</em>, <em>EcommerceItem</em>, <em>EcommerceLastOrderTimestamp</em>, <em>EcommerceShippingCost</em>, <em>EcommerceSubtotal</em>, and <em>EcommerceTax</em>.
 
-<strong>AuthToken</strong> must be set before the following parameters are set:  <em>VisitorCity</em>, <em>VisitorCountry</em>, <em>VisitorIp</em>, <em>VisitorLatitude</em>, <em>VisitorLongitude</em>, and <em>VisitorRegion</em>.
+<strong>AuthToken</strong> must be set before the following parameters are set: <em>VisitorCity</em>, <em>VisitorCountry</em>, <em>VisitorIp</em>, <em>VisitorLatitude</em>, <em>VisitorLongitude</em>, and <em>VisitorRegion</em>.
 
 ### Sending Requests
 Create a PiwikTracker through
@@ -90,20 +91,18 @@ mvn clean
 
 ## Contribute
 Have a fantastic feature idea?  Spot a bug?  We would absolutely love for you to contribute to this project!  Please feel free to:
+
 * Fork this project
 * Create a feature branch from the <strong>dev</strong> branch
 * Write awesome code that does awesome things
-* Write awesome test that test your awesome code
+* Write awesome test to test your awesome code
 * Verify that everything is working as it should by running <strong>mvn test</strong>.  If everything passes, you may want to make sure that your tests are covering everything you think they are!  Run <strong>mvn org.pitest:pitest-maven:mutationCoverage</strong> to find out!
 * Commit this code to your repository
 * Submit a pull request from your branch to our dev branch and let us know why you made the changes you did
 * We'll take a look at your request and work to get it integrated with the repo!
 
-## Contact
-brett.csorba@gmail.com
-
 ## License
-This software is released under the BSD 3-Clause license.  See [LICENSE](LICENSE).
+This software is released under the BSD 3-Clause license. See [LICENSE](LICENSE).
 
 ## Copyright
 Copyright (c) 2015 General Electric Company. All rights reserved.
