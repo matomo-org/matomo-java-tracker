@@ -38,8 +38,9 @@ public class PiwikTracker{
     private static final int DEFAULT_TIMEOUT = 5000;
     private final URIBuilder uriBuilder;
     private final int timeout;
-    private String proxyHost = null;
-    private int proxyPort = 0;
+    private final String proxyHost;
+    private final int proxyPort;
+    private CloseableHttpAsyncClient asyncClient = null;
 
     /**
      * Creates a tracker that will send {@link PiwikRequest}s to the specified
@@ -61,6 +62,8 @@ public class PiwikTracker{
     public PiwikTracker(String hostUrl, int timeout){
         uriBuilder = new URIBuilder(URI.create(hostUrl));
         this.timeout = timeout;
+        this.proxyHost = null;
+        this.proxyPort = 0;
     }
 
     /**
@@ -261,6 +264,10 @@ public class PiwikTracker{
      */
     protected CloseableHttpAsyncClient getHttpAsyncClient(){
 
+    	if(asyncClient != null) {
+    		return asyncClient;
+    	}
+    	
         HttpAsyncClientBuilder builder = HttpAsyncClientBuilder.create();
 
         if(proxyHost != null && proxyPort != 0) {
@@ -276,6 +283,8 @@ public class PiwikTracker{
 
         builder.setDefaultRequestConfig(config.build());
 
-        return builder.build();
+        asyncClient = builder.build();
+        
+        return asyncClient;
     }
 }
