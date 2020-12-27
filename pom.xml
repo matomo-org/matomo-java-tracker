@@ -81,7 +81,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>3.2.0</version>
         <configuration>
-<!--          <release>8</release>-->
+          <!--          <release>8</release>-->
         </configuration>
         <executions>
           <execution>
