@@ -62,7 +62,7 @@ If you have multiple requests to wish to track, it may be more efficient to send
 ```java
 HttpResponse response = tracker.sendBulkRequest(requests);
 ```
-If some of the parameters that you've specified in the bulk request requre AuthToken to be set, this can also be set in the bulk request through
+If some of the parameters that you've specified in the bulk request require AuthToken to be set, this can also be set in the bulk request through
 ```java
 HttpResponse response = tracker.sendBulkRequest(requests, authToken);
 ```
