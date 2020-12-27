@@ -31,11 +31,11 @@ responseAsImage = false;
 
 Overwrite these properties as desired.
 
-Note that if you want to be able to track campaigns using <em>Referrers &gt; Campaigns</em>, you must add the correct URL parameters to your actionUrl. For example, 
+Note that if you want to be able to track campaigns using <em>Referrers &gt; Campaigns</em>, you must add the correct URL parameters to your actionUrl. For example,
 ```java
 URL actionUrl = new URL("http://example.org/landing.html?pk_campaign=Email-Nov2011&pk_kwd=LearnMore");
 ```
-See [Tracking Campaigns](https://matomo.org/docs/tracking-campaigns/) for more information. 
+See [Tracking Campaigns](https://matomo.org/docs/tracking-campaigns/) for more information.
 
 All HTTP query parameters denoted on the [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api) can be set using the appropriate getters and setters. See <strong>PiwikRequest.java</strong> for the mappings of the parameters to their corresponding Java getters/setters.
 
@@ -82,7 +82,7 @@ This project also supports [Pitest](http://pitest.org/) mutation testing.  This 
 ```shell
 mvn org.pitest:pitest-maven:mutationCoverage
 ```
-and will produce an html report at <strong>target/pit-reports/YYYYMMDDHHMI</strong>
+and will produce an HTML report at <strong>target/pit-reports/YYYYMMDDHHMI</strong>
 
 Clean this project using
 ```shell
