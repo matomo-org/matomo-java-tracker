@@ -40,7 +40,7 @@ public class PiwikRequestTest{
     @Test
     public void testConstructor() throws Exception{
         request = new PiwikRequest(3, new URL("http://test.com"));
-        assertEquals(new Integer(3), request.getSiteId());
+        assertEquals(Integer.valueOf(3), request.getSiteId());
         assertTrue(request.getRequired());
         assertEquals(new URL("http://test.com"), request.getActionUrl());
         assertNotNull(request.getVisitorId());
@@ -66,7 +66,7 @@ public class PiwikRequestTest{
     @Test
     public void testActionTime(){
         request.setActionTime(1000L);
-        assertEquals(new Long(1000L), request.getActionTime());
+        assertEquals(Long.valueOf(1000L), request.getActionTime());
     }
 
     /**
@@ -242,7 +242,7 @@ public class PiwikRequestTest{
     @Test
     public void testCurrentHour(){
         request.setCurrentHour(1);
-        assertEquals(new Integer(1), request.getCurrentHour());
+        assertEquals(Integer.valueOf(1), request.getCurrentHour());
     }
 
     /**
@@ -251,7 +251,7 @@ public class PiwikRequestTest{
     @Test
     public void testCurrentMinute(){
         request.setCurrentMinute(2);
-        assertEquals(new Integer(2), request.getCurrentMinute());
+        assertEquals(Integer.valueOf(2), request.getCurrentMinute());
     }
 
     /**
@@ -260,7 +260,7 @@ public class PiwikRequestTest{
     @Test
     public void testCurrentSecond(){
         request.setCurrentSecond(3);
-        assertEquals(new Integer(3), request.getCurrentSecond());
+        assertEquals(Integer.valueOf(3), request.getCurrentSecond());
     }
     
     /**
@@ -391,7 +391,7 @@ public class PiwikRequestTest{
     @Test
     public void testEnableEcommerce(){
         request.enableEcommerce();
-        assertEquals(new Integer(0), request.getGoalId());
+        assertEquals(Integer.valueOf(0), request.getGoalId());
     }
 
     /**
@@ -483,7 +483,7 @@ public class PiwikRequestTest{
         request.setEcommerceRevenue(2.0);
         request.setEcommerceDiscount(1.0);
         
-        assertEquals(new Double(1.0), request.getEcommerceDiscount());
+        assertEquals(Double.valueOf(1.0), request.getEcommerceDiscount());
     }
     @Test
     public void testEcommerceDiscountTE(){
@@ -585,7 +585,7 @@ public class PiwikRequestTest{
         request.setEcommerceRevenue(2.0);
         request.setEcommerceLastOrderTimestamp(1000L);
         
-        assertEquals(new Long(1000L), request.getEcommerceLastOrderTimestamp());
+        assertEquals(Long.valueOf(1000L), request.getEcommerceLastOrderTimestamp());
     }
     @Test
     public void testEcommerceLastOrderTimestampTE(){
@@ -614,7 +614,7 @@ public class PiwikRequestTest{
         request.setEcommerceId("1");
         request.setEcommerceRevenue(20.0);
         
-        assertEquals(new Double(20.0), request.getEcommerceRevenue());
+        assertEquals(Double.valueOf(20.0), request.getEcommerceRevenue());
     }
     @Test
     public void testEcommerceRevenueTE(){
@@ -644,7 +644,7 @@ public class PiwikRequestTest{
         request.setEcommerceRevenue(2.0);
         request.setEcommerceShippingCost(20.0);
         
-        assertEquals(new Double(20.0), request.getEcommerceShippingCost());
+        assertEquals(Double.valueOf(20.0), request.getEcommerceShippingCost());
     }
     @Test
     public void testEcommerceShippingCostTE(){
@@ -674,7 +674,7 @@ public class PiwikRequestTest{
         request.setEcommerceRevenue(2.0);
         request.setEcommerceSubtotal(20.0);
         
-        assertEquals(new Double(20.0), request.getEcommerceSubtotal());
+        assertEquals(Double.valueOf(20.0), request.getEcommerceSubtotal());
     }
     @Test
     public void testEcommerceSubtotalTE(){
@@ -704,7 +704,7 @@ public class PiwikRequestTest{
         request.setEcommerceRevenue(2.0);
         request.setEcommerceTax(20.0);
         
-        assertEquals(new Double(20.0), request.getEcommerceTax());
+        assertEquals(Double.valueOf(20.0), request.getEcommerceTax());
     }
     @Test
     public void testEcommerceTaxTE(){
@@ -779,7 +779,7 @@ public class PiwikRequestTest{
     @Test
     public void testGoalId(){
         request.setGoalId(1);
-        assertEquals(new Integer(1), request.getGoalId());
+        assertEquals(Integer.valueOf(1), request.getGoalId());
     }
 
     /**
@@ -801,7 +801,7 @@ public class PiwikRequestTest{
         request.setGoalId(1);
         request.setGoalRevenue(20.0);
         
-        assertEquals(new Double(20.0), request.getGoalRevenue());
+        assertEquals(Double.valueOf(20.0), request.getGoalRevenue());
     }
     @Test
     public void testGoalRevenueF(){
@@ -1150,7 +1150,7 @@ public class PiwikRequestTest{
     public void testSearchResultsCountTF(){
         request.setSearchQuery("query");
         request.setSearchResultsCount(100L);
-        assertEquals(new Long(100L), request.getSearchResultsCount());
+        assertEquals(Long.valueOf(100L), request.getSearchResultsCount());
     }
     @Test
     public void testSearchResultsCountF(){
@@ -1164,7 +1164,7 @@ public class PiwikRequestTest{
     @Test
     public void testSiteId(){
         request.setSiteId(2);
-        assertEquals(new Integer(2), request.getSiteId());
+        assertEquals(Integer.valueOf(2), request.getSiteId());
     }
 
     /**
@@ -1319,7 +1319,7 @@ public class PiwikRequestTest{
     @Test
     public void testVisitorFirstVisitTimestamp(){
         request.setVisitorFirstVisitTimestamp(1000L);
-        assertEquals(new Long(1000L), request.getVisitorFirstVisitTimestamp());
+        assertEquals(Long.valueOf(1000L), request.getVisitorFirstVisitTimestamp());
     }
 
     /**
@@ -1392,7 +1392,7 @@ public class PiwikRequestTest{
     public void testVisitorLatitudeT(){
         request.setAuthToken("12345678901234567890123456789012");
         request.setVisitorLatitude(10.5);
-        assertEquals(new Double(10.5), request.getVisitorLatitude());
+        assertEquals(Double.valueOf(10.5), request.getVisitorLatitude());
     }
     @Test
     public void testVisitorLatitudeTE(){
@@ -1418,7 +1418,7 @@ public class PiwikRequestTest{
     public void testVisitorLongitudeT(){
         request.setAuthToken("12345678901234567890123456789012");
         request.setVisitorLongitude(20.5);
-        assertEquals(new Double(20.5), request.getVisitorLongitude());
+        assertEquals(Double.valueOf(20.5), request.getVisitorLongitude());
     }
     @Test
     public void testVisitorLongitudeTE(){
@@ -1443,7 +1443,7 @@ public class PiwikRequestTest{
     @Test
     public void testVisitorPreviousVisitTimestamp(){
         request.setVisitorPreviousVisitTimestamp(1000L);
-        assertEquals(new Long(1000L), request.getVisitorPreviousVisitTimestamp());
+        assertEquals(Long.valueOf(1000L), request.getVisitorPreviousVisitTimestamp());
     }
 
     /**
@@ -1480,7 +1480,7 @@ public class PiwikRequestTest{
     @Test
     public void testVisitorVisitCount(){
         request.setVisitorVisitCount(100);
-        assertEquals(new Integer(100), request.getVisitorVisitCount());
+        assertEquals(Integer.valueOf(100), request.getVisitorVisitCount());
     }
 
     /**
