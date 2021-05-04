@@ -14,3 +14,7 @@ hs_err_pid*
 # IDEA files
 *.iml
 .idea
+
+# Eclipse files
+.classpath
+.project
