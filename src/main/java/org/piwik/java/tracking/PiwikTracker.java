@@ -6,27 +6,21 @@
  */
 package org.piwik.java.tracking;
 
-import org.apache.http.HttpHost;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.concurrent.Future;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.concurrent.Future;
 
 /**
  * A class that sends {@link PiwikRequest}s to a specified Piwik server.
@@ -41,7 +35,6 @@ public class PiwikTracker {
   private final int timeout;
   private final String proxyHost;
   private final int proxyPort;
-  private CloseableHttpAsyncClient asyncClient = null;
 
   /**
    * Creates a tracker that will send {@link PiwikRequest}s to the specified
@@ -50,7 +43,7 @@ public class PiwikTracker {
    * @param hostUrl url endpoint to send requests to.  Usually in the format
    * <strong>http://your-piwik-domain.tld/piwik.php</strong>.
    */
-  public PiwikTracker(String hostUrl) {
+  public PiwikTracker(final String hostUrl) {
     this(hostUrl, DEFAULT_TIMEOUT);
   }
 
@@ -62,7 +55,7 @@ public class PiwikTracker {
    * <strong>http://your-piwik-domain.tld/piwik.php</strong>.
    * @param timeout the timeout of the sent request in milliseconds
    */
-  public PiwikTracker(String hostUrl, int timeout) {
+  public PiwikTracker(final String hostUrl, final int timeout) {
     uriBuilder = new URIBuilder(URI.create(hostUrl));
     this.timeout = timeout;
     this.proxyHost = null;
@@ -78,11 +71,11 @@ public class PiwikTracker {
    * @param proxyHost url endpoint for the proxy
    * @param proxyPort proxy server port number
    */
-  public PiwikTracker(String hostUrl, String proxyHost, int proxyPort) {
+  public PiwikTracker(final String hostUrl, final String proxyHost, final int proxyPort) {
     this(hostUrl, proxyHost, proxyPort, DEFAULT_TIMEOUT);
   }
 
-  public PiwikTracker(String hostUrl, String proxyHost, int proxyPort, int timeout) {
+  public PiwikTracker(final String hostUrl, final String proxyHost, final int proxyPort, final int timeout) {
     uriBuilder = new URIBuilder(URI.create(hostUrl));
     this.proxyHost = proxyHost;
     this.proxyPort = proxyPort;
@@ -98,15 +91,15 @@ public class PiwikTracker {
    * @deprecated use sendRequestAsync instead
    */
   @Deprecated
-  public HttpResponse sendRequest(PiwikRequest request) throws IOException {
-    HttpClient client = getHttpClient();
+  public HttpResponse sendRequest(final PiwikRequest request) throws IOException {
+    final HttpClient client = getHttpClient();
     uriBuilder.setCustomQuery(request.getQueryString());
     HttpGet get = null;
 
     try {
       get = new HttpGet(uriBuilder.build());
       return client.execute(get);
-    } catch (URISyntaxException e) {
+    } catch (final URISyntaxException e) {
       throw new IOException(e);
     }
   }
@@ -118,8 +111,8 @@ public class PiwikTracker {
    * @return future with response from this request
    * @throws IOException thrown if there was a problem with this connection
    */
-  public Future<HttpResponse> sendRequestAsync(PiwikRequest request) throws IOException {
-    CloseableHttpAsyncClient client = getHttpAsyncClient();
+  public Future<HttpResponse> sendRequestAsync(final PiwikRequest request) throws IOException {
+    final CloseableHttpAsyncClient client = getHttpAsyncClient();
     client.start();
     uriBuilder.setCustomQuery(request.getQueryString());
     HttpGet get = null;
@@ -127,7 +120,7 @@ public class PiwikTracker {
     try {
       get = new HttpGet(uriBuilder.build());
       return client.execute(get, null);
-    } catch (URISyntaxException e) {
+    } catch (final URISyntaxException e) {
       throw new IOException(e);
     }
   }
@@ -142,7 +135,7 @@ public class PiwikTracker {
    * @deprecated use sendBulkRequestAsync instead
    */
   @Deprecated
-  public HttpResponse sendBulkRequest(Iterable<PiwikRequest> requests) throws IOException {
+  public HttpResponse sendBulkRequest(final Iterable<PiwikRequest> requests) throws IOException {
     return sendBulkRequest(requests, null);
   }
 
@@ -154,7 +147,7 @@ public class PiwikTracker {
    * @return future with response from these requests
    * @throws IOException thrown if there was a problem with this connection
    */
-  public Future<HttpResponse> sendBulkRequestAsync(Iterable<PiwikRequest> requests) throws IOException {
+  public Future<HttpResponse> sendBulkRequestAsync(final Iterable<PiwikRequest> requests) throws IOException {
     return sendBulkRequestAsync(requests, null);
   }
 
@@ -170,15 +163,15 @@ public class PiwikTracker {
    * @deprecated use sendBulkRequestAsync instead
    */
   @Deprecated
-  public HttpResponse sendBulkRequest(Iterable<PiwikRequest> requests, String authToken) throws IOException {
+  public HttpResponse sendBulkRequest(final Iterable<PiwikRequest> requests, final String authToken) throws IOException {
     if (authToken != null && authToken.length() != PiwikRequest.AUTH_TOKEN_LENGTH) {
       throw new IllegalArgumentException(authToken + " is not " + PiwikRequest.AUTH_TOKEN_LENGTH + " characters long.");
     }
 
-    JsonObjectBuilder ob = Json.createObjectBuilder();
-    JsonArrayBuilder ab = Json.createArrayBuilder();
+    final JsonObjectBuilder ob = Json.createObjectBuilder();
+    final JsonArrayBuilder ab = Json.createArrayBuilder();
 
-    for (PiwikRequest request : requests) {
+    for (final PiwikRequest request : requests) {
       ab.add("?" + request.getQueryString());
     }
 
@@ -188,7 +181,7 @@ public class PiwikTracker {
       ob.add(AUTH_TOKEN, authToken);
     }
 
-    HttpClient client = getHttpClient();
+    final HttpClient client = getHttpClient();
     HttpPost post = null;
 
     try {
@@ -196,7 +189,7 @@ public class PiwikTracker {
       post.setEntity(new StringEntity(ob.build().toString(),
           ContentType.APPLICATION_JSON));
       return client.execute(post);
-    } catch (URISyntaxException e) {
+    } catch (final URISyntaxException e) {
       throw new IOException(e);
     }
   }
@@ -211,15 +204,15 @@ public class PiwikTracker {
    * @return the response from these requests
    * @throws IOException thrown if there was a problem with this connection
    */
-  public Future<HttpResponse> sendBulkRequestAsync(Iterable<PiwikRequest> requests, String authToken) throws IOException {
+  public Future<HttpResponse> sendBulkRequestAsync(final Iterable<PiwikRequest> requests, final String authToken) throws IOException {
     if (authToken != null && authToken.length() != PiwikRequest.AUTH_TOKEN_LENGTH) {
       throw new IllegalArgumentException(authToken + " is not " + PiwikRequest.AUTH_TOKEN_LENGTH + " characters long.");
     }
 
-    JsonObjectBuilder ob = Json.createObjectBuilder();
-    JsonArrayBuilder ab = Json.createArrayBuilder();
+    final JsonObjectBuilder ob = Json.createObjectBuilder();
+    final JsonArrayBuilder ab = Json.createArrayBuilder();
 
-    for (PiwikRequest request : requests) {
+    for (final PiwikRequest request : requests) {
       ab.add("?" + request.getQueryString());
     }
 
@@ -229,7 +222,7 @@ public class PiwikTracker {
       ob.add(AUTH_TOKEN, authToken);
     }
 
-    CloseableHttpAsyncClient client = getHttpAsyncClient();
+    final CloseableHttpAsyncClient client = getHttpAsyncClient();
     client.start();
     HttpPost post = null;
 
@@ -238,7 +231,7 @@ public class PiwikTracker {
       post.setEntity(new StringEntity(ob.build().toString(),
           ContentType.APPLICATION_JSON));
       return client.execute(post, null);
-    } catch (URISyntaxException e) {
+    } catch (final URISyntaxException e) {
       throw new IOException(e);
     }
   }
@@ -249,23 +242,7 @@ public class PiwikTracker {
    * @return a HTTP client
    */
   protected HttpClient getHttpClient() {
-
-    HttpClientBuilder builder = HttpClientBuilder.create();
-
-    if (proxyHost != null && proxyPort != 0) {
-      HttpHost proxy = new HttpHost(proxyHost, proxyPort);
-      DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
-      builder.setRoutePlanner(routePlanner);
-    }
-
-    RequestConfig.Builder config = RequestConfig.custom()
-        .setConnectTimeout(timeout)
-        .setConnectionRequestTimeout(timeout)
-        .setSocketTimeout(timeout);
-
-    builder.setDefaultRequestConfig(config.build());
-
-    return builder.build();
+      return HttpClientFactory.getInstanceFor(proxyHost, proxyPort, timeout);
   }
 
   /**
@@ -274,28 +251,6 @@ public class PiwikTracker {
    * @return an async HTTP client
    */
   protected CloseableHttpAsyncClient getHttpAsyncClient() {
-
-    if (asyncClient != null) {
-      return asyncClient;
-    }
-
-    HttpAsyncClientBuilder builder = HttpAsyncClientBuilder.create();
-
-    if (proxyHost != null && proxyPort != 0) {
-      HttpHost proxy = new HttpHost(proxyHost, proxyPort);
-      DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
-      builder.setRoutePlanner(routePlanner);
-    }
-
-    RequestConfig.Builder config = RequestConfig.custom()
-        .setConnectTimeout(timeout)
-        .setConnectionRequestTimeout(timeout)
-        .setSocketTimeout(timeout);
-
-    builder.setDefaultRequestConfig(config.build());
-
-    asyncClient = builder.build();
-
-    return asyncClient;
+    return HttpClientFactory.getAsyncInstanceFor(proxyHost, proxyPort, timeout);
   }
 }
