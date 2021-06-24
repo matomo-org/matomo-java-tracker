@@ -51,7 +51,7 @@ Create a PiwikTracker through
 ```java
 PiwikTracker tracker = new PiwikTracker(hostUrl);
 ```
-where hostUrl is the url endpoint of the Piwik server.  Usually in the format <strong>http://your-piwik-domain.tld/piwik.php</strong>.
+where hostUrl is the url endpoint of the Piwik server.  Usually in the format http://your-piwik-domain.tld/piwik.php.
 
 To send a single request, call
 ```java
