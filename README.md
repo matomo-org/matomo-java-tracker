@@ -93,7 +93,7 @@ mvn clean
 Have a fantastic feature idea?  Spot a bug?  We would absolutely love for you to contribute to this project!  Please feel free to:
 
 * Fork this project
-* Create a feature branch from the <strong>dev</strong> branch
+* Create a feature branch from the <strong>master</strong> branch
 * Write awesome code that does awesome things
 * Write awesome test to test your awesome code
 * Verify that everything is working as it should by running <strong>mvn test</strong>.  If everything passes, you may want to make sure that your tests are covering everything you think they are!  Run <strong>mvn org.pitest:pitest-maven:mutationCoverage</strong> to find out!
