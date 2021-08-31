@@ -13,6 +13,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.util.EntityUtils;
 import org.junit.After;
@@ -30,11 +31,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.doReturn;
@@ -173,6 +173,57 @@ public class PiwikTrackerTest {
     assertEquals("OK", msgBulk);
   }
 
+  /**
+   * Test async API with local server
+   */
+  @Test
+  public void testWithLocalServerAsyncCallback() throws Exception {
+    CountDownLatch latch = new CountDownLatch(2);
+    BlockingQueue<HttpResponse> responses = new LinkedBlockingQueue<>();
+    BlockingQueue<Exception> exceptions = new LinkedBlockingQueue<>();
+    AtomicInteger cancelled = new AtomicInteger();
+
+    FutureCallback<HttpResponse> cb = new FutureCallback<HttpResponse>() {
+
+      @Override
+      public void completed(HttpResponse httpResponse) {
+        responses.add(httpResponse);
+        latch.countDown();
+      }
+
+      @Override
+      public void failed(Exception e) {
+        exceptions.add(e);
+        latch.countDown();
+      }
+
+      @Override
+      public void cancelled() {
+        cancelled.incrementAndGet();
+        latch.countDown();
+
+      }
+    };
+
+    // one
+    PiwikRequest request = new PiwikRequest(3, new URL("http://test.com"));
+    Future<HttpResponse> respFuture = localTracker.sendRequestAsync(request, cb);
+    // bulk
+    List<PiwikRequest> requests = Collections.singletonList(request);
+    Future<HttpResponse> bulkFuture = localTracker.sendBulkRequestAsync(requests, cb);
+
+    assertTrue("Responses not received", latch.await(100, TimeUnit.MILLISECONDS));
+    assertEquals("Not expecting cancelled responses", 0, cancelled.get());
+    assertEquals("Not expecting exceptions", exceptions.size(), 0);
+    assertTrue("Single response future not done", respFuture.isDone());
+    assertTrue("Bulk response future not done", bulkFuture.isDone());
+    HttpResponse response = responses.poll(1, TimeUnit.MILLISECONDS);
+    assertEquals("OK", EntityUtils.toString(response.getEntity()));
+
+    HttpResponse bulkResponse = responses.poll(1, TimeUnit.MILLISECONDS);
+    assertEquals("OK", EntityUtils.toString(bulkResponse.getEntity()));
+  }
+
   static class CorrectGetRequest implements ArgumentMatcher<HttpGet> {
     String url;
 
@@ -262,7 +313,7 @@ public class PiwikTrackerTest {
     doReturn(response).when(future).get();
     doReturn(true).when(future).isDone();
 
-    doReturn(future).when(piwikTracker).sendBulkRequestAsync(requests, null);
+    doReturn(future).when(piwikTracker).sendBulkRequestAsync(requests);
 
     assertEquals(response, piwikTracker.sendBulkRequestAsync(requests).get());
   }
@@ -304,7 +355,7 @@ public class PiwikTrackerTest {
     doReturn(future).when(client)
         .execute(argThat(new CorrectPostRequest("{\"requests\":[\"?query\"]}")), any());
 
-    assertEquals(response, piwikTracker.sendBulkRequestAsync(requests, null).get());
+    assertEquals(response, piwikTracker.sendBulkRequestAsync(requests).get());
   }
 
   @Test

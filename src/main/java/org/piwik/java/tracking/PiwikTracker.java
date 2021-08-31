@@ -18,6 +18,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
@@ -112,6 +113,17 @@ public class PiwikTracker {
    * @throws IOException thrown if there was a problem with this connection
    */
   public Future<HttpResponse> sendRequestAsync(final PiwikRequest request) throws IOException {
+    return sendRequestAsync(request, null);
+  }
+  /**
+   * Send a request.
+   *
+   * @param request request to send
+   * @param callback callback that gets executed when response arrives
+   * @return future with response from this request
+   * @throws IOException thrown if there was a problem with this connection
+   */
+  public Future<HttpResponse> sendRequestAsync(final PiwikRequest request, FutureCallback<HttpResponse> callback) throws IOException {
     final CloseableHttpAsyncClient client = getHttpAsyncClient();
     client.start();
     uriBuilder.setCustomQuery(request.getQueryString());
@@ -119,7 +131,7 @@ public class PiwikTracker {
 
     try {
       get = new HttpGet(uriBuilder.build());
-      return client.execute(get, null);
+      return client.execute(get, callback);
     } catch (final URISyntaxException e) {
       throw new IOException(e);
     }
@@ -148,7 +160,20 @@ public class PiwikTracker {
    * @throws IOException thrown if there was a problem with this connection
    */
   public Future<HttpResponse> sendBulkRequestAsync(final Iterable<PiwikRequest> requests) throws IOException {
-    return sendBulkRequestAsync(requests, null);
+    return sendBulkRequestAsync(requests, null, null);
+  }
+
+  /**
+   * Send multiple requests in a single HTTP call.  More efficient than sending
+   * several individual requests.
+   *
+   * @param requests the requests to send
+   * @param callback callback that gets executed when response arrives
+   * @return future with response from these requests
+   * @throws IOException thrown if there was a problem with this connection
+   */
+  public Future<HttpResponse> sendBulkRequestAsync(final Iterable<PiwikRequest> requests, FutureCallback<HttpResponse> callback) throws IOException {
+    return sendBulkRequestAsync(requests, null, callback);
   }
 
   /**
@@ -205,6 +230,22 @@ public class PiwikTracker {
    * @throws IOException thrown if there was a problem with this connection
    */
   public Future<HttpResponse> sendBulkRequestAsync(final Iterable<PiwikRequest> requests, final String authToken) throws IOException {
+    return sendBulkRequestAsync(requests, authToken, null);
+  }
+
+  /**
+   * Send multiple requests in a single HTTP call.  More efficient than sending
+   * several individual requests.  Specify the AuthToken if parameters that require
+   * an auth token is used.
+   *
+   * @param requests the requests to send
+   * @param authToken specify if any of the parameters use require AuthToken
+   * @param callback callback that gets executed when response arrives
+   * @return the response from these requests
+   * @throws IOException thrown if there was a problem with this connection
+   */
+  public Future<HttpResponse> sendBulkRequestAsync(final Iterable<PiwikRequest> requests, final String authToken,
+                                                   FutureCallback<HttpResponse> callback) throws IOException {
     if (authToken != null && authToken.length() != PiwikRequest.AUTH_TOKEN_LENGTH) {
       throw new IllegalArgumentException(authToken + " is not " + PiwikRequest.AUTH_TOKEN_LENGTH + " characters long.");
     }
@@ -230,7 +271,7 @@ public class PiwikTracker {
       post = new HttpPost(uriBuilder.build());
       post.setEntity(new StringEntity(ob.build().toString(),
           ContentType.APPLICATION_JSON));
-      return client.execute(post, null);
+      return client.execute(post, callback);
     } catch (final URISyntaxException e) {
       throw new IOException(e);
     }
