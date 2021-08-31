@@ -4,7 +4,7 @@
 
   <groupId>org.piwik.java.tracking</groupId>
   <artifactId>matomo-java-tracker</artifactId>
-  <version>1.7</version>
+  <version>1.8-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Matomo Java Tracker</name>
@@ -170,7 +170,7 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>3.11.2</version>
+      <version>3.12.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
