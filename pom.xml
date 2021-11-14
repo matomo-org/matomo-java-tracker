@@ -33,7 +33,7 @@
 
   <scm>
     <connection>scm:git@github.com:matomo-org/matomo-java-tracker.git</connection>
-    <developerConnection>scm:git@github.com:pmatomo-org/matomo-java-tracker.git</developerConnection>
+    <developerConnection>scm:git@github.com:matomo-org/matomo-java-tracker.git</developerConnection>
     <url>git@github.com:matomo-org/matomo-java-tracker.git</url>
   </scm>
 
