@@ -145,7 +145,7 @@ public class PiwikRequest {
 
   /**
    * Set the title of the action being tracked. It is possible to
-   * <a href="http://piwik.org/faq/how-to/#faq_62">use slashes /
+   * <a href="http://matomo.org/faq/how-to/faq_62">use slashes /
    * to set one or several categories for this action</a>.
    * For example, <strong>Help / Feedback </strong>
    * will create the Action <strong>Feedback</strong> in the category Help.
@@ -949,7 +949,7 @@ public class PiwikRequest {
   /**
    * Set an override value for the <strong>Accept-Language</strong> HTTP header
    * field. This value is used to detect the visitor's country if
-   * <a href="http://piwik.org/faq/troubleshooting/#faq_65">GeoIP </a>is not enabled.
+   * <a href="http://matomo.org/faq/troubleshooting/faq_65">GeoIP </a>is not enabled.
    *
    * @param acceptLangage the Accept-Language HTTP header to set.  A null value will remove this parameter
    */
@@ -1317,7 +1317,7 @@ public class PiwikRequest {
    * Set the datetime of the request (normally the current time is used).
    * This can be used to record visits and page views in the past. The datetime
    * must be sent in UTC timezone. <em>Note: if you record data in the past, you will
-   * need to <a href="http://piwik.org/faq/how-to/#faq_59">force Piwik to re-process
+   * need to <a href="http://matomo.org/faq/how-to/faq_59">force Piwik to re-process
    * reports for the past dates</a>.</em> If you set the <em>Request Datetime</em> to a datetime
    * older than four hours then <em>Auth Token</em> must be set. If you set
    * <em>Request Datetime</em> with a datetime in the last four hours then you
