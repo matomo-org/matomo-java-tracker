@@ -55,16 +55,16 @@ where hostUrl is the url endpoint of the Piwik server.  Usually in the format ht
 
 To send a single request, call
 ```java
-HttpResponse response = tracker.sendRequest(request);
+Future<HttpResponse> response = tracker.sendRequestAsync(request);
 ```
 
 If you have multiple requests to wish to track, it may be more efficient to send them in a single HTTP call.  To do this, send a bulk request.  Place your requests in an <strong>Iterable</strong> data structure and call
 ```java
-HttpResponse response = tracker.sendBulkRequest(requests);
+Future<HttpResponse> response = tracker.sendBulkRequestAsync(requests);
 ```
 If some of the parameters that you've specified in the bulk request require AuthToken to be set, this can also be set in the bulk request through
 ```java
-HttpResponse response = tracker.sendBulkRequest(requests, authToken);
+Future<HttpResponse> response = tracker.sendBulkRequestAsync(requests, authToken);
 ```
 ## Install
 This project can be tested and built by calling
