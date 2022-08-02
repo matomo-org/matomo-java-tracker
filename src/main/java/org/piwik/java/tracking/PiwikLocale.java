@@ -1,55 +1,27 @@
 /*
- * Piwik Java Tracker
+ * Matomo Java Tracker
  *
- * @link https://github.com/piwik/piwik-java-tracker
- * @license https://github.com/piwik/piwik-java-tracker/blob/master/LICENSE BSD-3 Clause
+ * @link https://github.com/matomo/matomo-java-tracker
+ * @license https://github.com/matomo/matomo-java-tracker/blob/master/LICENSE BSD-3 Clause
  */
 package org.piwik.java.tracking;
+
+import org.matomo.java.tracking.MatomoLocale;
 
 import java.util.Locale;
 
 /**
- * Object representing a locale required by some Piwik query parameters.
- *
  * @author brettcsorba
+ * @deprecated Use {@link org.matomo.java.tracking.MatomoLocale} instead.
  */
-public class PiwikLocale {
-  private Locale locale;
+@Deprecated
+public class PiwikLocale extends MatomoLocale {
 
   /**
-   * Create this PiwikLocale from a Locale.
-   *
-   * @param locale the locale to create this object from
+   * @deprecated Use {@link MatomoLocale} instead.
    */
+  @Deprecated
   public PiwikLocale(Locale locale) {
-    this.locale = locale;
-  }
-
-  /**
-   * Gets the locale.
-   *
-   * @return the locale
-   */
-  public Locale getLocale() {
-    return locale;
-  }
-
-  /**
-   * Sets the locale.
-   *
-   * @param locale the locale to set
-   */
-  public void setLocale(Locale locale) {
-    this.locale = locale;
-  }
-
-  /**
-   * Returns the locale's lowercase country code.
-   *
-   * @return the locale's lowercase country code
-   */
-  @Override
-  public String toString() {
-    return locale.getCountry().toLowerCase();
+    super(locale);
   }
 }

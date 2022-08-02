@@ -1,10 +1,10 @@
 /*
  * Piwik Java Tracker
  *
- * @link https://github.com/piwik/piwik-java-tracker
- * @license https://github.com/piwik/piwik-java-tracker/blob/master/LICENSE BSD-3 Clause
+ * @link https://github.com/matomo/matomo-java-tracker
+ * @license https://github.com/matomo/matomo-java-tracker/blob/master/LICENSE BSD-3 Clause
  */
-package org.piwik.java.tracking;
+package org.matomo.java.tracking;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -22,6 +22,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+import org.piwik.java.tracking.PiwikRequest;
+import org.piwik.java.tracking.PiwikTracker;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,12 +31,21 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doReturn;
@@ -45,6 +56,8 @@ import static org.mockito.Mockito.spy;
  * @author brettcsorba
  */
 public class PiwikTrackerTest {
+  private static final Map<String, Collection<Object>> PARAMETERS = Collections.singletonMap("parameterName", Collections.singleton("parameterValue"));
+
   // https://stackoverflow.com/a/3732328
   static class Handler implements HttpHandler {
     @Override
@@ -110,9 +123,9 @@ public class PiwikTrackerTest {
     HttpResponse response = mock(HttpResponse.class);
 
     doReturn(client).when(piwikTracker).getHttpClient();
-    doReturn("query").when(request).getQueryString();
+    doReturn(PARAMETERS).when(request).getParameters();
     doReturn(response).when(client)
-        .execute(argThat(new CorrectGetRequest("http://test.com?query")));
+      .execute(argThat(new CorrectGetRequest("http://test.com?parameterName=parameterValue")));
 
     assertEquals(response, piwikTracker.sendRequest(request));
   }
@@ -128,11 +141,11 @@ public class PiwikTrackerTest {
     Future<HttpResponse> future = mock(Future.class);
 
     doReturn(client).when(piwikTracker).getHttpAsyncClient();
-    doReturn("query").when(request).getQueryString();
+    doReturn(PARAMETERS).when(request).getParameters();
     doReturn(response).when(future).get();
     doReturn(true).when(future).isDone();
     doReturn(future).when(client)
-        .execute(argThat(new CorrectGetRequest("http://test.com?query")), any());
+      .execute(argThat(new CorrectGetRequest("http://test.com?parameterName=parameterValue")), any());
 
     assertEquals(response, piwikTracker.sendRequestAsync(request).get());
   }
@@ -260,7 +273,7 @@ public class PiwikTrackerTest {
       HttpClient client = mock(HttpClient.class);
       PiwikRequest request = mock(PiwikRequest.class);
 
-      doReturn("query").when(request).getQueryString();
+      doReturn(PARAMETERS).when(request).getParameters();
       requests.add(request);
       doReturn(client).when(piwikTracker).getHttpClient();
 
@@ -278,10 +291,10 @@ public class PiwikTrackerTest {
     PiwikRequest request = mock(PiwikRequest.class);
     HttpResponse response = mock(HttpResponse.class);
 
-    doReturn("query").when(request).getQueryString();
+    doReturn(PARAMETERS).when(request).getParameters();
     requests.add(request);
     doReturn(client).when(piwikTracker).getHttpClient();
-    doReturn(response).when(client).execute(argThat(new CorrectPostRequest("{\"requests\":[\"?query\"]}")));
+    doReturn(response).when(client).execute(argThat(new CorrectPostRequest("{\"requests\":[\"?parameterName=parameterValue\"]}")));
 
     assertEquals(response, piwikTracker.sendBulkRequest(requests, null));
   }
@@ -293,11 +306,11 @@ public class PiwikTrackerTest {
     PiwikRequest request = mock(PiwikRequest.class);
     HttpResponse response = mock(HttpResponse.class);
 
-    doReturn("query").when(request).getQueryString();
+    doReturn(PARAMETERS).when(request).getParameters();
     requests.add(request);
     doReturn(client).when(piwikTracker).getHttpClient();
     doReturn(response).when(client)
-        .execute(argThat(new CorrectPostRequest("{\"requests\":[\"?query\"],\"token_auth\":\"12345678901234567890123456789012\"}")));
+      .execute(argThat(new CorrectPostRequest("{\"requests\":[\"?parameterName=parameterValue\"],\"token_auth\":\"12345678901234567890123456789012\"}")));
 
     assertEquals(response, piwikTracker.sendBulkRequest(requests, "12345678901234567890123456789012"));
   }
@@ -328,7 +341,7 @@ public class PiwikTrackerTest {
       CloseableHttpAsyncClient client = mock(CloseableHttpAsyncClient.class);
       PiwikRequest request = mock(PiwikRequest.class);
 
-      doReturn("query").when(request).getQueryString();
+      doReturn(PARAMETERS).when(request).getParameters();
       requests.add(request);
       doReturn(client).when(piwikTracker).getHttpAsyncClient();
 
@@ -349,11 +362,11 @@ public class PiwikTrackerTest {
     doReturn(response).when(future).get();
     doReturn(true).when(future).isDone();
 
-    doReturn("query").when(request).getQueryString();
+    doReturn(PARAMETERS).when(request).getParameters();
     requests.add(request);
     doReturn(client).when(piwikTracker).getHttpAsyncClient();
     doReturn(future).when(client)
-        .execute(argThat(new CorrectPostRequest("{\"requests\":[\"?query\"]}")), any());
+      .execute(argThat(new CorrectPostRequest("{\"requests\":[\"?parameterName=parameterValue\"]}")), any());
 
     assertEquals(response, piwikTracker.sendBulkRequestAsync(requests).get());
   }
@@ -368,11 +381,11 @@ public class PiwikTrackerTest {
     doReturn(response).when(future).get();
     doReturn(true).when(future).isDone();
 
-    doReturn("query").when(request).getQueryString();
+    doReturn(PARAMETERS).when(request).getParameters();
     requests.add(request);
     doReturn(client).when(piwikTracker).getHttpAsyncClient();
     doReturn(future).when(client)
-        .execute(argThat(new CorrectPostRequest("{\"requests\":[\"?query\"],\"token_auth\":\"12345678901234567890123456789012\"}")), any());
+      .execute(argThat(new CorrectPostRequest("{\"requests\":[\"?parameterName=parameterValue\"],\"token_auth\":\"12345678901234567890123456789012\"}")), any());
 
     assertEquals(response, piwikTracker.sendBulkRequestAsync(requests, "12345678901234567890123456789012").get());
   }

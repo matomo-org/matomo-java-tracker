@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.piwik.java.tracking;
+package org.matomo.java.tracking;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +28,7 @@ public class CustomVariableTest {
       new CustomVariable(null, null);
       fail("Exception should have been throw.");
     } catch (NullPointerException e) {
-      assertEquals("Key cannot be null.", e.getLocalizedMessage());
+      assertEquals("key is marked non-null but is null", e.getLocalizedMessage());
     }
   }
 
@@ -38,7 +38,7 @@ public class CustomVariableTest {
       new CustomVariable("key", null);
       fail("Exception should have been throw.");
     } catch (NullPointerException e) {
-      assertEquals("Value cannot be null.", e.getLocalizedMessage());
+      assertEquals("value is marked non-null but is null", e.getLocalizedMessage());
     }
   }
 

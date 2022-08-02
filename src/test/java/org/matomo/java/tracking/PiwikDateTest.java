@@ -1,12 +1,13 @@
 /*
- * Piwik Java Tracker
+ * Matomo Java Tracker
  *
- * @link https://github.com/piwik/piwik-java-tracker
- * @license https://github.com/piwik/piwik-java-tracker/blob/master/LICENSE BSD-3 Clause
+ * @link https://github.com/matomo/matomo-java-tracker
+ * @license https://github.com/matomo/matomo-java-tracker/blob/master/LICENSE BSD-3 Clause
  */
-package org.piwik.java.tracking;
+package org.matomo.java.tracking;
 
 import org.junit.Test;
+import org.piwik.java.tracking.PiwikDate;
 
 import java.util.TimeZone;
 

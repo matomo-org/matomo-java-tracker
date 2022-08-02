@@ -1,16 +1,18 @@
 /*
  * Piwik Java Tracker
  *
- * @link https://github.com/piwik/piwik-java-tracker
- * @license https://github.com/piwik/piwik-java-tracker/blob/master/LICENSE BSD-3 Clause
+ * @link https://github.com/matomo/matomo-java-tracker
+ * @license https://github.com/matomo/matomo-java-tracker/blob/master/LICENSE BSD-3 Clause
  */
-package org.piwik.java.tracking;
+package org.matomo.java.tracking;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.piwik.java.tracking.PiwikDate;
+import org.piwik.java.tracking.PiwikLocale;
+import org.piwik.java.tracking.PiwikRequest;
 
-import javax.xml.bind.TypeConstraintException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -82,25 +84,15 @@ public class PiwikRequestTest {
     URL url = new URL("http://action.com");
     request.setActionUrl(url);
     assertEquals(url, request.getActionUrl());
-    try {
-      request.getActionUrlAsString();
-      fail("Exception should have been thrown.");
-    } catch (TypeConstraintException e) {
-      assertEquals("The stored Action URL is a URL, not a String.  Use \"getActionUrl\" instead.", e.getLocalizedMessage());
-    }
+    assertEquals("http://action.com", request.getActionUrlAsString());
 
     request.setActionUrlWithString(null);
     assertNull(request.getActionUrl());
     assertNull(request.getActionUrlAsString());
 
-    request.setActionUrlWithString("actionUrl");
-    assertEquals("actionUrl", request.getActionUrlAsString());
-    try {
-      request.getActionUrl();
-      fail("Exception should have been thrown.");
-    } catch (TypeConstraintException e) {
-      assertEquals("The stored Action URL is a String, not a URL.  Use \"getActionUrlAsString\" instead.", e.getLocalizedMessage());
-    }
+    request.setActionUrlWithString("http://actionstring.com");
+    assertEquals("http://actionstring.com", request.getActionUrlAsString());
+    assertEquals(new URL("http://actionstring.com"), request.getActionUrl());
   }
 
   /**
@@ -214,23 +206,12 @@ public class PiwikRequestTest {
     URL url = new URL("http://target.com");
     request.setContentTarget(url);
     assertEquals(url, request.getContentTarget());
+    assertEquals("http://target.com", request.getContentTargetAsString());
 
-    try {
-      request.getContentTargetAsString();
-      fail("Exception should have been thrown.");
-    } catch (TypeConstraintException e) {
-      assertEquals("The stored Content Target is a URL, not a String.  Use \"getContentTarget\" instead.", e.getLocalizedMessage());
-    }
+    request.setContentTargetWithString("http://targetstring.com");
+    assertEquals("http://targetstring.com", request.getContentTargetAsString());
+    assertEquals(new URL("http://targetstring.com"), request.getContentTarget());
 
-    request.setContentTargetWithString("contentTarget");
-    assertEquals("contentTarget", request.getContentTargetAsString());
-
-    try {
-      request.getContentTarget();
-      fail("Exception should have been thrown.");
-    } catch (TypeConstraintException e) {
-      assertEquals("The stored Content Target is a String, not a URL.  Use \"getContentTargetAsString\" instead.", e.getLocalizedMessage());
-    }
   }
 
   /**
@@ -269,7 +250,7 @@ public class PiwikRequestTest {
       request.getCustomTrackingParameter(null);
       fail("Exception should have been thrown.");
     } catch (NullPointerException e) {
-      assertEquals("Key cannot be null.", e.getLocalizedMessage());
+      assertEquals("key is marked non-null but is null", e.getLocalizedMessage());
     }
   }
 
@@ -284,7 +265,7 @@ public class PiwikRequestTest {
       request.setCustomTrackingParameter(null, null);
       fail("Exception should have been thrown.");
     } catch (NullPointerException e) {
-      assertEquals("Key cannot be null.", e.getLocalizedMessage());
+      assertEquals("key is marked non-null but is null", e.getLocalizedMessage());
     }
   }
 
@@ -311,7 +292,7 @@ public class PiwikRequestTest {
       request.addCustomTrackingParameter(null, null);
       fail("Exception should have been thrown.");
     } catch (NullPointerException e) {
-      assertEquals("Key cannot be null.", e.getLocalizedMessage());
+      assertEquals("key is marked non-null but is null", e.getLocalizedMessage());
     }
   }
 
@@ -321,7 +302,7 @@ public class PiwikRequestTest {
       request.addCustomTrackingParameter("key", null);
       fail("Exception should have been thrown.");
     } catch (NullPointerException e) {
-      assertEquals("Cannot add a null custom tracking parameter.", e.getLocalizedMessage());
+      assertEquals("value is marked non-null but is null", e.getLocalizedMessage());
     }
   }
 
@@ -364,23 +345,12 @@ public class PiwikRequestTest {
     URL url = new URL("http://download.com");
     request.setDownloadUrl(url);
     assertEquals(url, request.getDownloadUrl());
+    assertEquals("http://download.com", request.getDownloadUrlAsString());
 
-    try {
-      request.getDownloadUrlAsString();
-      fail("Exception should have been thrown.");
-    } catch (TypeConstraintException e) {
-      assertEquals("The stored Download URL is a URL, not a String.  Use \"getDownloadUrl\" instead.", e.getLocalizedMessage());
-    }
+    request.setDownloadUrlWithString("http://downloadstring.com");
+    assertEquals("http://downloadstring.com", request.getDownloadUrlAsString());
+    assertEquals(new URL("http://downloadstring.com"), request.getDownloadUrl());
 
-    request.setDownloadUrlWithString("downloadUrl");
-    assertEquals("downloadUrl", request.getDownloadUrlAsString());
-
-    try {
-      request.getDownloadUrl();
-      fail("Exception should have been thrown.");
-    } catch (TypeConstraintException e) {
-      assertEquals("The stored Download URL is a String, not a URL.  Use \"getDownloadUrlAsString\" instead.", e.getLocalizedMessage());
-    }
   }
 
   /**
@@ -402,7 +372,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -414,7 +384,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -434,7 +404,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -446,7 +416,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("EcommerceId must be set before this value can be set.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -459,7 +429,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("EcommerceRevenue must be set before this value can be set.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -491,7 +461,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -520,7 +490,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -542,7 +512,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -555,7 +525,7 @@ public class PiwikRequestTest {
       request.addEcommerceItem(null);
       fail("Exception should have been thrown.");
     } catch (NullPointerException e) {
-      assertEquals("Value cannot be null.", e.getLocalizedMessage());
+      assertEquals("item is marked non-null but is null", e.getLocalizedMessage());
     }
   }
 
@@ -595,7 +565,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -625,7 +595,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -656,7 +626,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -687,7 +657,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -718,7 +688,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -797,7 +767,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("GoalId must be set before GoalRevenue can be set.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -853,23 +823,12 @@ public class PiwikRequestTest {
     URL url = new URL("http://outlink.com");
     request.setOutlinkUrl(url);
     assertEquals(url, request.getOutlinkUrl());
+    assertEquals("http://outlink.com", request.getOutlinkUrlAsString());
 
-    try {
-      request.getOutlinkUrlAsString();
-      fail("Exception should have been thrown.");
-    } catch (TypeConstraintException e) {
-      assertEquals("The stored Outlink URL is a URL, not a String.  Use \"getOutlinkUrl\" instead.", e.getLocalizedMessage());
-    }
+    request.setOutlinkUrlWithString("http://outlinkstring.com");
+    assertEquals("http://outlinkstring.com", request.getOutlinkUrlAsString());
+    assertEquals(new URL("http://outlinkstring.com"), request.getOutlinkUrl());
 
-    request.setOutlinkUrlWithString("outlinkUrl");
-    assertEquals("outlinkUrl", request.getOutlinkUrlAsString());
-
-    try {
-      request.getOutlinkUrl();
-      fail("Exception should have been thrown.");
-    } catch (TypeConstraintException e) {
-      assertEquals("The stored Outlink URL is a String, not a URL.  Use \"getOutlinkUrlAsString\" instead.", e.getLocalizedMessage());
-    }
   }
 
   /**
@@ -881,7 +840,7 @@ public class PiwikRequestTest {
       request.setPageCustomVariable(null, null);
       fail("Exception should have been thrown");
     } catch (NullPointerException e) {
-      assertEquals("Key cannot be null.", e.getLocalizedMessage());
+      assertEquals("key is marked non-null but is null", e.getLocalizedMessage());
     }
   }
 
@@ -891,7 +850,7 @@ public class PiwikRequestTest {
       request.setPageCustomVariable(null, "pageVal");
       fail("Exception should have been thrown");
     } catch (NullPointerException e) {
-      assertEquals("Key cannot be null.", e.getLocalizedMessage());
+      assertEquals("key is marked non-null but is null", e.getLocalizedMessage());
     }
   }
 
@@ -901,7 +860,7 @@ public class PiwikRequestTest {
       request.getPageCustomVariable(null);
       fail("Exception should have been thrown");
     } catch (NullPointerException e) {
-      assertEquals("Key cannot be null.", e.getLocalizedMessage());
+      assertEquals("key is marked non-null but is null", e.getLocalizedMessage());
     }
   }
 
@@ -1026,23 +985,12 @@ public class PiwikRequestTest {
     URL url = new URL("http://referrer.com");
     request.setReferrerUrl(url);
     assertEquals(url, request.getReferrerUrl());
+    assertEquals("http://referrer.com", request.getReferrerUrlAsString());
 
-    try {
-      request.getReferrerUrlAsString();
-      fail("Exception should have been thrown.");
-    } catch (TypeConstraintException e) {
-      assertEquals("The stored Referrer URL is a URL, not a String.  Use \"getReferrerUrl\" instead.", e.getLocalizedMessage());
-    }
+    request.setReferrerUrlWithString("http://referrerstring.com");
+    assertEquals("http://referrerstring.com", request.getReferrerUrlAsString());
+    assertEquals(new URL("http://referrerstring.com"), request.getReferrerUrl());
 
-    request.setReferrerUrlWithString("referrerUrl");
-    assertEquals("referrerUrl", request.getReferrerUrlAsString());
-
-    try {
-      request.getReferrerUrl();
-      fail("Exception should have been thrown.");
-    } catch (TypeConstraintException e) {
-      assertEquals("The stored Referrer URL is a String, not a URL.  Use \"getReferrerUrlAsString\" instead.", e.getLocalizedMessage());
-    }
   }
 
   /**
@@ -1065,7 +1013,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("Because you are trying to set RequestDatetime for a time greater than 4 hours ago, AuthToken must be set first.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -1112,7 +1060,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("SearchQuery must be set before SearchCategory can be set.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -1148,7 +1096,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("SearchQuery must be set before SearchResultsCount can be set.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -1201,22 +1149,22 @@ public class PiwikRequestTest {
     assertNull(request.getVisitCustomVariable(1));
     CustomVariable cv = new CustomVariable("visitKey", "visitVal");
     request.setVisitCustomVariable(cv, 1);
-    assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_cvar={\"1\":[\"visitKey\",\"visitVal\"]}&_id=1234567890123456&url=http://test.com", request.getQueryString());
+    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&_cvar={\"1\":[\"visitKey\",\"visitVal\"]}", request.getQueryString());
 
     request.setUserCustomVariable("key", "val");
     assertEquals(cv, request.getVisitCustomVariable(1));
-    assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_cvar={\"1\":[\"visitKey\",\"visitVal\"],\"2\":[\"key\",\"val\"]}&_id=1234567890123456&url=http://test.com", request.getQueryString());
+    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&_cvar={\"1\":[\"visitKey\",\"visitVal\"],\"2\":[\"key\",\"val\"]}", request.getQueryString());
 
     request.setVisitCustomVariable(null, 1);
     assertNull(request.getVisitCustomVariable(1));
-    assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_cvar={\"2\":[\"key\",\"val\"]}&_id=1234567890123456&url=http://test.com", request.getQueryString());
+    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&_cvar={\"2\":[\"key\",\"val\"]}", request.getQueryString());
 
     request.setVisitCustomVariable(cv, 2);
     assertEquals(cv, request.getVisitCustomVariable(2));
-    assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_cvar={\"2\":[\"visitKey\",\"visitVal\"]}&_id=1234567890123456&url=http://test.com", request.getQueryString());
+    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&_cvar={\"2\":[\"visitKey\",\"visitVal\"]}", request.getQueryString());
 
     request.setUserCustomVariable("visitKey", null);
-    assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com", request.getQueryString());
+    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456", request.getQueryString());
   }
 
   /**
@@ -1245,7 +1193,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("AuthToken must be set before this value can be set.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -1275,7 +1223,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("AuthToken must be set before this value can be set.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -1296,7 +1244,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalArgumentException e) {
       assertEquals("1 is not 16 characters long.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -1307,7 +1255,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalArgumentException e) {
       assertEquals("1234567890abcdeg is not a hexadecimal string.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -1343,7 +1291,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalArgumentException e) {
       assertEquals("1 is not 16 characters long.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -1354,7 +1302,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalArgumentException e) {
       assertEquals("1234567890abcdeg is not a hexadecimal string.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -1388,7 +1336,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("AuthToken must be set before this value can be set.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -1415,7 +1363,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("AuthToken must be set before this value can be set.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -1442,7 +1390,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("AuthToken must be set before this value can be set.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -1479,7 +1427,7 @@ public class PiwikRequestTest {
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
       assertEquals("AuthToken must be set before this value can be set.",
-          e.getLocalizedMessage());
+        e.getLocalizedMessage());
     }
   }
 
@@ -1506,20 +1454,20 @@ public class PiwikRequestTest {
   public void testGetQueryString() {
     request.setRandomValue("random");
     request.setVisitorId("1234567890123456");
-    assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com", request.getQueryString());
+    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456", request.getQueryString());
     request.setPageCustomVariable("key", "val");
-    assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&cvar={\"1\":[\"key\",\"val\"]}&_id=1234567890123456&url=http://test.com",
-        request.getQueryString());
+    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&cvar={\"1\":[\"key\",\"val\"]}",
+      request.getQueryString());
     request.setPageCustomVariable("key", null);
-    assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com", request.getQueryString());
+    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456", request.getQueryString());
     request.addCustomTrackingParameter("key", "test");
-    assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com&key=test", request.getQueryString());
+    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&key=test", request.getQueryString());
     request.addCustomTrackingParameter("key", "test2");
-    assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com&key=test&key=test2", request.getQueryString());
+    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&key=test&key=test2", request.getQueryString());
     request.setCustomTrackingParameter("key2", "test3");
-    assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com&key2=test3&key=test&key=test2", request.getQueryString());
+    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&key=test&key=test2&key2=test3", request.getQueryString());
     request.setCustomTrackingParameter("key", "test4");
-    assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com&key2=test3&key=test4", request.getQueryString());
+    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&key2=test3&key=test4", request.getQueryString());
     request.setRandomValue(null);
     request.setSiteId(null);
     request.setRequired(null);
@@ -1537,7 +1485,7 @@ public class PiwikRequestTest {
     request.setActionUrlWithString("http://test.com");
     request.setRandomValue("random");
     request.setVisitorId("1234567890123456");
-    assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http://test.com", request.getQueryString());
+    assertEquals("idsite=3&rec=1&apiv=1&send_image=0&url=http://test.com&rand=random&_id=1234567890123456", request.getQueryString());
   }
 
   /**
@@ -1547,15 +1495,15 @@ public class PiwikRequestTest {
   public void testGetUrlEncodedQueryString() {
     request.setRandomValue("random");
     request.setVisitorId("1234567890123456");
-    assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http%3A%2F%2Ftest.com", request.getUrlEncodedQueryString());
+    assertEquals("_id=1234567890123456&apiv=1&idsite=3&rand=random&rec=1&send_image=0&url=http%3A%2F%2Ftest.com", request.getUrlEncodedQueryString());
     request.addCustomTrackingParameter("ke/y", "te:st");
-    assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http%3A%2F%2Ftest.com&ke%2Fy=te%3Ast", request.getUrlEncodedQueryString());
+    assertEquals("_id=1234567890123456&apiv=1&idsite=3&ke%2Fy=te%3Ast&rand=random&rec=1&send_image=0&url=http%3A%2F%2Ftest.com", request.getUrlEncodedQueryString());
     request.addCustomTrackingParameter("ke/y", "te:st2");
-    assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http%3A%2F%2Ftest.com&ke%2Fy=te%3Ast&ke%2Fy=te%3Ast2", request.getUrlEncodedQueryString());
+    assertEquals("_id=1234567890123456&apiv=1&idsite=3&ke%2Fy=te%3Ast&ke%2Fy=te%3Ast2&rand=random&rec=1&send_image=0&url=http%3A%2F%2Ftest.com", request.getUrlEncodedQueryString());
     request.setCustomTrackingParameter("ke/y2", "te:st3");
-    assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http%3A%2F%2Ftest.com&ke%2Fy=te%3Ast&ke%2Fy=te%3Ast2&ke%2Fy2=te%3Ast3", request.getUrlEncodedQueryString());
+    assertEquals("_id=1234567890123456&apiv=1&idsite=3&ke%2Fy=te%3Ast&ke%2Fy=te%3Ast2&ke%2Fy2=te%3Ast3&rand=random&rec=1&send_image=0&url=http%3A%2F%2Ftest.com", request.getUrlEncodedQueryString());
     request.setCustomTrackingParameter("ke/y", "te:st4");
-    assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http%3A%2F%2Ftest.com&ke%2Fy=te%3Ast4&ke%2Fy2=te%3Ast3", request.getUrlEncodedQueryString());
+    assertEquals("_id=1234567890123456&apiv=1&idsite=3&ke%2Fy=te%3Ast4&ke%2Fy2=te%3Ast3&rand=random&rec=1&send_image=0&url=http%3A%2F%2Ftest.com", request.getUrlEncodedQueryString());
     request.setRandomValue(null);
     request.setSiteId(null);
     request.setRequired(null);
@@ -1573,7 +1521,7 @@ public class PiwikRequestTest {
     request.setActionUrlWithString("http://test.com");
     request.setRandomValue("random");
     request.setVisitorId("1234567890123456");
-    assertEquals("rand=random&idsite=3&rec=1&apiv=1&send_image=0&_id=1234567890123456&url=http%3A%2F%2Ftest.com", request.getUrlEncodedQueryString());
+    assertEquals("_id=1234567890123456&apiv=1&idsite=3&rand=random&rec=1&send_image=0&url=http%3A%2F%2Ftest.com", request.getUrlEncodedQueryString());
   }
 
   /**

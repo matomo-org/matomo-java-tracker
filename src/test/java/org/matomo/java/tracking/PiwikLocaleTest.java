@@ -1,16 +1,17 @@
 /*
  * Piwik Java Tracker
  *
- * @link https://github.com/piwik/piwik-java-tracker
- * @license https://github.com/piwik/piwik-java-tracker/blob/master/LICENSE BSD-3 Clause
+ * @link https://github.com/matomo/matomo-java-tracker
+ * @license https://github.com/matomo/matomo-java-tracker/blob/master/LICENSE BSD-3 Clause
  */
-package org.piwik.java.tracking;
+package org.matomo.java.tracking;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.piwik.java.tracking.PiwikLocale;
 
 import java.util.Locale;
 
