@@ -6,6 +6,7 @@
  */
 package org.piwik.java.tracking;
 
+import lombok.NonNull;
 import org.matomo.java.tracking.MatomoRequest;
 
 import java.net.URL;
@@ -21,7 +22,7 @@ public class PiwikRequest extends MatomoRequest {
    * @deprecated Use {@link MatomoRequest} instead.
    */
   @Deprecated
-  public PiwikRequest(Integer siteId, URL actionUrl) {
-    super(siteId, actionUrl);
+  public PiwikRequest(int siteId, @NonNull URL actionUrl) {
+    super(siteId, actionUrl.toString());
   }
 }

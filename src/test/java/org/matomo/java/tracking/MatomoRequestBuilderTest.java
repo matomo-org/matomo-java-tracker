@@ -2,7 +2,6 @@ package org.matomo.java.tracking;
 
 import org.junit.Test;
 
-import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -28,20 +27,20 @@ public class MatomoRequestBuilderTest {
       .build();
 
     Map<String, Collection<Object>> parameters = matomoRequest.getParameters();
-    assertThat(parameters.get("idsite"), hasItem((Object) 42));
-    assertThat(parameters.get("action_name"), hasItem((Object) "ACTION_NAME"));
-    assertThat(parameters.get("apiv"), hasItem((Object) "1"));
-    assertThat(parameters.get("url"), hasItem((Object) new URL("https://www.your-domain.tld/some/page?query=foo")));
+    assertThat(parameters.get("idsite"), hasItem(42));
+    assertThat(parameters.get("action_name"), hasItem("ACTION_NAME"));
+    assertThat(parameters.get("apiv"), hasItem("1"));
+    assertThat(parameters.get("url"), hasItem("https://www.your-domain.tld/some/page?query=foo"));
     assertThat(parameters.get("_id").isEmpty(), is(false));
     assertThat(parameters.get("rand").isEmpty(), is(false));
-    assertThat(parameters.get("send_image"), hasItem((Object) new MatomoBoolean(false)));
-    assertThat(parameters.get("rec"), hasItem((Object) new MatomoBoolean(true)));
-    assertThat(parameters.get("urlref"), hasItem((Object) new URL("https://referrer.com")));
-    assertThat(parameters.get("trackingParameterName"), hasItem((Object) "trackingParameterValue"));
+    assertThat(parameters.get("send_image"), hasItem(new MatomoBoolean(false)));
+    assertThat(parameters.get("rec"), hasItem(new MatomoBoolean(true)));
+    assertThat(parameters.get("urlref"), hasItem("https://referrer.com"));
+    assertThat(parameters.get("trackingParameterName"), hasItem("trackingParameterValue"));
     CustomVariables customVariables = new CustomVariables();
     customVariables.add(customVariable);
-    assertThat(parameters.get("cvar"), hasItem((Object) customVariables));
-    assertThat(parameters.get("_cvar"), hasItem((Object) customVariables));
+    assertThat(parameters.get("cvar"), hasItem(customVariables));
+    assertThat(parameters.get("_cvar"), hasItem(customVariables));
 
   }
 

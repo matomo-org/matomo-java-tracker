@@ -1,7 +1,5 @@
 package org.matomo.java.tracking;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +8,7 @@ public class MatomoRequestBuilder {
 
   private int siteId;
 
-  private URL actionUrl;
+  private String actionUrl;
 
   private String actionName;
   private Long actionTime;
@@ -22,12 +20,12 @@ public class MatomoRequestBuilder {
   private String contentInteraction;
   private String contentName;
   private String contentPiece;
-  private URL contentTarget;
+  private String contentTarget;
   private Integer currentHour;
   private Integer currentMinute;
   private Integer currentSecond;
   private String deviceResolution;
-  private URL downloadUrl;
+  private String downloadUrl;
   private Double ecommerceDiscount;
   private String ecommerceId;
   private Long ecommerceLastOrderTimestamp;
@@ -44,7 +42,7 @@ public class MatomoRequestBuilder {
   private String headerAcceptLanguage;
   private String headerUserAgent;
   private Boolean newVisit;
-  private URL outlinkUrl;
+  private String outlinkUrl;
   private Boolean pluginDirector;
   private Boolean pluginFlash;
   private Boolean pluginGears;
@@ -55,7 +53,7 @@ public class MatomoRequestBuilder {
   private Boolean pluginSilverlight;
   private Boolean pluginWindowsMedia;
   private String randomValue;
-  private URL referrerUrl;
+  private String referrerUrl;
   private MatomoDate requestDatetime;
   private Boolean required;
   private Boolean responseAsImage;
@@ -86,17 +84,8 @@ public class MatomoRequestBuilder {
     return this;
   }
 
-  public MatomoRequestBuilder actionUrl(URL actionUrl) {
-    this.actionUrl = actionUrl;
-    return this;
-  }
-
   public MatomoRequestBuilder actionUrl(String actionUrl) {
-    try {
-      this.actionUrl = new URL(actionUrl);
-    } catch (MalformedURLException e) {
-      throw new InvalidUrlException(e);
-    }
+    this.actionUrl = actionUrl;
     return this;
   }
 
@@ -150,17 +139,8 @@ public class MatomoRequestBuilder {
     return this;
   }
 
-  public MatomoRequestBuilder contentTarget(URL contentTarget) {
-    this.contentTarget = contentTarget;
-    return this;
-  }
-
   public MatomoRequestBuilder contentTarget(String contentTarget) {
-    try {
-      this.contentTarget = new URL(contentTarget);
-    } catch (MalformedURLException e) {
-      throw new InvalidUrlException(e);
-    }
+    this.contentTarget = contentTarget;
     return this;
   }
 
@@ -184,17 +164,8 @@ public class MatomoRequestBuilder {
     return this;
   }
 
-  public MatomoRequestBuilder downloadUrl(URL downloadUrl) {
-    this.downloadUrl = downloadUrl;
-    return this;
-  }
-
   public MatomoRequestBuilder downloadUrl(String downloadUrl) {
-    try {
-      this.downloadUrl = new URL(downloadUrl);
-    } catch (MalformedURLException e) {
-      throw new InvalidUrlException(e);
-    }
+    this.downloadUrl = downloadUrl;
     return this;
   }
 
@@ -278,17 +249,8 @@ public class MatomoRequestBuilder {
     return this;
   }
 
-  public MatomoRequestBuilder outlinkUrl(URL outlinkUrl) {
-    this.outlinkUrl = outlinkUrl;
-    return this;
-  }
-
   public MatomoRequestBuilder outlinkUrl(String outlinkUrl) {
-    try {
-      this.outlinkUrl = new URL(outlinkUrl);
-    } catch (MalformedURLException e) {
-      throw new InvalidUrlException(e);
-    }
+    this.outlinkUrl = outlinkUrl;
     return this;
   }
 
@@ -342,17 +304,8 @@ public class MatomoRequestBuilder {
     return this;
   }
 
-  public MatomoRequestBuilder referrerUrl(URL referrerUrl) {
-    this.referrerUrl = referrerUrl;
-    return this;
-  }
-
   public MatomoRequestBuilder referrerUrl(String referrerUrl) {
-    try {
-      this.referrerUrl = new URL(referrerUrl);
-    } catch (MalformedURLException e) {
-      throw new InvalidUrlException(e);
-    }
+    this.referrerUrl = referrerUrl;
     return this;
   }
 

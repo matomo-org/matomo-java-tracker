@@ -134,7 +134,7 @@ public class MatomoRequest {
    * @param siteId    the id of the website we're tracking a visit/action for
    * @param actionUrl the full URL for the current action
    */
-  public MatomoRequest(int siteId, URL actionUrl) {
+  public MatomoRequest(int siteId, String actionUrl) {
     setParameter(SITE_ID, siteId);
     setBooleanParameter(REQUIRED, true);
     setParameter(ACTION_URL, actionUrl);
@@ -198,10 +198,11 @@ public class MatomoRequest {
    * Get the full URL for the current action.
    *
    * @return the full URL
+   * @deprecated Please use {@link #getActionUrlAsString}
    */
   @Nullable
   public URL getActionUrl() {
-    return castOrNull(ACTION_URL);
+    return castToUrlOrNull(ACTION_URL);
   }
 
   /**
@@ -209,9 +210,10 @@ public class MatomoRequest {
    *
    * @return the full URL
    */
+  @Deprecated
   @Nullable
   public String getActionUrlAsString() {
-    return getUrlParameter(ACTION_URL);
+    return castOrNull(ACTION_URL);
   }
 
 
@@ -219,8 +221,19 @@ public class MatomoRequest {
    * Set the full URL for the current action.
    *
    * @param actionUrl the full URL to set.  A null value will remove this parameter
+   * @deprecated Please use {@link #setActionUrl(String)}
    */
-  public void setActionUrl(URL actionUrl) {
+  @Deprecated
+  public void setActionUrl(@NonNull URL actionUrl) {
+    setActionUrl(actionUrl.toString());
+  }
+
+  /**
+   * Set the full URL for the current action.
+   *
+   * @param actionUrl the full URL to set.  A null value will remove this parameter
+   */
+  public void setActionUrl(String actionUrl) {
     setParameter(ACTION_URL, actionUrl);
   }
 
@@ -228,9 +241,11 @@ public class MatomoRequest {
    * Set the full URL for the current action.
    *
    * @param actionUrl the full URL to set.  A null value will remove this parameter
+   * @deprecated Please use {@link #setActionUrl(String)}
    */
+  @Deprecated
   public void setActionUrlWithString(String actionUrl) {
-    setUrlParameter(ACTION_URL, actionUrl);
+    setActionUrl(actionUrl);
   }
 
   /**
@@ -414,7 +429,20 @@ public class MatomoRequest {
    */
   @Nullable
   public URL getContentTarget() {
-    return castOrNull(CONTENT_TARGET);
+    return castToUrlOrNull(CONTENT_TARGET);
+  }
+
+  @Nullable
+  private URL castToUrlOrNull(@NonNull String key) {
+    String url = castOrNull(key);
+    if (url == null) {
+      return null;
+    }
+    try {
+      return new URL(url);
+    } catch (MalformedURLException e) {
+      throw new InvalidUrlException(e);
+    }
   }
 
   /**
@@ -424,7 +452,18 @@ public class MatomoRequest {
    */
   @Nullable
   public String getContentTargetAsString() {
-    return getUrlParameter(CONTENT_TARGET);
+    return castOrNull(CONTENT_TARGET);
+  }
+
+  /**
+   * Set the target of the content. For instance the URL of a landing page.
+   *
+   * @param contentTarget the target to set.  A null value will remove this parameter
+   * @deprecated Please use {@link #setContentTarget(String)}
+   */
+  @Deprecated
+  public void setContentTarget(@NonNull URL contentTarget) {
+    setContentTarget(contentTarget.toString());
   }
 
   /**
@@ -432,7 +471,7 @@ public class MatomoRequest {
    *
    * @param contentTarget the target to set.  A null value will remove this parameter
    */
-  public void setContentTarget(URL contentTarget) {
+  public void setContentTarget(String contentTarget) {
     setParameter(CONTENT_TARGET, contentTarget);
   }
 
@@ -440,9 +479,11 @@ public class MatomoRequest {
    * Set the target of the content. For instance the URL of a landing page.
    *
    * @param contentTarget the target to set.  A null value will remove this parameter
+   * @deprecated Please use {@link #setContentTarget(String)}
    */
+  @Deprecated
   public void setContentTargetWithString(String contentTarget) {
-    setUrlParameter(CONTENT_TARGET, contentTarget);
+    setContentTarget(contentTarget);
   }
 
   /**
@@ -577,7 +618,7 @@ public class MatomoRequest {
    */
   @Nullable
   public URL getDownloadUrl() {
-    return castOrNull(DOWNLOAD_URL);
+    return castToUrlOrNull(DOWNLOAD_URL);
   }
 
   /**
@@ -587,7 +628,19 @@ public class MatomoRequest {
    */
   @Nullable
   public String getDownloadUrlAsString() {
-    return getUrlParameter(DOWNLOAD_URL);
+    return castOrNull(DOWNLOAD_URL);
+  }
+
+  /**
+   * Set the url of a file the user has downloaded. Used for tracking downloads.
+   * We recommend to also set the <strong>url</strong> parameter to this same value.
+   *
+   * @param downloadUrl the url to set.  A null value will remove this parameter
+   * @deprecated Please use {@link #setDownloadUrl(String)}
+   */
+  @Deprecated
+  public void setDownloadUrl(@NonNull URL downloadUrl) {
+    setDownloadUrl(downloadUrl.toString());
   }
 
   /**
@@ -596,7 +649,7 @@ public class MatomoRequest {
    *
    * @param downloadUrl the url to set.  A null value will remove this parameter
    */
-  public void setDownloadUrl(URL downloadUrl) {
+  public void setDownloadUrl(String downloadUrl) {
     setParameter(DOWNLOAD_URL, downloadUrl);
   }
 
@@ -605,9 +658,11 @@ public class MatomoRequest {
    * We recommend to also set the <strong>url</strong> parameter to this same value.
    *
    * @param downloadUrl the url to set.  A null value will remove this parameter
+   * @deprecated Please use {@link #setDownloadUrl(String)}
    */
+  @Deprecated
   public void setDownloadUrlWithString(String downloadUrl) {
-    setUrlParameter(DOWNLOAD_URL, downloadUrl);
+    setDownloadUrl(downloadUrl);
   }
 
   /**
@@ -1030,7 +1085,7 @@ public class MatomoRequest {
    */
   @Nullable
   public URL getOutlinkUrl() {
-    return castOrNull(OUTLINK_URL);
+    return castToUrlOrNull(OUTLINK_URL);
   }
 
   /**
@@ -1040,7 +1095,7 @@ public class MatomoRequest {
    */
   @Nullable
   public String getOutlinkUrlAsString() {
-    return getUrlParameter(OUTLINK_URL);
+    return castOrNull(OUTLINK_URL);
   }
 
   /**
@@ -1048,8 +1103,21 @@ public class MatomoRequest {
    * We recommend to also set the <strong>url</strong> parameter to this same value.
    *
    * @param outlinkUrl the outlink url to set.  A null value will remove this parameter
+   * @deprecated Please use {@link #setOutlinkUrl(String)}
    */
-  public void setOutlinkUrl(URL outlinkUrl) {
+  @Deprecated
+  public void setOutlinkUrl(@NonNull URL outlinkUrl) {
+    setOutlinkUrl(outlinkUrl.toString());
+  }
+
+
+  /**
+   * Set an external URL the user has opened. Used for tracking outlink clicks.
+   * We recommend to also set the <strong>url</strong> parameter to this same value.
+   *
+   * @param outlinkUrl the outlink url to set.  A null value will remove this parameter
+   */
+  public void setOutlinkUrl(String outlinkUrl) {
     setParameter(OUTLINK_URL, outlinkUrl);
   }
 
@@ -1058,9 +1126,11 @@ public class MatomoRequest {
    * We recommend to also set the <strong>url</strong> parameter to this same value.
    *
    * @param outlinkUrl the outlink url to set.  A null value will remove this parameter
+   * @deprecated Please use {@link #setOutlinkUrl(String)}
    */
+  @Deprecated
   public void setOutlinkUrlWithString(String outlinkUrl) {
-    setUrlParameter(OUTLINK_URL, outlinkUrl);
+    setOutlinkUrl(outlinkUrl);
   }
 
   /**
@@ -1313,7 +1383,7 @@ public class MatomoRequest {
    */
   @Nullable
   public URL getReferrerUrl() {
-    return castOrNull(REFERRER_URL);
+    return castToUrlOrNull(REFERRER_URL);
   }
 
   /**
@@ -1323,7 +1393,19 @@ public class MatomoRequest {
    */
   @Nullable
   public String getReferrerUrlAsString() {
-    return getUrlParameter(REFERRER_URL);
+    return castOrNull(REFERRER_URL);
+  }
+
+  /**
+   * Set the full HTTP Referrer URL. This value is used to determine how someone
+   * got to your website (ie, through a website, search engine or campaign).
+   *
+   * @param referrerUrl the referrer url to set.  A null value will remove this parameter
+   * @deprecated Please use {@link #setReferrerUrl(String)}
+   */
+  @Deprecated
+  public void setReferrerUrl(@NonNull URL referrerUrl) {
+    setReferrerUrl(referrerUrl.toString());
   }
 
   /**
@@ -1332,7 +1414,7 @@ public class MatomoRequest {
    *
    * @param referrerUrl the referrer url to set.  A null value will remove this parameter
    */
-  public void setReferrerUrl(URL referrerUrl) {
+  public void setReferrerUrl(String referrerUrl) {
     setParameter(REFERRER_URL, referrerUrl);
   }
 
@@ -1341,9 +1423,11 @@ public class MatomoRequest {
    * got to your website (ie, through a website, search engine or campaign).
    *
    * @param referrerUrl the referrer url to set.  A null value will remove this parameter
+   * @deprecated Please use {@link #setReferrerUrl(String)}
    */
+  @Deprecated
   public void setReferrerUrlWithString(String referrerUrl) {
-    setUrlParameter(REFERRER_URL, referrerUrl);
+    setReferrerUrl(referrerUrl);
   }
 
   /**
@@ -1998,41 +2082,6 @@ public class MatomoRequest {
     } else {
       setParameter(key, new MatomoBoolean(value));
     }
-  }
-
-  /**
-   * Get a stored parameter that is a URL.
-   *
-   * @param key the parameter's key
-   * @return the stored parameter's value
-   */
-  @Nullable
-  private String getUrlParameter(@NonNull String key) {
-    URL url = castOrNull(key);
-    if (url == null) {
-      return null;
-    }
-    return url.toString();
-  }
-
-  /**
-   * Set a stored parameter that is a valid URL. It will be syntactically checked
-   *
-   * @param key the parameter's key
-   * @param url the parameter's value.  Removes the parameter if null
-   * @throws InvalidUrlException if the URL is invalid
-   */
-  private void setUrlParameter(@NonNull String key, @Nullable String url) {
-    if (url == null) {
-      setParameter(key, null);
-    } else {
-      try {
-        setParameter(key, new URL(url));
-      } catch (MalformedURLException e) {
-        throw new InvalidUrlException(e);
-      }
-    }
-
   }
 
   /**

@@ -77,7 +77,7 @@ public class PiwikRequestTest {
    */
   @Test
   public void testActionUrl() throws Exception {
-    request.setActionUrl(null);
+    request.setActionUrl((String) null);
     assertNull(request.getActionUrl());
     assertNull(request.getActionUrlAsString());
 
@@ -1474,7 +1474,7 @@ public class PiwikRequestTest {
     request.setApiVersion(null);
     request.setResponseAsImage(null);
     request.setVisitorId(null);
-    request.setActionUrl(null);
+    request.setActionUrl((String) null);
     assertEquals("key2=test3&key=test4", request.getQueryString());
     request.clearCustomTrackingParameter();
     assertEquals("", request.getQueryString());
@@ -1510,7 +1510,7 @@ public class PiwikRequestTest {
     request.setApiVersion(null);
     request.setResponseAsImage(null);
     request.setVisitorId(null);
-    request.setActionUrl(null);
+    request.setActionUrl((String) null);
     assertEquals("ke%2Fy=te%3Ast4&ke%2Fy2=te%3Ast3", request.getUrlEncodedQueryString());
     request.clearCustomTrackingParameter();
     assertEquals("", request.getUrlEncodedQueryString());
