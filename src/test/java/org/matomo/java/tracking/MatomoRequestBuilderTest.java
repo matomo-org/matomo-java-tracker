@@ -13,7 +13,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class MatomoRequestBuilderTest {
 
   @Test
-  public void buildsRequest() throws Exception {
+  public void buildsRequest() {
 
     CustomVariable customVariable = new CustomVariable("pageCustomVariableName", "pageCustomVariableValue");
     MatomoRequest matomoRequest = MatomoRequest.builder()
@@ -24,6 +24,7 @@ public class MatomoRequestBuilderTest {
       .customTrackingParameters(Collections.singletonMap("trackingParameterName", "trackingParameterValue"))
       .pageCustomVariables(Collections.singletonList(customVariable))
       .visitCustomVariables(Collections.singletonList(customVariable))
+      .customAction(true)
       .build();
 
     Map<String, Collection<Object>> parameters = matomoRequest.getParameters();
@@ -41,6 +42,7 @@ public class MatomoRequestBuilderTest {
     customVariables.add(customVariable);
     assertThat(parameters.get("cvar"), hasItem(customVariables));
     assertThat(parameters.get("_cvar"), hasItem(customVariables));
+    assertThat(parameters.get("ca"), hasItem(new MatomoBoolean(true)));
 
   }
 

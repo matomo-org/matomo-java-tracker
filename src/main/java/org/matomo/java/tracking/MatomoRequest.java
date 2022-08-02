@@ -55,6 +55,8 @@ public class MatomoRequest {
   private static final String CURRENT_HOUR = "h";
   private static final String CURRENT_MINUTE = "m";
   private static final String CURRENT_SECOND = "s";
+
+  private static final String CUSTOM_ACTION = "ca";
   private static final String DEVICE_RESOLUTION = "res";
   private static final String DOWNLOAD_URL = "download";
   private static final String ECOMMERCE_DISCOUNT = "ec_dt";
@@ -541,6 +543,25 @@ public class MatomoRequest {
    */
   public void setCurrentSecond(Integer currentSecond) {
     setParameter(CURRENT_SECOND, currentSecond);
+  }
+
+  /**
+   * Get the custom action
+   *
+   * @return the custom action
+   */
+  @Nullable
+  public Boolean getCustomAction() {
+    return getBooleanParameter(CUSTOM_ACTION);
+  }
+
+  /**
+   * Set the custom action
+   *
+   * @param customAction the second to set.  A null value will remove this parameter
+   */
+  public void setCustomAction(Boolean customAction) {
+    setBooleanParameter(CUSTOM_ACTION, customAction);
   }
 
   /**

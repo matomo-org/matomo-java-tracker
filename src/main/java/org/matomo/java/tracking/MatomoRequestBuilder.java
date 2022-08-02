@@ -24,6 +24,8 @@ public class MatomoRequestBuilder {
   private Integer currentHour;
   private Integer currentMinute;
   private Integer currentSecond;
+
+  private Boolean customAction;
   private String deviceResolution;
   private String downloadUrl;
   private Double ecommerceDiscount;
@@ -156,6 +158,11 @@ public class MatomoRequestBuilder {
 
   public MatomoRequestBuilder currentSecond(Integer currentSecond) {
     this.currentSecond = currentSecond;
+    return this;
+  }
+
+  public MatomoRequestBuilder customAction(Boolean customAction) {
+    this.customAction = customAction;
     return this;
   }
 
@@ -462,6 +469,9 @@ public class MatomoRequestBuilder {
     }
     if (currentSecond != null) {
       matomoRequest.setCurrentSecond(currentSecond);
+    }
+    if (customAction != null) {
+      matomoRequest.setCustomAction(customAction);
     }
     if (customTrackingParameters != null) {
       for (Map.Entry<String, Object> customTrackingParameter : customTrackingParameters.entrySet()) {
