@@ -9,6 +9,7 @@ package org.matomo.java.tracking;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -21,6 +22,8 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -49,9 +52,9 @@ public class MatomoTracker {
    * Tracking HTTP API endpoint.
    *
    * @param hostUrl url endpoint to send requests to.  Usually in the format
-   *                <strong>http://your-matomo-domain.tld/matomo.php</strong>.
+   *                <strong>http://your-matomo-domain.tld/matomo.php</strong>. Must not be null
    */
-  public MatomoTracker(final String hostUrl) {
+  public MatomoTracker(@NonNull final String hostUrl) {
     this(hostUrl, DEFAULT_TIMEOUT);
   }
 
@@ -63,11 +66,11 @@ public class MatomoTracker {
    *                <strong>http://your-matomo-domain.tld/matomo.php</strong>.
    * @param timeout the timeout of the sent request in milliseconds
    */
-  public MatomoTracker(final String hostUrl, final int timeout) {
+  public MatomoTracker(@NonNull final String hostUrl, final int timeout) {
     this(hostUrl, null, 0, timeout);
   }
 
-  public MatomoTracker(final String hostUrl, final String proxyHost, final int proxyPort, final int timeout) {
+  public MatomoTracker(@NonNull final String hostUrl, @Nullable final String proxyHost, final int proxyPort, final int timeout) {
     this.hostUrl = URI.create(hostUrl);
     this.proxyHost = proxyHost;
     this.proxyPort = proxyPort;
@@ -83,27 +86,36 @@ public class MatomoTracker {
    * @param proxyHost url endpoint for the proxy
    * @param proxyPort proxy server port number
    */
-  public MatomoTracker(final String hostUrl, final String proxyHost, final int proxyPort) {
+  public MatomoTracker(@NonNull final String hostUrl, @Nullable final String proxyHost, final int proxyPort) {
     this(hostUrl, proxyHost, proxyPort, DEFAULT_TIMEOUT);
   }
 
   /**
-   * Send a request.
+   * Sends a tracking request to Matomo
    *
-   * @param request request to send
+   * @param request request to send. must not be null
    * @return the response from this request
    * @throws IOException thrown if there was a problem with this connection
    * @deprecated use sendRequestAsync instead
    */
   @Deprecated
-  public HttpResponse sendRequest(final MatomoRequest request) throws IOException {
+  public HttpResponse sendRequest(@NonNull final MatomoRequest request) {
     final HttpClient client = getHttpClient();
+    HttpUriRequest get = createGetRequest(request);
+    log.debug("Sending request via GET: {}", request);
     try {
-      HttpUriRequest get = new HttpGet(new URIBuilder(hostUrl).addParameters(QueryParameters.fromMap(request.getParameters())).build());
-      log.debug("Sending request via GET: {}", request);
       return client.execute(get);
-    } catch (final URISyntaxException e) {
-      throw new IOException(e);
+    } catch (IOException e) {
+      throw new MatomoException("Could not send request to Matomo", e);
+    }
+  }
+
+  @Nonnull
+  private HttpUriRequest createGetRequest(@NonNull MatomoRequest request) {
+    try {
+      return new HttpGet(new URIBuilder(hostUrl).addParameters(QueryParameters.fromMap(request.getParameters())).build());
+    } catch (URISyntaxException e) {
+      throw new InvalidUrlException(e);
     }
   }
 
@@ -123,7 +135,7 @@ public class MatomoTracker {
    * @return future with response from this request
    * @throws IOException thrown if there was a problem with this connection
    */
-  public Future<HttpResponse> sendRequestAsync(final MatomoRequest request) throws IOException {
+  public Future<HttpResponse> sendRequestAsync(@NonNull final MatomoRequest request) {
     return sendRequestAsync(request, null);
   }
 
@@ -135,17 +147,12 @@ public class MatomoTracker {
    * @return future with response from this request
    * @throws IOException thrown if there was a problem with this connection
    */
-  public Future<HttpResponse> sendRequestAsync(final MatomoRequest request, FutureCallback<HttpResponse> callback) throws IOException {
+  public Future<HttpResponse> sendRequestAsync(@NonNull final MatomoRequest request, @Nullable FutureCallback<HttpResponse> callback) {
     final CloseableHttpAsyncClient client = getHttpAsyncClient();
     client.start();
-
-    try {
-      HttpUriRequest get = new HttpGet(new URIBuilder(hostUrl).addParameters(QueryParameters.fromMap(request.getParameters())).build());
-      log.debug("Sending async request via GET: {}", request);
-      return client.execute(get, callback);
-    } catch (final URISyntaxException e) {
-      throw new IOException(e);
-    }
+    HttpUriRequest get = createGetRequest(request);
+    log.debug("Sending async request via GET: {}", request);
+    return client.execute(get, callback);
   }
 
   /**
@@ -167,7 +174,7 @@ public class MatomoTracker {
    * @deprecated use sendBulkRequestAsync instead
    */
   @Deprecated
-  public HttpResponse sendBulkRequest(final Iterable<? extends MatomoRequest> requests) throws IOException {
+  public HttpResponse sendBulkRequest(@NonNull final Iterable<? extends MatomoRequest> requests) {
     return sendBulkRequest(requests, null);
   }
 
@@ -183,18 +190,21 @@ public class MatomoTracker {
    * @deprecated use sendBulkRequestAsync instead
    */
   @Deprecated
-  public HttpResponse sendBulkRequest(final Iterable<? extends MatomoRequest> requests, final String authToken) throws IOException {
+  public HttpResponse sendBulkRequest(@NonNull final Iterable<? extends MatomoRequest> requests, @Nullable final String authToken) {
     if (authToken != null && authToken.length() != MatomoRequest.AUTH_TOKEN_LENGTH) {
       throw new IllegalArgumentException(authToken + " is not " + MatomoRequest.AUTH_TOKEN_LENGTH + " characters long.");
     }
-
     HttpPost post = buildPost(requests, authToken);
     final HttpClient client = getHttpClient();
     log.debug("Sending requests via POST: {}", requests);
-    return client.execute(post);
+    try {
+      return client.execute(post);
+    } catch (IOException e) {
+      throw new MatomoException("Could not send bulk request", e);
+    }
   }
 
-  private HttpPost buildPost(Iterable<? extends MatomoRequest> requests, String authToken) {
+  private HttpPost buildPost(@NonNull Iterable<? extends MatomoRequest> requests, @Nullable String authToken) {
     ObjectNode objectNode = OBJECT_MAPPER.createObjectNode();
     ArrayNode requestsNode = objectNode.putArray(REQUESTS);
     for (final MatomoRequest request : requests) {
@@ -216,7 +226,7 @@ public class MatomoTracker {
    * @return future with response from these requests
    * @throws IOException thrown if there was a problem with this connection
    */
-  public Future<HttpResponse> sendBulkRequestAsync(final Iterable<? extends MatomoRequest> requests) throws IOException {
+  public Future<HttpResponse> sendBulkRequestAsync(@NonNull final Iterable<? extends MatomoRequest> requests) {
     return sendBulkRequestAsync(requests, null, null);
   }
 
@@ -230,7 +240,7 @@ public class MatomoTracker {
    * @param callback  callback that gets executed when response arrives
    * @return the response from these requests
    */
-  public Future<HttpResponse> sendBulkRequestAsync(final Iterable<? extends MatomoRequest> requests, final String authToken, FutureCallback<HttpResponse> callback) {
+  public Future<HttpResponse> sendBulkRequestAsync(@NonNull final Iterable<? extends MatomoRequest> requests, @Nullable final String authToken, @Nullable FutureCallback<HttpResponse> callback) {
     if (authToken != null && authToken.length() != MatomoRequest.AUTH_TOKEN_LENGTH) {
       throw new IllegalArgumentException(authToken + " is not " + MatomoRequest.AUTH_TOKEN_LENGTH + " characters long.");
     }
@@ -250,7 +260,7 @@ public class MatomoTracker {
    * @return future with response from these requests
    * @throws IOException thrown if there was a problem with this connection
    */
-  public Future<HttpResponse> sendBulkRequestAsync(final Iterable<? extends MatomoRequest> requests, FutureCallback<HttpResponse> callback) throws IOException {
+  public Future<HttpResponse> sendBulkRequestAsync(@NonNull final Iterable<? extends MatomoRequest> requests, @Nullable FutureCallback<HttpResponse> callback) {
     return sendBulkRequestAsync(requests, null, callback);
   }
 
@@ -264,7 +274,7 @@ public class MatomoTracker {
    * @return the response from these requests
    * @throws IOException thrown if there was a problem with this connection
    */
-  public Future<HttpResponse> sendBulkRequestAsync(final Iterable<? extends MatomoRequest> requests, final String authToken) throws IOException {
+  public Future<HttpResponse> sendBulkRequestAsync(@NonNull final Iterable<? extends MatomoRequest> requests, @Nullable final String authToken) {
     return sendBulkRequestAsync(requests, authToken, null);
   }
 }
