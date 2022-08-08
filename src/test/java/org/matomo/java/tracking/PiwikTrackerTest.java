@@ -254,7 +254,7 @@ public class PiwikTrackerTest {
    * Test of sendBulkRequest method, of class PiwikTracker.
    */
   @Test
-  public void testSendBulkRequest_Iterable() throws Exception {
+  public void testSendBulkRequest_Iterable() {
     List<PiwikRequest> requests = new ArrayList<>();
     HttpResponse response = mock(HttpResponse.class);
 
@@ -267,7 +267,7 @@ public class PiwikTrackerTest {
    * Test of sendBulkRequest method, of class PiwikTracker.
    */
   @Test
-  public void testSendBulkRequest_Iterable_StringTT() throws Exception {
+  public void testSendBulkRequest_Iterable_StringTT() {
     try {
       List<PiwikRequest> requests = new ArrayList<>();
       HttpClient client = mock(HttpClient.class);
@@ -335,7 +335,7 @@ public class PiwikTrackerTest {
    * Test of sendBulkRequestAsync method, of class PiwikTracker.
    */
   @Test
-  public void testSendBulkRequestAsync_Iterable_StringTT() throws Exception {
+  public void testSendBulkRequestAsync_Iterable_StringTT() {
     try {
       List<PiwikRequest> requests = new ArrayList<>();
       CloseableHttpAsyncClient client = mock(CloseableHttpAsyncClient.class);
