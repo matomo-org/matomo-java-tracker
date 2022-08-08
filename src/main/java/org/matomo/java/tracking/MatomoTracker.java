@@ -229,9 +229,8 @@ public class MatomoTracker {
    * @param authToken specify if any of the parameters use require AuthToken
    * @param callback  callback that gets executed when response arrives
    * @return the response from these requests
-   * @throws IOException thrown if there was a problem with this connection
    */
-  public Future<HttpResponse> sendBulkRequestAsync(final Iterable<? extends MatomoRequest> requests, final String authToken, FutureCallback<HttpResponse> callback) throws IOException {
+  public Future<HttpResponse> sendBulkRequestAsync(final Iterable<? extends MatomoRequest> requests, final String authToken, FutureCallback<HttpResponse> callback) {
     if (authToken != null && authToken.length() != MatomoRequest.AUTH_TOKEN_LENGTH) {
       throw new IllegalArgumentException(authToken + " is not " + MatomoRequest.AUTH_TOKEN_LENGTH + " characters long.");
     }
