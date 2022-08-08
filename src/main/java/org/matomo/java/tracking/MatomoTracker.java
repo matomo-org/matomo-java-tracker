@@ -95,7 +95,6 @@ public class MatomoTracker {
    *
    * @param request request to send. must not be null
    * @return the response from this request
-   * @throws IOException thrown if there was a problem with this connection
    * @deprecated use sendRequestAsync instead
    */
   @Deprecated
@@ -133,7 +132,6 @@ public class MatomoTracker {
    *
    * @param request request to send
    * @return future with response from this request
-   * @throws IOException thrown if there was a problem with this connection
    */
   public Future<HttpResponse> sendRequestAsync(@NonNull final MatomoRequest request) {
     return sendRequestAsync(request, null);
@@ -145,7 +143,6 @@ public class MatomoTracker {
    * @param request  request to send
    * @param callback callback that gets executed when response arrives
    * @return future with response from this request
-   * @throws IOException thrown if there was a problem with this connection
    */
   public Future<HttpResponse> sendRequestAsync(@NonNull final MatomoRequest request, @Nullable FutureCallback<HttpResponse> callback) {
     final CloseableHttpAsyncClient client = getHttpAsyncClient();
@@ -170,7 +167,6 @@ public class MatomoTracker {
    *
    * @param requests the requests to send
    * @return the response from these requests
-   * @throws IOException thrown if there was a problem with this connection
    * @deprecated use sendBulkRequestAsync instead
    */
   @Deprecated
@@ -186,7 +182,6 @@ public class MatomoTracker {
    * @param requests  the requests to send
    * @param authToken specify if any of the parameters use require AuthToken
    * @return the response from these requests
-   * @throws IOException thrown if there was a problem with this connection
    * @deprecated use sendBulkRequestAsync instead
    */
   @Deprecated
@@ -224,7 +219,6 @@ public class MatomoTracker {
    *
    * @param requests the requests to send
    * @return future with response from these requests
-   * @throws IOException thrown if there was a problem with this connection
    */
   public Future<HttpResponse> sendBulkRequestAsync(@NonNull final Iterable<? extends MatomoRequest> requests) {
     return sendBulkRequestAsync(requests, null, null);
@@ -258,7 +252,6 @@ public class MatomoTracker {
    * @param requests the requests to send
    * @param callback callback that gets executed when response arrives
    * @return future with response from these requests
-   * @throws IOException thrown if there was a problem with this connection
    */
   public Future<HttpResponse> sendBulkRequestAsync(@NonNull final Iterable<? extends MatomoRequest> requests, @Nullable FutureCallback<HttpResponse> callback) {
     return sendBulkRequestAsync(requests, null, callback);
@@ -272,7 +265,6 @@ public class MatomoTracker {
    * @param requests  the requests to send
    * @param authToken specify if any of the parameters use require AuthToken
    * @return the response from these requests
-   * @throws IOException thrown if there was a problem with this connection
    */
   public Future<HttpResponse> sendBulkRequestAsync(@NonNull final Iterable<? extends MatomoRequest> requests, @Nullable final String authToken) {
     return sendBulkRequestAsync(requests, authToken, null);

@@ -2134,8 +2134,8 @@ public class MatomoRequest {
    * Store a value in a json object at the specified parameter.
    *
    * @param parameter      the parameter to store the json object at
-   * @param parameter      the key of the value.  Cannot be null
    * @param customVariable the value.  Removes the parameter if null
+   * @param index          the custom variable index
    */
   private void setCustomVariable(@NonNull String parameter, @Nullable CustomVariable customVariable, Integer index) {
 

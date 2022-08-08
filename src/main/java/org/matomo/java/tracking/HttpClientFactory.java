@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  * Internal factory for providing instances of HTTP clients.
- * Especially {@linkAsyncHttpClient} instances are intended to be global resources that share the same lifecycle as the application.
+ * Especially {@link org.apache.http.nio.client.HttpAsyncClient} instances are intended to be global resources that share the same lifecycle as the application.
  * For details see <a href='https://github.com/AsyncHttpClient/async-http-client'>Apache documentation</a>.
  *
  * @author norbertroamsys
