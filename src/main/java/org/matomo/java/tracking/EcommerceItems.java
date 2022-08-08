@@ -31,10 +31,6 @@ class EcommerceItems {
     return ecommerceItems.get(index);
   }
 
-  public EcommerceItem set(int index, EcommerceItem element) {
-    return ecommerceItems.set(index, element);
-  }
-
   @Override
   public String toString() {
     ArrayNode arrayNode = OBJECT_MAPPER.createArrayNode();
