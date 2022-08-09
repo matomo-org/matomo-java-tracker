@@ -1,18 +1,16 @@
 /*
- * Piwik Java Tracker
+ * Matomo Java Tracker
  *
- * @link https://github.com/piwik/piwik-java-tracker
- * @license https://github.com/piwik/piwik-java-tracker/blob/master/LICENSE BSD-3 Clause
+ * @link https://github.com/matomo/matomo-java-tracker
+ * @license https://github.com/matomo/matomo-java-tracker/blob/master/LICENSE BSD-3 Clause
  */
-package org.piwik.java.tracking;
+package org.matomo.java.tracking;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import javax.json.JsonValue.ValueType;
 
 import static org.junit.Assert.assertEquals;
 
@@ -106,22 +104,5 @@ public class EcommerceItemTest {
     assertEquals(new Integer(1), ecommerceItem.getQuantity());
   }
 
-  /**
-   * Test of getValueType method, of class EcommerceItem.
-   */
-  @Test
-  public void testGetValueType() {
-    assertEquals(ValueType.ARRAY, ecommerceItem.getValueType());
-  }
-
-  /**
-   * Test of toString method, of class EcommerceItem.
-   */
-  @Test
-  public void testToString() {
-    ecommerceItem = new EcommerceItem("sku", "name", "category", 1.0, 1);
-
-    assertEquals("[\"sku\",\"name\",\"category\",1.0,1]", ecommerceItem.toString());
-  }
 
 }
