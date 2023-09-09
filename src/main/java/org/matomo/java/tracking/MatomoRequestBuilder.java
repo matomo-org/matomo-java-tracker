@@ -583,11 +583,11 @@ public class MatomoRequestBuilder {
     if (responseAsImage != null) {
       matomoRequest.setResponseAsImage(responseAsImage);
     }
-    if (searchCategory != null) {
-      matomoRequest.setSearchCategory(searchCategory);
-    }
     if (searchQuery != null) {
       matomoRequest.setSearchQuery(searchQuery);
+    }
+    if (searchCategory != null) {
+      matomoRequest.setSearchCategory(searchCategory);
     }
     if (searchResultsCount != null) {
       matomoRequest.setSearchResultsCount(searchResultsCount);
