@@ -24,7 +24,7 @@ Add a dependency on Matomo Java Tracker using Maven:
 <dependency>
   <groupId>org.piwik.java.tracking</groupId>
   <artifactId>matomo-java-tracker</artifactId>
-  <version>2.0</version>
+  <version>2.1</version>
 </dependency>
 ```
 
@@ -32,7 +32,7 @@ or Gradle:
 
 ```groovy
 dependencies {
-  implementation("org.piwik.java.tracking:matomo-java-tracker:2.0")
+  implementation("org.piwik.java.tracking:matomo-java-tracker:2.1")
 }
 ```
 
