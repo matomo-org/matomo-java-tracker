@@ -16,4 +16,4 @@ jobs:
         java-version: '8'
         distribution: 'temurin'
         cache: maven
-    - run: mvn -B verify jacoco:report coveralls:report
+    - run: mvn -B verify jacoco:report
