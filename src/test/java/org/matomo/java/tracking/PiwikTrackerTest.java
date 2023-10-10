@@ -143,7 +143,6 @@ public class PiwikTrackerTest {
     doReturn(client).when(piwikTracker).getHttpAsyncClient();
     doReturn(PARAMETERS).when(request).getParameters();
     doReturn(response).when(future).get();
-    doReturn(true).when(future).isDone();
     doReturn(future).when(client)
       .execute(argThat(new CorrectGetRequest("http://test.com?parameterName=parameterValue")), any());
 
@@ -273,9 +272,7 @@ public class PiwikTrackerTest {
       HttpClient client = mock(HttpClient.class);
       PiwikRequest request = mock(PiwikRequest.class);
 
-      doReturn(PARAMETERS).when(request).getParameters();
       requests.add(request);
-      doReturn(client).when(piwikTracker).getHttpClient();
 
       piwikTracker.sendBulkRequest(requests, "1");
       fail("Exception should have been thrown.");
@@ -324,7 +321,6 @@ public class PiwikTrackerTest {
     HttpResponse response = mock(HttpResponse.class);
     Future<HttpResponse> future = mock(Future.class);
     doReturn(response).when(future).get();
-    doReturn(true).when(future).isDone();
 
     doReturn(future).when(piwikTracker).sendBulkRequestAsync(requests);
 
@@ -341,9 +337,7 @@ public class PiwikTrackerTest {
       CloseableHttpAsyncClient client = mock(CloseableHttpAsyncClient.class);
       PiwikRequest request = mock(PiwikRequest.class);
 
-      doReturn(PARAMETERS).when(request).getParameters();
       requests.add(request);
-      doReturn(client).when(piwikTracker).getHttpAsyncClient();
 
       piwikTracker.sendBulkRequestAsync(requests, "1");
       fail("Exception should have been thrown.");
@@ -360,7 +354,6 @@ public class PiwikTrackerTest {
     HttpResponse response = mock(HttpResponse.class);
     Future<HttpResponse> future = mock(Future.class);
     doReturn(response).when(future).get();
-    doReturn(true).when(future).isDone();
 
     doReturn(PARAMETERS).when(request).getParameters();
     requests.add(request);
@@ -379,7 +372,6 @@ public class PiwikTrackerTest {
     HttpResponse response = mock(HttpResponse.class);
     Future<HttpResponse> future = mock(Future.class);
     doReturn(response).when(future).get();
-    doReturn(true).when(future).isDone();
 
     doReturn(PARAMETERS).when(request).getParameters();
     requests.add(request);
