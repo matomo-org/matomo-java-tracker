@@ -1,6 +1,14 @@
 version: 2
 updates:
-  - package-ecosystem: "maven"
-    directory: "/"
+  - package-ecosystem: maven
+    directory: /
     schedule:
-      interval: "weekly"
+      interval: weekly
+    assignees:
+      - dheid
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    assignees:
+      - dheid
