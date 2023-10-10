@@ -1,7 +1,0 @@
-install: mvn install -DskipTests=true -Dgpg.skip=true
-jdk:
-  - openjdk8
-language: java
-after_success:
-  - mvn clean test jacoco:report coveralls:report
-  
