@@ -29,12 +29,19 @@
       <name>Thomas Lutz</name>
       <email>thomaslutz.de@gmail.com</email>
     </developer>
+    <developer>
+      <id>dheid</id>
+      <name>Daniel Heid</name>
+      <email>mail@daniel-heid.de</email>
+      <organization>Freelancer</organization>
+      <organizationUrl>https://www.daniel-heid.de/</organizationUrl>
+    </developer>
   </developers>
 
   <scm>
-    <connection>scm:git@github.com:matomo-org/matomo-java-tracker.git</connection>
-    <developerConnection>scm:git@github.com:matomo-org/matomo-java-tracker.git</developerConnection>
-    <url>git@github.com:matomo-org/matomo-java-tracker.git</url>
+    <connection>scm:git:ssh://git@github.com/matomo-org/matomo-java-tracker.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/matomo-org/matomo-java-tracker.git</developerConnection>
+    <url>https://github.com/matomo-org/matomo-java-tracker</url>
   </scm>
 
   <distributionManagement>
