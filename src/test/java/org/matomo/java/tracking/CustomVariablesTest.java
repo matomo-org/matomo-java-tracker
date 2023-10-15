@@ -1,85 +1,77 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.matomo.java.tracking;
 
-import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * @author Katie
  */
-public class CustomVariablesTest {
+@DisplayName("Custom Variables Test")
+class CustomVariablesTest {
+
   private final CustomVariables customVariables = new CustomVariables();
 
   @Test
-  public void testAdd_CustomVariable() {
+  @DisplayName("Test Add _ Custom Variable")
+  void testAdd_CustomVariable() {
     CustomVariable a = new CustomVariable("a", "b");
     CustomVariable b = new CustomVariable("c", "d");
     CustomVariable c = new CustomVariable("a", "e");
     CustomVariable d = new CustomVariable("a", "f");
-
-    assertTrue(customVariables.isEmpty());
+    assertThat(customVariables.isEmpty()).isTrue();
     customVariables.add(a);
-    assertFalse(customVariables.isEmpty());
-    assertEquals("b", customVariables.get("a"));
-    assertEquals(a, customVariables.get(1));
-    assertEquals("{\"1\":[\"a\",\"b\"]}", customVariables.toString());
-
+    assertThat(customVariables.isEmpty()).isFalse();
+    assertThat(customVariables.get("a")).isEqualTo("b");
+    assertThat(customVariables.get(1)).isEqualTo(a);
+    assertThat(customVariables.toString()).isEqualTo("{\"1\":[\"a\",\"b\"]}");
     customVariables.add(b);
-    assertEquals("d", customVariables.get("c"));
-    assertEquals(b, customVariables.get(2));
-    assertEquals("{\"1\":[\"a\",\"b\"],\"2\":[\"c\",\"d\"]}", customVariables.toString());
-
+    assertThat(customVariables.get("c")).isEqualTo("d");
+    assertThat(customVariables.get(2)).isEqualTo(b);
+    assertThat(customVariables.toString()).isEqualTo("{\"1\":[\"a\",\"b\"],\"2\":[\"c\",\"d\"]}");
     customVariables.add(c, 5);
-    assertEquals("b", customVariables.get("a"));
-    assertEquals(c, customVariables.get(5));
-    assertNull(customVariables.get(3));
-    assertEquals("{\"1\":[\"a\",\"b\"],\"2\":[\"c\",\"d\"],\"5\":[\"a\",\"e\"]}", customVariables.toString());
-
+    assertThat(customVariables.get("a")).isEqualTo("b");
+    assertThat(customVariables.get(5)).isEqualTo(c);
+    assertThat(customVariables.get(3)).isNull();
+    assertThat(customVariables.toString()).isEqualTo("{\"1\":[\"a\",\"b\"],\"2\":[\"c\",\"d\"],\"5\":[\"a\",\"e\"]}");
     customVariables.add(d);
-    assertEquals("f", customVariables.get("a"));
-    assertEquals(d, customVariables.get(1));
-    assertEquals(d, customVariables.get(5));
-    assertEquals("{\"1\":[\"a\",\"f\"],\"2\":[\"c\",\"d\"],\"5\":[\"a\",\"f\"]}", customVariables.toString());
-
+    assertThat(customVariables.get("a")).isEqualTo("f");
+    assertThat(customVariables.get(1)).isEqualTo(d);
+    assertThat(customVariables.get(5)).isEqualTo(d);
+    assertThat(customVariables.toString()).isEqualTo("{\"1\":[\"a\",\"f\"],\"2\":[\"c\",\"d\"],\"5\":[\"a\",\"f\"]}");
     customVariables.remove("a");
-    assertNull(customVariables.get("a"));
-    assertNull(customVariables.get(1));
-    assertNull(customVariables.get(5));
-    assertEquals("{\"2\":[\"c\",\"d\"]}", customVariables.toString());
-
+    assertThat(customVariables.get("a")).isNull();
+    assertThat(customVariables.get(1)).isNull();
+    assertThat(customVariables.get(5)).isNull();
+    assertThat(customVariables.toString()).isEqualTo("{\"2\":[\"c\",\"d\"]}");
     customVariables.remove(2);
-    assertNull(customVariables.get("c"));
-    assertNull(customVariables.get(2));
-    assertTrue(customVariables.isEmpty());
-    assertEquals("{}", customVariables.toString());
+    assertThat(customVariables.get("c")).isNull();
+    assertThat(customVariables.get(2)).isNull();
+    assertThat(customVariables.isEmpty()).isTrue();
+    assertThat(customVariables.toString()).isEqualTo("{}");
   }
 
   @Test
-  public void testAddCustomVariableIndexLessThan1() {
+  @DisplayName("Test Add Custom Variable Index Less Than 1")
+  void testAddCustomVariableIndexLessThan1() {
     try {
       customVariables.add(new CustomVariable("a", "b"), 0);
       fail("Exception should have been throw.");
     } catch (IllegalArgumentException e) {
-      assertEquals("Index must be greater than 0.", e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("Index must be greater than 0.");
     }
   }
 
   @Test
-  public void testGetCustomVariableIntegerLessThan1() {
+  @DisplayName("Test Get Custom Variable Integer Less Than 1")
+  void testGetCustomVariableIntegerLessThan1() {
     try {
       customVariables.get(0);
       fail("Exception should have been throw.");
     } catch (IllegalArgumentException e) {
-      assertEquals("Index must be greater than 0.", e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("Index must be greater than 0.");
     }
   }
 }

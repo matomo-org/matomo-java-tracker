@@ -1,9 +1,3 @@
-/*
- * Piwik Java Tracker
- *
- * @link https://github.com/matomo/matomo-java-tracker
- * @license https://github.com/matomo/matomo-java-tracker/blob/master/LICENSE BSD-3 Clause
- */
 package org.matomo.java.tracking;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -16,11 +10,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.util.EntityUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.ArgumentMatcher;
 import org.piwik.java.tracking.PiwikRequest;
 import org.piwik.java.tracking.PiwikTracker;
@@ -30,36 +20,28 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
 
 /**
  * @author brettcsorba
  */
-public class PiwikTrackerTest {
+@DisplayName("Piwik Tracker Test")
+class PiwikTrackerTest {
+
   private static final Map<String, Collection<Object>> PARAMETERS = Collections.singletonMap("parameterName", Collections.singleton("parameterValue"));
 
   // https://stackoverflow.com/a/3732328
+  @DisplayName("Handler")
   static class Handler implements HttpHandler {
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
       String response = "OK";
@@ -71,38 +53,40 @@ public class PiwikTrackerTest {
   }
 
   PiwikTracker piwikTracker;
+
   PiwikTracker localTracker;
+
   HttpServer server;
 
   public PiwikTrackerTest() {
   }
 
-  @BeforeClass
-  public static void setUpClass() {
+  @BeforeAll
+  static void setUpClass() {
   }
 
-  @AfterClass
-  public static void tearDownClass() {
+  @AfterAll
+  static void tearDownClass() {
   }
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     // test with mocks
     piwikTracker = spy(new PiwikTracker("http://test.com"));
-
     // test with local server
     localTracker = new PiwikTracker("http://localhost:8001/test");
     try {
       server = HttpServer.create(new InetSocketAddress(8001), 0);
       server.createContext("/test", new Handler());
-      server.setExecutor(null); // creates a default executor
+      // creates a default executor
+      server.setExecutor(null);
       server.start();
     } catch (IOException ex) {
     }
   }
 
-  @After
-  public void tearDown() {
+  @AfterEach
+  void tearDown() {
     server.stop(0);
   }
 
@@ -110,92 +94,89 @@ public class PiwikTrackerTest {
    * Test of addParameter method, of class PiwikTracker.
    */
   @Test
-  public void testAddParameter() {
+  @DisplayName("Test Add Parameter")
+  void testAddParameter() {
   }
 
   /**
    * Test of sendRequest method, of class PiwikTracker.
    */
   @Test
-  public void testSendRequest() throws Exception {
+  @DisplayName("Test Send Request")
+  void testSendRequest() throws Exception {
     PiwikRequest request = mock(PiwikRequest.class);
     HttpClient client = mock(HttpClient.class);
     HttpResponse response = mock(HttpResponse.class);
-
     doReturn(client).when(piwikTracker).getHttpClient();
     doReturn(PARAMETERS).when(request).getParameters();
-    doReturn(response).when(client)
-      .execute(argThat(new CorrectGetRequest("http://test.com?parameterName=parameterValue")));
-
-    assertEquals(response, piwikTracker.sendRequest(request));
+    doReturn(response).when(client).execute(argThat(new CorrectGetRequest("http://test.com?parameterName=parameterValue")));
+    assertThat(piwikTracker.sendRequest(request)).isEqualTo(response);
   }
 
   /**
    * Test of sendRequestAsync method, of class PiwikTracker.
    */
   @Test
-  public void testSendRequestAsync() throws Exception {
+  @DisplayName("Test Send Request Async")
+  void testSendRequestAsync() throws Exception {
     PiwikRequest request = mock(PiwikRequest.class);
     CloseableHttpAsyncClient client = mock(CloseableHttpAsyncClient.class);
     HttpResponse response = mock(HttpResponse.class);
     Future<HttpResponse> future = mock(Future.class);
-
     doReturn(client).when(piwikTracker).getHttpAsyncClient();
     doReturn(PARAMETERS).when(request).getParameters();
     doReturn(response).when(future).get();
     doReturn(true).when(future).isDone();
-    doReturn(future).when(client)
-      .execute(argThat(new CorrectGetRequest("http://test.com?parameterName=parameterValue")), any());
-
-    assertEquals(response, piwikTracker.sendRequestAsync(request).get());
+    doReturn(future).when(client).execute(argThat(new CorrectGetRequest("http://test.com?parameterName=parameterValue")), any());
+    assertThat(piwikTracker.sendRequestAsync(request).get()).isEqualTo(response);
   }
 
   /**
    * Test sync API with local server
    */
   @Test
-  public void testWithLocalServer() throws Exception {
+  @DisplayName("Test With Local Server")
+  void testWithLocalServer() throws Exception {
     // one
     PiwikRequest request = new PiwikRequest(3, new URL("http://test.com"));
     HttpResponse response = localTracker.sendRequest(request);
     String msg = EntityUtils.toString(response.getEntity());
-    assertEquals("OK", msg);
-
+    assertThat(msg).isEqualTo("OK");
     // bulk
     List<PiwikRequest> requests = Collections.singletonList(request);
     HttpResponse responseBulk = localTracker.sendBulkRequest(requests);
     String msgBulk = EntityUtils.toString(responseBulk.getEntity());
-    assertEquals("OK", msgBulk);
+    assertThat(msgBulk).isEqualTo("OK");
   }
 
   /**
    * Test async API with local server
    */
   @Test
-  public void testWithLocalServerAsync() throws Exception {
+  @DisplayName("Test With Local Server Async")
+  void testWithLocalServerAsync() throws Exception {
     // one
     PiwikRequest request = new PiwikRequest(3, new URL("http://test.com"));
     HttpResponse response = localTracker.sendRequestAsync(request).get();
     String msg = EntityUtils.toString(response.getEntity());
-    assertEquals("OK", msg);
-
+    assertThat(msg).isEqualTo("OK");
     // bulk
     List<PiwikRequest> requests = Collections.singletonList(request);
     HttpResponse responseBulk = localTracker.sendBulkRequestAsync(requests).get();
     String msgBulk = EntityUtils.toString(responseBulk.getEntity());
-    assertEquals("OK", msgBulk);
+    assertThat(msgBulk).isEqualTo("OK");
   }
 
   /**
    * Test async API with local server
    */
   @Test
-  public void testWithLocalServerAsyncCallback() throws Exception {
+  @DisplayName("Test With Local Server Async Callback")
+  void testWithLocalServerAsyncCallback() throws Exception {
     CountDownLatch latch = new CountDownLatch(2);
     BlockingQueue<HttpResponse> responses = new LinkedBlockingQueue<>();
     BlockingQueue<Exception> exceptions = new LinkedBlockingQueue<>();
     AtomicInteger cancelled = new AtomicInteger();
-
     FutureCallback<HttpResponse> cb = new FutureCallback<HttpResponse>() {
 
       @Override
@@ -214,30 +195,28 @@ public class PiwikTrackerTest {
       public void cancelled() {
         cancelled.incrementAndGet();
         latch.countDown();
-
       }
     };
-
     // one
     PiwikRequest request = new PiwikRequest(3, new URL("http://test.com"));
     Future<HttpResponse> respFuture = localTracker.sendRequestAsync(request, cb);
     // bulk
     List<PiwikRequest> requests = Collections.singletonList(request);
     Future<HttpResponse> bulkFuture = localTracker.sendBulkRequestAsync(requests, cb);
-
-    assertTrue("Responses not received", latch.await(100, TimeUnit.MILLISECONDS));
-    assertEquals("Not expecting cancelled responses", 0, cancelled.get());
-    assertEquals("Not expecting exceptions", exceptions.size(), 0);
-    assertTrue("Single response future not done", respFuture.isDone());
-    assertTrue("Bulk response future not done", bulkFuture.isDone());
+    assertThat(latch.await(100, TimeUnit.MILLISECONDS)).as("Responses not received").isTrue();
+    assertThat(cancelled.get()).as("Not expecting cancelled responses").isEqualTo(0);
+    assertThat(exceptions.size()).as("Not expecting exceptions").isEqualTo(0);
+    assertThat(respFuture.isDone()).as("Single response future not done").isTrue();
+    assertThat(bulkFuture.isDone()).as("Bulk response future not done").isTrue();
     HttpResponse response = responses.poll(1, TimeUnit.MILLISECONDS);
-    assertEquals("OK", EntityUtils.toString(response.getEntity()));
-
+    assertThat(EntityUtils.toString(response.getEntity())).isEqualTo("OK");
     HttpResponse bulkResponse = responses.poll(1, TimeUnit.MILLISECONDS);
-    assertEquals("OK", EntityUtils.toString(bulkResponse.getEntity()));
+    assertThat(EntityUtils.toString(bulkResponse.getEntity())).isEqualTo("OK");
   }
 
+  @DisplayName("Correct Get Request")
   static class CorrectGetRequest implements ArgumentMatcher<HttpGet> {
+
     String url;
 
     public CorrectGetRequest(String url) {
@@ -254,106 +233,100 @@ public class PiwikTrackerTest {
    * Test of sendBulkRequest method, of class PiwikTracker.
    */
   @Test
-  public void testSendBulkRequest_Iterable() {
+  @DisplayName("Test Send Bulk Request _ Iterable")
+  void testSendBulkRequest_Iterable() {
     List<PiwikRequest> requests = new ArrayList<>();
     HttpResponse response = mock(HttpResponse.class);
-
     doReturn(response).when(piwikTracker).sendBulkRequest(requests, null);
-
-    assertEquals(response, piwikTracker.sendBulkRequest(requests));
+    assertThat(piwikTracker.sendBulkRequest(requests)).isEqualTo(response);
   }
 
   /**
    * Test of sendBulkRequest method, of class PiwikTracker.
    */
   @Test
-  public void testSendBulkRequest_Iterable_StringTT() {
+  @DisplayName("Test Send Bulk Request _ Iterable _ String TT")
+  void testSendBulkRequest_Iterable_StringTT() {
     try {
       List<PiwikRequest> requests = new ArrayList<>();
       HttpClient client = mock(HttpClient.class);
       PiwikRequest request = mock(PiwikRequest.class);
-
       doReturn(PARAMETERS).when(request).getParameters();
       requests.add(request);
       doReturn(client).when(piwikTracker).getHttpClient();
-
       piwikTracker.sendBulkRequest(requests, "1");
       fail("Exception should have been thrown.");
     } catch (IllegalArgumentException e) {
-      assertEquals("1 is not 32 characters long.", e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("1 is not 32 characters long.");
     }
   }
 
   @Test
-  public void testSendBulkRequest_Iterable_StringFF() throws Exception {
+  @DisplayName("Test Send Bulk Request _ Iterable _ String FF")
+  void testSendBulkRequest_Iterable_StringFF() throws Exception {
     List<PiwikRequest> requests = new ArrayList<>();
     HttpClient client = mock(HttpClient.class);
     PiwikRequest request = mock(PiwikRequest.class);
     HttpResponse response = mock(HttpResponse.class);
-
     doReturn(PARAMETERS).when(request).getParameters();
     requests.add(request);
     doReturn(client).when(piwikTracker).getHttpClient();
     doReturn(response).when(client).execute(argThat(new CorrectPostRequest("{\"requests\":[\"?parameterName=parameterValue\"]}")));
-
-    assertEquals(response, piwikTracker.sendBulkRequest(requests, null));
+    assertThat(piwikTracker.sendBulkRequest(requests, null)).isEqualTo(response);
   }
 
   @Test
-  public void testSendBulkRequest_Iterable_StringFT() throws Exception {
+  @DisplayName("Test Send Bulk Request _ Iterable _ String FT")
+  void testSendBulkRequest_Iterable_StringFT() throws Exception {
     List<PiwikRequest> requests = new ArrayList<>();
     HttpClient client = mock(HttpClient.class);
     PiwikRequest request = mock(PiwikRequest.class);
     HttpResponse response = mock(HttpResponse.class);
-
     doReturn(PARAMETERS).when(request).getParameters();
     requests.add(request);
     doReturn(client).when(piwikTracker).getHttpClient();
-    doReturn(response).when(client)
-      .execute(argThat(new CorrectPostRequest("{\"requests\":[\"?parameterName=parameterValue\"],\"token_auth\":\"12345678901234567890123456789012\"}")));
-
-    assertEquals(response, piwikTracker.sendBulkRequest(requests, "12345678901234567890123456789012"));
+    doReturn(response).when(client).execute(argThat(new CorrectPostRequest("{\"requests\":[\"?parameterName=parameterValue\"],\"token_auth\":\"12345678901234567890123456789012\"}")));
+    assertThat(piwikTracker.sendBulkRequest(requests, "12345678901234567890123456789012")).isEqualTo(response);
   }
 
   /**
    * Test of sendBulkRequestAsync method, of class PiwikTracker.
    */
   @Test
-  public void testSendBulkRequestAsync_Iterable() throws Exception {
+  @DisplayName("Test Send Bulk Request Async _ Iterable")
+  void testSendBulkRequestAsync_Iterable() throws Exception {
     List<PiwikRequest> requests = new ArrayList<>();
     HttpResponse response = mock(HttpResponse.class);
     Future<HttpResponse> future = mock(Future.class);
     doReturn(response).when(future).get();
     doReturn(true).when(future).isDone();
-
     doReturn(future).when(piwikTracker).sendBulkRequestAsync(requests);
-
-    assertEquals(response, piwikTracker.sendBulkRequestAsync(requests).get());
+    assertThat(piwikTracker.sendBulkRequestAsync(requests).get()).isEqualTo(response);
   }
 
   /**
    * Test of sendBulkRequestAsync method, of class PiwikTracker.
    */
   @Test
-  public void testSendBulkRequestAsync_Iterable_StringTT() {
+  @DisplayName("Test Send Bulk Request Async _ Iterable _ String TT")
+  void testSendBulkRequestAsync_Iterable_StringTT() {
     try {
       List<PiwikRequest> requests = new ArrayList<>();
       CloseableHttpAsyncClient client = mock(CloseableHttpAsyncClient.class);
       PiwikRequest request = mock(PiwikRequest.class);
-
       doReturn(PARAMETERS).when(request).getParameters();
       requests.add(request);
       doReturn(client).when(piwikTracker).getHttpAsyncClient();
-
       piwikTracker.sendBulkRequestAsync(requests, "1");
       fail("Exception should have been thrown.");
     } catch (IllegalArgumentException e) {
-      assertEquals("1 is not 32 characters long.", e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("1 is not 32 characters long.");
     }
   }
 
   @Test
-  public void testSendBulkRequestAsync_Iterable_StringFF() throws Exception {
+  @DisplayName("Test Send Bulk Request Async _ Iterable _ String FF")
+  void testSendBulkRequestAsync_Iterable_StringFF() throws Exception {
     List<PiwikRequest> requests = new ArrayList<>();
     CloseableHttpAsyncClient client = mock(CloseableHttpAsyncClient.class);
     PiwikRequest request = mock(PiwikRequest.class);
@@ -361,18 +334,16 @@ public class PiwikTrackerTest {
     Future<HttpResponse> future = mock(Future.class);
     doReturn(response).when(future).get();
     doReturn(true).when(future).isDone();
-
     doReturn(PARAMETERS).when(request).getParameters();
     requests.add(request);
     doReturn(client).when(piwikTracker).getHttpAsyncClient();
-    doReturn(future).when(client)
-      .execute(argThat(new CorrectPostRequest("{\"requests\":[\"?parameterName=parameterValue\"]}")), any());
-
-    assertEquals(response, piwikTracker.sendBulkRequestAsync(requests).get());
+    doReturn(future).when(client).execute(argThat(new CorrectPostRequest("{\"requests\":[\"?parameterName=parameterValue\"]}")), any());
+    assertThat(piwikTracker.sendBulkRequestAsync(requests).get()).isEqualTo(response);
   }
 
   @Test
-  public void testSendBulkRequestAsync_Iterable_StringFT() throws Exception {
+  @DisplayName("Test Send Bulk Request Async _ Iterable _ String FT")
+  void testSendBulkRequestAsync_Iterable_StringFT() throws Exception {
     List<PiwikRequest> requests = new ArrayList<>();
     CloseableHttpAsyncClient client = mock(CloseableHttpAsyncClient.class);
     PiwikRequest request = mock(PiwikRequest.class);
@@ -380,17 +351,16 @@ public class PiwikTrackerTest {
     Future<HttpResponse> future = mock(Future.class);
     doReturn(response).when(future).get();
     doReturn(true).when(future).isDone();
-
     doReturn(PARAMETERS).when(request).getParameters();
     requests.add(request);
     doReturn(client).when(piwikTracker).getHttpAsyncClient();
-    doReturn(future).when(client)
-      .execute(argThat(new CorrectPostRequest("{\"requests\":[\"?parameterName=parameterValue\"],\"token_auth\":\"12345678901234567890123456789012\"}")), any());
-
-    assertEquals(response, piwikTracker.sendBulkRequestAsync(requests, "12345678901234567890123456789012").get());
+    doReturn(future).when(client).execute(argThat(new CorrectPostRequest("{\"requests\":[\"?parameterName=parameterValue\"],\"token_auth\":\"12345678901234567890123456789012\"}")), any());
+    assertThat(piwikTracker.sendBulkRequestAsync(requests, "12345678901234567890123456789012").get()).isEqualTo(response);
   }
 
+  @DisplayName("Correct Post Request")
   static class CorrectPostRequest implements ArgumentMatcher<HttpPost> {
+
     String body;
 
     public CorrectPostRequest(String body) {
@@ -416,26 +386,28 @@ public class PiwikTrackerTest {
    * Test of getHttpClient method, of class PiwikTracker.
    */
   @Test
-  public void testGetHttpClient() {
-    assertNotNull(piwikTracker.getHttpClient());
+  @DisplayName("Test Get Http Client")
+  void testGetHttpClient() {
+    assertThat(piwikTracker.getHttpClient()).isNotNull();
   }
 
   /**
    * Test of getHttpAsyncClient method, of class PiwikTracker.
    */
   @Test
-  public void testGetHttpAsyncClient() {
-    assertNotNull(piwikTracker.getHttpAsyncClient());
+  @DisplayName("Test Get Http Async Client")
+  void testGetHttpAsyncClient() {
+    assertThat(piwikTracker.getHttpAsyncClient()).isNotNull();
   }
 
   /**
    * Test of getHttpClient method, of class PiwikTracker, with proxy.
    */
   @Test
-  public void testGetHttpClientWithProxy() {
+  @DisplayName("Test Get Http Client With Proxy")
+  void testGetHttpClientWithProxy() {
     piwikTracker = new PiwikTracker("http://test.com", "http://proxy", 8080);
     HttpClient httpClient = piwikTracker.getHttpClient();
-
-    assertNotNull(httpClient);
+    assertThat(httpClient).isNotNull();
   }
 }

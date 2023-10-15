@@ -1,56 +1,47 @@
-/*
- * Matomo Java Tracker
- *
- * @link https://github.com/matomo/matomo-java-tracker
- * @license https://github.com/matomo/matomo-java-tracker/blob/master/LICENSE BSD-3 Clause
- */
 package org.matomo.java.tracking;
 
-import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.piwik.java.tracking.PiwikDate;
 
 import java.util.TimeZone;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author brettcsorba
  */
-public class PiwikDateTest {
+@DisplayName("Piwik Date Test")
+class PiwikDateTest {
+
   /**
    * Test of constructor, of class PiwikDate.
    */
   @Test
-  public void testConstructor0() {
+  @DisplayName("Test Constructor 0")
+  void testConstructor0() {
     PiwikDate date = new PiwikDate();
-
-    assertNotNull(date);
+    assertThat(date).isNotNull();
   }
 
   @Test
-  public void testConstructor1() {
+  @DisplayName("Test Constructor 1")
+  void testConstructor1() {
     PiwikDate date = new PiwikDate(1433186085092L);
-
-    assertNotNull(date);
-
-    assertEquals("2015-06-01 19:14:45", date.toString());
-
+    assertThat(date).isNotNull();
+    assertThat(date.toString()).isEqualTo("2015-06-01 19:14:45");
     date = new PiwikDate(1467437553000L);
-
-    assertEquals("2016-07-02 05:32:33", date.toString());
+    assertThat(date.toString()).isEqualTo("2016-07-02 05:32:33");
   }
 
   /**
    * Test of setTimeZone method, of class PiwikDate.
    */
   @Test
-  public void testSetTimeZone() {
+  @DisplayName("Test Set Time Zone")
+  void testSetTimeZone() {
     PiwikDate date = new PiwikDate(1433186085092L);
-
     date.setTimeZone(TimeZone.getTimeZone("America/New_York"));
-
-    assertEquals("2015-06-01 15:14:45", date.toString());
+    assertThat(date.toString()).isEqualTo("2015-06-01 15:14:45");
   }
-
 }
