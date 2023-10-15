@@ -1,14 +1,9 @@
-/*
- * Piwik Java Tracker
- *
- * @link https://github.com/matomo/matomo-java-tracker
- * @license https://github.com/matomo/matomo-java-tracker/blob/master/LICENSE BSD-3 Clause
- */
 package org.matomo.java.tracking;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.piwik.java.tracking.PiwikDate;
 import org.piwik.java.tracking.PiwikLocale;
 import org.piwik.java.tracking.PiwikRequest;
@@ -18,128 +13,132 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * @author brettcsorba
  */
-public class PiwikRequestTest {
+@DisplayName("Piwik Request Test")
+class PiwikRequestTest {
+
   private PiwikRequest request;
 
-  @Before
-  public void setUp() throws Exception {
+  @BeforeEach
+  void setUp() throws Exception {
     request = new PiwikRequest(3, new URL("http://test.com"));
   }
 
-  @After
-  public void tearDown() {
+  @AfterEach
+  void tearDown() {
   }
 
   @Test
-  public void testConstructor() throws Exception {
+  @DisplayName("Test Constructor")
+  void testConstructor() throws Exception {
     request = new PiwikRequest(3, new URL("http://test.com"));
-    assertEquals(Integer.valueOf(3), request.getSiteId());
-    assertTrue(request.getRequired());
-    assertEquals(new URL("http://test.com"), request.getActionUrl());
-    assertNotNull(request.getVisitorId());
-    assertNotNull(request.getRandomValue());
-    assertEquals("1", request.getApiVersion());
-    assertFalse(request.getResponseAsImage());
+    assertThat(request.getSiteId()).isEqualTo(Integer.valueOf(3));
+    assertThat(request.getRequired()).isTrue();
+    assertThat(request.getActionUrl()).isEqualTo(new URL("http://test.com"));
+    assertThat(request.getVisitorId()).isNotNull();
+    assertThat(request.getRandomValue()).isNotNull();
+    assertThat(request.getApiVersion()).isEqualTo("1");
+    assertThat(request.getResponseAsImage()).isFalse();
   }
 
   /**
    * Test of getActionName method, of class PiwikRequest.
    */
   @Test
-  public void testActionName() {
+  @DisplayName("Test Action Name")
+  void testActionName() {
     request.setActionName("action");
-    assertEquals("action", request.getActionName());
+    assertThat(request.getActionName()).isEqualTo("action");
     request.setActionName(null);
-    assertNull(request.getActionName());
+    assertThat(request.getActionName()).isNull();
   }
 
   /**
    * Test of getActionTime method, of class PiwikRequest.
    */
   @Test
-  public void testActionTime() {
+  @DisplayName("Test Action Time")
+  void testActionTime() {
     request.setActionTime(1000L);
-    assertEquals(Long.valueOf(1000L), request.getActionTime());
+    assertThat(request.getActionTime()).isEqualTo(Long.valueOf(1000L));
   }
 
   /**
    * Test of getActionUrl method, of class PiwikRequest.
    */
   @Test
-  public void testActionUrl() throws Exception {
+  @DisplayName("Test Action Url")
+  void testActionUrl() throws Exception {
     request.setActionUrl((String) null);
-    assertNull(request.getActionUrl());
-    assertNull(request.getActionUrlAsString());
-
+    assertThat(request.getActionUrl()).isNull();
+    assertThat(request.getActionUrlAsString()).isNull();
     URL url = new URL("http://action.com");
     request.setActionUrl(url);
-    assertEquals(url, request.getActionUrl());
-    assertEquals("http://action.com", request.getActionUrlAsString());
-
+    assertThat(request.getActionUrl()).isEqualTo(url);
+    assertThat(request.getActionUrlAsString()).isEqualTo("http://action.com");
     request.setActionUrlWithString(null);
-    assertNull(request.getActionUrl());
-    assertNull(request.getActionUrlAsString());
-
+    assertThat(request.getActionUrl()).isNull();
+    assertThat(request.getActionUrlAsString()).isNull();
     request.setActionUrlWithString("http://actionstring.com");
-    assertEquals("http://actionstring.com", request.getActionUrlAsString());
-    assertEquals(new URL("http://actionstring.com"), request.getActionUrl());
+    assertThat(request.getActionUrlAsString()).isEqualTo("http://actionstring.com");
+    assertThat(request.getActionUrl()).isEqualTo(new URL("http://actionstring.com"));
   }
 
   /**
    * Test of getApiVersion method, of class PiwikRequest.
    */
   @Test
-  public void testApiVersion() {
+  @DisplayName("Test Api Version")
+  void testApiVersion() {
     request.setApiVersion("2");
-    assertEquals("2", request.getApiVersion());
+    assertThat(request.getApiVersion()).isEqualTo("2");
   }
 
   /**
    * Test of getAuthToken method, of class PiwikRequest.
    */
   @Test
-  public void testAuthTokenTT() {
+  @DisplayName("Test Auth Token TT")
+  void testAuthTokenTT() {
     try {
       request.setAuthToken("1234");
       fail("Exception should have been thrown.");
     } catch (IllegalArgumentException e) {
-      assertEquals("1234 is not 32 characters long.", e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("1234 is not 32 characters long.");
     }
   }
 
   @Test
-  public void testAuthTokenTF() {
+  @DisplayName("Test Auth Token TF")
+  void testAuthTokenTF() {
     request.setAuthToken("12345678901234567890123456789012");
-    assertEquals("12345678901234567890123456789012", request.getAuthToken());
+    assertThat(request.getAuthToken()).isEqualTo("12345678901234567890123456789012");
   }
 
   @Test
-  public void testAuthTokenF() {
+  @DisplayName("Test Auth Token F")
+  void testAuthTokenF() {
     request.setAuthToken("12345678901234567890123456789012");
     request.setAuthToken(null);
-    assertNull(request.getAuthToken());
+    assertThat(request.getAuthToken()).isNull();
   }
 
   /**
    * Test of verifyAuthTokenSet method, of class PiwikRequest.
    */
   @Test
-  public void testVerifyAuthTokenSet() {
+  @DisplayName("Test Verify Auth Token Set")
+  void testVerifyAuthTokenSet() {
     try {
       request.verifyAuthTokenSet();
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("AuthToken must be set before this value can be set.", e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("AuthToken must be set before this value can be set.");
     }
   }
 
@@ -147,249 +146,264 @@ public class PiwikRequestTest {
    * Test of getCampaignKeyword method, of class PiwikRequest.
    */
   @Test
-  public void testCampaignKeyword() {
+  @DisplayName("Test Campaign Keyword")
+  void testCampaignKeyword() {
     request.setCampaignKeyword("keyword");
-    assertEquals("keyword", request.getCampaignKeyword());
+    assertThat(request.getCampaignKeyword()).isEqualTo("keyword");
   }
 
   /**
    * Test of getCampaignName method, of class PiwikRequest.
    */
   @Test
-  public void testCampaignName() {
+  @DisplayName("Test Campaign Name")
+  void testCampaignName() {
     request.setCampaignName("name");
-    assertEquals("name", request.getCampaignName());
+    assertThat(request.getCampaignName()).isEqualTo("name");
   }
 
   /**
    * Test of getCharacterSet method, of class PiwikRequest.
    */
   @Test
-  public void testCharacterSet() {
+  @DisplayName("Test Character Set")
+  void testCharacterSet() {
     Charset charset = Charset.defaultCharset();
     request.setCharacterSet(charset);
-    assertEquals(charset, request.getCharacterSet());
+    assertThat(request.getCharacterSet()).isEqualTo(charset);
   }
 
   /**
    * Test of getContentInteraction method, of class PiwikRequest.
    */
   @Test
-  public void testContentInteraction() {
+  @DisplayName("Test Content Interaction")
+  void testContentInteraction() {
     request.setContentInteraction("interaction");
-    assertEquals("interaction", request.getContentInteraction());
+    assertThat(request.getContentInteraction()).isEqualTo("interaction");
   }
 
   /**
    * Test of getContentName method, of class PiwikRequest.
    */
   @Test
-  public void testContentName() {
+  @DisplayName("Test Content Name")
+  void testContentName() {
     request.setContentName("name");
-    assertEquals("name", request.getContentName());
+    assertThat(request.getContentName()).isEqualTo("name");
   }
 
   /**
    * Test of getContentPiece method, of class PiwikRequest.
    */
   @Test
-  public void testContentPiece() {
+  @DisplayName("Test Content Piece")
+  void testContentPiece() {
     request.setContentPiece("piece");
-    assertEquals("piece", request.getContentPiece());
+    assertThat(request.getContentPiece()).isEqualTo("piece");
   }
 
   /**
    * Test of getContentTarget method, of class PiwikRequest.
    */
   @Test
-  public void testContentTarget() throws Exception {
+  @DisplayName("Test Content Target")
+  void testContentTarget() throws Exception {
     URL url = new URL("http://target.com");
     request.setContentTarget(url);
-    assertEquals(url, request.getContentTarget());
-    assertEquals("http://target.com", request.getContentTargetAsString());
-
+    assertThat(request.getContentTarget()).isEqualTo(url);
+    assertThat(request.getContentTargetAsString()).isEqualTo("http://target.com");
     request.setContentTargetWithString("http://targetstring.com");
-    assertEquals("http://targetstring.com", request.getContentTargetAsString());
-    assertEquals(new URL("http://targetstring.com"), request.getContentTarget());
-
+    assertThat(request.getContentTargetAsString()).isEqualTo("http://targetstring.com");
+    assertThat(request.getContentTarget()).isEqualTo(new URL("http://targetstring.com"));
   }
 
   /**
    * Test of getCurrentHour method, of class PiwikRequest.
    */
   @Test
-  public void testCurrentHour() {
+  @DisplayName("Test Current Hour")
+  void testCurrentHour() {
     request.setCurrentHour(1);
-    assertEquals(Integer.valueOf(1), request.getCurrentHour());
+    assertThat(request.getCurrentHour()).isEqualTo(Integer.valueOf(1));
   }
 
   /**
    * Test of getCurrentMinute method, of class PiwikRequest.
    */
   @Test
-  public void testCurrentMinute() {
+  @DisplayName("Test Current Minute")
+  void testCurrentMinute() {
     request.setCurrentMinute(2);
-    assertEquals(Integer.valueOf(2), request.getCurrentMinute());
+    assertThat(request.getCurrentMinute()).isEqualTo(Integer.valueOf(2));
   }
 
   /**
    * Test of getCurrentSecond method, of class PiwikRequest.
    */
   @Test
-  public void testCurrentSecond() {
+  @DisplayName("Test Current Second")
+  void testCurrentSecond() {
     request.setCurrentSecond(3);
-    assertEquals(Integer.valueOf(3), request.getCurrentSecond());
+    assertThat(request.getCurrentSecond()).isEqualTo(Integer.valueOf(3));
   }
 
   /**
    * Test of getCustomTrackingParameter method, of class PiwikRequest.
    */
   @Test
-  public void testGetCustomTrackingParameter_T() {
+  @DisplayName("Test Get Custom Tracking Parameter _ T")
+  void testGetCustomTrackingParameter_T() {
     try {
       request.getCustomTrackingParameter(null);
       fail("Exception should have been thrown.");
     } catch (NullPointerException e) {
-      assertEquals("key is marked non-null but is null", e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("key is marked non-null but is null");
     }
   }
 
   @Test
-  public void testGetCustomTrackingParameter_FT() {
-    assertTrue(request.getCustomTrackingParameter("key").isEmpty());
+  @DisplayName("Test Get Custom Tracking Parameter _ FT")
+  void testGetCustomTrackingParameter_FT() {
+    assertThat(request.getCustomTrackingParameter("key").isEmpty()).isTrue();
   }
 
   @Test
-  public void testSetCustomTrackingParameter_T() {
+  @DisplayName("Test Set Custom Tracking Parameter _ T")
+  void testSetCustomTrackingParameter_T() {
     try {
       request.setCustomTrackingParameter(null, null);
       fail("Exception should have been thrown.");
     } catch (NullPointerException e) {
-      assertEquals("key is marked non-null but is null", e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("key is marked non-null but is null");
     }
   }
 
   @Test
-  public void testSetCustomTrackingParameter_F() {
+  @DisplayName("Test Set Custom Tracking Parameter _ F")
+  void testSetCustomTrackingParameter_F() {
     request.setCustomTrackingParameter("key", "value");
     List l = request.getCustomTrackingParameter("key");
-    assertEquals(1, l.size());
-    assertEquals("value", l.get(0));
-
+    assertThat(l.size()).isEqualTo(1);
+    assertThat(l.get(0)).isEqualTo("value");
     request.setCustomTrackingParameter("key", "value2");
     l = request.getCustomTrackingParameter("key");
-    assertEquals(1, l.size());
-    assertEquals("value2", l.get(0));
-
+    assertThat(l.size()).isEqualTo(1);
+    assertThat(l.get(0)).isEqualTo("value2");
     request.setCustomTrackingParameter("key", null);
     l = request.getCustomTrackingParameter("key");
-    assertTrue(l.isEmpty());
+    assertThat(l.isEmpty()).isTrue();
   }
 
   @Test
-  public void testAddCustomTrackingParameter_T() {
+  @DisplayName("Test Add Custom Tracking Parameter _ T")
+  void testAddCustomTrackingParameter_T() {
     try {
       request.addCustomTrackingParameter(null, null);
       fail("Exception should have been thrown.");
     } catch (NullPointerException e) {
-      assertEquals("key is marked non-null but is null", e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("key is marked non-null but is null");
     }
   }
 
   @Test
-  public void testAddCustomTrackingParameter_FT() {
+  @DisplayName("Test Add Custom Tracking Parameter _ FT")
+  void testAddCustomTrackingParameter_FT() {
     try {
       request.addCustomTrackingParameter("key", null);
       fail("Exception should have been thrown.");
     } catch (NullPointerException e) {
-      assertEquals("value is marked non-null but is null", e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("value is marked non-null but is null");
     }
   }
 
   @Test
-  public void testAddCustomTrackingParameter_FF() {
+  @DisplayName("Test Add Custom Tracking Parameter _ FF")
+  void testAddCustomTrackingParameter_FF() {
     request.addCustomTrackingParameter("key", "value");
     List l = request.getCustomTrackingParameter("key");
-    assertEquals(1, l.size());
-    assertEquals("value", l.get(0));
-
+    assertThat(l.size()).isEqualTo(1);
+    assertThat(l.get(0)).isEqualTo("value");
     request.addCustomTrackingParameter("key", "value2");
     l = request.getCustomTrackingParameter("key");
-    assertEquals(2, l.size());
-    assertTrue(l.contains("value"));
-    assertTrue(l.contains("value2"));
+    assertThat(l.size()).isEqualTo(2);
+    assertThat(l.contains("value")).isTrue();
+    assertThat(l.contains("value2")).isTrue();
   }
 
   @Test
-  public void testClearCustomTrackingParameter() {
+  @DisplayName("Test Clear Custom Tracking Parameter")
+  void testClearCustomTrackingParameter() {
     request.setCustomTrackingParameter("key", "value");
     request.clearCustomTrackingParameter();
     List l = request.getCustomTrackingParameter("key");
-    assertTrue(l.isEmpty());
+    assertThat(l.isEmpty()).isTrue();
   }
 
   /**
    * Test of getDeviceResolution method, of class PiwikRequest.
    */
   @Test
-  public void testDeviceResolution() {
+  @DisplayName("Test Device Resolution")
+  void testDeviceResolution() {
     request.setDeviceResolution("1x2");
-    assertEquals("1x2", request.getDeviceResolution());
+    assertThat(request.getDeviceResolution()).isEqualTo("1x2");
   }
 
   /**
    * Test of getDownloadUrl method, of class PiwikRequest.
    */
   @Test
-  public void testDownloadUrl() throws Exception {
+  @DisplayName("Test Download Url")
+  void testDownloadUrl() throws Exception {
     URL url = new URL("http://download.com");
     request.setDownloadUrl(url);
-    assertEquals(url, request.getDownloadUrl());
-    assertEquals("http://download.com", request.getDownloadUrlAsString());
-
+    assertThat(request.getDownloadUrl()).isEqualTo(url);
+    assertThat(request.getDownloadUrlAsString()).isEqualTo("http://download.com");
     request.setDownloadUrlWithString("http://downloadstring.com");
-    assertEquals("http://downloadstring.com", request.getDownloadUrlAsString());
-    assertEquals(new URL("http://downloadstring.com"), request.getDownloadUrl());
-
+    assertThat(request.getDownloadUrlAsString()).isEqualTo("http://downloadstring.com");
+    assertThat(request.getDownloadUrl()).isEqualTo(new URL("http://downloadstring.com"));
   }
 
   /**
    * Test of enableEcommerce method, of class PiwikRequest.
    */
   @Test
-  public void testEnableEcommerce() {
+  @DisplayName("Test Enable Ecommerce")
+  void testEnableEcommerce() {
     request.enableEcommerce();
-    assertEquals(Integer.valueOf(0), request.getGoalId());
+    assertThat(request.getGoalId()).isEqualTo(Integer.valueOf(0));
   }
 
   /**
    * Test of verifyEcommerceEnabled method, of class PiwikRequest.
    */
   @Test
-  public void testVerifyEcommerceEnabledT() {
+  @DisplayName("Test Verify Ecommerce Enabled T")
+  void testVerifyEcommerceEnabledT() {
     try {
       request.verifyEcommerceEnabled();
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.");
     }
   }
 
   @Test
-  public void testVerifyEcommerceEnabledFT() {
+  @DisplayName("Test Verify Ecommerce Enabled FT")
+  void testVerifyEcommerceEnabledFT() {
     try {
       request.setGoalId(1);
       request.verifyEcommerceEnabled();
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.");
     }
   }
 
   @Test
-  public void testVerifyEcommerceEnabledFF() {
+  @DisplayName("Test Verify Ecommerce Enabled FF")
+  void testVerifyEcommerceEnabledFF() {
     request.enableEcommerce();
     request.verifyEcommerceEnabled();
   }
@@ -398,43 +412,44 @@ public class PiwikRequestTest {
    * Test of verifyEcommerceState method, of class PiwikRequest.
    */
   @Test
-  public void testVerifyEcommerceStateE() {
+  @DisplayName("Test Verify Ecommerce State E")
+  void testVerifyEcommerceStateE() {
     try {
       request.verifyEcommerceState();
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.");
     }
   }
 
   @Test
-  public void testVerifyEcommerceStateT() {
+  @DisplayName("Test Verify Ecommerce State T")
+  void testVerifyEcommerceStateT() {
     try {
       request.enableEcommerce();
       request.verifyEcommerceState();
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("EcommerceId must be set before this value can be set.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("EcommerceId must be set before this value can be set.");
     }
   }
 
   @Test
-  public void testVerifyEcommerceStateFT() {
+  @DisplayName("Test Verify Ecommerce State FT")
+  void testVerifyEcommerceStateFT() {
     try {
       request.enableEcommerce();
       request.setEcommerceId("1");
       request.verifyEcommerceState();
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("EcommerceRevenue must be set before this value can be set.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("EcommerceRevenue must be set before this value can be set.");
     }
   }
 
   @Test
-  public void testVerifyEcommerceStateFF() {
+  @DisplayName("Test Verify Ecommerce State FF")
+  void testVerifyEcommerceStateFF() {
     request.enableEcommerce();
     request.setEcommerceId("1");
     request.setEcommerceRevenue(2.0);
@@ -445,79 +460,80 @@ public class PiwikRequestTest {
    * Test of getEcommerceDiscount method, of class PiwikRequest.
    */
   @Test
-  public void testEcommerceDiscountT() {
+  @DisplayName("Test Ecommerce Discount T")
+  void testEcommerceDiscountT() {
     request.enableEcommerce();
     request.setEcommerceId("1");
     request.setEcommerceRevenue(2.0);
     request.setEcommerceDiscount(1.0);
-
-    assertEquals(Double.valueOf(1.0), request.getEcommerceDiscount());
+    assertThat(request.getEcommerceDiscount()).isEqualTo(Double.valueOf(1.0));
   }
 
   @Test
-  public void testEcommerceDiscountTE() {
+  @DisplayName("Test Ecommerce Discount TE")
+  void testEcommerceDiscountTE() {
     try {
       request.setEcommerceDiscount(1.0);
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.");
     }
   }
 
   @Test
-  public void testEcommerceDiscountF() {
+  @DisplayName("Test Ecommerce Discount F")
+  void testEcommerceDiscountF() {
     request.setEcommerceDiscount(null);
-
-    assertNull(request.getEcommerceDiscount());
+    assertThat(request.getEcommerceDiscount()).isNull();
   }
 
   /**
    * Test of getEcommerceId method, of class PiwikRequest.
    */
   @Test
-  public void testEcommerceIdT() {
+  @DisplayName("Test Ecommerce Id T")
+  void testEcommerceIdT() {
     request.enableEcommerce();
     request.setEcommerceId("1");
-
-    assertEquals("1", request.getEcommerceId());
+    assertThat(request.getEcommerceId()).isEqualTo("1");
   }
 
   @Test
-  public void testEcommerceIdTE() {
+  @DisplayName("Test Ecommerce Id TE")
+  void testEcommerceIdTE() {
     try {
       request.setEcommerceId("1");
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.");
     }
   }
 
   @Test
-  public void testEcommerceIdF() {
+  @DisplayName("Test Ecommerce Id F")
+  void testEcommerceIdF() {
     request.setEcommerceId(null);
-
-    assertNull(request.getEcommerceId());
+    assertThat(request.getEcommerceId()).isNull();
   }
 
   /**
    * Test of getEcommerceItem method, of class PiwikRequest.
    */
   @Test
-  public void testEcommerceItemE() {
+  @DisplayName("Test Ecommerce Item E")
+  void testEcommerceItemE() {
     try {
       EcommerceItem item = new EcommerceItem("sku", "name", "category", 1.0, 2);
       request.addEcommerceItem(item);
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.");
     }
   }
 
   @Test
-  public void testEcommerceItemE2() {
+  @DisplayName("Test Ecommerce Item E 2")
+  void testEcommerceItemE2() {
     try {
       request.enableEcommerce();
       request.setEcommerceId("1");
@@ -525,198 +541,198 @@ public class PiwikRequestTest {
       request.addEcommerceItem(null);
       fail("Exception should have been thrown.");
     } catch (NullPointerException e) {
-      assertEquals("item is marked non-null but is null", e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("item is marked non-null but is null");
     }
   }
 
   @Test
-  public void testEcommerceItem() {
-    assertNull(request.getEcommerceItem(0));
-
+  @DisplayName("Test Ecommerce Item")
+  void testEcommerceItem() {
+    assertThat(request.getEcommerceItem(0)).isNull();
     EcommerceItem item = new EcommerceItem("sku", "name", "category", 1.0, 2);
     request.enableEcommerce();
     request.setEcommerceId("1");
     request.setEcommerceRevenue(2.0);
     request.addEcommerceItem(item);
-
-    assertEquals(item, request.getEcommerceItem(0));
-
+    assertThat(request.getEcommerceItem(0)).isEqualTo(item);
     request.clearEcommerceItems();
-    assertNull(request.getEcommerceItem(0));
+    assertThat(request.getEcommerceItem(0)).isNull();
   }
 
   /**
    * Test of getEcommerceLastOrderTimestamp method, of class PiwikRequest.
    */
   @Test
-  public void testEcommerceLastOrderTimestampT() {
+  @DisplayName("Test Ecommerce Last Order Timestamp T")
+  void testEcommerceLastOrderTimestampT() {
     request.enableEcommerce();
     request.setEcommerceId("1");
     request.setEcommerceRevenue(2.0);
     request.setEcommerceLastOrderTimestamp(1000L);
-
-    assertEquals(Long.valueOf(1000L), request.getEcommerceLastOrderTimestamp());
+    assertThat(request.getEcommerceLastOrderTimestamp()).isEqualTo(Long.valueOf(1000L));
   }
 
   @Test
-  public void testEcommerceLastOrderTimestampTE() {
+  @DisplayName("Test Ecommerce Last Order Timestamp TE")
+  void testEcommerceLastOrderTimestampTE() {
     try {
       request.setEcommerceLastOrderTimestamp(1000L);
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.");
     }
   }
 
   @Test
-  public void testEcommerceLastOrderTimestampF() {
+  @DisplayName("Test Ecommerce Last Order Timestamp F")
+  void testEcommerceLastOrderTimestampF() {
     request.setEcommerceLastOrderTimestamp(null);
-
-    assertNull(request.getEcommerceLastOrderTimestamp());
+    assertThat(request.getEcommerceLastOrderTimestamp()).isNull();
   }
 
   /**
    * Test of getEcommerceRevenue method, of class PiwikRequest.
    */
   @Test
-  public void testEcommerceRevenueT() {
+  @DisplayName("Test Ecommerce Revenue T")
+  void testEcommerceRevenueT() {
     request.enableEcommerce();
     request.setEcommerceId("1");
     request.setEcommerceRevenue(20.0);
-
-    assertEquals(Double.valueOf(20.0), request.getEcommerceRevenue());
+    assertThat(request.getEcommerceRevenue()).isEqualTo(Double.valueOf(20.0));
   }
 
   @Test
-  public void testEcommerceRevenueTE() {
+  @DisplayName("Test Ecommerce Revenue TE")
+  void testEcommerceRevenueTE() {
     try {
       request.setEcommerceRevenue(20.0);
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.");
     }
   }
 
   @Test
-  public void testEcommerceRevenueF() {
+  @DisplayName("Test Ecommerce Revenue F")
+  void testEcommerceRevenueF() {
     request.setEcommerceRevenue(null);
-
-    assertNull(request.getEcommerceRevenue());
+    assertThat(request.getEcommerceRevenue()).isNull();
   }
 
   /**
    * Test of getEcommerceShippingCost method, of class PiwikRequest.
    */
   @Test
-  public void testEcommerceShippingCostT() {
+  @DisplayName("Test Ecommerce Shipping Cost T")
+  void testEcommerceShippingCostT() {
     request.enableEcommerce();
     request.setEcommerceId("1");
     request.setEcommerceRevenue(2.0);
     request.setEcommerceShippingCost(20.0);
-
-    assertEquals(Double.valueOf(20.0), request.getEcommerceShippingCost());
+    assertThat(request.getEcommerceShippingCost()).isEqualTo(Double.valueOf(20.0));
   }
 
   @Test
-  public void testEcommerceShippingCostTE() {
+  @DisplayName("Test Ecommerce Shipping Cost TE")
+  void testEcommerceShippingCostTE() {
     try {
       request.setEcommerceShippingCost(20.0);
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.");
     }
   }
 
   @Test
-  public void testEcommerceShippingCostF() {
+  @DisplayName("Test Ecommerce Shipping Cost F")
+  void testEcommerceShippingCostF() {
     request.setEcommerceShippingCost(null);
-
-    assertNull(request.getEcommerceShippingCost());
+    assertThat(request.getEcommerceShippingCost()).isNull();
   }
 
   /**
    * Test of getEcommerceSubtotal method, of class PiwikRequest.
    */
   @Test
-  public void testEcommerceSubtotalT() {
+  @DisplayName("Test Ecommerce Subtotal T")
+  void testEcommerceSubtotalT() {
     request.enableEcommerce();
     request.setEcommerceId("1");
     request.setEcommerceRevenue(2.0);
     request.setEcommerceSubtotal(20.0);
-
-    assertEquals(Double.valueOf(20.0), request.getEcommerceSubtotal());
+    assertThat(request.getEcommerceSubtotal()).isEqualTo(Double.valueOf(20.0));
   }
 
   @Test
-  public void testEcommerceSubtotalTE() {
+  @DisplayName("Test Ecommerce Subtotal TE")
+  void testEcommerceSubtotalTE() {
     try {
       request.setEcommerceSubtotal(20.0);
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.");
     }
   }
 
   @Test
-  public void testEcommerceSubtotalF() {
+  @DisplayName("Test Ecommerce Subtotal F")
+  void testEcommerceSubtotalF() {
     request.setEcommerceSubtotal(null);
-
-    assertNull(request.getEcommerceSubtotal());
+    assertThat(request.getEcommerceSubtotal()).isNull();
   }
 
   /**
    * Test of getEcommerceTax method, of class PiwikRequest.
    */
   @Test
-  public void testEcommerceTaxT() {
+  @DisplayName("Test Ecommerce Tax T")
+  void testEcommerceTaxT() {
     request.enableEcommerce();
     request.setEcommerceId("1");
     request.setEcommerceRevenue(2.0);
     request.setEcommerceTax(20.0);
-
-    assertEquals(Double.valueOf(20.0), request.getEcommerceTax());
+    assertThat(request.getEcommerceTax()).isEqualTo(Double.valueOf(20.0));
   }
 
   @Test
-  public void testEcommerceTaxTE() {
+  @DisplayName("Test Ecommerce Tax TE")
+  void testEcommerceTaxTE() {
     try {
       request.setEcommerceTax(20.0);
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("GoalId must be \"0\".  Try calling enableEcommerce first before calling this method.");
     }
   }
 
   @Test
-  public void testEcommerceTaxF() {
+  @DisplayName("Test Ecommerce Tax F")
+  void testEcommerceTaxF() {
     request.setEcommerceTax(null);
-
-    assertNull(request.getEcommerceTax());
+    assertThat(request.getEcommerceTax()).isNull();
   }
 
   /**
    * Test of getEventAction method, of class PiwikRequest.
    */
   @Test
-  public void testEventAction() {
+  @DisplayName("Test Event Action")
+  void testEventAction() {
     request.setEventAction("action");
-    assertEquals("action", request.getEventAction());
+    assertThat(request.getEventAction()).isEqualTo("action");
     request.setEventAction(null);
-    assertNull(request.getEventAction());
+    assertThat(request.getEventAction()).isNull();
   }
 
   @Test
-  public void testEventActionException() {
+  @DisplayName("Test Event Action Exception")
+  void testEventActionException() {
     try {
       request.setEventAction("");
       fail("Exception should have been thrown");
     } catch (IllegalArgumentException e) {
-      assertEquals("Value cannot be empty.", e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("Value cannot be empty.");
     }
   }
 
@@ -724,750 +740,792 @@ public class PiwikRequestTest {
    * Test of getEventCategory method, of class PiwikRequest.
    */
   @Test
-  public void testEventCategory() {
+  @DisplayName("Test Event Category")
+  void testEventCategory() {
     request.setEventCategory("category");
-    assertEquals("category", request.getEventCategory());
+    assertThat(request.getEventCategory()).isEqualTo("category");
   }
 
   /**
    * Test of getEventName method, of class PiwikRequest.
    */
   @Test
-  public void testEventName() {
+  @DisplayName("Test Event Name")
+  void testEventName() {
     request.setEventName("name");
-    assertEquals("name", request.getEventName());
+    assertThat(request.getEventName()).isEqualTo("name");
   }
-
 
   /**
    * Test of getEventValue method, of class PiwikRequest.
    */
   @Test
-  public void testEventValue() {
+  @DisplayName("Test Event Value")
+  void testEventValue() {
     request.setEventValue(1);
-    assertEquals(1, request.getEventValue());
+    assertThat(request.getEventValue()).isEqualTo(1);
   }
 
   /**
    * Test of getGoalId method, of class PiwikRequest.
    */
   @Test
-  public void testGoalId() {
+  @DisplayName("Test Goal Id")
+  void testGoalId() {
     request.setGoalId(1);
-    assertEquals(Integer.valueOf(1), request.getGoalId());
+    assertThat(request.getGoalId()).isEqualTo(Integer.valueOf(1));
   }
 
   /**
    * Test of getGoalRevenue method, of class PiwikRequest.
    */
   @Test
-  public void testGoalRevenueTT() {
+  @DisplayName("Test Goal Revenue TT")
+  void testGoalRevenueTT() {
     try {
       request.setGoalRevenue(20.0);
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("GoalId must be set before GoalRevenue can be set.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("GoalId must be set before GoalRevenue can be set.");
     }
   }
 
   @Test
-  public void testGoalRevenueTF() {
+  @DisplayName("Test Goal Revenue TF")
+  void testGoalRevenueTF() {
     request.setGoalId(1);
     request.setGoalRevenue(20.0);
-
-    assertEquals(Double.valueOf(20.0), request.getGoalRevenue());
+    assertThat(request.getGoalRevenue()).isEqualTo(Double.valueOf(20.0));
   }
 
   @Test
-  public void testGoalRevenueF() {
+  @DisplayName("Test Goal Revenue F")
+  void testGoalRevenueF() {
     request.setGoalRevenue(null);
-
-    assertNull(request.getGoalRevenue());
+    assertThat(request.getGoalRevenue()).isNull();
   }
 
   /**
    * Test of getHeaderAcceptLanguage method, of class PiwikRequest.
    */
   @Test
-  public void testHeaderAcceptLanguage() {
+  @DisplayName("Test Header Accept Language")
+  void testHeaderAcceptLanguage() {
     request.setHeaderAcceptLanguage("language");
-    assertEquals("language", request.getHeaderAcceptLanguage());
+    assertThat(request.getHeaderAcceptLanguage()).isEqualTo("language");
   }
 
   /**
    * Test of getHeaderUserAgent method, of class PiwikRequest.
    */
   @Test
-  public void testHeaderUserAgent() {
+  @DisplayName("Test Header User Agent")
+  void testHeaderUserAgent() {
     request.setHeaderUserAgent("agent");
-    assertEquals("agent", request.getHeaderUserAgent());
+    assertThat(request.getHeaderUserAgent()).isEqualTo("agent");
   }
 
   /**
    * Test of getNewVisit method, of class PiwikRequest.
    */
   @Test
-  public void testNewVisit() {
+  @DisplayName("Test New Visit")
+  void testNewVisit() {
     request.setNewVisit(true);
-    assertEquals(true, request.getNewVisit());
+    assertThat(request.getNewVisit()).isEqualTo(true);
     request.setNewVisit(null);
-    assertNull(request.getNewVisit());
+    assertThat(request.getNewVisit()).isNull();
   }
 
   /**
    * Test of getOutlinkUrl method, of class PiwikRequest.
    */
   @Test
-  public void testOutlinkUrl() throws Exception {
+  @DisplayName("Test Outlink Url")
+  void testOutlinkUrl() throws Exception {
     URL url = new URL("http://outlink.com");
     request.setOutlinkUrl(url);
-    assertEquals(url, request.getOutlinkUrl());
-    assertEquals("http://outlink.com", request.getOutlinkUrlAsString());
-
+    assertThat(request.getOutlinkUrl()).isEqualTo(url);
+    assertThat(request.getOutlinkUrlAsString()).isEqualTo("http://outlink.com");
     request.setOutlinkUrlWithString("http://outlinkstring.com");
-    assertEquals("http://outlinkstring.com", request.getOutlinkUrlAsString());
-    assertEquals(new URL("http://outlinkstring.com"), request.getOutlinkUrl());
-
+    assertThat(request.getOutlinkUrlAsString()).isEqualTo("http://outlinkstring.com");
+    assertThat(request.getOutlinkUrl()).isEqualTo(new URL("http://outlinkstring.com"));
   }
 
   /**
    * Test of getPageCustomVariable method, of class PiwikRequest.
    */
   @Test
-  public void testPageCustomVariableStringStringE() {
+  @DisplayName("Test Page Custom Variable String String E")
+  void testPageCustomVariableStringStringE() {
     try {
       request.setPageCustomVariable(null, null);
       fail("Exception should have been thrown");
     } catch (NullPointerException e) {
-      assertEquals("key is marked non-null but is null", e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("key is marked non-null but is null");
     }
   }
 
   @Test
-  public void testPageCustomVariableStringStringE2() {
+  @DisplayName("Test Page Custom Variable String String E 2")
+  void testPageCustomVariableStringStringE2() {
     try {
       request.setPageCustomVariable(null, "pageVal");
       fail("Exception should have been thrown");
     } catch (NullPointerException e) {
-      assertEquals("key is marked non-null but is null", e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("key is marked non-null but is null");
     }
   }
 
   @Test
-  public void testPageCustomVariableStringStringE3() {
+  @DisplayName("Test Page Custom Variable String String E 3")
+  void testPageCustomVariableStringStringE3() {
     try {
       request.getPageCustomVariable(null);
       fail("Exception should have been thrown");
     } catch (NullPointerException e) {
-      assertEquals("key is marked non-null but is null", e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("key is marked non-null but is null");
     }
   }
 
   @Test
-  public void testPageCustomVariableStringString() {
-    assertNull(request.getPageCustomVariable("pageKey"));
+  @DisplayName("Test Page Custom Variable String String")
+  void testPageCustomVariableStringString() {
+    assertThat(request.getPageCustomVariable("pageKey")).isNull();
     request.setPageCustomVariable("pageKey", "pageVal");
-    assertEquals("pageVal", request.getPageCustomVariable("pageKey"));
+    assertThat(request.getPageCustomVariable("pageKey")).isEqualTo("pageVal");
     request.setPageCustomVariable("pageKey", null);
-    assertNull(request.getPageCustomVariable("pageKey"));
+    assertThat(request.getPageCustomVariable("pageKey")).isNull();
     request.setPageCustomVariable("pageKey", "pageVal");
-    assertEquals("pageVal", request.getPageCustomVariable("pageKey"));
+    assertThat(request.getPageCustomVariable("pageKey")).isEqualTo("pageVal");
   }
 
   @Test
-  public void testPageCustomVariableCustomVariable() {
-    assertNull(request.getPageCustomVariable(1));
+  @DisplayName("Test Page Custom Variable Custom Variable")
+  void testPageCustomVariableCustomVariable() {
+    assertThat(request.getPageCustomVariable(1)).isNull();
     CustomVariable cv = new CustomVariable("pageKey", "pageVal");
     request.setPageCustomVariable(cv, 1);
-    assertEquals(cv, request.getPageCustomVariable(1));
+    assertThat(request.getPageCustomVariable(1)).isEqualTo(cv);
     request.setPageCustomVariable(null, 1);
-    assertNull(request.getPageCustomVariable(1));
+    assertThat(request.getPageCustomVariable(1)).isNull();
     request.setPageCustomVariable(cv, 2);
-    assertEquals(cv, request.getPageCustomVariable(2));
+    assertThat(request.getPageCustomVariable(2)).isEqualTo(cv);
   }
 
   /**
    * Test of getPluginDirector method, of class PiwikRequest.
    */
   @Test
-  public void testPluginDirector() {
+  @DisplayName("Test Plugin Director")
+  void testPluginDirector() {
     request.setPluginDirector(true);
-    assertEquals(true, request.getPluginDirector());
+    assertThat(request.getPluginDirector()).isEqualTo(true);
   }
 
   /**
    * Test of getPluginFlash method, of class PiwikRequest.
    */
   @Test
-  public void testPluginFlash() {
+  @DisplayName("Test Plugin Flash")
+  void testPluginFlash() {
     request.setPluginFlash(true);
-    assertEquals(true, request.getPluginFlash());
+    assertThat(request.getPluginFlash()).isEqualTo(true);
   }
 
   /**
    * Test of getPluginGears method, of class PiwikRequest.
    */
   @Test
-  public void testPluginGears() {
+  @DisplayName("Test Plugin Gears")
+  void testPluginGears() {
     request.setPluginGears(true);
-    assertEquals(true, request.getPluginGears());
+    assertThat(request.getPluginGears()).isEqualTo(true);
   }
 
   /**
    * Test of getPluginJava method, of class PiwikRequest.
    */
   @Test
-  public void testPluginJava() {
+  @DisplayName("Test Plugin Java")
+  void testPluginJava() {
     request.setPluginJava(true);
-    assertEquals(true, request.getPluginJava());
+    assertThat(request.getPluginJava()).isEqualTo(true);
   }
 
   /**
    * Test of getPluginPDF method, of class PiwikRequest.
    */
   @Test
-  public void testPluginPDF() {
+  @DisplayName("Test Plugin PDF")
+  void testPluginPDF() {
     request.setPluginPDF(true);
-    assertEquals(true, request.getPluginPDF());
+    assertThat(request.getPluginPDF()).isEqualTo(true);
   }
 
   /**
    * Test of getPluginQuicktime method, of class PiwikRequest.
    */
   @Test
-  public void testPluginQuicktime() {
+  @DisplayName("Test Plugin Quicktime")
+  void testPluginQuicktime() {
     request.setPluginQuicktime(true);
-    assertEquals(true, request.getPluginQuicktime());
+    assertThat(request.getPluginQuicktime()).isEqualTo(true);
   }
 
   /**
    * Test of getPluginRealPlayer method, of class PiwikRequest.
    */
   @Test
-  public void testPluginRealPlayer() {
+  @DisplayName("Test Plugin Real Player")
+  void testPluginRealPlayer() {
     request.setPluginRealPlayer(true);
-    assertEquals(true, request.getPluginRealPlayer());
+    assertThat(request.getPluginRealPlayer()).isEqualTo(true);
   }
 
   /**
    * Test of getPluginSilverlight method, of class PiwikRequest.
    */
   @Test
-  public void testPluginSilverlight() {
+  @DisplayName("Test Plugin Silverlight")
+  void testPluginSilverlight() {
     request.setPluginSilverlight(true);
-    assertEquals(true, request.getPluginSilverlight());
+    assertThat(request.getPluginSilverlight()).isEqualTo(true);
   }
 
   /**
    * Test of getPluginWindowsMedia method, of class PiwikRequest.
    */
   @Test
-  public void testPluginWindowsMedia() {
+  @DisplayName("Test Plugin Windows Media")
+  void testPluginWindowsMedia() {
     request.setPluginWindowsMedia(true);
-    assertEquals(true, request.getPluginWindowsMedia());
+    assertThat(request.getPluginWindowsMedia()).isEqualTo(true);
   }
 
   /**
    * Test of getRandomValue method, of class PiwikRequest.
    */
   @Test
-  public void testRandomValue() {
+  @DisplayName("Test Random Value")
+  void testRandomValue() {
     request.setRandomValue("value");
-    assertEquals("value", request.getRandomValue());
+    assertThat(request.getRandomValue()).isEqualTo("value");
   }
 
   /**
    * Test of setReferrerUrl method, of class PiwikRequest.
    */
   @Test
-  public void testReferrerUrl() throws Exception {
+  @DisplayName("Test Referrer Url")
+  void testReferrerUrl() throws Exception {
     URL url = new URL("http://referrer.com");
     request.setReferrerUrl(url);
-    assertEquals(url, request.getReferrerUrl());
-    assertEquals("http://referrer.com", request.getReferrerUrlAsString());
-
+    assertThat(request.getReferrerUrl()).isEqualTo(url);
+    assertThat(request.getReferrerUrlAsString()).isEqualTo("http://referrer.com");
     request.setReferrerUrlWithString("http://referrerstring.com");
-    assertEquals("http://referrerstring.com", request.getReferrerUrlAsString());
-    assertEquals(new URL("http://referrerstring.com"), request.getReferrerUrl());
-
+    assertThat(request.getReferrerUrlAsString()).isEqualTo("http://referrerstring.com");
+    assertThat(request.getReferrerUrl()).isEqualTo(new URL("http://referrerstring.com"));
   }
 
   /**
    * Test of getRequestDatetime method, of class PiwikRequest.
    */
   @Test
-  public void testRequestDatetimeTTT() {
+  @DisplayName("Test Request Datetime TTT")
+  void testRequestDatetimeTTT() {
     request.setAuthToken("12345678901234567890123456789012");
     PiwikDate date = new PiwikDate(1000L);
     request.setRequestDatetime(date);
-
-    assertEquals(date, request.getRequestDatetime());
+    assertThat(request.getRequestDatetime()).isEqualTo(date);
   }
 
   @Test
-  public void testRequestDatetimeTTF() {
+  @DisplayName("Test Request Datetime TTF")
+  void testRequestDatetimeTTF() {
     try {
       PiwikDate date = new PiwikDate(1000L);
       request.setRequestDatetime(date);
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("Because you are trying to set RequestDatetime for a time greater than 4 hours ago, AuthToken must be set first.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("Because you are trying to set RequestDatetime for a time greater than 4 hours ago, AuthToken must be set first.");
     }
   }
 
   @Test
-  public void testRequestDatetimeTF() {
+  @DisplayName("Test Request Datetime TF")
+  void testRequestDatetimeTF() {
     PiwikDate date = new PiwikDate();
     request.setRequestDatetime(date);
-    assertEquals(date, request.getRequestDatetime());
+    assertThat(request.getRequestDatetime()).isEqualTo(date);
   }
 
   @Test
-  public void testRequestDatetimeF() {
+  @DisplayName("Test Request Datetime F")
+  void testRequestDatetimeF() {
     PiwikDate date = new PiwikDate();
     request.setRequestDatetime(date);
     request.setRequestDatetime(null);
-    assertNull(request.getRequestDatetime());
+    assertThat(request.getRequestDatetime()).isNull();
   }
 
   /**
    * Test of getRequired method, of class PiwikRequest.
    */
   @Test
-  public void testRequired() {
+  @DisplayName("Test Required")
+  void testRequired() {
     request.setRequired(false);
-    assertEquals(false, request.getRequired());
+    assertThat(request.getRequired()).isEqualTo(false);
   }
 
   /**
    * Test of getResponseAsImage method, of class PiwikRequest.
    */
   @Test
-  public void testResponseAsImage() {
+  @DisplayName("Test Response As Image")
+  void testResponseAsImage() {
     request.setResponseAsImage(true);
-    assertEquals(true, request.getResponseAsImage());
+    assertThat(request.getResponseAsImage()).isEqualTo(true);
   }
 
   /**
    * Test of getSearchCategory method, of class PiwikRequest.
    */
   @Test
-  public void testSearchCategoryTT() {
+  @DisplayName("Test Search Category TT")
+  void testSearchCategoryTT() {
     try {
       request.setSearchCategory("category");
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("SearchQuery must be set before SearchCategory can be set.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("SearchQuery must be set before SearchCategory can be set.");
     }
   }
 
   @Test
-  public void testSearchCategoryTF() {
+  @DisplayName("Test Search Category TF")
+  void testSearchCategoryTF() {
     request.setSearchQuery("query");
     request.setSearchCategory("category");
-    assertEquals("category", request.getSearchCategory());
+    assertThat(request.getSearchCategory()).isEqualTo("category");
   }
 
   @Test
-  public void testSearchCategoryF() {
+  @DisplayName("Test Search Category F")
+  void testSearchCategoryF() {
     request.setSearchCategory(null);
-    assertNull(request.getSearchCategory());
+    assertThat(request.getSearchCategory()).isNull();
   }
 
   /**
    * Test of getSearchQuery method, of class PiwikRequest.
    */
   @Test
-  public void testSearchQuery() {
+  @DisplayName("Test Search Query")
+  void testSearchQuery() {
     request.setSearchQuery("query");
-    assertEquals("query", request.getSearchQuery());
+    assertThat(request.getSearchQuery()).isEqualTo("query");
   }
 
   /**
    * Test of getSearchResultsCount method, of class PiwikRequest.
    */
   @Test
-  public void testSearchResultsCountTT() {
+  @DisplayName("Test Search Results Count TT")
+  void testSearchResultsCountTT() {
     try {
       request.setSearchResultsCount(100L);
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("SearchQuery must be set before SearchResultsCount can be set.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("SearchQuery must be set before SearchResultsCount can be set.");
     }
   }
 
   @Test
-  public void testSearchResultsCountTF() {
+  @DisplayName("Test Search Results Count TF")
+  void testSearchResultsCountTF() {
     request.setSearchQuery("query");
     request.setSearchResultsCount(100L);
-    assertEquals(Long.valueOf(100L), request.getSearchResultsCount());
+    assertThat(request.getSearchResultsCount()).isEqualTo(Long.valueOf(100L));
   }
 
   @Test
-  public void testSearchResultsCountF() {
+  @DisplayName("Test Search Results Count F")
+  void testSearchResultsCountF() {
     request.setSearchResultsCount(null);
-    assertNull(request.getSearchResultsCount());
+    assertThat(request.getSearchResultsCount()).isNull();
   }
 
   /**
    * Test of getSiteId method, of class PiwikRequest.
    */
   @Test
-  public void testSiteId() {
+  @DisplayName("Test Site Id")
+  void testSiteId() {
     request.setSiteId(2);
-    assertEquals(Integer.valueOf(2), request.getSiteId());
+    assertThat(request.getSiteId()).isEqualTo(Integer.valueOf(2));
   }
 
   /**
    * Test of setTrackBotRequest method, of class PiwikRequest.
    */
   @Test
-  public void testTrackBotRequests() {
+  @DisplayName("Test Track Bot Requests")
+  void testTrackBotRequests() {
     request.setTrackBotRequests(true);
-    assertEquals(true, request.getTrackBotRequests());
+    assertThat(request.getTrackBotRequests()).isEqualTo(true);
   }
-
 
   /**
    * Test of getUserrCustomVariable method, of class PiwikRequest.
    */
   @Test
-  public void testUserCustomVariableStringString() {
+  @DisplayName("Test User Custom Variable String String")
+  void testUserCustomVariableStringString() {
     request.setUserCustomVariable("userKey", "userValue");
-    assertEquals("userValue", request.getUserCustomVariable("userKey"));
+    assertThat(request.getUserCustomVariable("userKey")).isEqualTo("userValue");
   }
 
   @Test
-  public void testVisitCustomVariableCustomVariable() {
+  @DisplayName("Test Visit Custom Variable Custom Variable")
+  void testVisitCustomVariableCustomVariable() {
     request.setRandomValue("random");
     request.setVisitorId("1234567890123456");
-
-    assertNull(request.getVisitCustomVariable(1));
+    assertThat(request.getVisitCustomVariable(1)).isNull();
     CustomVariable cv = new CustomVariable("visitKey", "visitVal");
     request.setVisitCustomVariable(cv, 1);
-    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&_cvar={\"1\":[\"visitKey\",\"visitVal\"]}", request.getQueryString());
-
+    assertThat(request.getQueryString()).isEqualTo("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&_cvar={\"1\":[\"visitKey\",\"visitVal\"]}");
     request.setUserCustomVariable("key", "val");
-    assertEquals(cv, request.getVisitCustomVariable(1));
-    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&_cvar={\"1\":[\"visitKey\",\"visitVal\"],\"2\":[\"key\",\"val\"]}", request.getQueryString());
-
+    assertThat(request.getVisitCustomVariable(1)).isEqualTo(cv);
+    assertThat(request.getQueryString()).isEqualTo("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&_cvar={\"1\":[\"visitKey\",\"visitVal\"],\"2\":[\"key\",\"val\"]}");
     request.setVisitCustomVariable(null, 1);
-    assertNull(request.getVisitCustomVariable(1));
-    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&_cvar={\"2\":[\"key\",\"val\"]}", request.getQueryString());
-
+    assertThat(request.getVisitCustomVariable(1)).isNull();
+    assertThat(request.getQueryString()).isEqualTo("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&_cvar={\"2\":[\"key\",\"val\"]}");
     request.setVisitCustomVariable(cv, 2);
-    assertEquals(cv, request.getVisitCustomVariable(2));
-    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&_cvar={\"2\":[\"visitKey\",\"visitVal\"]}", request.getQueryString());
-
+    assertThat(request.getVisitCustomVariable(2)).isEqualTo(cv);
+    assertThat(request.getQueryString()).isEqualTo("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&_cvar={\"2\":[\"visitKey\",\"visitVal\"]}");
     request.setUserCustomVariable("visitKey", null);
-    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456", request.getQueryString());
+    assertThat(request.getQueryString()).isEqualTo("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456");
   }
 
   /**
    * Test of getUserId method, of class PiwikRequest.
    */
   @Test
-  public void testUserId() {
+  @DisplayName("Test User Id")
+  void testUserId() {
     request.setUserId("id");
-    assertEquals("id", request.getUserId());
+    assertThat(request.getUserId()).isEqualTo("id");
   }
 
   /**
    * Test of getVisitorCity method, of class PiwikRequest.
    */
   @Test
-  public void testVisitorCityT() {
+  @DisplayName("Test Visitor City T")
+  void testVisitorCityT() {
     request.setAuthToken("12345678901234567890123456789012");
     request.setVisitorCity("city");
-    assertEquals("city", request.getVisitorCity());
+    assertThat(request.getVisitorCity()).isEqualTo("city");
   }
 
   @Test
-  public void testVisitorCityTE() {
+  @DisplayName("Test Visitor City TE")
+  void testVisitorCityTE() {
     try {
       request.setVisitorCity("city");
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("AuthToken must be set before this value can be set.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("AuthToken must be set before this value can be set.");
     }
   }
 
   @Test
-  public void testVisitorCityF() {
+  @DisplayName("Test Visitor City F")
+  void testVisitorCityF() {
     request.setVisitorCity(null);
-    assertNull(request.getVisitorCity());
+    assertThat(request.getVisitorCity()).isNull();
   }
 
   /**
    * Test of getVisitorCountry method, of class PiwikRequest.
    */
   @Test
-  public void testVisitorCountryT() {
+  @DisplayName("Test Visitor Country T")
+  void testVisitorCountryT() {
     PiwikLocale country = new PiwikLocale(Locale.US);
     request.setAuthToken("12345678901234567890123456789012");
     request.setVisitorCountry(country);
-
-    assertEquals(country, request.getVisitorCountry());
+    assertThat(request.getVisitorCountry()).isEqualTo(country);
   }
 
   @Test
-  public void testVisitorCountryTE() {
+  @DisplayName("Test Visitor Country TE")
+  void testVisitorCountryTE() {
     try {
       PiwikLocale country = new PiwikLocale(Locale.US);
       request.setVisitorCountry(country);
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("AuthToken must be set before this value can be set.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("AuthToken must be set before this value can be set.");
     }
   }
 
   @Test
-  public void testVisitorCountryF() {
+  @DisplayName("Test Visitor Country F")
+  void testVisitorCountryF() {
     request.setVisitorCountry(null);
-
-    assertNull(request.getVisitorCountry());
+    assertThat(request.getVisitorCountry()).isNull();
   }
 
   /**
    * Test of getVisitorCustomId method, of class PiwikRequest.
    */
   @Test
-  public void testVisitorCustomTT() {
+  @DisplayName("Test Visitor Custom TT")
+  void testVisitorCustomTT() {
     try {
       request.setVisitorCustomId("1");
       fail("Exception should have been thrown.");
     } catch (IllegalArgumentException e) {
-      assertEquals("1 is not 16 characters long.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("1 is not 16 characters long.");
     }
   }
 
   @Test
-  public void testVisitorCustomTFT() {
+  @DisplayName("Test Visitor Custom TFT")
+  void testVisitorCustomTFT() {
     try {
       request.setVisitorCustomId("1234567890abcdeg");
       fail("Exception should have been thrown.");
     } catch (IllegalArgumentException e) {
-      assertEquals("1234567890abcdeg is not a hexadecimal string.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("1234567890abcdeg is not a hexadecimal string.");
     }
   }
 
   @Test
-  public void testVisitorCustomIdTFF() {
+  @DisplayName("Test Visitor Custom Id TFF")
+  void testVisitorCustomIdTFF() {
     request.setVisitorCustomId("1234567890abcdef");
-    assertEquals("1234567890abcdef", request.getVisitorCustomId());
+    assertThat(request.getVisitorCustomId()).isEqualTo("1234567890abcdef");
   }
 
   @Test
-  public void testVisitorCustomIdF() {
+  @DisplayName("Test Visitor Custom Id F")
+  void testVisitorCustomIdF() {
     request.setVisitorCustomId("1234567890abcdef");
     request.setVisitorCustomId(null);
-    assertNull(request.getVisitorCustomId());
+    assertThat(request.getVisitorCustomId()).isNull();
   }
 
   /**
    * Test of getVisitorFirstVisitTimestamp method, of class PiwikRequest.
    */
   @Test
-  public void testVisitorFirstVisitTimestamp() {
+  @DisplayName("Test Visitor First Visit Timestamp")
+  void testVisitorFirstVisitTimestamp() {
     request.setVisitorFirstVisitTimestamp(1000L);
-    assertEquals(Long.valueOf(1000L), request.getVisitorFirstVisitTimestamp());
+    assertThat(request.getVisitorFirstVisitTimestamp()).isEqualTo(Long.valueOf(1000L));
   }
 
   /**
    * Test of getVisitorId method, of class PiwikRequest.
    */
   @Test
-  public void testVisitorIdTT() {
+  @DisplayName("Test Visitor Id TT")
+  void testVisitorIdTT() {
     try {
       request.setVisitorId("1");
       fail("Exception should have been thrown.");
     } catch (IllegalArgumentException e) {
-      assertEquals("1 is not 16 characters long.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("1 is not 16 characters long.");
     }
   }
 
   @Test
-  public void testVisitorIdTFT() {
+  @DisplayName("Test Visitor Id TFT")
+  void testVisitorIdTFT() {
     try {
       request.setVisitorId("1234567890abcdeg");
       fail("Exception should have been thrown.");
     } catch (IllegalArgumentException e) {
-      assertEquals("1234567890abcdeg is not a hexadecimal string.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("1234567890abcdeg is not a hexadecimal string.");
     }
   }
 
   @Test
-  public void testVisitorIdTFF() {
+  @DisplayName("Test Visitor Id TFF")
+  void testVisitorIdTFF() {
     request.setVisitorId("1234567890abcdef");
-    assertEquals("1234567890abcdef", request.getVisitorId());
+    assertThat(request.getVisitorId()).isEqualTo("1234567890abcdef");
   }
 
   @Test
-  public void testVisitorIdF() {
+  @DisplayName("Test Visitor Id F")
+  void testVisitorIdF() {
     request.setVisitorId("1234567890abcdef");
     request.setVisitorId(null);
-    assertNull(request.getVisitorId());
+    assertThat(request.getVisitorId()).isNull();
   }
 
   /**
    * Test of getVisitorIp method, of class PiwikRequest.
    */
   @Test
-  public void testVisitorIpT() {
+  @DisplayName("Test Visitor Ip T")
+  void testVisitorIpT() {
     request.setAuthToken("12345678901234567890123456789012");
     request.setVisitorIp("ip");
-    assertEquals("ip", request.getVisitorIp());
+    assertThat(request.getVisitorIp()).isEqualTo("ip");
   }
 
   @Test
-  public void testVisitorIpTE() {
+  @DisplayName("Test Visitor Ip TE")
+  void testVisitorIpTE() {
     try {
       request.setVisitorIp("ip");
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("AuthToken must be set before this value can be set.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("AuthToken must be set before this value can be set.");
     }
   }
 
   @Test
-  public void testVisitorIpF() {
+  @DisplayName("Test Visitor Ip F")
+  void testVisitorIpF() {
     request.setVisitorIp(null);
-    assertNull(request.getVisitorIp());
+    assertThat(request.getVisitorIp()).isNull();
   }
 
   /**
    * Test of getVisitorLatitude method, of class PiwikRequest.
    */
   @Test
-  public void testVisitorLatitudeT() {
+  @DisplayName("Test Visitor Latitude T")
+  void testVisitorLatitudeT() {
     request.setAuthToken("12345678901234567890123456789012");
     request.setVisitorLatitude(10.5);
-    assertEquals(Double.valueOf(10.5), request.getVisitorLatitude());
+    assertThat(request.getVisitorLatitude()).isEqualTo(Double.valueOf(10.5));
   }
 
   @Test
-  public void testVisitorLatitudeTE() {
+  @DisplayName("Test Visitor Latitude TE")
+  void testVisitorLatitudeTE() {
     try {
       request.setVisitorLatitude(10.5);
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("AuthToken must be set before this value can be set.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("AuthToken must be set before this value can be set.");
     }
   }
 
   @Test
-  public void testVisitorLatitudeF() {
+  @DisplayName("Test Visitor Latitude F")
+  void testVisitorLatitudeF() {
     request.setVisitorLatitude(null);
-    assertNull(request.getVisitorLatitude());
+    assertThat(request.getVisitorLatitude()).isNull();
   }
 
   /**
    * Test of getVisitorLongitude method, of class PiwikRequest.
    */
   @Test
-  public void testVisitorLongitudeT() {
+  @DisplayName("Test Visitor Longitude T")
+  void testVisitorLongitudeT() {
     request.setAuthToken("12345678901234567890123456789012");
     request.setVisitorLongitude(20.5);
-    assertEquals(Double.valueOf(20.5), request.getVisitorLongitude());
+    assertThat(request.getVisitorLongitude()).isEqualTo(Double.valueOf(20.5));
   }
 
   @Test
-  public void testVisitorLongitudeTE() {
+  @DisplayName("Test Visitor Longitude TE")
+  void testVisitorLongitudeTE() {
     try {
       request.setVisitorLongitude(20.5);
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("AuthToken must be set before this value can be set.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("AuthToken must be set before this value can be set.");
     }
   }
 
   @Test
-  public void testVisitorLongitudeF() {
+  @DisplayName("Test Visitor Longitude F")
+  void testVisitorLongitudeF() {
     request.setVisitorLongitude(null);
-    assertNull(request.getVisitorLongitude());
+    assertThat(request.getVisitorLongitude()).isNull();
   }
 
   /**
    * Test of getVisitorPreviousVisitTimestamp method, of class PiwikRequest.
    */
   @Test
-  public void testVisitorPreviousVisitTimestamp() {
+  @DisplayName("Test Visitor Previous Visit Timestamp")
+  void testVisitorPreviousVisitTimestamp() {
     request.setVisitorPreviousVisitTimestamp(1000L);
-    assertEquals(Long.valueOf(1000L), request.getVisitorPreviousVisitTimestamp());
+    assertThat(request.getVisitorPreviousVisitTimestamp()).isEqualTo(Long.valueOf(1000L));
   }
 
   /**
    * Test of getVisitorRegion method, of class PiwikRequest.
    */
   @Test
-  public void testVisitorRegionT() {
+  @DisplayName("Test Visitor Region T")
+  void testVisitorRegionT() {
     request.setAuthToken("12345678901234567890123456789012");
     request.setVisitorRegion("region");
-
-    assertEquals("region", request.getVisitorRegion());
+    assertThat(request.getVisitorRegion()).isEqualTo("region");
   }
 
   @Test
-  public void testGetVisitorRegionTE() {
+  @DisplayName("Test Get Visitor Region TE")
+  void testGetVisitorRegionTE() {
     try {
       request.setVisitorRegion("region");
       fail("Exception should have been thrown.");
     } catch (IllegalStateException e) {
-      assertEquals("AuthToken must be set before this value can be set.",
-        e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("AuthToken must be set before this value can be set.");
     }
   }
 
   @Test
-  public void testVisitorRegionF() {
+  @DisplayName("Test Visitor Region F")
+  void testVisitorRegionF() {
     request.setVisitorRegion(null);
-
-    assertNull(request.getVisitorRegion());
+    assertThat(request.getVisitorRegion()).isNull();
   }
 
   /**
    * Test of getVisitorVisitCount method, of class PiwikRequest.
    */
   @Test
-  public void testVisitorVisitCount() {
+  @DisplayName("Test Visitor Visit Count")
+  void testVisitorVisitCount() {
     request.setVisitorVisitCount(100);
-    assertEquals(Integer.valueOf(100), request.getVisitorVisitCount());
+    assertThat(request.getVisitorVisitCount()).isEqualTo(Integer.valueOf(100));
   }
 
   /**
    * Test of getQueryString method, of class PiwikRequest.
    */
   @Test
-  public void testGetQueryString() {
+  @DisplayName("Test Get Query String")
+  void testGetQueryString() {
     request.setRandomValue("random");
     request.setVisitorId("1234567890123456");
-    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456", request.getQueryString());
+    assertThat(request.getQueryString()).isEqualTo("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456");
     request.setPageCustomVariable("key", "val");
-    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&cvar={\"1\":[\"key\",\"val\"]}",
-      request.getQueryString());
+    assertThat(request.getQueryString()).isEqualTo("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&cvar={\"1\":[\"key\",\"val\"]}");
     request.setPageCustomVariable("key", null);
-    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456", request.getQueryString());
+    assertThat(request.getQueryString()).isEqualTo("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456");
     request.addCustomTrackingParameter("key", "test");
-    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&key=test", request.getQueryString());
+    assertThat(request.getQueryString()).isEqualTo("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&key=test");
     request.addCustomTrackingParameter("key", "test2");
-    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&key=test&key=test2", request.getQueryString());
+    assertThat(request.getQueryString()).isEqualTo("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&key=test&key=test2");
     request.setCustomTrackingParameter("key2", "test3");
-    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&key=test&key=test2&key2=test3", request.getQueryString());
+    assertThat(request.getQueryString()).isEqualTo("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&key=test&key=test2&key2=test3");
     request.setCustomTrackingParameter("key", "test4");
-    assertEquals("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&key2=test3&key=test4", request.getQueryString());
+    assertThat(request.getQueryString()).isEqualTo("idsite=3&rec=1&url=http://test.com&apiv=1&send_image=0&rand=random&_id=1234567890123456&key2=test3&key=test4");
     request.setRandomValue(null);
     request.setSiteId(null);
     request.setRequired(null);
@@ -1475,35 +1533,37 @@ public class PiwikRequestTest {
     request.setResponseAsImage(null);
     request.setVisitorId(null);
     request.setActionUrl((String) null);
-    assertEquals("key2=test3&key=test4", request.getQueryString());
+    assertThat(request.getQueryString()).isEqualTo("key2=test3&key=test4");
     request.clearCustomTrackingParameter();
-    assertEquals("", request.getQueryString());
+    assertThat(request.getQueryString()).isEqualTo("");
   }
 
   @Test
-  public void testGetQueryString2() {
+  @DisplayName("Test Get Query String 2")
+  void testGetQueryString2() {
     request.setActionUrlWithString("http://test.com");
     request.setRandomValue("random");
     request.setVisitorId("1234567890123456");
-    assertEquals("idsite=3&rec=1&apiv=1&send_image=0&url=http://test.com&rand=random&_id=1234567890123456", request.getQueryString());
+    assertThat(request.getQueryString()).isEqualTo("idsite=3&rec=1&apiv=1&send_image=0&url=http://test.com&rand=random&_id=1234567890123456");
   }
 
   /**
    * Test of getUrlEncodedQueryString method, of class PiwikRequest.
    */
   @Test
-  public void testGetUrlEncodedQueryString() {
+  @DisplayName("Test Get Url Encoded Query String")
+  void testGetUrlEncodedQueryString() {
     request.setRandomValue("random");
     request.setVisitorId("1234567890123456");
-    assertEquals("_id=1234567890123456&apiv=1&idsite=3&rand=random&rec=1&send_image=0&url=http%3A%2F%2Ftest.com", request.getUrlEncodedQueryString());
+    assertThat(request.getUrlEncodedQueryString()).isEqualTo("_id=1234567890123456&apiv=1&idsite=3&rand=random&rec=1&send_image=0&url=http%3A%2F%2Ftest.com");
     request.addCustomTrackingParameter("ke/y", "te:st");
-    assertEquals("_id=1234567890123456&apiv=1&idsite=3&ke%2Fy=te%3Ast&rand=random&rec=1&send_image=0&url=http%3A%2F%2Ftest.com", request.getUrlEncodedQueryString());
+    assertThat(request.getUrlEncodedQueryString()).isEqualTo("_id=1234567890123456&apiv=1&idsite=3&ke%2Fy=te%3Ast&rand=random&rec=1&send_image=0&url=http%3A%2F%2Ftest.com");
     request.addCustomTrackingParameter("ke/y", "te:st2");
-    assertEquals("_id=1234567890123456&apiv=1&idsite=3&ke%2Fy=te%3Ast&ke%2Fy=te%3Ast2&rand=random&rec=1&send_image=0&url=http%3A%2F%2Ftest.com", request.getUrlEncodedQueryString());
+    assertThat(request.getUrlEncodedQueryString()).isEqualTo("_id=1234567890123456&apiv=1&idsite=3&ke%2Fy=te%3Ast&ke%2Fy=te%3Ast2&rand=random&rec=1&send_image=0&url=http%3A%2F%2Ftest.com");
     request.setCustomTrackingParameter("ke/y2", "te:st3");
-    assertEquals("_id=1234567890123456&apiv=1&idsite=3&ke%2Fy=te%3Ast&ke%2Fy=te%3Ast2&ke%2Fy2=te%3Ast3&rand=random&rec=1&send_image=0&url=http%3A%2F%2Ftest.com", request.getUrlEncodedQueryString());
+    assertThat(request.getUrlEncodedQueryString()).isEqualTo("_id=1234567890123456&apiv=1&idsite=3&ke%2Fy=te%3Ast&ke%2Fy=te%3Ast2&ke%2Fy2=te%3Ast3&rand=random&rec=1&send_image=0&url=http%3A%2F%2Ftest.com");
     request.setCustomTrackingParameter("ke/y", "te:st4");
-    assertEquals("_id=1234567890123456&apiv=1&idsite=3&ke%2Fy=te%3Ast4&ke%2Fy2=te%3Ast3&rand=random&rec=1&send_image=0&url=http%3A%2F%2Ftest.com", request.getUrlEncodedQueryString());
+    assertThat(request.getUrlEncodedQueryString()).isEqualTo("_id=1234567890123456&apiv=1&idsite=3&ke%2Fy=te%3Ast4&ke%2Fy2=te%3Ast3&rand=random&rec=1&send_image=0&url=http%3A%2F%2Ftest.com");
     request.setRandomValue(null);
     request.setSiteId(null);
     request.setRequired(null);
@@ -1511,27 +1571,28 @@ public class PiwikRequestTest {
     request.setResponseAsImage(null);
     request.setVisitorId(null);
     request.setActionUrl((String) null);
-    assertEquals("ke%2Fy=te%3Ast4&ke%2Fy2=te%3Ast3", request.getUrlEncodedQueryString());
+    assertThat(request.getUrlEncodedQueryString()).isEqualTo("ke%2Fy=te%3Ast4&ke%2Fy2=te%3Ast3");
     request.clearCustomTrackingParameter();
-    assertEquals("", request.getUrlEncodedQueryString());
+    assertThat(request.getUrlEncodedQueryString()).isEqualTo("");
   }
 
   @Test
-  public void testGetUrlEncodedQueryString2() {
+  @DisplayName("Test Get Url Encoded Query String 2")
+  void testGetUrlEncodedQueryString2() {
     request.setActionUrlWithString("http://test.com");
     request.setRandomValue("random");
     request.setVisitorId("1234567890123456");
-    assertEquals("_id=1234567890123456&apiv=1&idsite=3&rand=random&rec=1&send_image=0&url=http%3A%2F%2Ftest.com", request.getUrlEncodedQueryString());
+    assertThat(request.getUrlEncodedQueryString()).isEqualTo("_id=1234567890123456&apiv=1&idsite=3&rand=random&rec=1&send_image=0&url=http%3A%2F%2Ftest.com");
   }
 
   /**
    * Test of getRandomHexString method, of class PiwikRequest.
    */
   @Test
-  public void testGetRandomHexString() {
+  @DisplayName("Test Get Random Hex String")
+  void testGetRandomHexString() {
     String s = PiwikRequest.getRandomHexString(10);
-
-    assertEquals(10, s.length());
+    assertThat(s.length()).isEqualTo(10);
     Long.parseLong(s, 16);
   }
 }

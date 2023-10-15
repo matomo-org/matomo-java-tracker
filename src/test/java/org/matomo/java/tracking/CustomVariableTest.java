@@ -1,54 +1,56 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.matomo.java.tracking;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * @author Katie
  */
-public class CustomVariableTest {
+@DisplayName("Custom Variable Test")
+class CustomVariableTest {
+
   private CustomVariable customVariable;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     customVariable = new CustomVariable("key", "value");
   }
 
   @Test
-  public void testConstructorNullKey() {
+  @DisplayName("Test Constructor Null Key")
+  void testConstructorNullKey() {
     try {
       new CustomVariable(null, null);
       fail("Exception should have been throw.");
     } catch (NullPointerException e) {
-      assertEquals("key is marked non-null but is null", e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("key is marked non-null but is null");
     }
   }
 
   @Test
-  public void testConstructorNullValue() {
+  @DisplayName("Test Constructor Null Value")
+  void testConstructorNullValue() {
     try {
       new CustomVariable("key", null);
       fail("Exception should have been throw.");
     } catch (NullPointerException e) {
-      assertEquals("value is marked non-null but is null", e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage()).isEqualTo("value is marked non-null but is null");
     }
   }
 
   @Test
-  public void testGetKey() {
-    assertEquals("key", customVariable.getKey());
+  @DisplayName("Test Get Key")
+  void testGetKey() {
+    assertThat(customVariable.getKey()).isEqualTo("key");
   }
 
   @Test
-  public void testGetValue() {
-    assertEquals("value", customVariable.getValue());
+  @DisplayName("Test Get Value")
+  void testGetValue() {
+    assertThat(customVariable.getValue()).isEqualTo("value");
   }
 }
