@@ -1,108 +1,68 @@
-/*
- * Matomo Java Tracker
- *
- * @link https://github.com/matomo/matomo-java-tracker
- * @license https://github.com/matomo/matomo-java-tracker/blob/master/LICENSE BSD-3 Clause
- */
 package org.matomo.java.tracking;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * @author brettcsorba
- */
-public class EcommerceItemTest {
-  EcommerceItem ecommerceItem;
+class EcommerceItemTest {
 
-  public EcommerceItemTest() {
-  }
-
-  @BeforeClass
-  public static void setUpClass() {
-  }
-
-  @AfterClass
-  public static void tearDownClass() {
-  }
-
-  @Before
-  public void setUp() {
-    ecommerceItem = new EcommerceItem(null, null, null, null, null);
-  }
-
-  @After
-  public void tearDown() {
-  }
+  private EcommerceItem ecommerceItem = new EcommerceItem(null, null, null, null, null);
 
   /**
    * Test of constructor, of class EcommerceItem.
    */
   @Test
-  public void testConstructor() {
-    EcommerceItem ecommerceItem = new EcommerceItem("sku", "name", "category", 1.0, 1);
-
-    assertEquals("sku", ecommerceItem.getSku());
-    assertEquals("name", ecommerceItem.getName());
-    assertEquals("category", ecommerceItem.getCategory());
-    assertEquals(new Double(1.0), ecommerceItem.getPrice());
-    assertEquals(new Integer(1), ecommerceItem.getQuantity());
+  void testConstructor() {
+    EcommerceItem ecommerceItem = new EcommerceItem("sku", "name", "category", 2.0, 2);
+    assertThat(ecommerceItem.getSku()).isEqualTo("sku");
+    assertThat(ecommerceItem.getName()).isEqualTo("name");
+    assertThat(ecommerceItem.getCategory()).isEqualTo("category");
+    assertThat(ecommerceItem.getPrice()).isEqualTo(2.0);
+    assertThat(ecommerceItem.getQuantity()).isEqualTo(2);
   }
 
   /**
    * Test of getSku method, of class EcommerceItem.
    */
   @Test
-  public void testGetSku() {
+  void testGetSku() {
     ecommerceItem.setSku("sku");
-
-    assertEquals("sku", ecommerceItem.getSku());
+    assertThat(ecommerceItem.getSku()).isEqualTo("sku");
   }
 
   /**
    * Test of getName method, of class EcommerceItem.
    */
   @Test
-  public void testGetName() {
+  void testGetName() {
     ecommerceItem.setName("name");
-
-    assertEquals("name", ecommerceItem.getName());
+    assertThat(ecommerceItem.getName()).isEqualTo("name");
   }
 
   /**
    * Test of getCategory method, of class EcommerceItem.
    */
   @Test
-  public void testGetCategory() {
+  void testGetCategory() {
     ecommerceItem.setCategory("category");
-
-    assertEquals("category", ecommerceItem.getCategory());
+    assertThat(ecommerceItem.getCategory()).isEqualTo("category");
   }
 
   /**
    * Test of getPrice method, of class EcommerceItem.
    */
   @Test
-  public void testGetPrice() {
-    ecommerceItem.setPrice(1.0);
-
-    assertEquals(new Double(1.0), ecommerceItem.getPrice());
+  void testGetPrice() {
+    ecommerceItem.setPrice(2.0);
+    assertThat(ecommerceItem.getPrice()).isEqualTo(2.0);
   }
 
   /**
    * Test of getQuantity method, of class EcommerceItem.
    */
   @Test
-  public void testGetQuantity() {
-    ecommerceItem.setQuantity(1);
-
-    assertEquals(new Integer(1), ecommerceItem.getQuantity());
+  void testGetQuantity() {
+    ecommerceItem.setQuantity(2);
+    assertThat(ecommerceItem.getQuantity()).isEqualTo(2);
   }
-
-
 }

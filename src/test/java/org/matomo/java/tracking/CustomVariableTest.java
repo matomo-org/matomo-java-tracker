@@ -1,54 +1,37 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.matomo.java.tracking;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import org.junit.jupiter.api.Test;
 
-/**
- * @author Katie
- */
-public class CustomVariableTest {
-  private CustomVariable customVariable;
+class CustomVariableTest {
 
-  @Before
-  public void setUp() {
-    customVariable = new CustomVariable("key", "value");
+  @Test
+  void createsCustomVariable() {
+    CustomVariable customVariable = new CustomVariable("key", "value");
+
+    assertThat(customVariable.getKey()).isEqualTo("key");
+    assertThat(customVariable.getValue()).isEqualTo("value");
   }
 
   @Test
-  public void testConstructorNullKey() {
-    try {
-      new CustomVariable(null, null);
-      fail("Exception should have been throw.");
-    } catch (NullPointerException e) {
-      assertEquals("key is marked non-null but is null", e.getLocalizedMessage());
-    }
+  void failsOnNullKey() {
+    assertThatThrownBy(() -> new CustomVariable(null, "value")).isInstanceOf(
+      NullPointerException.class);
   }
 
   @Test
-  public void testConstructorNullValue() {
-    try {
-      new CustomVariable("key", null);
-      fail("Exception should have been throw.");
-    } catch (NullPointerException e) {
-      assertEquals("value is marked non-null but is null", e.getLocalizedMessage());
-    }
+  void failsOnNullValue() {
+    assertThatThrownBy(() -> new CustomVariable("key", null)).isInstanceOf(
+      NullPointerException.class);
   }
 
   @Test
-  public void testGetKey() {
-    assertEquals("key", customVariable.getKey());
+  void failsOnNullKeyAndValue() {
+    assertThatThrownBy(() -> new CustomVariable(null, null)).isInstanceOf(
+      NullPointerException.class);
   }
 
-  @Test
-  public void testGetValue() {
-    assertEquals("value", customVariable.getValue());
-  }
+
 }
