@@ -20,6 +20,10 @@ Features include:
 * Allows asynchronous requests
 * Supports Matomo 4 and 5
 * Single and multiple requests can be sent
+* Well documented with Javadoc
+* Ensures correct values are sent to Matomo Tracking API
+* Includes debug and error logging
+* Easy to integrate in frameworks, e.g. Spring: Just create the MatomoTracker Spring bean and use it in other beans
 
 ## What Is New?
 
@@ -75,6 +79,12 @@ or Gradle:
 dependencies {
   implementation("org.piwik.java.tracking:matomo-java-tracker:3.0.0-rc1")
 }
+```
+
+or Gradle with Kotlin DSL:
+
+```kotlin
+implementation("org.piwik.java.tracking:matomo-java-tracker:3.0.0-rc1")
 ```
 
 ### Create a Request
@@ -167,7 +177,28 @@ public class YourImplementation {
 }
 ```
 
-using the Matomo Endpoint URL as the first parameter.
+The Matomo Tracker currently supports the following builder methods:
+
+* `.apiEndpoint(...)` An `URI` object that points to the Matomo Tracking API endpoint of your Matomo installation. Must be set.
+* `.defaultSiteId(...)` If you provide a default site id, it will be taken if the action does not contain a site id.
+* `.defaultTokenAuth(...)` If you provide a default token auth, it will be taken if the action does not contain a token
+  auth.
+* `.delay(...)` The duration on how long the tracker collects actions until they will be sent out as a bulk request.
+  Default: 1 seconds
+* `.enabled(...)` The tracker is enabled per default. You can disable it per configuration with this flag.
+* `.logFailedTracking(...)` Will send errors to the log if the Matomo Tracking API responds with an errornous HTTP code
+* `.connectTimeout(...)` allows you to change the default connection timeout of 10 seconds. 0 is
+  interpreted as infinite, null uses the system default
+* `.socketTimeout(...)` allows you to change the default socket timeout of 10 seconds. 0 is
+  interpreted as infinite, null uses the system default
+* `.userAgent(...)` used by the request made to the endpoint is `MatomoJavaClient` per default. You can change it by using this builder method.
+* `.proxyHost(...)` The hostname or IP address of an optional HTTP proxy. `proxyPort` must be
+  configured as well
+* `.proxyPort(...)` The port of an HTTP proxy. `proxyHost` must be configured as well.
+* `.proxyUserName(...)` If the HTTP proxy requires a user name for basic authentication, it can be
+  configured with this method. Proxy host, port and password must also be set.
+* `.proxyPassword(...)` The corresponding password for the basic auth proxy user. The proxy host,
+  port and user name must be set as well.
 
 To send a single request, call
 
@@ -393,6 +424,11 @@ Clean this project using
 mvn clean
 ```
 
+## Versioning
+
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see
+the [tags on this repository](https://github.com/matomo-org/matomo-java-tracker/tags).
+
 ## Contribute
 
 Have a fantastic feature idea? Spot a bug? We would absolutely love for you to contribute to this project!  Please feel
@@ -408,6 +444,9 @@ free to:
 * Commit this code to your repository
 * Submit a pull request from your branch to our dev branch and let us know why you made the changes you did
 * We'll take a look at your request and work to get it integrated with the repo!
+
+Please read [the contribution document](CONTRIBUTING.md) for details on our code of conduct, and the
+process for submitting pull requests to us.
 
 ## Further information
 
