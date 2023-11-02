@@ -21,6 +21,8 @@ public class CustomVariable extends org.matomo.java.tracking.parameters.CustomVa
   /**
    * Instantiates a new custom variable.
    *
+   * @param key   the key of the custom variable (required)
+   * @param value the value of the custom variable (required)
    * @deprecated Use {@link org.matomo.java.tracking.parameters.CustomVariable} instead.
    */
   @Deprecated

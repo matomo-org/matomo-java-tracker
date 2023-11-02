@@ -589,7 +589,7 @@ public class MatomoRequest {
    *
    * @param siteId    the id of the website we're tracking a visit/action for
    * @param actionUrl the full URL for the current action
-   * @deprecated Please use {@link #builder()}
+   * @deprecated Please use {@link MatomoRequest#builder()}
    */
   @Deprecated
   public MatomoRequest(int siteId, String actionUrl) {
@@ -673,7 +673,7 @@ public class MatomoRequest {
    * Sets <em>idgoal&#61;0</em> in the request to track an ecommerce interaction:
    * cart update or an ecommerce order.
    *
-   * @deprecated Please use {@link #setGoalId(Integer)} instead
+   * @deprecated Please use {@link MatomoRequest#setGoalId(Integer)} instead
    */
   @Deprecated
   public void enableEcommerce() {
@@ -735,7 +735,7 @@ public class MatomoRequest {
    *
    * @param index the index of the variable to get.  Must be greater than 0
    * @return the variable at the specified key, null if nothing at this index
-   * @deprecated Use {@link #getPageCustomVariables()} instead
+   * @deprecated Use {@link MatomoRequest#getPageCustomVariables()} instead
    */
   @Deprecated
   @Nullable
@@ -757,7 +757,7 @@ public class MatomoRequest {
    *
    * @param key   the key of the variable to set
    * @param value the value of the variable to set at the specified key.  A null value will remove this custom variable
-   * @deprecated Use {@link #getPageCustomVariables()} instead
+   * @deprecated Use {@link MatomoRequest#getPageCustomVariables()} instead
    */
   @Deprecated
   public void setPageCustomVariable(@NotNull String key, @Nullable String value) {

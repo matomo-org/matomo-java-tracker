@@ -70,22 +70,46 @@ public class CustomVariables {
     }
   }
 
+  /**
+   * Returns the custom variable at the given index.
+   *
+   * @param index The index of the custom variable
+   * @return The custom variable at the given index
+   */
   @Nullable
   public CustomVariable get(int index) {
     validateIndex(index);
     return variables.get(index);
   }
 
+  /**
+   * Returns the value of the custom variable with the given key. If there are multiple custom variables with the same
+   * key, the first one is returned. If there is no custom variable with the given key, null is returned.
+   *
+   * @param key The key of the custom variable. Must not be null.
+   * @return The value of the custom variable with the given key. null if there is no variable with the given key.
+   */
   @Nullable
   public String get(@NonNull String key) {
     return variables.values().stream().filter(variable -> variable.getKey().equals(key)).findFirst()
       .map(CustomVariable::getValue).orElse(null);
   }
 
+  /**
+   * Removes the custom variable at the given index. If there is no custom variable at the given index, nothing happens.
+   *
+   * @param index The index of the custom variable to remove. Must be greater than 0.
+   */
   public void remove(int index) {
+    validateIndex(index);
     variables.remove(index);
   }
 
+  /**
+   * Removes the custom variable with the given key. If there is no custom variable with the given key, nothing happens.
+   *
+   * @param key The key of the custom variable to remove. Must not be null.
+   */
   public void remove(@NonNull String key) {
     variables.entrySet().removeIf(entry -> entry.getValue().getKey().equals(key));
   }
@@ -94,6 +118,12 @@ public class CustomVariables {
     return variables.isEmpty();
   }
 
+  /**
+   * Creates a JSON representation of the custom variables. The format is as follows:
+   * {@code {"1":["key1","value1"],"2":["key2","value2"]}}
+   *
+   * @return A JSON representation of the custom variables
+   */
   @Override
   public String toString() {
     StringBuilder stringBuilder = new StringBuilder("{");

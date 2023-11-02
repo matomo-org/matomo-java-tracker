@@ -24,6 +24,7 @@ public class PiwikLocale extends Country {
   /**
    * Creates a new Piwik locale object with the specified locale.
    *
+   * @param locale the locale to use
    * @deprecated Use {@link Country} instead.
    */
   @Deprecated

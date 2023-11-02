@@ -28,7 +28,6 @@ public class VisitorId {
    *
    * <p>Please consider creating a fixed id for each visitor by getting a hash code from e.g. the username and
    * using {@link #fromHash(long)}
-   * <
    *
    * @return A randomly generated visitor id
    */

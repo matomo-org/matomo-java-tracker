@@ -25,7 +25,6 @@ public class PiwikDate extends MatomoDate {
   /**
    * Creates a new date object with the current time.
    *
-   * @author brettcsorba
    * @deprecated Use {@link Instant} instead.
    */
   public PiwikDate() {
@@ -34,7 +33,7 @@ public class PiwikDate extends MatomoDate {
   /**
    * Creates a new date object with the specified time. The time is specified in milliseconds since the epoch.
    *
-   * @author brettcsorba
+   * @param epochMilli The time in milliseconds since the epoch
    * @deprecated Use {@link Instant} instead.
    */
   public PiwikDate(long epochMilli) {
@@ -44,7 +43,7 @@ public class PiwikDate extends MatomoDate {
   /**
    * Sets the time zone for this date object. This is used to convert the date to UTC before sending it to Matomo.
    *
-   * @author brettcsorba
+   * @param zone the time zone to use
    * @deprecated Use {@link ZonedDateTime#toInstant()} instead.
    */
   @Deprecated

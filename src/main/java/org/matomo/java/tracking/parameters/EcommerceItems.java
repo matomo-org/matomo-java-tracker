@@ -8,6 +8,7 @@
 package org.matomo.java.tracking.parameters;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 /**
  * Multiple things that you can buy online.
  */
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
