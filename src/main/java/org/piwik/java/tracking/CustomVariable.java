@@ -4,19 +4,24 @@
  * @link https://github.com/matomo/matomo-java-tracker
  * @license https://github.com/matomo/matomo-java-tracker/blob/master/LICENSE BSD-3 Clause
  */
+
 package org.piwik.java.tracking;
 
-import org.matomo.java.tracking.MatomoRequest;
-
 /**
+ * A user defined custom variable.
+ *
+ * <p>Renamed to {@link org.matomo.java.tracking.parameters.CustomVariable} in 3.0.0.
+ *
  * @author brettcsorba
- * @deprecated Use {@link org.matomo.java.tracking.CustomVariable} instead.
+ * @deprecated Use {@link org.matomo.java.tracking.parameters.CustomVariable} instead.
  */
 @Deprecated
-public class CustomVariable extends org.matomo.java.tracking.CustomVariable {
+public class CustomVariable extends org.matomo.java.tracking.parameters.CustomVariable {
 
   /**
-   * @deprecated Use {@link MatomoRequest} instead.
+   * Instantiates a new custom variable.
+   *
+   * @deprecated Use {@link org.matomo.java.tracking.parameters.CustomVariable} instead.
    */
   @Deprecated
   public CustomVariable(String key, String value) {

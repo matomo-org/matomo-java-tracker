@@ -1,16 +1,18 @@
-package org.matomo.java.tracking;
+/*
+ * Matomo Java Tracker
+ *
+ * @link https://github.com/matomo/matomo-java-tracker
+ * @license https://github.com/matomo/matomo-java-tracker/blob/master/LICENSE BSD-3 Clause
+ */
+
+package org.matomo.java.tracking.parameters;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-/**
- * @author Katie
- */
-@DisplayName("Custom Variable Test")
 class CustomVariableTest {
 
   private CustomVariable customVariable;
@@ -21,7 +23,6 @@ class CustomVariableTest {
   }
 
   @Test
-  @DisplayName("Test Constructor Null Key")
   void testConstructorNullKey() {
     try {
       new CustomVariable(null, null);
@@ -32,7 +33,6 @@ class CustomVariableTest {
   }
 
   @Test
-  @DisplayName("Test Constructor Null Value")
   void testConstructorNullValue() {
     try {
       new CustomVariable("key", null);
@@ -43,13 +43,11 @@ class CustomVariableTest {
   }
 
   @Test
-  @DisplayName("Test Get Key")
   void testGetKey() {
     assertThat(customVariable.getKey()).isEqualTo("key");
   }
 
   @Test
-  @DisplayName("Test Get Value")
   void testGetValue() {
     assertThat(customVariable.getValue()).isEqualTo("value");
   }

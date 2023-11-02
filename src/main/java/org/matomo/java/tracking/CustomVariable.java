@@ -4,27 +4,21 @@
  * @link https://github.com/matomo/matomo-java-tracker
  * @license https://github.com/matomo/matomo-java-tracker/blob/master/LICENSE BSD-3 Clause
  */
+
 package org.matomo.java.tracking;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+import lombok.NonNull;
 
 /**
  * A user defined custom variable.
  *
  * @author brettcsorba
+ * @deprecated Use {@link org.matomo.java.tracking.parameters.EcommerceItem} instead.
  */
-@Getter
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@AllArgsConstructor
-@ToString
-@EqualsAndHashCode
-public class CustomVariable {
+@Deprecated
+public class CustomVariable extends org.matomo.java.tracking.parameters.CustomVariable {
 
-  @NonNull
-  String key;
-
-  @NonNull
-  String value;
-
+  public CustomVariable(@NonNull String key, @NonNull String value) {
+    super(key, value);
+  }
 }

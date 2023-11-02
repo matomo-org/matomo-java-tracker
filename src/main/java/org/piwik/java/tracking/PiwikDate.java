@@ -4,39 +4,48 @@
  * @link https://github.com/matomo/matomo-java-tracker
  * @license https://github.com/matomo/matomo-java-tracker/blob/master/LICENSE BSD-3 Clause
  */
+
 package org.piwik.java.tracking;
 
 import org.matomo.java.tracking.MatomoDate;
 
-import java.time.ZoneId;
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.TimeZone;
 
 /**
+ * A date object that can be used to send dates to Matomo. This class is deprecated and will be removed in a future.
+ *
  * @author brettcsorba
- * @deprecated Use {@link MatomoDate} instead.
+ * @deprecated Please use {@link Instant}
  */
 @Deprecated
 public class PiwikDate extends MatomoDate {
 
   /**
+   * Creates a new date object with the current time.
+   *
    * @author brettcsorba
-   * @deprecated Use {@link MatomoDate} instead.
+   * @deprecated Use {@link Instant} instead.
    */
   public PiwikDate() {
-    super();
   }
 
   /**
+   * Creates a new date object with the specified time. The time is specified in milliseconds since the epoch.
+   *
    * @author brettcsorba
-   * @deprecated Use {@link MatomoDate} instead.
+   * @deprecated Use {@link Instant} instead.
    */
   public PiwikDate(long epochMilli) {
     super(epochMilli);
   }
 
   /**
+   * Sets the time zone for this date object. This is used to convert the date to UTC before sending it to Matomo.
+   *
    * @author brettcsorba
-   * @deprecated Use {@link MatomoDate#setTimeZone(ZoneId)} instead.
+   * @deprecated Use {@link ZonedDateTime#toInstant()} instead.
    */
   @Deprecated
   public void setTimeZone(TimeZone zone) {

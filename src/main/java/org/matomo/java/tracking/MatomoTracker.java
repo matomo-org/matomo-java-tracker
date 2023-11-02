@@ -4,30 +4,21 @@
  * @link https://github.com/matomo/matomo-java-tracker
  * @license https://github.com/matomo/matomo-java-tracker/blob/master/LICENSE BSD-3 Clause
  */
+
 package org.matomo.java.tracking;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.concurrent.FutureCallback;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.concurrent.Future;
+import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.function.Consumer;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * A class that sends {@link MatomoRequest}s to a specified Matomo server.
@@ -37,15 +28,9 @@ import java.util.concurrent.Future;
 @Slf4j
 public class MatomoTracker {
 
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+  private final TrackerConfiguration trackerConfiguration;
 
-  private static final String AUTH_TOKEN = "token_auth";
-  private static final String REQUESTS = "requests";
-  private static final int DEFAULT_TIMEOUT = 5000;
-  private final URI hostUrl;
-  private final int timeout;
-  private final String proxyHost;
-  private final int proxyPort;
+  private final Sender sender;
 
   /**
    * Creates a tracker that will send {@link MatomoRequest}s to the specified
@@ -53,9 +38,11 @@ public class MatomoTracker {
    *
    * @param hostUrl url endpoint to send requests to.  Usually in the format
    *                <strong>http://your-matomo-domain.tld/matomo.php</strong>. Must not be null
+   * @deprecated Please use {@link MatomoTracker#MatomoTracker(TrackerConfiguration)}
    */
-  public MatomoTracker(@NonNull final String hostUrl) {
-    this(hostUrl, DEFAULT_TIMEOUT);
+  @Deprecated
+  public MatomoTracker(@NotNull String hostUrl) {
+    this(requireNonNull(hostUrl, "Host URL must not be null"), 0);
   }
 
   /**
@@ -64,67 +51,83 @@ public class MatomoTracker {
    *
    * @param hostUrl url endpoint to send requests to.  Usually in the format
    *                <strong>http://your-matomo-domain.tld/matomo.php</strong>.
-   * @param timeout the timeout of the sent request in milliseconds
+   * @param timeout the timeout of the sent request in milliseconds or -1 if not set
+   * @deprecated Please use {@link MatomoTracker#MatomoTracker(TrackerConfiguration)}
    */
-  public MatomoTracker(@NonNull final String hostUrl, final int timeout) {
-    this(hostUrl, null, 0, timeout);
-  }
-
-  public MatomoTracker(@NonNull final String hostUrl, @Nullable final String proxyHost, final int proxyPort, final int timeout) {
-    this.hostUrl = URI.create(hostUrl);
-    this.proxyHost = proxyHost;
-    this.proxyPort = proxyPort;
-    this.timeout = timeout;
+  @Deprecated
+  public MatomoTracker(@NotNull String hostUrl, int timeout) {
+    this(requireNonNull(hostUrl, "Host URL must not be null"), null, 0, timeout);
   }
 
   /**
    * Creates a tracker that will send {@link MatomoRequest}s to the specified
-   * Tracking HTTP API endpoint via the provided proxy
+   * Tracking HTTP API endpoint.
    *
    * @param hostUrl   url endpoint to send requests to.  Usually in the format
    *                  <strong>http://your-matomo-domain.tld/matomo.php</strong>.
-   * @param proxyHost url endpoint for the proxy
-   * @param proxyPort proxy server port number
+   * @param proxyHost The hostname or IP address of an optional HTTP proxy, null allowed
+   * @param proxyPort The port of an HTTP proxy or -1 if not set
+   * @param timeout   the timeout of the request in milliseconds or -1 if not set
+   * @deprecated Please use {@link MatomoTracker#MatomoTracker(TrackerConfiguration)}
    */
-  public MatomoTracker(@NonNull final String hostUrl, @Nullable final String proxyHost, final int proxyPort) {
-    this(hostUrl, proxyHost, proxyPort, DEFAULT_TIMEOUT);
+  @Deprecated
+  public MatomoTracker(@NotNull String hostUrl, @Nullable String proxyHost, int proxyPort, int timeout) {
+    this(TrackerConfiguration.builder().enabled(true).apiEndpoint(
+        URI.create(requireNonNull(hostUrl, "Host URL must not be null"))).proxyHost(proxyHost).proxyPort(proxyPort)
+      .connectTimeout(timeout == -1 ? Duration.ofSeconds(5L) : Duration.ofSeconds(timeout))
+      .socketTimeout(timeout == -1 ? Duration.ofSeconds(5L) : Duration.ofSeconds(timeout)).build());
   }
 
   /**
-   * Sends a tracking request to Matomo
+   * Creates a new Matomo Tracker instance.
+   *
+   * @param trackerConfiguration Configurations parameters (you can use a builder)
+   */
+  public MatomoTracker(@NotNull TrackerConfiguration trackerConfiguration) {
+    requireNonNull(trackerConfiguration, "Tracker configuration must not be null");
+    trackerConfiguration.validate();
+    this.trackerConfiguration = trackerConfiguration;
+    ScheduledThreadPoolExecutor threadPoolExecutor = createThreadPoolExecutor();
+    sender = new Sender(trackerConfiguration, new QueryCreator(trackerConfiguration), threadPoolExecutor);
+  }
+
+  @NotNull
+  private static ScheduledThreadPoolExecutor createThreadPoolExecutor() {
+    DaemonThreadFactory threadFactory = new DaemonThreadFactory();
+    ScheduledThreadPoolExecutor threadPoolExecutor = new ScheduledThreadPoolExecutor(1, threadFactory);
+    threadPoolExecutor.setRemoveOnCancelPolicy(true);
+    return threadPoolExecutor;
+  }
+
+  /**
+   * Creates a tracker that will send {@link MatomoRequest}s to the specified
+   * Tracking HTTP API endpoint via the provided proxy.
+   *
+   * @param hostUrl   url endpoint to send requests to.  Usually in the format
+   *                  <strong>http://your-matomo-domain.tld/matomo.php</strong>.
+   * @param proxyHost url endpoint for the proxy, null allowed
+   * @param proxyPort proxy server port number or -1 if not set
+   * @deprecated Please use {@link MatomoTracker#MatomoTracker(TrackerConfiguration)}
+   */
+  @Deprecated
+  public MatomoTracker(@NotNull String hostUrl, @Nullable String proxyHost, int proxyPort) {
+    this(hostUrl, proxyHost, proxyPort, -1);
+  }
+
+  /**
+   * Sends a tracking request to Matomo.
    *
    * @param request request to send. must not be null
-   * @return the response from this request
    * @deprecated use sendRequestAsync instead
    */
   @Deprecated
-  public HttpResponse sendRequest(@NonNull final MatomoRequest request) {
-    final HttpClient client = getHttpClient();
-    HttpUriRequest get = createGetRequest(request);
-    log.debug("Sending request via GET: {}", request);
-    try {
-      return client.execute(get);
-    } catch (IOException e) {
-      throw new MatomoException("Could not send request to Matomo", e);
+  public void sendRequest(@NonNull MatomoRequest request) {
+    if (trackerConfiguration.isEnabled()) {
+      log.debug("Sending request via GET: {}", request);
+      sender.sendSingle(request);
+    } else {
+      log.warn("Not sending request, because tracker is disabled");
     }
-  }
-
-  @Nonnull
-  private HttpUriRequest createGetRequest(@NonNull MatomoRequest request) {
-    try {
-      return new HttpGet(new URIBuilder(hostUrl).addParameters(QueryParameters.fromMap(request.getParameters())).build());
-    } catch (URISyntaxException e) {
-      throw new InvalidUrlException(e);
-    }
-  }
-
-  /**
-   * Get a HTTP client. With proxy if a proxy is provided in the constructor.
-   *
-   * @return a HTTP client
-   */
-  protected HttpClient getHttpClient() {
-    return HttpClientFactory.getInstanceFor(proxyHost, proxyPort, timeout);
   }
 
   /**
@@ -133,7 +136,7 @@ public class MatomoTracker {
    * @param request request to send
    * @return future with response from this request
    */
-  public Future<HttpResponse> sendRequestAsync(@NonNull final MatomoRequest request) {
+  public CompletableFuture<Void> sendRequestAsync(@NotNull MatomoRequest request) {
     return sendRequestAsync(request, null);
   }
 
@@ -141,24 +144,27 @@ public class MatomoTracker {
    * Send a request.
    *
    * @param request  request to send
-   * @param callback callback that gets executed when response arrives
+   * @param callback callback that gets executed when response arrives, null allowed
    * @return future with response from this request
    */
-  public Future<HttpResponse> sendRequestAsync(@NonNull final MatomoRequest request, @Nullable FutureCallback<HttpResponse> callback) {
-    final CloseableHttpAsyncClient client = getHttpAsyncClient();
-    client.start();
-    HttpUriRequest get = createGetRequest(request);
-    log.debug("Sending async request via GET: {}", request);
-    return client.execute(get, callback);
+  public CompletableFuture<Void> sendRequestAsync(@NotNull MatomoRequest request, @Nullable Consumer<Void> callback) {
+    if (trackerConfiguration.isEnabled()) {
+      validate(request);
+      log.debug("Sending async request via GET: {}", request);
+      CompletableFuture<Void> future = sender.sendSingleAsync(request);
+      if (callback != null) {
+        return future.thenAccept(callback);
+      }
+      return future;
+    }
+    log.warn("Not sending request, because tracker is disabled");
+    return CompletableFuture.completedFuture(null);
   }
 
-  /**
-   * Get an async HTTP client. With proxy if a proxy is provided in the constructor.
-   *
-   * @return an async HTTP client
-   */
-  protected CloseableHttpAsyncClient getHttpAsyncClient() {
-    return HttpClientFactory.getAsyncInstanceFor(proxyHost, proxyPort, timeout);
+  private void validate(@NotNull MatomoRequest request) {
+    if (trackerConfiguration.getDefaultSiteId() == null && request.getSiteId() == null) {
+      throw new IllegalArgumentException("No default site ID and no request site ID is given");
+    }
   }
 
   /**
@@ -166,12 +172,11 @@ public class MatomoTracker {
    * several individual requests.
    *
    * @param requests the requests to send
-   * @return the response from these requests
    * @deprecated use sendBulkRequestAsync instead
    */
   @Deprecated
-  public HttpResponse sendBulkRequest(@NonNull final Iterable<? extends MatomoRequest> requests) {
-    return sendBulkRequest(requests, null);
+  public void sendBulkRequest(@NonNull Iterable<? extends MatomoRequest> requests) {
+    sendBulkRequest(requests, null);
   }
 
   /**
@@ -180,37 +185,20 @@ public class MatomoTracker {
    * an auth token is used.
    *
    * @param requests  the requests to send
-   * @param authToken specify if any of the parameters use require AuthToken
-   * @return the response from these requests
+   * @param authToken specify if any of the parameters use require AuthToken, null allowed
    * @deprecated use sendBulkRequestAsync instead
    */
   @Deprecated
-  public HttpResponse sendBulkRequest(@NonNull final Iterable<? extends MatomoRequest> requests, @Nullable final String authToken) {
-    if (authToken != null && authToken.length() != MatomoRequest.AUTH_TOKEN_LENGTH) {
-      throw new IllegalArgumentException(authToken + " is not " + MatomoRequest.AUTH_TOKEN_LENGTH + " characters long.");
+  public void sendBulkRequest(@NonNull Iterable<? extends MatomoRequest> requests, @Nullable String authToken) {
+    if (trackerConfiguration.isEnabled()) {
+      for (MatomoRequest request : requests) {
+        validate(request);
+      }
+      log.debug("Sending requests via POST: {}", requests);
+      sender.sendBulk(requests, authToken);
+    } else {
+      log.warn("Not sending request, because tracker is disabled");
     }
-    HttpPost post = buildPost(requests, authToken);
-    final HttpClient client = getHttpClient();
-    log.debug("Sending requests via POST: {}", requests);
-    try {
-      return client.execute(post);
-    } catch (IOException e) {
-      throw new MatomoException("Could not send bulk request", e);
-    }
-  }
-
-  private HttpPost buildPost(@NonNull Iterable<? extends MatomoRequest> requests, @Nullable String authToken) {
-    ObjectNode objectNode = OBJECT_MAPPER.createObjectNode();
-    ArrayNode requestsNode = objectNode.putArray(REQUESTS);
-    for (final MatomoRequest request : requests) {
-      requestsNode.add(new URIBuilder().addParameters(QueryParameters.fromMap(request.getParameters())).toString());
-    }
-    if (authToken != null) {
-      objectNode.put(AUTH_TOKEN, authToken);
-    }
-    HttpPost post = new HttpPost(hostUrl);
-    post.setEntity(new StringEntity(objectNode.toString(), ContentType.APPLICATION_JSON));
-    return post;
   }
 
   /**
@@ -220,7 +208,7 @@ public class MatomoTracker {
    * @param requests the requests to send
    * @return future with response from these requests
    */
-  public Future<HttpResponse> sendBulkRequestAsync(@NonNull final Iterable<? extends MatomoRequest> requests) {
+  public CompletableFuture<Void> sendBulkRequestAsync(@NotNull Iterable<? extends MatomoRequest> requests) {
     return sendBulkRequestAsync(requests, null, null);
   }
 
@@ -230,19 +218,26 @@ public class MatomoTracker {
    * an auth token is used.
    *
    * @param requests  the requests to send
-   * @param authToken specify if any of the parameters use require AuthToken
-   * @param callback  callback that gets executed when response arrives
+   * @param authToken specify if any of the parameters use require AuthToken, null allowed
+   * @param callback  callback that gets executed when response arrives, null allowed
    * @return the response from these requests
    */
-  public Future<HttpResponse> sendBulkRequestAsync(@NonNull final Iterable<? extends MatomoRequest> requests, @Nullable final String authToken, @Nullable FutureCallback<HttpResponse> callback) {
-    if (authToken != null && authToken.length() != MatomoRequest.AUTH_TOKEN_LENGTH) {
-      throw new IllegalArgumentException(authToken + " is not " + MatomoRequest.AUTH_TOKEN_LENGTH + " characters long.");
+  public CompletableFuture<Void> sendBulkRequestAsync(
+    @NotNull Iterable<? extends MatomoRequest> requests, @Nullable String authToken, @Nullable Consumer<Void> callback
+  ) {
+    if (trackerConfiguration.isEnabled()) {
+      for (MatomoRequest request : requests) {
+        validate(request);
+      }
+      log.debug("Sending async requests via POST: {}", requests);
+      CompletableFuture<Void> future = sender.sendBulkAsync(requests, authToken);
+      if (callback != null) {
+        return future.thenAccept(callback);
+      }
+      return future;
     }
-    HttpPost post = buildPost(requests, authToken);
-    final CloseableHttpAsyncClient client = getHttpAsyncClient();
-    client.start();
-    log.debug("Sending async requests via POST: {}", requests);
-    return client.execute(post, callback);
+    log.warn("Tracker is disabled");
+    return CompletableFuture.completedFuture(null);
   }
 
   /**
@@ -250,10 +245,12 @@ public class MatomoTracker {
    * several individual requests.
    *
    * @param requests the requests to send
-   * @param callback callback that gets executed when response arrives
+   * @param callback callback that gets executed when response arrives, null allowed
    * @return future with response from these requests
    */
-  public Future<HttpResponse> sendBulkRequestAsync(@NonNull final Iterable<? extends MatomoRequest> requests, @Nullable FutureCallback<HttpResponse> callback) {
+  public CompletableFuture<Void> sendBulkRequestAsync(
+    @NotNull Iterable<? extends MatomoRequest> requests, @Nullable Consumer<Void> callback
+  ) {
     return sendBulkRequestAsync(requests, null, callback);
   }
 
@@ -263,10 +260,12 @@ public class MatomoTracker {
    * an auth token is used.
    *
    * @param requests  the requests to send
-   * @param authToken specify if any of the parameters use require AuthToken
+   * @param authToken specify if any of the parameters use require AuthToken, null allowed
    * @return the response from these requests
    */
-  public Future<HttpResponse> sendBulkRequestAsync(@NonNull final Iterable<? extends MatomoRequest> requests, @Nullable final String authToken) {
+  public CompletableFuture<Void> sendBulkRequestAsync(
+    @NotNull Iterable<? extends MatomoRequest> requests, @Nullable String authToken
+  ) {
     return sendBulkRequestAsync(requests, authToken, null);
   }
 }

@@ -4,11 +4,13 @@
  * @link https://github.com/matomo/matomo-java-tracker
  * @license https://github.com/matomo/matomo-java-tracker/blob/master/LICENSE BSD-3 Clause
  */
+
 package org.matomo.java.tracking;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
+import org.matomo.java.tracking.parameters.Country;
 
 import java.util.Locale;
 
@@ -16,20 +18,22 @@ import java.util.Locale;
  * Object representing a locale required by some Matomo query parameters.
  *
  * @author brettcsorba
+ * @deprecated Use {@link Country} instead
  */
 @Setter
 @Getter
-@AllArgsConstructor
-public class MatomoLocale {
-  private Locale locale;
+@Deprecated
+public class MatomoLocale extends Country {
 
   /**
-   * Returns the locale's lowercase country code.
+   * Constructs a new MatomoLocale.
    *
-   * @return the locale's lowercase country code
+   * @param locale The locale to get the country code from
+   * @deprecated Please use {@link Country}
    */
-  @Override
-  public String toString() {
-    return locale.getCountry().toLowerCase(Locale.ENGLISH);
+  @Deprecated
+  public MatomoLocale(@NotNull Locale locale) {
+    super(locale);
   }
+
 }
