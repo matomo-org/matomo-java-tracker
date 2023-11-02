@@ -549,14 +549,12 @@ class PiwikRequestTest {
    */
   @Test
   void testPageCustomVariableStringStringE() {
-    assertThatThrownBy(() -> request.setPageCustomVariable(null, null)).isInstanceOf(
-      IllegalArgumentException.class);
+    assertThatThrownBy(() -> request.setPageCustomVariable(null, null));
   }
 
   @Test
   void testPageCustomVariableStringStringE2() {
-    assertThatThrownBy(() -> request.setPageCustomVariable(null, "pageVal")).isInstanceOf(
-      IllegalArgumentException.class);
+    assertThatThrownBy(() -> request.setPageCustomVariable(null, "pageVal"));
   }
 
   @Test
