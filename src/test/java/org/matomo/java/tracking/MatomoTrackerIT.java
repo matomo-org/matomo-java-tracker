@@ -1,6 +1,27 @@
 package org.matomo.java.tracking;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.status;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static java.util.Collections.singleton;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Arrays;
+import java.util.Locale.LanguageRange;
+import java.util.concurrent.CompletableFuture;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.matomo.java.tracking.MatomoRequest.MatomoRequestBuilder;
@@ -16,31 +37,10 @@ import org.matomo.java.tracking.parameters.RandomValue;
 import org.matomo.java.tracking.parameters.UniqueId;
 import org.matomo.java.tracking.parameters.VisitorId;
 
-import java.net.URI;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.Locale.LanguageRange;
-import java.util.concurrent.CompletableFuture;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.resetAllRequests;
-import static com.github.tomakehurst.wiremock.client.WireMock.status;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static java.util.Collections.singleton;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-@WireMockTest(httpPort = 8099)
 class MatomoTrackerIT {
+
+  private static final WireMockServer wireMockServer = new WireMockServer(
+    WireMockConfiguration.options().dynamicPort());
 
   private static final int SITE_ID = 42;
 
@@ -52,11 +52,16 @@ class MatomoTrackerIT {
 
   private CompletableFuture<Void> future;
 
+  @BeforeAll
+  static void beforeAll() {
+    wireMockServer.start();
+  }
+
   @BeforeEach
   void givenStub() {
-    resetAllRequests();
-    stubFor(post(urlPathEqualTo("/matomo.php")).willReturn(status(204)));
-    stubFor(get(urlPathEqualTo("/matomo.php")).willReturn(status(204)));
+    wireMockServer.resetRequests();
+    wireMockServer.stubFor(post(urlPathEqualTo("/matomo.php")).willReturn(status(204)));
+    wireMockServer.stubFor(get(urlPathEqualTo("/matomo.php")).willReturn(status(204)));
   }
 
   @Test
@@ -98,13 +103,14 @@ class MatomoTrackerIT {
   }
 
   private void givenTrackerConfigurationWithDefaultSiteId() {
-    trackerConfigurationBuilder.apiEndpoint(URI.create("http://localhost:8099/matomo.php")).defaultSiteId(SITE_ID);
+    trackerConfigurationBuilder.apiEndpoint(URI.create(String.format(
+      "http://localhost:%s/matomo.php", wireMockServer.port()))).defaultSiteId(SITE_ID);
   }
 
   private void thenGetsRequest(String expectedQuery) {
     assertThat(future).isNotCompletedExceptionally();
-    verify(
-      getRequestedFor(urlEqualTo(String.format("/matomo.php?%s", expectedQuery))).withHeader("Accept", equalTo("*/*"))
+    wireMockServer.verify(
+      getRequestedFor(urlEqualTo(String.format("/matomo.php?%s", expectedQuery)))
         .withHeader("User-Agent", equalTo("MatomoJavaClient")));
   }
 
@@ -214,8 +220,10 @@ class MatomoTrackerIT {
 
   private void thenPostsRequestWithoutAuthToken(String expectedQuery, String contentLength) {
     assertThat(future).isNotCompletedExceptionally();
-    verify(postRequestedFor(urlEqualTo("/matomo.php")).withHeader("Content-Length", equalTo(contentLength))
-      .withHeader("Accept", equalTo("*/*")).withHeader("Content-Type", equalTo("application/json"))
+    wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php"))
+      .withHeader("Content-Length", equalTo(contentLength))
+      .withHeader("Accept", equalTo("*/*"))
+      .withHeader("Content-Type", equalTo("application/json"))
       .withHeader("User-Agent", equalTo("MatomoJavaClient"))
       .withRequestBody(
         equalToJson("{\"requests\":[\"?" + expectedQuery + "\"]}")));
@@ -244,8 +252,7 @@ class MatomoTrackerIT {
     whenSendsRequestAsync();
 
     assertThat(future).isNotCompletedExceptionally();
-    verify(getRequestedFor(urlPathEqualTo("/matomo.php"))
-      .withHeader("Accept", equalTo("*/*"))
+    wireMockServer.verify(getRequestedFor(urlPathEqualTo("/matomo.php"))
       .withHeader("User-Agent", equalTo("MatomoJavaClient")));
 
   }
@@ -258,7 +265,7 @@ class MatomoTrackerIT {
     whenSendsBulkRequestAsync();
 
     assertThat(future).isNotCompletedExceptionally();
-    verify(postRequestedFor(urlPathEqualTo("/matomo.php"))
+    wireMockServer.verify(postRequestedFor(urlPathEqualTo("/matomo.php"))
       .withHeader("Accept", equalTo("*/*"))
       .withHeader("Content-Length", equalTo("90"))
       .withHeader("Content-Type", equalTo("application/json"))
@@ -275,7 +282,7 @@ class MatomoTrackerIT {
     whenSendsRequestAsync();
 
     assertThat(future).isNotCompletedExceptionally();
-    verify(getRequestedFor(urlPathEqualTo("/matomo.php"))
+    wireMockServer.verify(getRequestedFor(urlPathEqualTo("/matomo.php"))
       .withHeader("User-Agent", equalTo("Mozilla/5.0")));
 
   }
@@ -302,7 +309,7 @@ class MatomoTrackerIT {
     whenSendsBulkRequestAsync();
 
     assertThat(future).isNotCompletedExceptionally();
-    verify(postRequestedFor(urlEqualTo("/matomo.php")).withHeader("Content-Length", equalTo("711"))
+    wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php")).withHeader("Content-Length", equalTo("711"))
       .withHeader("Accept", equalTo("*/*")).withHeader("Content-Type", equalTo("application/json"))
       .withHeader("User-Agent", equalTo("MatomoJavaClient"))
       .withRequestBody(
@@ -314,14 +321,14 @@ class MatomoTrackerIT {
   @Test
   void doesNothingIfNotEnabled() {
 
-    resetAllRequests();
+    wireMockServer.resetRequests();
     givenTrackerConfigurationWithDefaultSiteId();
     trackerConfigurationBuilder.enabled(false);
 
     whenSendsRequestAsync();
 
     assertThat(future).isNotCompletedExceptionally();
-    verify(0, postRequestedFor(urlPathEqualTo("/matomo.php")));
+    wireMockServer.verify(0, postRequestedFor(urlPathEqualTo("/matomo.php")));
 
   }
 
@@ -353,8 +360,9 @@ class MatomoTrackerIT {
   @Test
   void reportsErrors() {
 
-    stubFor(get(urlPathEqualTo("/failing")).willReturn(status(500)));
-    trackerConfigurationBuilder.apiEndpoint(URI.create("http://localhost:8099/failing")).defaultSiteId(SITE_ID);
+    wireMockServer.stubFor(get(urlPathEqualTo("/failing")).willReturn(status(500)));
+    trackerConfigurationBuilder.apiEndpoint(URI.create(String.format("http://localhost:%d/failing",
+      wireMockServer.port()))).defaultSiteId(SITE_ID);
 
     assertThatThrownBy(this::whenSendsRequestAsync).hasRootCauseInstanceOf(MatomoException.class)
       .hasRootCauseMessage("Tracking endpoint responded with code 500");
@@ -372,7 +380,7 @@ class MatomoTrackerIT {
     whenSendsRequestAsync();
 
     assertThat(future).isNotCompletedExceptionally();
-    verify(
+    wireMockServer.verify(
       getRequestedFor(
         urlEqualTo(
           "/matomo.php?idsite=42token_auth=fdf6e8461ea9de33176b222519627f78&rec=1&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom"))
@@ -393,7 +401,7 @@ class MatomoTrackerIT {
     future1.get();
 
     assertThat(future1).isNotCompletedExceptionally();
-    verify(postRequestedFor(urlEqualTo("/matomo.php")).withHeader("Content-Length", equalTo("297"))
+    wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php")).withHeader("Content-Length", equalTo("297"))
       .withHeader("Accept", equalTo("*/*")).withHeader("Content-Type", equalTo("application/json"))
       .withHeader("User-Agent", equalTo("MatomoJavaClient")).withRequestBody(equalToJson(
         "{\"requests\" : [ \"?idsite=42&rec=1&action_name=First&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom\", \"?idsite=42&rec=1&action_name=Second&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom\", \"?idsite=42&rec=1&action_name=Third&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom\" ]}")));
