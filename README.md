@@ -25,10 +25,36 @@ Features include:
 * Includes debug and error logging
 * Easy to integrate in frameworks, e.g. Spring: Just create the MatomoTracker Spring bean and use it in other beans
 
+## Table of Contents
+
+* [What Is New?](#what-is-new)
+* [Javadoc](#javadoc)
+* [Need help?](#need-help)
+* [Using this API](#using-this-api)
+* [Migration from Version 2 to 3](#migration-from-version-2-to-3)
+* [Building](#building)
+* [Versioning](#versioning)
+* [Contribute](#contribute)
+* [Further information](#further-information)
+* [License](#license)
+
 ## What Is New?
 
 Do you still use Matomo Java Tracker 2.x? We created version 3, that is compatible with Matomo 4 and 5 and contains less
 dependencies. Release notes can be found here: https://github.com/matomo-org/matomo-java-tracker/releases
+
+Here are the most important changes:
+
+* Matomo Java Tracker 3.x is compatible with Matomo 4 and 5
+* less dependencies
+* new dimension parameter
+* new visitor id parameter
+* new random value parameter
+* new device resolution parameter
+* new locale parameter
+* new country parameter
+* new page view id parameter
+* special types allow to provide valid parameters now
 
 ## Javadoc
 
@@ -36,6 +62,8 @@ The Javadoc for this project is hosted as a GitHub page for this repo. The lates
 found [here](https://matomo-org.github.io/matomo-java-tracker/javadoc/index.html).
 
 Javadoc folder older versions can be found here: https://javadoc.io/doc/org.piwik.java.tracking/matomo-java-tracker
+
+You can also build the Javadoc yourself. See the section _Building_ below.
 
 ## Need help?
 
@@ -59,6 +87,10 @@ Javadoc folder older versions can be found here: https://javadoc.io/doc/org.piwi
   * Matomo Mastodon: https://fosstodon.org/@matomo
 
 ## Using this API
+
+See the following sections for information on how to use this API. For more information, see the Javadoc. We also recommend
+to read the [Tracking API User Guide](https://matomo.org/guide/apis/tracking-api/). The Matomo Tracking HTTP API is well
+documented and contains many examples. See https://developer.matomo.org/api-reference/tracking-api
 
 ### Add library to your build
 
@@ -397,9 +429,6 @@ following breaking changes:
 
 ## Building
 
-You need a GPG signing key on your machine. Please follow these
-instructions: https://docs.github.com/en/authentication/managing-commit-signature-verification/generating-a-new-gpg-key
-
 This project can be tested and built by calling
 
 ```shell
@@ -448,12 +477,16 @@ free to:
 Please read [the contribution document](CONTRIBUTING.md) for details on our code of conduct, and the
 process for submitting pull requests to us.
 
+We use Checkstyle and JaCoCo to ensure code quality. Please run `mvn verify` before submitting a pull request. Please
+provide tests for your changes. We use JUnit 5 for testing. Coverage should be at least 80%.
+
 ## Further information
 
 * [Matomo PHP Tracker](https://github.com/matomo-org/matomo-php-tracker)
 * [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api)
 * [Introducting the Matomo Java Tracker](https://matomo.org/blog/2015/11/introducing-piwik-java-tracker/)
 * [Tracking API User Guide](https://matomo.org/guide/apis/tracking-api/)
+* [Matomo](https://matomo.org/) - The Matomo project
 
 ## License
 
@@ -462,3 +495,5 @@ This software is released under the BSD 3-Clause license. See [LICENSE](LICENSE)
 ## Copyright
 
 Copyright (c) 2015 General Electric Company. All rights reserved.
+
+
