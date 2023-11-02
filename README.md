@@ -5,13 +5,54 @@
 [![Average time to resolve an issue](https://isitmaintained.com/badge/resolution/matomo-org/matomo-java-tracker.svg)](https://isitmaintained.com/project/matomo-org/matomo-java-tracker "Average time to resolve an issue")
 [![Percentage of issues still open](https://isitmaintained.com/badge/open/matomo-org/matomo-java-tracker.svg)](https://isitmaintained.com/project/matomo-org/matomo-java-tracker "Percentage of issues still open")
 
-Official Java implementation of the [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api).
+Matomo Java Tracker is the official Java implementation of
+the [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api). The tracker allows you to track
+visits, goals and ecommerce transactions and items. It is designed to be used in server-side applications, such as
+Java-based web applications or web services.
+
+Features include:
+
+* Track page views, goals, ecommerce transactions and items
+* Supports custom dimensions and custom variables
+* Includes tracking parameters for campaigns, events, downloads, outlinks, site search, devices, visiors
+* Supports Java 8 and higher
+* Contains nearly no dependencies
+* Allows asynchronous requests
+* Supports Matomo 4 and 5
+* Single and multiple requests can be sent
+
+## What Is New?
+
+Do you still use Matomo Java Tracker 2.x? We created version 3, that is compatible with Matomo 4 and 5 and contains less
+dependencies. Release notes can be found here: https://github.com/matomo-org/matomo-java-tracker/releases
 
 ## Javadoc
 
 The Javadoc for this project is hosted as a GitHub page for this repo. The latest Javadoc can be
-found [here](https://matomo-org.github.io/matomo-java-tracker/javadoc/HEAD/index.html). Javadoc for the latest and all
-releases can be found [here](https://matomo-org.github.io/matomo-java-tracker/javadoc/index.html).
+found [here](https://matomo-org.github.io/matomo-java-tracker/javadoc/index.html).
+
+Javadoc folder older versions can be found here: https://javadoc.io/doc/org.piwik.java.tracking/matomo-java-tracker
+
+## Need help?
+
+* Open an issue in this repository: https://github.com/matomo-org/matomo-java-tracker/issues
+* Use discussions: https://github.com/matomo-org/matomo-java-tracker/discussions
+* Ask your question on Stackoverflow with the tag `matomo`: https://stackoverflow.com/questions/tagged/matomo
+* Use other communication channels:
+  * Matomo forum: https://forum.matomo.org/
+  * Matomo Slack: https://matomo.org/slack/
+  * Matomo Telegram: https://t.me/matomo_analytics
+  * Matomo Discord: https://discord.gg/7M2gtrT
+  * Matomo Matrix: https://matrix.to/#/#matomo:matrix.org
+  * Matomo IRC: https://web.libera.chat/#matomo
+  * Matomo Twitter: https://twitter.com/matomo
+  * Matomo LinkedIn: https://www.linkedin.com/company/matomo-analytics
+  * Matomo Facebook: https://www.facebook.com/matomo.org
+  * Matomo Instagram: https://www.instagram.com/matomo_org/
+  * Matomo YouTube: https://www.youtube.com/user/MatomoAnalytics
+  * Matomo Reddit: https://www.reddit.com/r/matomo/
+  * Matomo Pinterest: https://www.pinterest.com/matomoorg/
+  * Matomo Mastodon: https://fosstodon.org/@matomo
 
 ## Using this API
 
@@ -24,7 +65,7 @@ Add a dependency on Matomo Java Tracker using Maven:
 <dependency>
   <groupId>org.piwik.java.tracking</groupId>
   <artifactId>matomo-java-tracker</artifactId>
-  <version>2.1</version>
+  <version>3.0.0-rc1</version>
 </dependency>
 ```
 
@@ -32,7 +73,7 @@ or Gradle:
 
 ```groovy
 dependencies {
-  implementation("org.piwik.java.tracking:matomo-java-tracker:2.1")
+  implementation("org.piwik.java.tracking:matomo-java-tracker:3.0.0-rc1")
 }
 ```
 
@@ -99,20 +140,9 @@ See [Tracking Campaigns](https://matomo.org/docs/tracking-campaigns/) for more i
 
 All HTTP query parameters denoted on
 the [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api) can be set using the appropriate
-getters and setters. See _MatomoRequest.java_ for the mappings of the parameters to their corresponding
-Java getters/setters.
+getters and setters. See _MatomoRequest.java_ for the mappings of the parameters to their corresponding attributes.
 
-Some parameters are dependent on the state of other parameters:
-_EcommerceEnabled_ must be called before the following parameters are set: *EcommerceId* and *
-EcommerceRevenue*.
-
-_EcommerceId_ and _EcommerceRevenue_ must be set before the following parameters are
-set:  *EcommerceDiscount*, *EcommerceItem*, *EcommerceLastOrderTimestamp*, *
-EcommerceShippingCost*, *EcommerceSubtotal*, and *EcommerceTax*.
-
-_AuthToken_ must be set before the following parameters are set: *VisitorCity*, *
-VisitorCountry*, *VisitorIp*, *VisitorLatitude*, *VisitorLongitude*, and *VisitorRegion*
-.
+Requests are validated prior to sending. If a request is invalid, a `MatomoException` will be thrown.
 
 ### Sending Requests
 
@@ -121,13 +151,16 @@ Create a MatomoTracker using the constructor
 ```java
 package example;
 
+import java.net.URI;
 import org.matomo.java.tracking.MatomoTracker;
+import org.matomo.java.tracking.TrackerConfiguration;
 
 public class YourImplementation {
 
   public void yourMethod() {
 
-    MatomoTracker tracker = new MatomoTracker("https://your-matomo-domain.tld/matomo.php");
+    MatomoTracker tracker = new MatomoTracker(
+      TrackerConfiguration.builder().apiEndpoint(URI.create("https://your-matomo-domain.tld/matomo.php")).build());
 
   }
 
@@ -157,20 +190,12 @@ public class YourImplementation {
     MatomoRequest request =
       MatomoRequest.builder().siteId(42).actionUrl("https://www.mydomain.com/some/page").actionName("Signup").build();
 
-    MatomoTracker tracker = new MatomoTracker("https://your-matomo-domain.tld/matomo.php");
-    try {
-      Future<HttpResponse> response = tracker.sendRequestAsync(request);
-      // usually not needed:
-      HttpResponse httpResponse = response.get();
-      int statusCode = httpResponse.getStatusLine().getStatusCode();
-      if (statusCode > 399) {
-        // problem
-      }
-    } catch (IOException e) {
-      throw new UncheckedIOException("Could not send request to Matomo", e);
-    } catch (ExecutionException | InterruptedException e) {
-      throw new RuntimeException("Error while getting response", e);
-    }
+    MatomoTracker tracker = new MatomoTracker(
+      TrackerConfiguration.builder().apiEndpoint(URI.create("https://your-matomo-domain.tld/matomo.php")).build());
+
+    CompletableFuture<Void> future = tracker.sendRequestAsync(request);
+    // execute the request:
+    future.get();
 
   }
 
@@ -183,6 +208,7 @@ send a bulk request. Place your requests in an _Iterable_ data structure and cal
 ```java
 package example;
 
+import java.util.concurrent.CompletableFuture;
 import org.apache.http.HttpResponse;
 import org.matomo.java.tracking.MatomoRequest;
 import org.matomo.java.tracking.MatomoTracker;
@@ -203,20 +229,12 @@ public class YourImplementation {
     requests.add(builder.actionUrl("https://www.mydomain.com/some/page").actionName("Some Page").build());
     requests.add(builder.actionUrl("https://www.mydomain.com/another/page").actionName("Another Page").build());
 
-    MatomoTracker tracker = new MatomoTracker("https://your-matomo-domain.tld/matomo.php");
-    try {
-      Future<HttpResponse> response = tracker.sendBulkRequestAsync(requests);
-      // usually not needed:
-      HttpResponse httpResponse = response.get();
-      int statusCode = httpResponse.getStatusLine().getStatusCode();
-      if (statusCode > 399) {
-        // problem
-      }
-    } catch (IOException e) {
-      throw new UncheckedIOException("Could not send request to Matomo", e);
-    } catch (ExecutionException | InterruptedException e) {
-      throw new RuntimeException("Error while getting response", e);
-    }
+    MatomoTracker tracker = new MatomoTracker(
+      TrackerConfiguration.builder().apiEndpoint(URI.create("https://your-matomo-domain.tld/matomo.php")).build());
+
+    CompletableFuture<Void> future = tracker.sendBulkRequestAsync(requests);
+    // execute the request
+    future.get();
 
   }
 
@@ -230,6 +248,7 @@ the bulk request through
 ```java
 package example;
 
+import java.util.concurrent.CompletableFuture;
 import org.apache.http.HttpResponse;
 import org.matomo.java.tracking.MatomoLocale;
 import org.matomo.java.tracking.MatomoRequest;
@@ -253,23 +272,16 @@ public class YourImplementation {
     requests.add(builder.actionUrl("https://www.mydomain.com/another/page").actionName("Another Page")
       .visitorCountry(new MatomoLocale(Locale.GERMANY)).build());
 
-    MatomoTracker tracker = new MatomoTracker("https://your-matomo-domain.tld/matomo.php");
-    try {
-      Future<HttpResponse> response = tracker.sendBulkRequestAsync(
-        requests,
-        "33dc3f2536d3025974cccb4b4d2d98f4"
-      ); // second parameter is authentication token need for country override
-      // usually not needed:
-      HttpResponse httpResponse = response.get();
-      int statusCode = httpResponse.getStatusLine().getStatusCode();
-      if (statusCode > 399) {
-        // problem
-      }
-    } catch (IOException e) {
-      throw new UncheckedIOException("Could not send request to Matomo", e);
-    } catch (ExecutionException | InterruptedException e) {
-      throw new RuntimeException("Error while getting response", e);
-    }
+    MatomoTracker tracker = new MatomoTracker(
+      TrackerConfiguration.builder().apiEndpoint(URI.create("https://your-matomo-domain.tld/matomo.php")).build());
+
+    CompletableFuture<Void> future = tracker.sendBulkRequestAsync(
+      requests,
+      "33dc3f2536d3025974cccb4b4d2d98f4"
+    ); // second parameter is authentication token need for country override
+    // execute the request:
+    future.get();
+
 
   }
 
@@ -371,7 +383,7 @@ version can be used in your local Maven repository for testing purposes, e.g.
 <dependency>
   <groupId>org.piwik.java.tracking</groupId>
   <artifactId>matomo-java-tracker</artifactId>
-  <version>2.1-SNAPSHOT</version>
+  <version>3.0.0-rc2-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -396,6 +408,13 @@ free to:
 * Commit this code to your repository
 * Submit a pull request from your branch to our dev branch and let us know why you made the changes you did
 * We'll take a look at your request and work to get it integrated with the repo!
+
+## Further information
+
+* [Matomo PHP Tracker](https://github.com/matomo-org/matomo-php-tracker)
+* [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api)
+* [Introducting the Matomo Java Tracker](https://matomo.org/blog/2015/11/introducing-piwik-java-tracker/)
+* [Tracking API User Guide](https://matomo.org/guide/apis/tracking-api/)
 
 ## License
 
