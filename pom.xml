@@ -39,8 +39,8 @@
   </developers>
 
   <scm>
-    <connection>scm:git:ssh://git@github.com/matomo-org/matomo-java-tracker.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/matomo-org/matomo-java-tracker.git</developerConnection>
+    <connection>scm:git:https://@github.com/matomo-org/matomo-java-tracker.git</connection>
+    <developerConnection>scm:git:https://github.com/matomo-org/matomo-java-tracker.git</developerConnection>
     <url>https://github.com/matomo-org/matomo-java-tracker</url>
     <tag>HEAD</tag>
   </scm>
