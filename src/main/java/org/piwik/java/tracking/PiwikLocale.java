@@ -4,21 +4,27 @@
  * @link https://github.com/matomo/matomo-java-tracker
  * @license https://github.com/matomo/matomo-java-tracker/blob/master/LICENSE BSD-3 Clause
  */
+
 package org.piwik.java.tracking;
 
-import org.matomo.java.tracking.MatomoLocale;
+import org.matomo.java.tracking.parameters.Country;
 
 import java.util.Locale;
 
 /**
+ * A locale object that can be used to send visitor country to Matomo. This class is deprecated and will be removed in
+ * the future.
+ *
  * @author brettcsorba
- * @deprecated Use {@link org.matomo.java.tracking.MatomoLocale} instead.
+ * @deprecated Use {@link Country} instead.
  */
 @Deprecated
-public class PiwikLocale extends MatomoLocale {
+public class PiwikLocale extends Country {
 
   /**
-   * @deprecated Use {@link MatomoLocale} instead.
+   * Creates a new Piwik locale object with the specified locale.
+   *
+   * @deprecated Use {@link Country} instead.
    */
   @Deprecated
   public PiwikLocale(Locale locale) {

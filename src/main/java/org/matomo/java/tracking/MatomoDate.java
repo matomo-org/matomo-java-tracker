@@ -4,22 +4,25 @@
  * @link https://github.com/matomo/matomo-java-tracker
  * @license https://github.com/matomo/matomo-java-tracker/blob/master/LICENSE BSD-3 Clause
  */
+
 package org.matomo.java.tracking;
+
+import lombok.Getter;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
 /**
  * A datetime object that will return the datetime in the format {@code yyyy-MM-dd hh:mm:ss}.
  *
  * @author brettcsorba
+ * @deprecated Please use {@link Instant}
  */
+@Deprecated
+@Getter
 public class MatomoDate {
-  private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
   private ZonedDateTime zonedDateTime;
 
@@ -27,6 +30,7 @@ public class MatomoDate {
    * Allocates a Date object and initializes it so that it represents the time
    * at which it was allocated, measured to the nearest millisecond.
    */
+  @Deprecated
   public MatomoDate() {
     zonedDateTime = ZonedDateTime.now(ZoneOffset.UTC);
   }
@@ -38,6 +42,7 @@ public class MatomoDate {
    *
    * @param epochMilli the milliseconds since January 1, 1970, 00:00:00 GMT.
    */
+  @Deprecated
   public MatomoDate(long epochMilli) {
     zonedDateTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(epochMilli), ZoneOffset.UTC);
   }
@@ -50,18 +55,6 @@ public class MatomoDate {
    */
   public void setTimeZone(ZoneId zone) {
     zonedDateTime = zonedDateTime.withZoneSameInstant(zone);
-  }
-
-  /**
-   * Converts this MatomoDate object to a String of the form:<br>
-   * <br>
-   * {@code yyyy-MM-dd hh:mm:ss}.
-   *
-   * @return a string representation of this MatomoDate
-   */
-  @Override
-  public String toString() {
-    return DATE_TIME_FORMATTER.format(zonedDateTime);
   }
 
   /**
