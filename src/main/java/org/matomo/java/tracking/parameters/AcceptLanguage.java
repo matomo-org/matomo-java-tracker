@@ -7,17 +7,15 @@
 
 package org.matomo.java.tracking.parameters;
 
-import lombok.Builder;
-import lombok.NonNull;
-import lombok.Singular;
-import lombok.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.Builder;
+import lombok.Singular;
+import lombok.Value;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Describes the content for the Accept-Language header field that can be overridden by a custom parameter. The format
@@ -62,7 +60,7 @@ public class AcceptLanguage {
       .collect(Collectors.joining(","));
   }
 
-  private static String format(@NonNull LanguageRange languageRange) {
+  private static String format(@NotNull LanguageRange languageRange) {
     return languageRange.getWeight() == LanguageRange.MAX_WEIGHT ? languageRange.getRange() :
       String.format("%s;q=%s", languageRange.getRange(), languageRange.getWeight());
   }

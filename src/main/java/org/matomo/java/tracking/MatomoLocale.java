@@ -7,12 +7,13 @@
 
 package org.matomo.java.tracking;
 
+import static java.util.Objects.requireNonNull;
+
+import java.util.Locale;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.matomo.java.tracking.parameters.Country;
-
-import java.util.Locale;
 
 /**
  * Object representing a locale required by some Matomo query parameters.
@@ -33,7 +34,7 @@ public class MatomoLocale extends Country {
    */
   @Deprecated
   public MatomoLocale(@NotNull Locale locale) {
-    super(locale);
+    super(requireNonNull(locale, "Locale must not be null"));
   }
 
 }

@@ -7,15 +7,14 @@
 
 package org.matomo.java.tracking.parameters;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.Locale.LanguageRange;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Locale.LanguageRange;
 
 /**
  * A two-letter country code representing a country.
@@ -99,8 +98,7 @@ public class Country {
    *     using {@link Locale#getCountry()}
    */
   public final void setLocale(Locale locale) {
-    if (locale == null || locale.getCountry() == null || locale.getCountry().isEmpty()
-      || locale.getCountry().trim().isEmpty()) {
+    if (locale == null || locale.getCountry() == null || locale.getCountry().isEmpty()) {
       throw new IllegalArgumentException("Invalid locale");
     }
     code = locale.getCountry().toLowerCase(Locale.ENGLISH);

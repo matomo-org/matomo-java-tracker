@@ -1,5 +1,17 @@
 package org.matomo.java.tracking;
 
+import static java.time.temporal.ChronoUnit.MINUTES;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.within;
+
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Locale;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.matomo.java.tracking.parameters.AcceptLanguage;
@@ -9,19 +21,6 @@ import org.matomo.java.tracking.parameters.VisitorId;
 import org.piwik.java.tracking.PiwikDate;
 import org.piwik.java.tracking.PiwikLocale;
 import org.piwik.java.tracking.PiwikRequest;
-
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Locale;
-
-import static java.time.temporal.ChronoUnit.MINUTES;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.fail;
-import static org.assertj.core.api.Assertions.within;
 
 class PiwikRequestTest {
 
@@ -942,6 +941,13 @@ class PiwikRequestTest {
   void testVisitorVisitCount() {
     request.setVisitorVisitCount(100);
     assertThat(request.getVisitorVisitCount()).isEqualTo(Integer.valueOf(100));
+  }
+
+  @Test
+  void failsIfActionUrlIsNull() {
+    assertThatThrownBy(() -> new PiwikRequest(3, null))
+      .isInstanceOf(NullPointerException.class)
+      .hasMessage("Action URL must not be null");
   }
 
 }

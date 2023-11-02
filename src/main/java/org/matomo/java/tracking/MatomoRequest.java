@@ -7,6 +7,16 @@
 
 package org.matomo.java.tracking;
 
+import static java.util.Objects.requireNonNull;
+
+import java.nio.charset.Charset;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;
@@ -27,19 +37,6 @@ import org.matomo.java.tracking.parameters.EcommerceItems;
 import org.matomo.java.tracking.parameters.RandomValue;
 import org.matomo.java.tracking.parameters.UniqueId;
 import org.matomo.java.tracking.parameters.VisitorId;
-
-import java.nio.charset.Charset;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * A class that implements the <a href="https://developer.matomo.org/api-reference/tracking-api">
@@ -836,10 +833,6 @@ public class MatomoRequest {
     if (matomoDate == null) {
       requestTimestamp = null;
     } else {
-      if (Duration.between(ZonedDateTime.now(), matomoDate.getZonedDateTime()).compareTo(Duration.ofHours(4L)) > 0
-        && authToken == null) {
-        throw new IllegalArgumentException("Because you are trying to set RequestDatetime for a time greater than 4 hours ago, AuthToken must be set first.");
-      }
       setRequestTimestamp(matomoDate.getZonedDateTime().toInstant());
     }
   }

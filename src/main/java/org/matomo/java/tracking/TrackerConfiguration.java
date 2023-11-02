@@ -7,13 +7,13 @@
 
 package org.matomo.java.tracking;
 
+import java.net.URI;
+import java.time.Duration;
+import java.util.regex.Pattern;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
 import org.jetbrains.annotations.Nullable;
-
-import java.net.URI;
-import java.time.Duration;
 
 /**
  * Defines configuration settings for the Matomo tracking.
@@ -22,6 +22,7 @@ import java.time.Duration;
 @Value
 public class TrackerConfiguration {
 
+  private static final Pattern AUTH_TOKEN_PATTERN = Pattern.compile("[a-z0-9]+");
   /**
    * The Matomo Tracking HTTP API endpoint, e.g. https://your-matomo-domain.example/matomo.php
    */
@@ -105,8 +106,13 @@ public class TrackerConfiguration {
    * Validates the auth token. The auth token must be exactly 32 characters long.
    */
   public void validate() {
-    if (defaultAuthToken != null && defaultAuthToken.trim().length() != 32) {
-      throw new IllegalArgumentException("Auth token must be exactly 32 characters long");
+    if (defaultAuthToken != null) {
+      if (defaultAuthToken.trim().length() != 32) {
+        throw new IllegalArgumentException("Auth token must be exactly 32 characters long");
+      }
+      if (!AUTH_TOKEN_PATTERN.matcher(defaultAuthToken).matches()) {
+        throw new IllegalArgumentException("Auth token must contain only lowercase letters and numbers");
+      }
     }
   }
 }

@@ -7,10 +7,10 @@
 
 package org.piwik.java.tracking;
 
-import lombok.NonNull;
-import org.matomo.java.tracking.MatomoRequest;
+import static java.util.Objects.requireNonNull;
 
 import java.net.URL;
+import org.matomo.java.tracking.MatomoRequest;
 
 /**
  * A request object that can be used to send requests to Matomo. This class is deprecated and will be removed in the
@@ -30,7 +30,7 @@ public class PiwikRequest extends MatomoRequest {
    * @deprecated Use {@link MatomoRequest} instead.
    */
   @Deprecated
-  public PiwikRequest(int siteId, @NonNull URL actionUrl) {
-    super(siteId, actionUrl.toString());
+  public PiwikRequest(int siteId, URL actionUrl) {
+    super(siteId, requireNonNull(actionUrl, "Action URL must not be null").toString());
   }
 }

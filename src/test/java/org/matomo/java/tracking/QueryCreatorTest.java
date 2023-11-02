@@ -1,5 +1,19 @@
 package org.matomo.java.tracking;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
+import static java.util.Collections.singletonMap;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Locale.LanguageRange;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.matomo.java.tracking.parameters.AcceptLanguage;
 import org.matomo.java.tracking.parameters.Country;
@@ -12,25 +26,11 @@ import org.matomo.java.tracking.parameters.RandomValue;
 import org.matomo.java.tracking.parameters.UniqueId;
 import org.matomo.java.tracking.parameters.VisitorId;
 
-import java.net.URI;
-import java.time.Instant;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Locale.LanguageRange;
-import java.util.Map;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.singleton;
-import static java.util.Collections.singletonMap;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 class QueryCreatorTest {
 
   private final MatomoRequest.MatomoRequestBuilder matomoRequestBuilder =
-    MatomoRequest.builder().visitorId(VisitorId.fromHash(1234567890123456789L))
-      .randomValue(RandomValue.fromString("random-value"));
+    MatomoRequest.builder().visitorId(VisitorId.fromHash(1234567890123456789L)).randomValue(
+      RandomValue.fromString("random-value"));
 
   private String defaultAuthToken = "876de1876fb2cda2816c362a61bfc712";
 
@@ -50,9 +50,8 @@ class QueryCreatorTest {
 
   private void whenCreatesQuery() {
     request = matomoRequestBuilder.build();
-    TrackerConfiguration trackerConfiguration =
-      TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).defaultSiteId(42)
-        .defaultAuthToken(defaultAuthToken).build();
+    TrackerConfiguration trackerConfiguration = TrackerConfiguration.builder().apiEndpoint(
+      URI.create("http://localhost")).defaultSiteId(42).defaultAuthToken(defaultAuthToken).build();
     String authToken = AuthToken.determineAuthToken(null, singleton(request), trackerConfiguration);
     query = new QueryCreator(trackerConfiguration).createQuery(request, authToken);
   }
@@ -179,20 +178,21 @@ class QueryCreatorTest {
   @Test
   void tracksMinimalRequest() {
 
-    matomoRequestBuilder.actionName("Help / Feedback").actionUrl("https://www.daniel-heid.de/portfolio")
-      .visitorId(VisitorId.fromHash(3434343434343434343L)).referrerUrl("https://www.daniel-heid.de/referrer")
-      .visitCustomVariables(
+    matomoRequestBuilder.actionName("Help / Feedback").actionUrl(
+        "https://www.daniel-heid.de/portfolio").visitorId(VisitorId.fromHash(3434343434343434343L))
+      .referrerUrl("https://www.daniel-heid.de/referrer").visitCustomVariables(
         new CustomVariables().add(new CustomVariable("customVariable1Key", "customVariable1Value"), 5)
-          .add(new CustomVariable("customVariable2Key", "customVariable2Value"), 6)).visitorVisitCount(2)
-      .visitorPreviousVisitTimestamp(Instant.parse("2022-08-09T18:34:12Z"))
-      .deviceResolution(DeviceResolution.builder().width(1024).height(768).build()).headerAcceptLanguage(
-        AcceptLanguage.builder().languageRange(new LanguageRange("de")).languageRange(new LanguageRange("de-DE", 0.9))
-          .languageRange(new LanguageRange("en", 0.8)).build()).pageViewId(UniqueId.fromValue(999999999999999999L))
-      .goalId(0).ecommerceRevenue(12.34).ecommerceItems(
-        EcommerceItems.builder().item(EcommerceItem.builder().sku("SKU").build())
-          .item(EcommerceItem.builder().sku("SKU").name("NAME").category("CATEGORY").price(123.4).build()).build())
-      .authToken("fdf6e8461ea9de33176b222519627f78")
-      .visitorCountry(Country.fromLanguageRanges("en-GB;q=0.7,de,de-DE;q=0.9,en;q=0.8,en-US;q=0.6"));
+          .add(new CustomVariable("customVariable2Key", "customVariable2Value"), 6))
+      .visitorVisitCount(2).visitorPreviousVisitTimestamp(Instant.parse("2022-08-09T18:34:12Z"))
+      .deviceResolution(DeviceResolution.builder().width(1024).height(768).build())
+      .headerAcceptLanguage(AcceptLanguage.builder().languageRange(new LanguageRange("de"))
+        .languageRange(new LanguageRange("de-DE", 0.9)).languageRange(new LanguageRange("en", 0.8))
+        .build()).pageViewId(UniqueId.fromValue(999999999999999999L)).goalId(0).ecommerceRevenue(
+        12.34).ecommerceItems(EcommerceItems.builder().item(
+        EcommerceItem.builder().sku("SKU").build()).item(EcommerceItem.builder().sku("SKU").name(
+        "NAME").category("CATEGORY").price(123.4).build()).build()).authToken(
+        "fdf6e8461ea9de33176b222519627f78").visitorCountry(
+        Country.fromLanguageRanges("en-GB;q=0.7,de,de-DE;q=0.9,en;q=0.8,en-US;q=0.6"));
 
     whenCreatesQuery();
 
@@ -203,8 +203,8 @@ class QueryCreatorTest {
 
   @Test
   void testGetQueryString() {
-    matomoRequestBuilder.siteId(3).actionUrl("http://test.com").randomValue(RandomValue.fromString("random"))
-      .visitorId(VisitorId.fromHex("1234567890123456"));
+    matomoRequestBuilder.siteId(3).actionUrl("http://test.com").randomValue(
+      RandomValue.fromString("random")).visitorId(VisitorId.fromHex("1234567890123456"));
     defaultAuthToken = null;
     whenCreatesQuery();
     assertThat(query).isEqualTo(
@@ -241,15 +241,14 @@ class QueryCreatorTest {
     matomoRequestBuilder.visitorId(null);
     matomoRequestBuilder.actionUrl(null);
     whenCreatesQuery();
-    assertThat(query).isEqualTo("idsite=42&cvar=%7B%227%22%3A%5B%22key%22%2C%22val%22%5D%7D&key2=test3&key=test4");
+    assertThat(query).isEqualTo(
+      "idsite=42&cvar=%7B%227%22%3A%5B%22key%22%2C%22val%22%5D%7D&key2=test3&key=test4");
   }
 
   @Test
   void testGetQueryString2() {
-    matomoRequestBuilder.actionUrl("http://test.com")
-      .randomValue(RandomValue.fromString("random"))
-      .visitorId(VisitorId.fromHex("1234567890123456"))
-      .siteId(3);
+    matomoRequestBuilder.actionUrl("http://test.com").randomValue(RandomValue.fromString("random"))
+      .visitorId(VisitorId.fromHex("1234567890123456")).siteId(3);
     defaultAuthToken = null;
 
     whenCreatesQuery();
@@ -284,8 +283,8 @@ class QueryCreatorTest {
     whenCreatesQuery();
     assertThat(query).isEqualTo(
       "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&send_image=0&rand=random&ke%2Fy=te%3Ast3&ke%2Fy=te%3Ast4&ke%2Fy2=te%3Ast3");
-    matomoRequestBuilder.randomValue(null).siteId(null).required(null).apiVersion(null).responseAsImage(null)
-      .visitorId(null).actionUrl(null);
+    matomoRequestBuilder.randomValue(null).siteId(null).required(null).apiVersion(null)
+      .responseAsImage(null).visitorId(null).actionUrl(null);
     whenCreatesQuery();
     assertThat(query).isEqualTo("idsite=42&ke%2Fy=te%3Ast3&ke%2Fy=te%3Ast4&ke%2Fy2=te%3Ast3");
 
@@ -306,9 +305,10 @@ class QueryCreatorTest {
 
   @Test
   void testVisitCustomVariableCustomVariable() {
-    matomoRequestBuilder.randomValue(RandomValue.fromString("random")).visitorId(VisitorId.fromHex("1234567890123456"))
-      .siteId(3);
-    org.matomo.java.tracking.CustomVariable cv = new org.matomo.java.tracking.CustomVariable("visitKey", "visitVal");
+    matomoRequestBuilder.randomValue(RandomValue.fromString("random")).visitorId(
+      VisitorId.fromHex("1234567890123456")).siteId(3);
+    org.matomo.java.tracking.CustomVariable cv = new org.matomo.java.tracking.CustomVariable(
+      "visitKey", "visitVal");
     matomoRequestBuilder.visitCustomVariables(new CustomVariables().add(cv, 8));
     defaultAuthToken = null;
 
@@ -338,6 +338,26 @@ class QueryCreatorTest {
 
     assertThatThrownBy(this::whenCreatesQuery).isInstanceOf(IllegalArgumentException.class)
       .hasMessage("Auth token must be exactly 32 characters long");
+  }
+
+  @Test
+  void createsQueryWithDimensions() {
+    matomoRequestBuilder.dimensions(asList("firstDimension", "secondDimension"));
+
+    whenCreatesQuery();
+
+    assertThat(query).isEqualTo(
+      "idsite=42token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&send_image=0&rand=random-value&dimension1=firstDimension&dimension2=secondDimension");
+  }
+
+  @Test
+  void appendsCharsetParameters() {
+    matomoRequestBuilder.characterSet(StandardCharsets.ISO_8859_1);
+
+    whenCreatesQuery();
+
+    assertThat(query).isEqualTo(
+      "idsite=42token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&cs=ISO-8859-1&send_image=0&rand=random-value");
   }
 
 }

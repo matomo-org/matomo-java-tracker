@@ -14,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
@@ -46,7 +47,8 @@ class PiwikTrackerIT {
 
   @BeforeEach
   void setUp() throws MalformedURLException {
-    piwikTracker = new PiwikTracker(String.format("http://localhost:%d/matomo.php", wireMockServer.port()));
+    piwikTracker = new PiwikTracker(
+      String.format("http://localhost:%d/matomo.php", wireMockServer.port()), -1);
     wireMockServer.resetRequests();
     wireMockServer.stubFor(post(urlPathEqualTo("/matomo.php")).willReturn(status(204)));
     wireMockServer.stubFor(get(urlPathEqualTo("/matomo.php")).willReturn(status(204)));
@@ -199,7 +201,8 @@ class PiwikTrackerIT {
     List<PiwikRequest> requests = Collections.singletonList(request);
     request.setCustomTrackingParameter("parameterName", "parameterValue");
 
-    CompletableFuture<Void> future = piwikTracker.sendBulkRequestAsync(requests, "12345678901234567890123456789012");
+    CompletableFuture<Void> future = piwikTracker.sendBulkRequestAsync(
+      requests, "12345678901234567890123456789012");
     future.get();
 
     assertThat(future).isNotCompletedExceptionally();
@@ -214,5 +217,37 @@ class PiwikTrackerIT {
 
   }
 
+  @Test
+  void createsPiwikTrackerWithHostUrl() {
+    PiwikTracker piwikTracker = new PiwikTracker(String.format("http://localhost:%d/matomo.php", wireMockServer.port()));
+
+    piwikTracker.sendRequest(request);
+
+    wireMockServer.verify(getRequestedFor(urlEqualTo(
+      "/matomo.php?rec=1&idsite=42&url=https%3A%2F%2Ftest.local%2Ftest%2Fpath%3Fid%3D123&apiv=1&_id=0de0b6b3a763ffff&send_image=0&rand=rand"))
+      .withHeader("User-Agent", equalTo("MatomoJavaClient")));
+  }
+
+  @Test
+  void createPiwikTrackerWithHostUrlAndProxyHostAndPort() {
+    PiwikTracker piwikTracker = new PiwikTracker(String.format("http://localhost:%d/matomo.php", wireMockServer.port()), "localhost", 8080);
+
+    assertThatThrownBy(() -> piwikTracker.sendRequest(request))
+      .isInstanceOf(MatomoException.class)
+      .hasMessage("Could not send request via GET")
+      .hasRootCauseInstanceOf(ConnectException.class)
+      .hasRootCauseMessage("Connection refused (Connection refused)");
+
+  }
+
+  @Test
+  void createPiwikTrackerWithHostUrlAndProxyHostAndPortAndTimeout() {
+    PiwikTracker piwikTracker = new PiwikTracker(String.format("http://localhost:%d/matomo.php", wireMockServer.port()), "localhost", 8080, 1000);
+
+    assertThatThrownBy(() -> piwikTracker.sendRequest(request))
+      .isInstanceOf(MatomoException.class)
+      .hasMessage("Could not send request via GET")
+      .hasRootCauseInstanceOf(ConnectException.class)
+      .hasRootCauseMessage("Connection refused (Connection refused)");}
 
 }

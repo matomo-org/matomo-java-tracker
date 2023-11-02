@@ -21,6 +21,7 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Locale.LanguageRange;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,8 @@ class MatomoTrackerIT {
 
   private static final int SITE_ID = 42;
 
-  private final TrackerConfigurationBuilder trackerConfigurationBuilder = TrackerConfiguration.builder();
+  private final TrackerConfigurationBuilder trackerConfigurationBuilder =
+    TrackerConfiguration.builder();
 
   private final MatomoRequestBuilder requestBuilder =
     MatomoRequest.builder().visitorId(VisitorId.fromHex("bbccddeeff1122"))
@@ -67,8 +69,9 @@ class MatomoTrackerIT {
   @Test
   void requiresApiEndpoint() {
 
-    assertThatThrownBy(() -> trackerConfigurationBuilder.defaultSiteId(SITE_ID).build()).isInstanceOf(
-      NullPointerException.class).hasMessage("apiEndpoint is marked non-null but is null");
+    assertThatThrownBy(() -> trackerConfigurationBuilder.defaultSiteId(SITE_ID).build())
+      .isInstanceOf(
+        NullPointerException.class).hasMessage("apiEndpoint is marked non-null but is null");
 
   }
 
@@ -83,12 +86,22 @@ class MatomoTrackerIT {
   }
 
   private void whenSendsRequestAsync() {
-    future = new MatomoTracker(trackerConfigurationBuilder.build()).sendRequestAsync(requestBuilder.build());
+    future = new MatomoTracker(trackerConfigurationBuilder.build()).sendRequestAsync(
+      requestBuilder.build());
     try {
       future.get();
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private void whenSendsSingleRequest() {
+    new MatomoTracker(trackerConfigurationBuilder.build()).sendRequest(requestBuilder.build());
+  }
+
+  private void whenSendsBulkRequest() {
+    new MatomoTracker(trackerConfigurationBuilder.build()).sendBulkRequest(
+      singleton(requestBuilder.build()));
   }
 
   @Test
@@ -132,7 +145,8 @@ class MatomoTrackerIT {
     givenTrackerConfigurationWithDefaultSiteId();
     requestBuilder.authToken("invalid-token-auth");
 
-    assertThatThrownBy(this::whenSendsRequestAsync).hasRootCauseInstanceOf(IllegalArgumentException.class)
+    assertThatThrownBy(this::whenSendsRequestAsync).hasRootCauseInstanceOf(
+        IllegalArgumentException.class)
       .hasRootCauseMessage("Auth token must be exactly 32 characters long");
 
   }
@@ -210,7 +224,8 @@ class MatomoTrackerIT {
 
   private void whenSendsBulkRequestAsync() {
     future =
-      new MatomoTracker(trackerConfigurationBuilder.build()).sendBulkRequestAsync(singleton(requestBuilder.build()));
+      new MatomoTracker(trackerConfigurationBuilder.build()).sendBulkRequestAsync(
+        singleton(requestBuilder.build()));
     try {
       future.get();
     } catch (Exception e) {
@@ -292,28 +307,40 @@ class MatomoTrackerIT {
 
     givenTrackerConfigurationWithDefaultSiteId();
     requestBuilder.actionName("Help / Feedback").actionUrl("https://www.daniel-heid.de/portfolio")
-      .visitorId(VisitorId.fromHash(3434343434343434343L)).referrerUrl("https://www.daniel-heid.de/referrer")
+      .visitorId(VisitorId.fromHash(3434343434343434343L)).referrerUrl(
+        "https://www.daniel-heid.de/referrer")
       .visitCustomVariables(
-        new CustomVariables().add(new CustomVariable("customVariable1Key", "customVariable1Value"), 4)
-          .add(new CustomVariable("customVariable2Key", "customVariable2Value"), 5)).visitorVisitCount(2)
-      .visitorFirstVisitTimestamp(LocalDateTime.of(2022, 8, 9, 18, 34, 12).toInstant(ZoneOffset.UTC))
-      .deviceResolution(DeviceResolution.builder().width(1024).height(768).build()).headerAcceptLanguage(
-        AcceptLanguage.builder().languageRange(new LanguageRange("de")).languageRange(new LanguageRange("de-DE", 0.9))
-          .languageRange(new LanguageRange("en", 0.8)).build()).pageViewId(UniqueId.fromValue(999999999999999999L))
+        new CustomVariables()
+          .add(new CustomVariable("customVariable1Key", "customVariable1Value"), 4)
+          .add(new CustomVariable("customVariable2Key", "customVariable2Value"), 5))
+      .visitorVisitCount(2)
+      .visitorFirstVisitTimestamp(
+        LocalDateTime.of(2022, 8, 9, 18, 34, 12).toInstant(ZoneOffset.UTC))
+      .deviceResolution(DeviceResolution.builder().width(1024).height(768).build())
+      .headerAcceptLanguage(
+        AcceptLanguage.builder().languageRange(new LanguageRange("de")).languageRange(
+            new LanguageRange("de-DE", 0.9))
+          .languageRange(new LanguageRange("en", 0.8)).build()).pageViewId(
+        UniqueId.fromValue(999999999999999999L))
       .goalId(0).ecommerceRevenue(12.34).ecommerceItems(
-        EcommerceItems.builder().item(org.matomo.java.tracking.parameters.EcommerceItem.builder().sku("SKU").build())
-          .item(EcommerceItem.builder().sku("SKU").name("NAME").category("CATEGORY").price(123.4).build()).build())
+        EcommerceItems.builder().item(
+            org.matomo.java.tracking.parameters.EcommerceItem.builder().sku("SKU").build())
+          .item(EcommerceItem.builder().sku("SKU").name("NAME").category("CATEGORY").price(123.4)
+            .build()).build())
       .authToken("fdf6e8461ea9de33176b222519627f78")
-      .visitorCountry(Country.fromLanguageRanges("en-GB;q=0.7,de,de-DE;q=0.9,en;q=0.8,en-US;q=0.6"));
+      .visitorCountry(
+        Country.fromLanguageRanges("en-GB;q=0.7,de,de-DE;q=0.9,en;q=0.8,en-US;q=0.6"));
 
     whenSendsBulkRequestAsync();
 
     assertThat(future).isNotCompletedExceptionally();
-    wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php")).withHeader("Content-Length", equalTo("711"))
+    wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php")).withHeader(
+        "Content-Length", equalTo("711"))
       .withHeader("Accept", equalTo("*/*")).withHeader("Content-Type", equalTo("application/json"))
       .withHeader("User-Agent", equalTo("MatomoJavaClient"))
       .withRequestBody(
-        equalToJson("{\"requests\":[\"?" + "idsite=42&rec=1&action_name=Help+%2F+Feedback&url=https%3A%2F%2Fwww.daniel-heid.de%2Fportfolio&apiv=1&_id=2fa93d2858bc4867&urlref=https%3A%2F%2Fwww.daniel-heid.de%2Freferrer&_cvar=%7B%224%22%3A%5B%22customVariable1Key%22%2C%22customVariable1Value%22%5D%2C%225%22%3A%5B%22customVariable2Key%22%2C%22customVariable2Value%22%5D%7D&_idvc=2&_idts=1660070052&res=1024x768&lang=de%2Cde-de%3Bq%3D0.9%2Cen%3Bq%3D0.8&pv_id=lbBbxG&idgoal=0&revenue=12.34&ec_items=%5B%5B%22SKU%22%2C%22%22%2C%22%22%2C0.0%2C0%5D%2C%5B%22SKU%22%2C%22NAME%22%2C%22CATEGORY%22%2C123.4%2C0%5D%5D&token_auth=fdf6e8461ea9de33176b222519627f78&country=de&send_image=0&rand=someRandom"
+        equalToJson("{\"requests\":[\"?"
+          + "idsite=42&rec=1&action_name=Help+%2F+Feedback&url=https%3A%2F%2Fwww.daniel-heid.de%2Fportfolio&apiv=1&_id=2fa93d2858bc4867&urlref=https%3A%2F%2Fwww.daniel-heid.de%2Freferrer&_cvar=%7B%224%22%3A%5B%22customVariable1Key%22%2C%22customVariable1Value%22%5D%2C%225%22%3A%5B%22customVariable2Key%22%2C%22customVariable2Value%22%5D%7D&_idvc=2&_idts=1660070052&res=1024x768&lang=de%2Cde-de%3Bq%3D0.9%2Cen%3Bq%3D0.8&pv_id=lbBbxG&idgoal=0&revenue=12.34&ec_items=%5B%5B%22SKU%22%2C%22%22%2C%22%22%2C0.0%2C0%5D%2C%5B%22SKU%22%2C%22NAME%22%2C%22CATEGORY%22%2C123.4%2C0%5D%5D&token_auth=fdf6e8461ea9de33176b222519627f78&country=de&send_image=0&rand=someRandom"
           + "\"],\"token_auth\" : \"" + "fdf6e8461ea9de33176b222519627f78" + "\"}")));
 
   }
@@ -336,7 +363,8 @@ class MatomoTrackerIT {
   void exampleWorks() {
 
     TrackerConfiguration config =
-      TrackerConfiguration.builder().apiEndpoint(URI.create("https://your-domain.net/matomo/matomo.php"))
+      TrackerConfiguration.builder().apiEndpoint(
+          URI.create("https://your-domain.net/matomo/matomo.php"))
         .defaultSiteId(42) // if not explicitly specified by action
         .build();
 
@@ -361,8 +389,10 @@ class MatomoTrackerIT {
   void reportsErrors() {
 
     wireMockServer.stubFor(get(urlPathEqualTo("/failing")).willReturn(status(500)));
-    trackerConfigurationBuilder.apiEndpoint(URI.create(String.format("http://localhost:%d/failing",
-      wireMockServer.port()))).defaultSiteId(SITE_ID);
+    trackerConfigurationBuilder.apiEndpoint(URI.create(String.format(
+      "http://localhost:%d/failing",
+      wireMockServer.port()
+    ))).defaultSiteId(SITE_ID);
 
     assertThatThrownBy(this::whenSendsRequestAsync).hasRootCauseInstanceOf(MatomoException.class)
       .hasRootCauseMessage("Tracking endpoint responded with code 500");
@@ -395,13 +425,16 @@ class MatomoTrackerIT {
     MatomoTracker tracker = new MatomoTracker(trackerConfigurationBuilder.build());
 
     CompletableFuture<Void> future1 = tracker.sendBulkRequestAsync(
-      Arrays.asList(requestBuilder.actionName("First").build(), requestBuilder.actionName("Second").build(),
+      Arrays.asList(
+        requestBuilder.actionName("First").build(),
+        requestBuilder.actionName("Second").build(),
         requestBuilder.actionName("Third").build()
       ));
     future1.get();
 
     assertThat(future1).isNotCompletedExceptionally();
-    wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php")).withHeader("Content-Length", equalTo("297"))
+    wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php")).withHeader(
+        "Content-Length", equalTo("297"))
       .withHeader("Accept", equalTo("*/*")).withHeader("Content-Type", equalTo("application/json"))
       .withHeader("User-Agent", equalTo("MatomoJavaClient")).withRequestBody(equalToJson(
         "{\"requests\" : [ \"?idsite=42&rec=1&action_name=First&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom\", \"?idsite=42&rec=1&action_name=Second&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom\", \"?idsite=42&rec=1&action_name=Third&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom\" ]}")));
@@ -414,8 +447,80 @@ class MatomoTrackerIT {
     givenTrackerConfigurationWithDefaultSiteId();
     requestBuilder.siteId(-1);
 
-    assertThatThrownBy(this::whenSendsRequestAsync).hasRootCauseInstanceOf(IllegalArgumentException.class)
+    assertThatThrownBy(this::whenSendsRequestAsync).hasRootCauseInstanceOf(
+        IllegalArgumentException.class)
       .hasRootCauseMessage("Site ID must not be negative");
+  }
+
+  @Test
+  void doesNotSendRequestAsyncIfTrackerConfigurationIsDisabled() {
+    givenTrackerConfigurationWithDefaultSiteId();
+    trackerConfigurationBuilder.enabled(false);
+
+    whenSendsRequestAsync();
+
+    assertThat(future).isNotCompletedExceptionally();
+    wireMockServer.verify(0, getRequestedFor(urlPathEqualTo("/matomo.php")));
+
+  }
+
+  @Test
+  void doesNotSendRequestIfTrackerConfigurationIsDisabled() {
+    givenTrackerConfigurationWithDefaultSiteId();
+    trackerConfigurationBuilder.enabled(false);
+
+    whenSendsSingleRequest();
+
+    wireMockServer.verify(0, getRequestedFor(urlPathEqualTo("/matomo.php")));
+  }
+
+  @Test
+  void doesNotSendBulkRequestIfTrackerConfigurationIsDisabled() {
+    givenTrackerConfigurationWithDefaultSiteId();
+    trackerConfigurationBuilder.enabled(false);
+
+    whenSendsBulkRequest();
+
+    wireMockServer.verify(0, postRequestedFor(urlPathEqualTo("/matomo.php")));
+  }
+
+  @Test
+  void doesNotSendBulkRequestAsyncIfTrackerConfigurationIsDisabled() {
+    givenTrackerConfigurationWithDefaultSiteId();
+    trackerConfigurationBuilder.enabled(false);
+
+    whenSendsBulkRequestAsync();
+
+    assertThat(future).isNotCompletedExceptionally();
+    wireMockServer.verify(0, postRequestedFor(urlPathEqualTo("/matomo.php")));
+  }
+
+  @Test
+  void sendsRequestAsyncAndAcceptsCallback() throws Exception {
+    givenTrackerConfigurationWithDefaultSiteId();
+    MatomoTracker tracker = new MatomoTracker(trackerConfigurationBuilder.build());
+    AtomicBoolean success = new AtomicBoolean();
+    CompletableFuture<Void> future = tracker.sendRequestAsync(requestBuilder.build(), v -> {
+      success.set(true);
+    });
+    future.get();
+    assertThat(future).isNotCompletedExceptionally();
+    wireMockServer.verify(getRequestedFor(urlPathEqualTo("/matomo.php")));
+    assertThat(success).isTrue();
+  }
+
+  @Test
+  void sendsRequestsAsyncAndAcceptsCallback() throws Exception {
+    givenTrackerConfigurationWithDefaultSiteId();
+    MatomoTracker tracker = new MatomoTracker(trackerConfigurationBuilder.build());
+    AtomicBoolean success = new AtomicBoolean();
+    CompletableFuture<Void> future = tracker.sendBulkRequestAsync(singleton(requestBuilder.build()), v -> {
+      success.set(true);
+    });
+    future.get();
+    assertThat(future).isNotCompletedExceptionally();
+    wireMockServer.verify(postRequestedFor(urlPathEqualTo("/matomo.php")));
+    assertThat(success).isTrue();
   }
 
 }
