@@ -11,8 +11,8 @@ class AuthTokenTest {
   @Test
   void determineAuthTokenReturnsAuthTokenFromRequest() {
 
-    MatomoRequest request = MatomoRequest.builder().authToken("bdeca231a312ab12cde124131bedfa23")
-      .build();
+    MatomoRequest request =
+        MatomoRequest.builder().authToken("bdeca231a312ab12cde124131bedfa23").build();
 
     String authToken = AuthToken.determineAuthToken(null, singleton(request), null);
 
@@ -23,10 +23,11 @@ class AuthTokenTest {
   @Test
   void determineAuthTokenReturnsAuthTokenFromTrackerConfiguration() {
 
-    TrackerConfiguration trackerConfiguration = TrackerConfiguration.builder()
-      .apiEndpoint(URI.create("https://your-matomo-domain.example/matomo."))
-      .defaultAuthToken("bdeca231a312ab12cde124131bedfa23")
-      .build();
+    TrackerConfiguration trackerConfiguration = TrackerConfiguration
+        .builder()
+        .apiEndpoint(URI.create("https://your-matomo-domain.example/matomo."))
+        .defaultAuthToken("bdeca231a312ab12cde124131bedfa23")
+        .build();
 
     String authToken = AuthToken.determineAuthToken(null, null, trackerConfiguration);
 
@@ -36,12 +37,13 @@ class AuthTokenTest {
   @Test
   void determineAuthTokenFromTrackerConfigurationIfRequestTokenIsEmpty() {
 
-    MatomoRequest request = MatomoRequest.builder()
-      .authToken("").build();
+    MatomoRequest request = MatomoRequest.builder().authToken("").build();
 
-    TrackerConfiguration trackerConfiguration = TrackerConfiguration.builder()
-      .apiEndpoint(URI.create("https://your-matomo-domain.example/matomo"))
-      .defaultAuthToken("bdeca231a312ab12cde124131bedfa23").build();
+    TrackerConfiguration trackerConfiguration = TrackerConfiguration
+        .builder()
+        .apiEndpoint(URI.create("https://your-matomo-domain.example/matomo"))
+        .defaultAuthToken("bdeca231a312ab12cde124131bedfa23")
+        .build();
 
     String authToken = AuthToken.determineAuthToken(null, singleton(request), trackerConfiguration);
 
@@ -52,12 +54,13 @@ class AuthTokenTest {
   @Test
   void determineAuthTokenFromTrackerConfigurationIfRequestTokenIsBlank() {
 
-    MatomoRequest request = MatomoRequest.builder()
-      .authToken(" ").build();
+    MatomoRequest request = MatomoRequest.builder().authToken(" ").build();
 
-    TrackerConfiguration trackerConfiguration = TrackerConfiguration.builder()
-      .apiEndpoint(URI.create("https://your-matomo-domain.example/matomo"))
-      .defaultAuthToken("bdeca231a312ab12cde124131bedfa23").build();
+    TrackerConfiguration trackerConfiguration = TrackerConfiguration
+        .builder()
+        .apiEndpoint(URI.create("https://your-matomo-domain.example/matomo"))
+        .defaultAuthToken("bdeca231a312ab12cde124131bedfa23")
+        .build();
 
     String authToken = AuthToken.determineAuthToken(null, singleton(request), trackerConfiguration);
 

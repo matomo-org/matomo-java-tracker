@@ -1,33 +1,32 @@
 package org.matomo.java.tracking.parameters;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 class VisitorIdTest {
 
   private static Stream<Arguments> validHexStrings() {
     return Stream.of(
-      Arguments.of("0", "0000000000000000"),
-      Arguments.of("0000", "0000000000000000"),
-      Arguments.of("1", "0000000000000001"),
-      Arguments.of("a", "000000000000000a"),
-      Arguments.of("1a", "000000000000001a"),
-      Arguments.of("01a", "000000000000001a"),
-      Arguments.of("1a2b", "0000000000001a2b"),
-      Arguments.of("1a2b3c", "00000000001a2b3c"),
-      Arguments.of("1a2b3c4d", "000000001a2b3c4d"),
-      Arguments.of("1a2b3c4d5e", "0000001a2b3c4d5e"),
-      Arguments.of("1A2B3C4D5E", "0000001a2b3c4d5e"),
-      Arguments.of("1a2b3c4d5e6f", "00001a2b3c4d5e6f"),
-      Arguments.of("1a2b3c4d5e6f7a", "001a2b3c4d5e6f7a")
+        Arguments.of("0", "0000000000000000"),
+        Arguments.of("0000", "0000000000000000"),
+        Arguments.of("1", "0000000000000001"),
+        Arguments.of("a", "000000000000000a"),
+        Arguments.of("1a", "000000000000001a"),
+        Arguments.of("01a", "000000000000001a"),
+        Arguments.of("1a2b", "0000000000001a2b"),
+        Arguments.of("1a2b3c", "00000000001a2b3c"),
+        Arguments.of("1a2b3c4d", "000000001a2b3c4d"),
+        Arguments.of("1a2b3c4d5e", "0000001a2b3c4d5e"),
+        Arguments.of("1A2B3C4D5E", "0000001a2b3c4d5e"),
+        Arguments.of("1a2b3c4d5e6f", "00001a2b3c4d5e6f"),
+        Arguments.of("1a2b3c4d5e6f7a", "001a2b3c4d5e6f7a")
     );
   }
 
@@ -118,24 +117,25 @@ class VisitorIdTest {
   void failsOnInvalidHexString() {
 
     assertThatThrownBy(() -> VisitorId.fromHex("invalid123456789"))
-      .isInstanceOf(IllegalArgumentException.class)
-      .hasMessage("Input must be a valid hex string")
-    ;
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Input must be a valid hex string");
 
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"g", "gh", "ghi", "ghij", "ghijk", "ghijkl", "ghijklm", "ghijklmn", "ghijklmn", "-1"})
+  @ValueSource(strings =
+      {"g", "gh", "ghi", "ghij", "ghijk", "ghijkl", "ghijklm", "ghijklmn", "ghijklmn", "-1"})
   void failsOnInvalidHexString(String hex) {
     assertThatThrownBy(() -> VisitorId.fromHex(hex))
-      .isInstanceOf(IllegalArgumentException.class)
-      .hasMessage("Input must be a valid hex string")
-    ;
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Input must be a valid hex string");
   }
 
   @ParameterizedTest
   @MethodSource("validHexStrings")
-  void createsVisitorIdFromHex(String hex, String expected) {
+  void createsVisitorIdFromHex(
+      String hex, String expected
+  ) {
 
     VisitorId visitorId = VisitorId.fromHex(hex);
 
@@ -147,18 +147,16 @@ class VisitorIdTest {
   @ValueSource(strings = {"", " "})
   void failsOnEmptyStrings(String hex) {
     assertThatThrownBy(() -> VisitorId.fromHex(hex))
-      .isInstanceOf(IllegalArgumentException.class)
-      .hasMessage("Hex string must not be null or empty")
-    ;
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Hex string must not be null or empty");
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"1234567890abcdefg", "1234567890abcdeff"})
   void failsOnInvalidHexStringLength(String hex) {
     assertThatThrownBy(() -> VisitorId.fromHex(hex))
-      .isInstanceOf(IllegalArgumentException.class)
-      .hasMessage("Hex string must not be longer than 16 characters")
-    ;
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Hex string must not be longer than 16 characters");
   }
 
 }

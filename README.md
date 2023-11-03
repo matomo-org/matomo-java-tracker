@@ -4,8 +4,6 @@
 [![Build Status](https://github.com/matomo-org/matomo-java-tracker/actions/workflows/build.yml/badge.svg)](https://github.com/matomo-org/matomo-java-tracker/actions/workflows/build.yml)
 [![Average time to resolve an issue](https://isitmaintained.com/badge/resolution/matomo-org/matomo-java-tracker.svg)](https://isitmaintained.com/project/matomo-org/matomo-java-tracker "Average time to resolve an issue")
 [![Percentage of issues still open](https://isitmaintained.com/badge/open/matomo-org/matomo-java-tracker.svg)](https://isitmaintained.com/project/matomo-org/matomo-java-tracker "Percentage of issues still open")
-![Line Coverage](.github/badges/jacoco.svg)
-![Branch Coverage](.github/badges/branches.svg)
 
 Matomo Java Tracker is the official Java implementation of
 the [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api). The tracker allows you to track
@@ -63,7 +61,8 @@ Here are the most important changes:
 ## Javadoc
 
 The Javadoc for this project is hosted as a GitHub page for this repo. The latest Javadoc can be
-found [here](https://matomo-org.github.io/matomo-java-tracker/javadoc/index.html). Javadoc folder older versions can be found here: https://javadoc.io/doc/org.piwik.java.tracking/matomo-java-tracker
+found [here](https://matomo-org.github.io/matomo-java-tracker/javadoc/index.html). Javadoc folder older versions can be
+found here: https://javadoc.io/doc/org.piwik.java.tracking/matomo-java-tracker
 You can also build the Javadoc yourself. See the section [Building](#building) below.
 
 ## Need help?
@@ -76,8 +75,10 @@ You can also build the Javadoc yourself. See the section [Building](#building) b
 
 ## Using this API
 
-See the following sections for information on how to use this API. For more information, see the Javadoc. We also recommend
-to read the [Tracking API User Guide](https://matomo.org/guide/apis/tracking-api/). The [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api) is well
+See the following sections for information on how to use this API. For more information, see the Javadoc. We also
+recommend
+to read the [Tracking API User Guide](https://matomo.org/guide/apis/tracking-api/).
+The [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api) is well
 documented and contains many examples.
 
 ### Add library to your build
@@ -87,9 +88,9 @@ Add a dependency on Matomo Java Tracker using Maven:
 ```xml
 
 <dependency>
-  <groupId>org.piwik.java.tracking</groupId>
-  <artifactId>matomo-java-tracker</artifactId>
-  <version>3.0.0-rc1</version>
+    <groupId>org.piwik.java.tracking</groupId>
+    <artifactId>matomo-java-tracker</artifactId>
+    <version>3.0.0-rc1</version>
 </dependency>
 ```
 
@@ -97,7 +98,7 @@ or Gradle:
 
 ```groovy
 dependencies {
-  implementation("org.piwik.java.tracking:matomo-java-tracker:3.0.0-rc1")
+    implementation("org.piwik.java.tracking:matomo-java-tracker:3.0.0-rc1")
 }
 ```
 
@@ -118,13 +119,14 @@ import org.matomo.java.tracking.MatomoRequest;
 
 public class YourImplementation {
 
-  public void yourMethod() {
-    MatomoRequest request = MatomoRequest.builder()
-      .siteId(42)
-      .actionUrl("https://www.mydomain.com/signup")
-      .actionName("Signup")
-      .build();
-  }
+    public void yourMethod() {
+        MatomoRequest request = MatomoRequest
+                .builder()
+                .siteId(42)
+                .actionUrl("https://www.mydomain.com/signup")
+                .actionName("Signup")
+                .build();
+    }
 
 }
 
@@ -153,22 +155,24 @@ import org.matomo.java.tracking.MatomoRequest;
 
 public class YourImplementation {
 
-  public void yourMethod() {
+    public void yourMethod() {
 
-    MatomoRequest request = MatomoRequest.builder()
-      .siteId(42)
-      .actionUrl(
-        "http://example.org/landing.html?pk_campaign=Email-Nov2011&pk_kwd=LearnMore") // include the query parameters to the url
-      .actionName("LearnMore")
-      .build();
-  }
+        MatomoRequest request = MatomoRequest
+                .builder()
+                .siteId(42)
+                .actionUrl("http://example.org/landing.html?pk_campaign=Email-Nov2011&pk_kwd=LearnMore") // include the query parameters to the url
+                .actionName("LearnMore")
+                .build();
+    }
 
 }
 ```
 
-See [Tracking Campaigns](https://matomo.org/docs/tracking-campaigns/) for more information. All HTTP query parameters denoted on
+See [Tracking Campaigns](https://matomo.org/docs/tracking-campaigns/) for more information. All HTTP query parameters
+denoted on
 the [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api) can be set using the appropriate
-getters and setters. See [MatomoRequest.java](src/main/java/org/matomo/api/MatomoRequest.java) for the mappings of the
+getters and setters. See [MatomoRequest](src/main/java/org/matomo/java/tracking/MatomoRequest.java) for the mappings of
+the
 parameters to their corresponding attributes.
 
 Requests are validated prior to sending. If a request is invalid, a `MatomoException` will be thrown.
@@ -186,19 +190,22 @@ import org.matomo.java.tracking.TrackerConfiguration;
 
 public class YourImplementation {
 
-  public void yourMethod() {
+    public void yourMethod() {
 
-    MatomoTracker tracker = new MatomoTracker(
-      TrackerConfiguration.builder().apiEndpoint(URI.create("https://your-matomo-domain.tld/matomo.php")).build());
+        MatomoTracker tracker = new MatomoTracker(TrackerConfiguration
+                .builder()
+                .apiEndpoint(URI.create("https://your-matomo-domain.tld/matomo.php"))
+                .build());
 
-  }
+    }
 
 }
 ```
 
 The Matomo Tracker currently supports the following builder methods:
 
-* `.apiEndpoint(...)` An `URI` object that points to the Matomo Tracking API endpoint of your Matomo installation. Must be set.
+* `.apiEndpoint(...)` An `URI` object that points to the Matomo Tracking API endpoint of your Matomo installation. Must
+  be set.
 * `.defaultSiteId(...)` If you provide a default site id, it will be taken if the action does not contain a site id.
 * `.defaultTokenAuth(...)` If you provide a default token auth, it will be taken if the action does not contain a token
   auth.
@@ -210,7 +217,8 @@ The Matomo Tracker currently supports the following builder methods:
   interpreted as infinite, null uses the system default
 * `.socketTimeout(...)` allows you to change the default socket timeout of 10 seconds. 0 is
   interpreted as infinite, null uses the system default
-* `.userAgent(...)` used by the request made to the endpoint is `MatomoJavaClient` per default. You can change it by using this builder method.
+* `.userAgent(...)` used by the request made to the endpoint is `MatomoJavaClient` per default. You can change it by
+  using this builder method.
 * `.proxyHost(...)` The hostname or IP address of an optional HTTP proxy. `proxyPort` must be
   configured as well
 * `.proxyPort(...)` The port of an HTTP proxy. `proxyHost` must be configured as well.
@@ -235,19 +243,25 @@ import java.util.concurrent.Future;
 
 public class YourImplementation {
 
-  public void yourMethod() {
+    public void yourMethod() {
 
-    MatomoRequest request =
-      MatomoRequest.builder().siteId(42).actionUrl("https://www.mydomain.com/some/page").actionName("Signup").build();
+        MatomoRequest request = MatomoRequest
+                .builder()
+                .siteId(42)
+                .actionUrl("https://www.mydomain.com/some/page")
+                .actionName("Signup")
+                .build();
 
-    MatomoTracker tracker = new MatomoTracker(
-      TrackerConfiguration.builder().apiEndpoint(URI.create("https://your-matomo-domain.tld/matomo.php")).build());
+        MatomoTracker tracker = new MatomoTracker(TrackerConfiguration
+                .builder()
+                .apiEndpoint(URI.create("https://your-matomo-domain.tld/matomo.php"))
+                .build());
 
-    CompletableFuture<Void> future = tracker.sendRequestAsync(request);
-    // execute the request:
-    future.get();
+        CompletableFuture<Void> future = tracker.sendRequestAsync(request);
+        // execute the request:
+        future.get();
 
-  }
+    }
 
 }
 ```
@@ -272,21 +286,23 @@ import java.util.concurrent.Future;
 
 public class YourImplementation {
 
-  public void yourMethod() {
+    public void yourMethod() {
 
-    Collection<MatomoRequest> requests = new ArrayList<>();
-    MatomoRequestBuilder builder = MatomoRequest.builder().siteId(42);
-    requests.add(builder.actionUrl("https://www.mydomain.com/some/page").actionName("Some Page").build());
-    requests.add(builder.actionUrl("https://www.mydomain.com/another/page").actionName("Another Page").build());
+        Collection<MatomoRequest> requests = new ArrayList<>();
+        MatomoRequestBuilder builder = MatomoRequest.builder().siteId(42);
+        requests.add(builder.actionUrl("https://www.mydomain.com/some/page").actionName("Some Page").build());
+        requests.add(builder.actionUrl("https://www.mydomain.com/another/page").actionName("Another Page").build());
 
-    MatomoTracker tracker = new MatomoTracker(
-      TrackerConfiguration.builder().apiEndpoint(URI.create("https://your-matomo-domain.tld/matomo.php")).build());
+        MatomoTracker tracker = new MatomoTracker(TrackerConfiguration
+                .builder()
+                .apiEndpoint(URI.create("https://your-matomo-domain.tld/matomo.php"))
+                .build());
 
-    CompletableFuture<Void> future = tracker.sendBulkRequestAsync(requests);
-    // execute the request
-    future.get();
+        CompletableFuture<Void> future = tracker.sendBulkRequestAsync(requests);
+        // execute the request
+        future.get();
 
-  }
+    }
 
 }
 
@@ -314,26 +330,31 @@ import java.util.concurrent.Future;
 
 public class YourImplementation {
 
-  public void yourMethod() {
+    public void yourMethod() {
 
-    Collection<MatomoRequest> requests = new ArrayList<>();
-    MatomoRequestBuilder builder = MatomoRequest.builder().siteId(42);
-    requests.add(builder.actionUrl("https://www.mydomain.com/some/page").actionName("Some Page").build());
-    requests.add(builder.actionUrl("https://www.mydomain.com/another/page").actionName("Another Page")
-      .visitorCountry(new MatomoLocale(Locale.GERMANY)).build());
+        Collection<MatomoRequest> requests = new ArrayList<>();
+        MatomoRequestBuilder builder = MatomoRequest.builder().siteId(42);
+        requests.add(builder.actionUrl("https://www.mydomain.com/some/page").actionName("Some Page").build());
+        requests.add(builder
+                .actionUrl("https://www.mydomain.com/another/page")
+                .actionName("Another Page")
+                .visitorCountry(new MatomoLocale(Locale.GERMANY))
+                .build());
 
-    MatomoTracker tracker = new MatomoTracker(
-      TrackerConfiguration.builder().apiEndpoint(URI.create("https://your-matomo-domain.tld/matomo.php")).build());
+        MatomoTracker tracker = new MatomoTracker(TrackerConfiguration
+                .builder()
+                .apiEndpoint(URI.create("https://your-matomo-domain.tld/matomo.php"))
+                .build());
 
-    CompletableFuture<Void> future = tracker.sendBulkRequestAsync(
-      requests,
-      "33dc3f2536d3025974cccb4b4d2d98f4"
-    ); // second parameter is authentication token need for country override
-    // execute the request:
-    future.get();
+        CompletableFuture<Void> future = tracker.sendBulkRequestAsync(
+                requests,
+                "33dc3f2536d3025974cccb4b4d2d98f4"
+        ); // second parameter is authentication token need for country override
+        // execute the request:
+        future.get();
 
 
-  }
+    }
 
 }
 
@@ -350,9 +371,11 @@ following breaking changes:
 
 * The parameter `actionTime` (`gt_ms`) is no longer supported by Matomo 5 and was removed.
 * Many methods marked as deprecated in version 2 were removed. Please see the
-  former [Javadoc](https://javadoc.io/doc/org.piwik.java.tracking/matomo-java-tracker/2.1/index.html) of version 2 to get the
+  former [Javadoc](https://javadoc.io/doc/org.piwik.java.tracking/matomo-java-tracker/2.1/index.html) of version 2 to
+  get the
   deprecated methods.
-* We removed the vulnerable dependency to the Apache HTTP client. Callbacks are no longer of type `FutureCallback<HttpResponse>`, but
+* We removed the vulnerable dependency to the Apache HTTP client. Callbacks are no longer of
+  type `FutureCallback<HttpResponse>`, but
   `Consumer<Void>` instead.
 * The `send...` methods of `MatomoTracker` no longer return a value (usually Matomo always returns an HTTP 204 response
   without a body). If the request fails, an exception will be thrown.
@@ -426,16 +449,18 @@ The built jars and javadoc can be found in `target`. By using the Maven goal `in
 version can be used in your local Maven repository for testing purposes, e.g.
 
 ```xml
+
 <dependency>
-  <groupId>org.piwik.java.tracking</groupId>
-  <artifactId>matomo-java-tracker</artifactId>
-  <version>3.0.0-rc2-SNAPSHOT</version>
+    <groupId>org.piwik.java.tracking</groupId>
+    <artifactId>matomo-java-tracker</artifactId>
+    <version>3.0.0-rc2-SNAPSHOT</version>
 </dependency>
 ```
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/matomo-org/matomo-java-tracker/tags).
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see
+the [tags on this repository](https://github.com/matomo-org/matomo-java-tracker/tags).
 
 ## Contribute
 

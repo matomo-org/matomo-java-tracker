@@ -76,8 +76,10 @@ public class VisitorId {
       throw new IllegalArgumentException("Input must be a valid hex string");
     }
     VisitorId visitorId = new VisitorId();
-    for (int charIndex = inputHex.length() - 1, representationIndex = visitorId.representation.length - 1;
-         charIndex >= 0; charIndex -= 2, representationIndex--) {
+    for (int charIndex = inputHex.length() - 1, representationIndex =
+         visitorId.representation.length - 1;
+         charIndex >= 0;
+         charIndex -= 2, representationIndex--) {
       String hex = inputHex.substring(Math.max(0, charIndex - 1), charIndex + 1);
       try {
         visitorId.representation[representationIndex] = (byte) Integer.parseInt(hex, 16);

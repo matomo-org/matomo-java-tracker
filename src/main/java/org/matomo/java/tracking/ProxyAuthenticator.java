@@ -7,12 +7,11 @@
 
 package org.matomo.java.tracking;
 
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.Nullable;
-
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 class ProxyAuthenticator extends Authenticator {

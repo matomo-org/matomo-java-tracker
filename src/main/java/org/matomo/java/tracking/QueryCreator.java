@@ -7,10 +7,8 @@
 
 package org.matomo.java.tracking;
 
-import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -25,11 +23,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 class QueryCreator {
 
-  private static final TrackingParameterMethod[] TRACKING_PARAMETER_METHODS = initializeTrackingParameterMethods();
+  private static final TrackingParameterMethod[] TRACKING_PARAMETER_METHODS =
+      initializeTrackingParameterMethods();
 
   private final TrackerConfiguration trackerConfiguration;
 
@@ -45,18 +45,23 @@ class QueryCreator {
   }
 
   private static void addMethods(
-    Collection<TrackingParameterMethod> methods, Member member, TrackingParameter trackingParameter
+      Collection<TrackingParameterMethod> methods,
+      Member member,
+      TrackingParameter trackingParameter
   ) {
     try {
-      for (PropertyDescriptor pd : Introspector.getBeanInfo(MatomoRequest.class).getPropertyDescriptors()) {
+      for (PropertyDescriptor pd : Introspector
+          .getBeanInfo(MatomoRequest.class)
+          .getPropertyDescriptors()) {
         if (member.getName().equals(pd.getName())) {
           String regex = trackingParameter.regex();
-          methods.add(TrackingParameterMethod.builder()
-            .parameterName(trackingParameter.name())
-            .method(pd.getReadMethod())
-            .pattern(regex == null || regex.isEmpty() || regex.trim().isEmpty() ? null :
-              Pattern.compile(trackingParameter.regex()))
-            .build());
+          methods.add(TrackingParameterMethod
+              .builder()
+              .parameterName(trackingParameter.name())
+              .method(pd.getReadMethod())
+              .pattern(regex == null || regex.isEmpty() || regex.trim().isEmpty() ? null :
+                  Pattern.compile(trackingParameter.regex()))
+              .build());
         }
       }
     } catch (IntrospectionException e) {
@@ -64,7 +69,12 @@ class QueryCreator {
     }
   }
 
-  String createQuery(@NotNull MatomoRequest request, @Nullable String authToken) {
+  String createQuery(
+      @NonNull
+      MatomoRequest request,
+      @Nullable
+      String authToken
+  ) {
     StringBuilder query = new StringBuilder(100);
     if (request.getSiteId() == null) {
       appendAmpersand(query);
@@ -80,7 +90,9 @@ class QueryCreator {
       appendParameter(method, request, query);
     }
     if (request.getCustomTrackingParameters() != null) {
-      for (Entry<String, Collection<Object>> entry : request.getCustomTrackingParameters().entrySet()) {
+      for (Entry<String, Collection<Object>> entry : request
+          .getCustomTrackingParameters()
+          .entrySet()) {
         for (Object value : entry.getValue()) {
           if (value != null && !value.toString().trim().isEmpty()) {
             appendAmpersand(query);
@@ -106,7 +118,9 @@ class QueryCreator {
     }
   }
 
-  private static void appendParameter(TrackingParameterMethod method, MatomoRequest request, StringBuilder query) {
+  private static void appendParameter(
+      TrackingParameterMethod method, MatomoRequest request, StringBuilder query
+  ) {
     try {
       Object parameterValue = method.getMethod().invoke(request);
       if (parameterValue != null) {
@@ -131,8 +145,11 @@ class QueryCreator {
     }
   }
 
-  @NotNull
-  private static String encode(@NotNull String parameterValue) {
+  @NonNull
+  private static String encode(
+      @NonNull
+      String parameterValue
+  ) {
     try {
       return URLEncoder.encode(parameterValue, "UTF-8");
     } catch (UnsupportedEncodingException e) {

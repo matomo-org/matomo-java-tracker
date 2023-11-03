@@ -7,12 +7,11 @@
 
 package org.matomo.java.tracking;
 
-import lombok.Getter;
-
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import lombok.Getter;
 
 /**
  * A datetime object that will return the datetime in the format {@code yyyy-MM-dd hh:mm:ss}.

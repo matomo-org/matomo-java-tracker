@@ -266,9 +266,7 @@ class PiwikRequestTest {
     request.addCustomTrackingParameter("key", "value");
     request.addCustomTrackingParameter("key", "value2");
     List<Object> l = request.getCustomTrackingParameter("key");
-    assertThat(l).hasSize(2)
-      .contains(new String[] {"value"})
-      .contains(new String[] {"value2"});
+    assertThat(l).hasSize(2).contains(new String[] {"value"}).contains(new String[] {"value2"});
   }
 
   @Test
@@ -682,7 +680,10 @@ class PiwikRequestTest {
   @Test
   void testRequestDatetimeTF() {
     request.setRequestDatetime(new PiwikDate());
-    assertThat(request.getRequestDatetime().getZonedDateTime()).isCloseTo(ZonedDateTime.now(), within(2, MINUTES));
+    assertThat(request.getRequestDatetime().getZonedDateTime()).isCloseTo(
+        ZonedDateTime.now(),
+        within(2, MINUTES)
+    );
   }
 
   @Test
@@ -946,8 +947,8 @@ class PiwikRequestTest {
   @Test
   void failsIfActionUrlIsNull() {
     assertThatThrownBy(() -> new PiwikRequest(3, null))
-      .isInstanceOf(NullPointerException.class)
-      .hasMessage("Action URL must not be null");
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("Action URL must not be null");
   }
 
 }

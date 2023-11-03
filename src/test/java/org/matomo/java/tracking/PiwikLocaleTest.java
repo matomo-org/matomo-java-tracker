@@ -1,11 +1,10 @@
 package org.matomo.java.tracking;
 
-import org.junit.jupiter.api.Test;
-import org.piwik.java.tracking.PiwikLocale;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Locale;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.piwik.java.tracking.PiwikLocale;
 
 class PiwikLocaleTest {
 

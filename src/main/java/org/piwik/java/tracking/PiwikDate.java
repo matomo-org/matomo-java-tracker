@@ -7,11 +7,10 @@
 
 package org.piwik.java.tracking;
 
-import org.matomo.java.tracking.MatomoDate;
-
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.TimeZone;
+import org.matomo.java.tracking.MatomoDate;
 
 /**
  * A date object that can be used to send dates to Matomo. This class is deprecated and will be removed in a future.

@@ -1,9 +1,9 @@
 package org.matomo.java.tracking.parameters;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
 import org.matomo.java.tracking.EcommerceItem;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 
 class EcommerceItemsTest {

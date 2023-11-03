@@ -1,8 +1,8 @@
 package org.matomo.java.tracking.parameters;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
 
 class UniqueIdTest {
 

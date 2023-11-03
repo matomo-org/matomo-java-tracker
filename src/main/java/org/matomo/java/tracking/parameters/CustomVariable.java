@@ -44,7 +44,7 @@ public class CustomVariable {
   /**
    * Instantiates a new custom variable.
    *
-   * @param key the key of the custom variable (required)
+   * @param key   the key of the custom variable (required)
    * @param value the value of the custom variable (required)
    */
   public CustomVariable(@NonNull String key, @NonNull String value) {

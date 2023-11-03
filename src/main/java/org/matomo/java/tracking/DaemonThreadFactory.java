@@ -7,14 +7,16 @@
 
 package org.matomo.java.tracking;
 
-import org.jetbrains.annotations.Nullable;
-
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.concurrent.ThreadFactory;
 
 class DaemonThreadFactory implements ThreadFactory {
 
   @Override
-  public Thread newThread(@Nullable Runnable runnable) {
+  public Thread newThread(
+      @Nullable
+      Runnable runnable
+  ) {
     Thread thread = new Thread(runnable);
     thread.setDaemon(true);
     thread.setName("MatomoJavaTracker");

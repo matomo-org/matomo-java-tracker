@@ -32,8 +32,8 @@ class MatomoRequestTest {
 
   @Test
   void setPageCustomVariableRequiresNonNullKey() {
-    assertThatThrownBy(() -> request.setPageCustomVariable(null, "bar"))
-      .isInstanceOf(NullPointerException.class);
+    assertThatThrownBy(() -> request.setPageCustomVariable(null, "bar")).isInstanceOf(
+        NullPointerException.class);
   }
 
   @Test

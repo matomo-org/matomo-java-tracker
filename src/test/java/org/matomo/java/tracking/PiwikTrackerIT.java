@@ -30,8 +30,8 @@ import org.piwik.java.tracking.PiwikTracker;
 
 class PiwikTrackerIT {
 
-  private static final WireMockServer wireMockServer = new WireMockServer(
-    WireMockConfiguration.options().dynamicPort());
+  private static final WireMockServer wireMockServer =
+      new WireMockServer(WireMockConfiguration.options().dynamicPort());
 
 
   private static final int SITE_ID = 42;
@@ -48,7 +48,9 @@ class PiwikTrackerIT {
   @BeforeEach
   void setUp() throws MalformedURLException {
     piwikTracker = new PiwikTracker(
-      String.format("http://localhost:%d/matomo.php", wireMockServer.port()), -1);
+        String.format("http://localhost:%d/matomo.php", wireMockServer.port()),
+        -1
+    );
     wireMockServer.resetRequests();
     wireMockServer.stubFor(post(urlPathEqualTo("/matomo.php")).willReturn(status(204)));
     wireMockServer.stubFor(get(urlPathEqualTo("/matomo.php")).willReturn(status(204)));
@@ -67,9 +69,10 @@ class PiwikTrackerIT {
     piwikTracker.sendRequest(request);
 
     wireMockServer.verify(getRequestedFor(urlEqualTo(
-      "/matomo.php?rec=1&idsite=42&url=https%3A%2F%2Ftest.local%2Ftest%2Fpath%3Fid%3D123&apiv=1&_id=0de0b6b3a763ffff&send_image=0&rand=rand&parameterName=parameterValue"))
-      .withHeader("User-Agent", equalTo("MatomoJavaClient")))
-    ;
+        "/matomo.php?rec=1&idsite=42&url=https%3A%2F%2Ftest.local%2Ftest%2Fpath%3Fid%3D123&apiv=1&_id=0de0b6b3a763ffff&send_image=0&rand=rand&parameterName=parameterValue")).withHeader(
+        "User-Agent",
+        equalTo("MatomoJavaClient")
+    ));
   }
 
   /**
@@ -84,8 +87,10 @@ class PiwikTrackerIT {
 
     assertThat(future).isNotCompletedExceptionally();
     wireMockServer.verify(getRequestedFor(urlEqualTo(
-      "/matomo.php?rec=1&idsite=42&url=https%3A%2F%2Ftest.local%2Ftest%2Fpath%3Fid%3D123&apiv=1&_id=0de0b6b3a763ffff&send_image=0&rand=rand&parameterName=parameterValue"))
-      .withHeader("User-Agent", equalTo("MatomoJavaClient")));
+        "/matomo.php?rec=1&idsite=42&url=https%3A%2F%2Ftest.local%2Ftest%2Fpath%3Fid%3D123&apiv=1&_id=0de0b6b3a763ffff&send_image=0&rand=rand&parameterName=parameterValue")).withHeader(
+        "User-Agent",
+        equalTo("MatomoJavaClient")
+    ));
   }
 
 
@@ -100,12 +105,12 @@ class PiwikTrackerIT {
     piwikTracker.sendBulkRequest(requests);
 
     wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php"))
-      .withHeader("Content-Length", equalTo("167"))
-      .withHeader("Accept", equalTo("*/*"))
-      .withHeader("Content-Type", equalTo("application/json"))
-      .withHeader("User-Agent", equalTo("MatomoJavaClient"))
-      .withRequestBody(equalToJson(
-        "{ \"requests\" : [ \"?rec=1&idsite=42&url=https%3A%2F%2Ftest.local%2Ftest%2Fpath%3Fid%3D123&apiv=1&_id=0de0b6b3a763ffff&send_image=0&rand=rand&parameterName=parameterValue\" ]}")));
+        .withHeader("Content-Length", equalTo("167"))
+        .withHeader("Accept", equalTo("*/*"))
+        .withHeader("Content-Type", equalTo("application/json"))
+        .withHeader("User-Agent", equalTo("MatomoJavaClient"))
+        .withRequestBody(equalToJson(
+            "{ \"requests\" : [ \"?rec=1&idsite=42&url=https%3A%2F%2Ftest.local%2Ftest%2Fpath%3Fid%3D123&apiv=1&_id=0de0b6b3a763ffff&send_image=0&rand=rand&parameterName=parameterValue\" ]}")));
 
   }
 
@@ -118,8 +123,8 @@ class PiwikTrackerIT {
     request.setCustomTrackingParameter("parameterName", "parameterValue");
 
     assertThatThrownBy(() -> piwikTracker.sendBulkRequest(requests, "1"))
-      .isInstanceOf(IllegalArgumentException.class)
-      .hasMessage("Auth token must be exactly 32 characters long");
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Auth token must be exactly 32 characters long");
   }
 
   @Test
@@ -130,12 +135,12 @@ class PiwikTrackerIT {
     piwikTracker.sendBulkRequest(requests, null);
 
     wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php"))
-      .withHeader("Content-Length", equalTo("167"))
-      .withHeader("Accept", equalTo("*/*"))
-      .withHeader("Content-Type", equalTo("application/json"))
-      .withHeader("User-Agent", equalTo("MatomoJavaClient"))
-      .withRequestBody(equalToJson(
-        "{\"requests\":[\"?rec=1&idsite=42&url=https%3A%2F%2Ftest.local%2Ftest%2Fpath%3Fid%3D123&apiv=1&_id=0de0b6b3a763ffff&send_image=0&rand=rand&parameterName=parameterValue\"]}")));
+        .withHeader("Content-Length", equalTo("167"))
+        .withHeader("Accept", equalTo("*/*"))
+        .withHeader("Content-Type", equalTo("application/json"))
+        .withHeader("User-Agent", equalTo("MatomoJavaClient"))
+        .withRequestBody(equalToJson(
+            "{\"requests\":[\"?rec=1&idsite=42&url=https%3A%2F%2Ftest.local%2Ftest%2Fpath%3Fid%3D123&apiv=1&_id=0de0b6b3a763ffff&send_image=0&rand=rand&parameterName=parameterValue\"]}")));
 
   }
 
@@ -147,12 +152,12 @@ class PiwikTrackerIT {
     piwikTracker.sendBulkRequest(requests, "12345678901234567890123456789012");
 
     wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php"))
-      .withHeader("Content-Length", equalTo("215"))
-      .withHeader("Accept", equalTo("*/*"))
-      .withHeader("Content-Type", equalTo("application/json"))
-      .withHeader("User-Agent", equalTo("MatomoJavaClient"))
-      .withRequestBody(equalToJson(
-        "{\"requests\":[\"?rec=1&idsite=42&url=https%3A%2F%2Ftest.local%2Ftest%2Fpath%3Fid%3D123&apiv=1&_id=0de0b6b3a763ffff&send_image=0&rand=rand&parameterName=parameterValue\" ],\"token_auth\":\"12345678901234567890123456789012\"}")));
+        .withHeader("Content-Length", equalTo("215"))
+        .withHeader("Accept", equalTo("*/*"))
+        .withHeader("Content-Type", equalTo("application/json"))
+        .withHeader("User-Agent", equalTo("MatomoJavaClient"))
+        .withRequestBody(equalToJson(
+            "{\"requests\":[\"?rec=1&idsite=42&url=https%3A%2F%2Ftest.local%2Ftest%2Fpath%3Fid%3D123&apiv=1&_id=0de0b6b3a763ffff&send_image=0&rand=rand&parameterName=parameterValue\" ],\"token_auth\":\"12345678901234567890123456789012\"}")));
 
   }
 
@@ -170,12 +175,12 @@ class PiwikTrackerIT {
     assertThat(future).isNotCompletedExceptionally();
 
     wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php"))
-      .withHeader("Content-Length", equalTo("167"))
-      .withHeader("Accept", equalTo("*/*"))
-      .withHeader("Content-Type", equalTo("application/json"))
-      .withHeader("User-Agent", equalTo("MatomoJavaClient"))
-      .withRequestBody(equalToJson(
-        "{\"requests\" : [ \"?rec=1&idsite=42&url=https%3A%2F%2Ftest.local%2Ftest%2Fpath%3Fid%3D123&apiv=1&_id=0de0b6b3a763ffff&send_image=0&rand=rand&parameterName=parameterValue\" ]}")));
+        .withHeader("Content-Length", equalTo("167"))
+        .withHeader("Accept", equalTo("*/*"))
+        .withHeader("Content-Type", equalTo("application/json"))
+        .withHeader("User-Agent", equalTo("MatomoJavaClient"))
+        .withRequestBody(equalToJson(
+            "{\"requests\" : [ \"?rec=1&idsite=42&url=https%3A%2F%2Ftest.local%2Ftest%2Fpath%3Fid%3D123&apiv=1&_id=0de0b6b3a763ffff&send_image=0&rand=rand&parameterName=parameterValue\" ]}")));
 
   }
 
@@ -189,8 +194,8 @@ class PiwikTrackerIT {
     request.setCustomTrackingParameter("parameterName", "parameterValue");
 
     assertThatThrownBy(() -> piwikTracker.sendBulkRequestAsync(requests, "1").get())
-      .isInstanceOf(IllegalArgumentException.class)
-      .hasMessage("Auth token must be exactly 32 characters long");
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Auth token must be exactly 32 characters long");
 
   }
 
@@ -201,53 +206,66 @@ class PiwikTrackerIT {
     List<PiwikRequest> requests = Collections.singletonList(request);
     request.setCustomTrackingParameter("parameterName", "parameterValue");
 
-    CompletableFuture<Void> future = piwikTracker.sendBulkRequestAsync(
-      requests, "12345678901234567890123456789012");
+    CompletableFuture<Void> future =
+        piwikTracker.sendBulkRequestAsync(requests, "12345678901234567890123456789012");
     future.get();
 
     assertThat(future).isNotCompletedExceptionally();
 
     wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php"))
-      .withHeader("Content-Length", equalTo("215"))
-      .withHeader("Accept", equalTo("*/*"))
-      .withHeader("Content-Type", equalTo("application/json"))
-      .withHeader("User-Agent", equalTo("MatomoJavaClient"))
-      .withRequestBody(equalToJson(
-        "{\"requests\":[ \"?rec=1&idsite=42&url=https%3A%2F%2Ftest.local%2Ftest%2Fpath%3Fid%3D123&apiv=1&_id=0de0b6b3a763ffff&send_image=0&rand=rand&parameterName=parameterValue\"],\"token_auth\":\"12345678901234567890123456789012\"}")));
+        .withHeader("Content-Length", equalTo("215"))
+        .withHeader("Accept", equalTo("*/*"))
+        .withHeader("Content-Type", equalTo("application/json"))
+        .withHeader("User-Agent", equalTo("MatomoJavaClient"))
+        .withRequestBody(equalToJson(
+            "{\"requests\":[ \"?rec=1&idsite=42&url=https%3A%2F%2Ftest.local%2Ftest%2Fpath%3Fid%3D123&apiv=1&_id=0de0b6b3a763ffff&send_image=0&rand=rand&parameterName=parameterValue\"],\"token_auth\":\"12345678901234567890123456789012\"}")));
 
   }
 
   @Test
   void createsPiwikTrackerWithHostUrl() {
-    PiwikTracker piwikTracker = new PiwikTracker(String.format("http://localhost:%d/matomo.php", wireMockServer.port()));
+    PiwikTracker piwikTracker =
+        new PiwikTracker(String.format("http://localhost:%d/matomo.php", wireMockServer.port()));
 
     piwikTracker.sendRequest(request);
 
     wireMockServer.verify(getRequestedFor(urlEqualTo(
-      "/matomo.php?rec=1&idsite=42&url=https%3A%2F%2Ftest.local%2Ftest%2Fpath%3Fid%3D123&apiv=1&_id=0de0b6b3a763ffff&send_image=0&rand=rand"))
-      .withHeader("User-Agent", equalTo("MatomoJavaClient")));
+        "/matomo.php?rec=1&idsite=42&url=https%3A%2F%2Ftest.local%2Ftest%2Fpath%3Fid%3D123&apiv=1&_id=0de0b6b3a763ffff&send_image=0&rand=rand")).withHeader(
+        "User-Agent",
+        equalTo("MatomoJavaClient")
+    ));
   }
 
   @Test
   void createPiwikTrackerWithHostUrlAndProxyHostAndPort() {
-    PiwikTracker piwikTracker = new PiwikTracker(String.format("http://localhost:%d/matomo.php", wireMockServer.port()), "localhost", 8080);
+    PiwikTracker piwikTracker =
+        new PiwikTracker(String.format("http://localhost:%d/matomo.php", wireMockServer.port()),
+            "localhost",
+            8080
+        );
 
     assertThatThrownBy(() -> piwikTracker.sendRequest(request))
-      .isInstanceOf(MatomoException.class)
-      .hasMessage("Could not send request via GET")
-      .hasRootCauseInstanceOf(ConnectException.class)
-      .hasRootCauseMessage("Connection refused (Connection refused)");
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not send request via GET")
+        .hasRootCauseInstanceOf(ConnectException.class)
+        .hasRootCauseMessage("Connection refused (Connection refused)");
 
   }
 
   @Test
   void createPiwikTrackerWithHostUrlAndProxyHostAndPortAndTimeout() {
-    PiwikTracker piwikTracker = new PiwikTracker(String.format("http://localhost:%d/matomo.php", wireMockServer.port()), "localhost", 8080, 1000);
+    PiwikTracker piwikTracker =
+        new PiwikTracker(String.format("http://localhost:%d/matomo.php", wireMockServer.port()),
+            "localhost",
+            8080,
+            1000
+        );
 
     assertThatThrownBy(() -> piwikTracker.sendRequest(request))
-      .isInstanceOf(MatomoException.class)
-      .hasMessage("Could not send request via GET")
-      .hasRootCauseInstanceOf(ConnectException.class)
-      .hasRootCauseMessage("Connection refused (Connection refused)");}
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not send request via GET")
+        .hasRootCauseInstanceOf(ConnectException.class)
+        .hasRootCauseMessage("Connection refused (Connection refused)");
+  }
 
 }

@@ -7,13 +7,13 @@
 
 package org.matomo.java.tracking.parameters;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A bunch of key-value pairs that represent custom information. See <a href="https://matomo.org/faq/how-to/guide-to-using-custom-variables-deprecated/">How do I use Custom Variables?</a>
@@ -99,8 +99,13 @@ public class CustomVariables {
     if (key.isEmpty()) {
       throw new IllegalArgumentException("key must not be null or empty");
     }
-    return variables.values().stream().filter(variable -> variable.getKey().equals(key)).findFirst()
-      .map(CustomVariable::getValue).orElse(null);
+    return variables
+        .values()
+        .stream()
+        .filter(variable -> variable.getKey().equals(key))
+        .findFirst()
+        .map(CustomVariable::getValue)
+        .orElse(null);
   }
 
   /**
@@ -138,8 +143,14 @@ public class CustomVariables {
     Iterator<Entry<Integer, CustomVariable>> iterator = variables.entrySet().iterator();
     while (iterator.hasNext()) {
       Entry<Integer, CustomVariable> entry = iterator.next();
-      stringBuilder.append('"').append(entry.getKey()).append("\":[\"").append(entry.getValue().getKey())
-        .append("\",\"").append(entry.getValue().getValue()).append("\"]");
+      stringBuilder
+          .append('"')
+          .append(entry.getKey())
+          .append("\":[\"")
+          .append(entry.getValue().getKey())
+          .append("\",\"")
+          .append(entry.getValue().getValue())
+          .append("\"]");
       if (iterator.hasNext()) {
         stringBuilder.append(',');
       }

@@ -35,8 +35,8 @@ class DeviceResolutionTest {
   @Test
   void failsOnWrongDimensionSize() {
     assertThatThrownBy(() -> DeviceResolution.fromString("1920x1080x720"))
-      .isInstanceOf(IllegalArgumentException.class)
-      .hasMessage("Wrong dimension size");
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Wrong dimension size");
   }
 
 }

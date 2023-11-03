@@ -9,6 +9,7 @@ package org.matomo.java.tracking;
 
 import static java.util.Objects.requireNonNull;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -25,8 +26,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.matomo.java.tracking.parameters.AcceptLanguage;
 import org.matomo.java.tracking.parameters.Country;
 import org.matomo.java.tracking.parameters.CustomVariable;
@@ -473,7 +472,10 @@ public class MatomoRequest {
    * 32 character authorization key used to authenticate the API request. We recommend to create a user specifically for
    * accessing the Tracking API, and give the user only write permission on the website(s).
    */
-  @TrackingParameter(name = "token_auth", regex = "[a-z0-9]{32}")
+  @TrackingParameter(
+      name = "token_auth",
+      regex = "[a-z0-9]{32}"
+  )
   private String authToken;
 
 
@@ -628,7 +630,11 @@ public class MatomoRequest {
    * @param key   the parameter's key.  Cannot be null
    * @param value the parameter's value.  Removes the parameter if null
    */
-  public void setCustomTrackingParameter(@NonNull String key, @Nullable Object value) {
+  public void setCustomTrackingParameter(
+      @NonNull String key,
+      @Nullable
+      Object value
+  ) {
 
     if (value == null) {
       if (customTrackingParameters != null) {
@@ -638,7 +644,8 @@ public class MatomoRequest {
       if (customTrackingParameters == null) {
         customTrackingParameters = new LinkedHashMap<>();
       }
-      Collection<Object> values = customTrackingParameters.computeIfAbsent(key, k -> new ArrayList<>());
+      Collection<Object> values =
+          customTrackingParameters.computeIfAbsent(key, k -> new ArrayList<>());
       values.clear();
       values.add(value);
     }
@@ -757,7 +764,12 @@ public class MatomoRequest {
    * @deprecated Use {@link MatomoRequest#getPageCustomVariables()} instead
    */
   @Deprecated
-  public void setPageCustomVariable(@NotNull String key, @Nullable String value) {
+  public void setPageCustomVariable(
+      @edu.umd.cs.findbugs.annotations.NonNull
+      String key,
+      @Nullable
+      String value
+  ) {
     requireNonNull(key, "Key must not be null");
     if (value == null) {
       if (pageCustomVariables == null) {
@@ -782,7 +794,10 @@ public class MatomoRequest {
    * @deprecated Use {@link #getPageCustomVariables()} instead
    */
   @Deprecated
-  public void setPageCustomVariable(@Nullable CustomVariable customVariable, int index) {
+  public void setPageCustomVariable(
+      @Nullable
+      CustomVariable customVariable, int index
+  ) {
     if (pageCustomVariables == null) {
       if (customVariable == null) {
         return;
@@ -793,8 +808,9 @@ public class MatomoRequest {
   }
 
   private static void setCustomVariable(
-    CustomVariables customVariables, @Nullable CustomVariable customVariable,
-    int index
+      CustomVariables customVariables,
+      @Nullable
+      CustomVariable customVariable, int index
   ) {
     if (customVariable == null) {
       customVariables.remove(index);
@@ -876,7 +892,12 @@ public class MatomoRequest {
    * @deprecated Use {@link #setVisitCustomVariables(CustomVariables)} instead
    */
   @Deprecated
-  public void setUserCustomVariable(@NotNull String key, @Nullable String value) {
+  public void setUserCustomVariable(
+      @edu.umd.cs.findbugs.annotations.NonNull
+      String key,
+      @Nullable
+      String value
+  ) {
     requireNonNull(key, "Key must not be null");
     if (value == null) {
       if (visitCustomVariables == null) {
@@ -901,7 +922,10 @@ public class MatomoRequest {
    * @deprecated Use {@link #setVisitCustomVariables(CustomVariables)} instead
    */
   @Deprecated
-  public void setVisitCustomVariable(@Nullable CustomVariable customVariable, int index) {
+  public void setVisitCustomVariable(
+      @Nullable
+      CustomVariable customVariable, int index
+  ) {
     if (visitCustomVariables == null) {
       if (customVariable == null) {
         return;

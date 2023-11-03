@@ -7,6 +7,8 @@
 
 package org.matomo.java.tracking.parameters;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Objects;
@@ -14,8 +16,6 @@ import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Describes the content for the Accept-Language header field that can be overridden by a custom parameter. The format
@@ -40,7 +40,10 @@ public class AcceptLanguage {
    * @see LanguageRange#parse(String)
    */
   @Nullable
-  public static AcceptLanguage fromHeader(@Nullable String header) {
+  public static AcceptLanguage fromHeader(
+      @Nullable
+      String header
+  ) {
     if (header == null || header.trim().isEmpty()) {
       return null;
     }
@@ -52,17 +55,21 @@ public class AcceptLanguage {
    *
    * @return The header value, e.g. "en-US,en;q=0.8,de;q=0.6"
    */
-  @NotNull
+  @NonNull
   public String toString() {
-    return languageRanges.stream()
-      .filter(Objects::nonNull)
-      .map(AcceptLanguage::format)
-      .collect(Collectors.joining(","));
+    return languageRanges
+        .stream()
+        .filter(Objects::nonNull)
+        .map(AcceptLanguage::format)
+        .collect(Collectors.joining(","));
   }
 
-  private static String format(@NotNull LanguageRange languageRange) {
+  private static String format(
+      @NonNull
+      LanguageRange languageRange
+  ) {
     return languageRange.getWeight() == LanguageRange.MAX_WEIGHT ? languageRange.getRange() :
-      String.format("%s;q=%s", languageRange.getRange(), languageRange.getWeight());
+        String.format("%s;q=%s", languageRange.getRange(), languageRange.getWeight());
   }
 
 }

@@ -37,14 +37,14 @@ class CustomVariablesTest {
     assertThat(customVariables.get(5)).isEqualTo(c);
     assertThat(customVariables.get(3)).isNull();
     assertThat(customVariables).hasToString(
-      "{\"1\":[\"a\",\"b\"],\"2\":[\"c\",\"d\"],\"5\":[\"a\",\"e\"]}");
+        "{\"1\":[\"a\",\"b\"],\"2\":[\"c\",\"d\"],\"5\":[\"a\",\"e\"]}");
     CustomVariable d = new CustomVariable("a", "f");
     customVariables.add(d);
     assertThat(customVariables.get("a")).isEqualTo("f");
     assertThat(customVariables.get(1)).isEqualTo(d);
     assertThat(customVariables.get(5)).isEqualTo(d);
     assertThat(customVariables).hasToString(
-      "{\"1\":[\"a\",\"f\"],\"2\":[\"c\",\"d\"],\"5\":[\"a\",\"f\"]}");
+        "{\"1\":[\"a\",\"f\"],\"2\":[\"c\",\"d\"],\"5\":[\"a\",\"f\"]}");
     customVariables.remove("a");
     assertThat(customVariables.get("a")).isNull();
     assertThat(customVariables.get(1)).isNull();
@@ -96,75 +96,74 @@ class CustomVariablesTest {
   @Test
   void testAddCustomVariableNull() {
     assertThatThrownBy(() -> customVariables.add(null))
-      .isInstanceOf(NullPointerException.class)
-      .hasMessage("variable"
-        + " is marked non-null but is null")
-      .hasNoCause();
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("variable" + " is marked non-null but is null")
+        .hasNoCause();
   }
 
   @Test
   void testAddCustomVariableKeyEmpty() {
     assertThatThrownBy(() -> customVariables.add(new CustomVariable("", "b")))
-      .isInstanceOf(IllegalArgumentException.class)
-      .hasMessage("Custom variable key must not be null or empty")
-      .hasNoCause();
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Custom variable key must not be null or empty")
+        .hasNoCause();
   }
 
   @Test
   void testAddCustomVariableValueEmpty() {
     assertThatThrownBy(() -> customVariables.add(new CustomVariable("a", "")))
-      .isInstanceOf(IllegalArgumentException.class)
-      .hasMessage("Custom variable value must not be null or empty")
-      .hasNoCause();
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Custom variable value must not be null or empty")
+        .hasNoCause();
   }
 
   @Test
   void testAddCustomVariableNullIndex() {
     assertThatThrownBy(() -> customVariables.add(new CustomVariable("a", "b"), 0))
-      .isInstanceOf(IllegalArgumentException.class)
-      .hasMessage("Index must be greater than 0")
-      .hasNoCause();
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Index must be greater than 0")
+        .hasNoCause();
   }
 
 
   @Test
   void testAddNullCustomVariableIndex() {
     assertThatThrownBy(() -> customVariables.add(null, 1))
-      .isInstanceOf(NullPointerException.class)
-      .hasMessage("cv is marked non-null but is null")
-      .hasNoCause();
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("cv is marked non-null but is null")
+        .hasNoCause();
   }
 
   @Test
   void testGetCustomVariableIntegerNull() {
     assertThatThrownBy(() -> customVariables.get(0))
-      .isInstanceOf(IllegalArgumentException.class)
-      .hasMessage("Index must be greater than 0")
-      .hasNoCause();
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Index must be greater than 0")
+        .hasNoCause();
   }
 
   @Test
   void testGetCustomVariableKeyNull() {
     assertThatThrownBy(() -> customVariables.get(null))
-      .isInstanceOf(NullPointerException.class)
-      .hasMessage("key is marked non-null but is null")
-      .hasNoCause();
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("key is marked non-null but is null")
+        .hasNoCause();
   }
 
   @Test
   void testGetCustomVariableKeyEmpty() {
     assertThatThrownBy(() -> customVariables.get(""))
-      .isInstanceOf(IllegalArgumentException.class)
-      .hasMessage("key must not be null or empty")
-      .hasNoCause();
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("key must not be null or empty")
+        .hasNoCause();
   }
 
   @Test
   void testRemoveCustomVariableKeyNull() {
     assertThatThrownBy(() -> customVariables.remove(null))
-      .isInstanceOf(NullPointerException.class)
-      .hasMessage("key is marked non-null but is null")
-      .hasNoCause();
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("key is marked non-null but is null")
+        .hasNoCause();
   }
 
 }

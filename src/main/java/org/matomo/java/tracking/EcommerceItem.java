@@ -28,8 +28,7 @@ public class EcommerceItem extends org.matomo.java.tracking.parameters.Ecommerce
    * @param quantity the quantity of the item
    */
   public EcommerceItem(
-    String sku, String name, String category,
-    Double price, Integer quantity
+      String sku, String name, String category, Double price, Integer quantity
   ) {
     super(sku, name, category, price, quantity);
   }

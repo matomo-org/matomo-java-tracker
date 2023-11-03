@@ -9,10 +9,10 @@ package org.matomo.java.tracking;
 
 import static java.util.Objects.requireNonNull;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import java.util.Locale;
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 import org.matomo.java.tracking.parameters.Country;
 
 /**
@@ -33,7 +33,10 @@ public class MatomoLocale extends Country {
    * @deprecated Please use {@link Country}
    */
   @Deprecated
-  public MatomoLocale(@NotNull Locale locale) {
+  public MatomoLocale(
+      @NonNull
+      Locale locale
+  ) {
     super(requireNonNull(locale, "Locale must not be null"));
   }
 

@@ -44,7 +44,7 @@ public class PiwikTracker extends MatomoTracker {
   /**
    * Creates a new PiwikTracker instance with the given host URL and proxy settings.
    *
-   * @param hostUrl the host URL of the Matomo server
+   * @param hostUrl   the host URL of the Matomo server
    * @param proxyHost the proxy host
    * @param proxyPort the proxy port
    * @deprecated Use {@link MatomoTracker} instead.
@@ -58,10 +58,10 @@ public class PiwikTracker extends MatomoTracker {
    * Creates a new PiwikTracker instance with the given host URL, proxy settings and timeout in milliseconds. Use -1 for
    * no timeout.
    *
-   * @param hostUrl the host URL of the Matomo server
+   * @param hostUrl   the host URL of the Matomo server
    * @param proxyHost the proxy host
    * @param proxyPort the proxy port
-   * @param timeout the timeout in milliseconds or -1 for no timeout
+   * @param timeout   the timeout in milliseconds or -1 for no timeout
    * @deprecated Use {@link MatomoTracker} instead.
    */
   @Deprecated

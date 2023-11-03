@@ -16,8 +16,9 @@ class MatomoLocaleTest {
 
   @Test
   void failsIfLocaleIsNull() {
-    assertThatThrownBy(() -> new MatomoLocale(null)).isInstanceOf(NullPointerException.class)
-      .hasMessage("Locale must not be null");
+    assertThatThrownBy(() -> new MatomoLocale(null))
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("Locale must not be null");
   }
 
 }

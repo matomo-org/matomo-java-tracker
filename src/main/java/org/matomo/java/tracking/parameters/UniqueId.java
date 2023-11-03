@@ -7,13 +7,12 @@
 
 package org.matomo.java.tracking.parameters;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-
 import java.security.SecureRandom;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 
 /**
  * A six character unique ID consisting of the characters [0-9a-Z].
@@ -21,7 +20,8 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class UniqueId {
 
-  private static final String CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  private static final String CHARS =
+      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
   private static final Random RANDOM = new SecureRandom();
 
@@ -48,8 +48,11 @@ public final class UniqueId {
 
   @Override
   public String toString() {
-    return IntStream.range(0, 6).map(i -> (int) (value >> i * 8)).mapToObj(
-      codePoint -> String.valueOf(CHARS.charAt(Math.abs(codePoint % CHARS.length())))).collect(Collectors.joining());
+    return IntStream
+        .range(0, 6)
+        .map(i -> (int) (value >> i * 8))
+        .mapToObj(codePoint -> String.valueOf(CHARS.charAt(Math.abs(codePoint % CHARS.length()))))
+        .collect(Collectors.joining());
   }
 
 }

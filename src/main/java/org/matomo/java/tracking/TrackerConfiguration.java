@@ -7,13 +7,13 @@
 
 package org.matomo.java.tracking;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.net.URI;
 import java.time.Duration;
 import java.util.regex.Pattern;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Defines configuration settings for the Matomo tracking.
@@ -111,7 +111,8 @@ public class TrackerConfiguration {
         throw new IllegalArgumentException("Auth token must be exactly 32 characters long");
       }
       if (!AUTH_TOKEN_PATTERN.matcher(defaultAuthToken).matches()) {
-        throw new IllegalArgumentException("Auth token must contain only lowercase letters and numbers");
+        throw new IllegalArgumentException(
+            "Auth token must contain only lowercase letters and numbers");
       }
     }
   }

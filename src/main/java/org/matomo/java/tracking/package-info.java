@@ -6,7 +6,6 @@
  * will be thrown.
  *
  * <p>For more information about the Matomo Tracking HTTP API, see the <a href="https://developer.matomo.org/api-reference/tracking-api">Matomo Tracking HTTP API</a>.
- *
  */
 
 package org.matomo.java.tracking;

@@ -7,9 +7,9 @@
 
 package org.matomo.java.tracking.parameters;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * The resolution (width and height) of the user's output device (monitor / phone).
@@ -31,7 +31,10 @@ public class DeviceResolution {
    * @return The device resolution representation
    */
   @Nullable
-  public static DeviceResolution fromString(@Nullable String deviceResolution) {
+  public static DeviceResolution fromString(
+      @Nullable
+      String deviceResolution
+  ) {
     if (deviceResolution == null) {
       return null;
     }
@@ -39,8 +42,10 @@ public class DeviceResolution {
     if (dimensions.length != 2) {
       throw new IllegalArgumentException("Wrong dimension size");
     }
-    return builder().width(Integer.parseInt(dimensions[0])).height(Integer.parseInt(dimensions[1]))
-      .build();
+    return builder()
+        .width(Integer.parseInt(dimensions[0]))
+        .height(Integer.parseInt(dimensions[1]))
+        .build();
   }
 
   @Override

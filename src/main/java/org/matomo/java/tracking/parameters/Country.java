@@ -7,14 +7,13 @@
 
 package org.matomo.java.tracking.parameters;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Locale.LanguageRange;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A two-letter country code representing a country.
@@ -33,7 +32,10 @@ public class Country {
    * @param locale A locale that must contain a country code
    */
   @Deprecated
-  protected Country(@NotNull Locale locale) {
+  protected Country(
+      @edu.umd.cs.findbugs.annotations.NonNull
+      Locale locale
+  ) {
     setLocale(locale);
   }
 
@@ -44,7 +46,10 @@ public class Country {
    * @return The country or null if code was null
    */
   @Nullable
-  public static Country fromCode(@Nullable String code) {
+  public static Country fromCode(
+      @Nullable
+      String code
+  ) {
     if (code == null || code.isEmpty() || code.trim().isEmpty()) {
       return null;
     }
@@ -61,7 +66,10 @@ public class Country {
    * @return The country or null if ranges was null
    */
   @Nullable
-  public static Country fromLanguageRanges(@Nullable String ranges) {
+  public static Country fromLanguageRanges(
+      @Nullable
+      String ranges
+  ) {
     if (ranges == null || ranges.isEmpty() || ranges.trim().isEmpty()) {
       return null;
     }
@@ -82,7 +90,7 @@ public class Country {
    * @return The locale for this country
    * @see Locale#forLanguageTag(String)
    * @deprecated Since you instantiate this class, you can determine the language on your own
-   *     using {@link Locale#forLanguageTag(String)}
+   * using {@link Locale#forLanguageTag(String)}
    */
   @Deprecated
   public Locale getLocale() {
@@ -95,7 +103,7 @@ public class Country {
    * @param locale A locale that must contain a country code
    * @see Locale#getCountry()
    * @deprecated Since you instantiate this class, you can determine the language on your own
-   *     using {@link Locale#getCountry()}
+   * using {@link Locale#getCountry()}
    */
   public final void setLocale(Locale locale) {
     if (locale == null || locale.getCountry() == null || locale.getCountry().isEmpty()) {

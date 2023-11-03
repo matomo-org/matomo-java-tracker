@@ -17,20 +17,26 @@ class CustomVariableTest {
 
   @Test
   void failsOnNullKey() {
-    assertThatThrownBy(() -> new CustomVariable(null, "value")).isInstanceOf(
-      NullPointerException.class);
+    assertThatThrownBy(() -> new CustomVariable(
+        null,
+        "value"
+    )).isInstanceOf(NullPointerException.class);
   }
 
   @Test
   void failsOnNullValue() {
-    assertThatThrownBy(() -> new CustomVariable("key", null)).isInstanceOf(
-      NullPointerException.class);
+    assertThatThrownBy(() -> new CustomVariable(
+        "key",
+        null
+    )).isInstanceOf(NullPointerException.class);
   }
 
   @Test
   void failsOnNullKeyAndValue() {
-    assertThatThrownBy(() -> new CustomVariable(null, null)).isInstanceOf(
-      NullPointerException.class);
+    assertThatThrownBy(() -> new CustomVariable(
+        null,
+        null
+    )).isInstanceOf(NullPointerException.class);
   }
 
 

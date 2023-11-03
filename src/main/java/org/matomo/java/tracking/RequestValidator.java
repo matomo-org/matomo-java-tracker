@@ -7,13 +7,13 @@
 
 package org.matomo.java.tracking;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 
 import static java.util.Objects.requireNonNull;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 final class RequestValidator {
 
@@ -21,15 +21,22 @@ final class RequestValidator {
     // utility
   }
 
-  static void validate(@NotNull MatomoRequest request, @Nullable CharSequence authToken) {
+  static void validate(
+      @NonNull
+      MatomoRequest request,
+      @Nullable
+      CharSequence authToken
+  ) {
     requireNonNull(request, "Request must not be null");
     if (request.getSiteId() != null && request.getSiteId() < 0) {
       throw new IllegalArgumentException("Site ID must not be negative");
     }
-    if (request.getGoalId() == null && (request.getEcommerceId() != null || request.getEcommerceRevenue() != null
-        || request.getEcommerceDiscount() != null || request.getEcommerceItems() != null
-        || request.getEcommerceLastOrderTimestamp() != null || request.getEcommerceShippingCost() != null
-        || request.getEcommerceSubtotal() != null || request.getEcommerceTax() != null)) {
+    if (request.getGoalId() == null && (
+        request.getEcommerceId() != null || request.getEcommerceRevenue() != null
+            || request.getEcommerceDiscount() != null || request.getEcommerceItems() != null
+            || request.getEcommerceLastOrderTimestamp() != null
+            || request.getEcommerceShippingCost() != null || request.getEcommerceSubtotal() != null
+            || request.getEcommerceTax() != null)) {
       throw new MatomoException("Goal ID must be set if ecommerce parameters are used");
     }
     if (request.getSearchResultsCount() != null && request.getSearchQuery() == null) {
@@ -37,13 +44,16 @@ final class RequestValidator {
     }
     if (authToken == null) {
       if (request.getVisitorLongitude() != null || request.getVisitorLatitude() != null
-        || request.getVisitorRegion() != null || request.getVisitorCity() != null
-        || request.getVisitorCountry() != null) {
-        throw new MatomoException("Auth token must be present if longitude, latitude, region, city or country are set");
+          || request.getVisitorRegion() != null || request.getVisitorCity() != null
+          || request.getVisitorCountry() != null) {
+        throw new MatomoException(
+            "Auth token must be present if longitude, latitude, region, city or country are set");
       }
-      if (request.getRequestTimestamp() != null
-        && request.getRequestTimestamp().isBefore(Instant.now().minus(4, ChronoUnit.HOURS))) {
-        throw new MatomoException("Auth token must be present if request timestamp is more than four hours ago");
+      if (request.getRequestTimestamp() != null && request
+          .getRequestTimestamp()
+          .isBefore(Instant.now().minus(4, ChronoUnit.HOURS))) {
+        throw new MatomoException(
+            "Auth token must be present if request timestamp is more than four hours ago");
       }
     } else {
       if (authToken.length() != 32) {

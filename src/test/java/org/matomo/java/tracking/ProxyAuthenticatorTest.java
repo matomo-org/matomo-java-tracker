@@ -21,9 +21,31 @@ class ProxyAuthenticatorTest {
     givenPasswordAuthentication(RequestorType.PROXY);
 
     assertThat(passwordAuthentication.getUserName()).isEqualTo("user");
-    assertThat(passwordAuthentication.getPassword()).contains('p', 'a', 's', 's', 'w', 'o', 'r', 'd');
+    assertThat(passwordAuthentication.getPassword()).contains(
+        'p',
+        'a',
+        's',
+        's',
+        'w',
+        'o',
+        'r',
+        'd'
+    );
 
   }
+
+  private void givenPasswordAuthentication(RequestorType proxy) throws Exception {
+    passwordAuthentication = Authenticator.requestPasswordAuthentication("host",
+        InetAddress.getLocalHost(),
+        8080,
+        "http",
+        "prompt",
+        "https",
+        new URL("https://www.daniel-heid.de"),
+        proxy
+    );
+  }
+
   @Test
   void returnsNullIfNoPasswordAuthentication() throws Exception {
 
@@ -33,19 +55,6 @@ class ProxyAuthenticatorTest {
 
     assertThat(passwordAuthentication).isNull();
 
-  }
-
-  private void givenPasswordAuthentication(RequestorType proxy) throws Exception {
-    passwordAuthentication = Authenticator.requestPasswordAuthentication(
-      "host",
-      InetAddress.getLocalHost(),
-      8080,
-      "http",
-      "prompt",
-      "https",
-      new URL("https://www.daniel-heid.de"),
-      proxy
-    );
   }
 
 
