@@ -68,17 +68,17 @@ You can also build the Javadoc yourself. See the section [Building](#building) b
 
 ## Need help?
 
-* Open an issue in the (Issue Tracker)[https://github.com/matomo-org/matomo-java-tracker/issues]
+* Open an issue in the [Issue Tracker](https://github.com/matomo-org/matomo-java-tracker/issues)
 * Use [our GitHub discussions](https://github.com/matomo-org/matomo-java-tracker/discussions)
-* Ask your question on (Stackoverflow with the tag `matomo`)[https://stackoverflow.com/questions/tagged/matomo]
+* Ask your question on [Stackoverflow with the tag `matomo`](https://stackoverflow.com/questions/tagged/matomo)
 * Create a thread in the [Matomo Forum](https://forum.matomo.org/)
 * Contact [Matomo Support](https://matomo.org/support/)
 
 ## Using this API
 
 See the following sections for information on how to use this API. For more information, see the Javadoc. We also recommend
-to read the [Tracking API User Guide](https://matomo.org/guide/apis/tracking-api/). The Matomo Tracking HTTP API is well
-documented and contains many examples. See https://developer.matomo.org/api-reference/tracking-api
+to read the [Tracking API User Guide](https://matomo.org/guide/apis/tracking-api/). The [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api) is well
+documented and contains many examples.
 
 ### Add library to your build
 
