@@ -16,6 +16,7 @@ Features include:
 * Supports custom dimensions and custom variables
 * Includes tracking parameters for campaigns, events, downloads, outlinks, site search, devices, visiors
 * Supports Java 8 and higher
+* Allows you to skip SSL certificate validation (not recommended for production)
 * Contains nearly no dependencies
 * Allows asynchronous requests
 * Supports Matomo 4 and 5
@@ -29,7 +30,7 @@ Further information on Matomo and Matomo HTTP tracking:
 
 * [Matomo PHP Tracker](https://github.com/matomo-org/matomo-php-tracker)
 * [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api)
-* [Introducting the Matomo Java Tracker](https://matomo.org/blog/2015/11/introducing-piwik-java-tracker/)
+* [Introducing the Matomo Java Tracker](https://matomo.org/blog/2015/11/introducing-piwik-java-tracker/)
 * [Tracking API User Guide](https://matomo.org/guide/apis/tracking-api/)
 * [Matomo Developer](https://developer.matomo.org/)
 * [The Matomo project](https://matomo.org/)
@@ -222,10 +223,14 @@ The Matomo Tracker currently supports the following builder methods:
 * `.proxyHost(...)` The hostname or IP address of an optional HTTP proxy. `proxyPort` must be
   configured as well
 * `.proxyPort(...)` The port of an HTTP proxy. `proxyHost` must be configured as well.
-* `.proxyUserName(...)` If the HTTP proxy requires a user name for basic authentication, it can be
+* `.proxyUserName(...)` If the HTTP proxy requires a username for basic authentication, it can be
   configured with this method. Proxy host, port and password must also be set.
 * `.proxyPassword(...)` The corresponding password for the basic auth proxy user. The proxy host,
-  port and user name must be set as well.
+  port and username must be set as well.
+* `.disableSslCertValidation(...)` If set to true, the SSL certificate of the Matomo server will not be validated. This
+  should only be used for testing purposes. Default: false
+* `.disableSslHostVerification(...)` If set to true, the SSL host of the Matomo server will not be validated. This should
+  only be used for testing purposes. Default: false
 
 To send a single request synchronously via GET, call
 

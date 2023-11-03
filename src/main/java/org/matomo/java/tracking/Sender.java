@@ -23,6 +23,7 @@ import java.net.Proxy;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -30,12 +31,21 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
 class Sender {
+
+  private static final TrustManager[] TRUST_ALL_MANAGERS = new TrustManager[] {
+      new TrustingX509TrustManager()
+  };
+  public static final TrustingHostnameVerifier TRUSTING_HOSTNAME_VERIFIER =
+      new TrustingHostnameVerifier();
 
   private final TrackerConfiguration trackerConfiguration;
 
@@ -87,28 +97,64 @@ class Sender {
   }
 
   private HttpURLConnection openConnection(URL url) {
+    HttpURLConnection connection;
     try {
       if (isEmpty(trackerConfiguration.getProxyHost())
           || trackerConfiguration.getProxyPort() <= 0) {
         log.debug("Proxy host or proxy port not configured. Will create connection without proxy");
-        return (HttpURLConnection) url.openConnection();
+        connection = (HttpURLConnection) url.openConnection();
+      } else {
+        connection = openProxiedConnection(url);
       }
-      InetSocketAddress proxyAddress = new InetSocketAddress(
-          trackerConfiguration.getProxyHost(),
-          trackerConfiguration.getProxyPort()
-      );
-      Proxy proxy = new Proxy(Proxy.Type.HTTP, proxyAddress);
-      if (!isEmpty(trackerConfiguration.getProxyUserName())
-          && !isEmpty(trackerConfiguration.getProxyPassword())) {
-        Authenticator.setDefault(new ProxyAuthenticator(
-            trackerConfiguration.getProxyUserName(),
-            trackerConfiguration.getProxyPassword()
-        ));
-      }
-      return (HttpURLConnection) url.openConnection(proxy);
     } catch (IOException e) {
       throw new MatomoException("Could not open connection", e);
     }
+    if (connection instanceof HttpsURLConnection) {
+      applySslConfiguration((HttpsURLConnection) connection);
+    }
+    return connection;
+  }
+
+  private void applySslConfiguration(
+      @NonNull
+      HttpsURLConnection connection
+  ) {
+    requireNonNull(connection, "Connection must not be null");
+    if (trackerConfiguration.isDisableSslCertValidation()) {
+      try {
+        SSLContext sslContext = SSLContext.getInstance("SSL");
+        sslContext.init(null, TRUST_ALL_MANAGERS, new SecureRandom());
+        connection.setSSLSocketFactory(sslContext.getSocketFactory());
+      } catch (Exception e) {
+        throw new MatomoException("Could not disable SSL certification validation", e);
+      }
+    }
+    if (trackerConfiguration.isDisableSslHostVerification()) {
+      connection.setHostnameVerifier(TRUSTING_HOSTNAME_VERIFIER);
+    }
+  }
+
+  private HttpURLConnection openProxiedConnection(@NonNull URL url) throws IOException {
+    requireNonNull(url, "URL must not be null");
+    requireNonNull(trackerConfiguration.getProxyHost(), "Proxy host must not be null");
+    if (trackerConfiguration.getProxyPort() <= 0) {
+      throw new IllegalArgumentException("Proxy port must be configured");
+    }
+    InetSocketAddress proxyAddress = new InetSocketAddress(trackerConfiguration.getProxyHost(),
+        trackerConfiguration.getProxyPort()
+    );
+    Proxy proxy = new Proxy(Proxy.Type.HTTP, proxyAddress);
+    if (!isEmpty(trackerConfiguration.getProxyUserName())
+        && !isEmpty(trackerConfiguration.getProxyPassword())) {
+      Authenticator.setDefault(new ProxyAuthenticator(trackerConfiguration.getProxyUserName(),
+          trackerConfiguration.getProxyPassword()
+      ));
+    }
+    log.debug("Using proxy {} on port {}",
+        trackerConfiguration.getProxyHost(),
+        trackerConfiguration.getProxyPort()
+    );
+    return (HttpURLConnection) url.openConnection(proxy);
   }
 
   private void configureAgentsAndTimeouts(HttpURLConnection connection) {
@@ -168,8 +214,7 @@ class Sender {
     }
     preparePostConnection(connection);
     configureAgentsAndTimeouts(connection);
-    log.debug(
-        "Sending bulk request using URI {} asynchronously",
+    log.debug("Sending bulk request using URI {} asynchronously",
         trackerConfiguration.getApiEndpoint()
     );
     OutputStream outputStream = null;

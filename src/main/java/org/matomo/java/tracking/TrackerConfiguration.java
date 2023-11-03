@@ -98,9 +98,30 @@ public class TrackerConfiguration {
   @NonNull String userAgent = "MatomoJavaClient";
 
   /**
-   * Logs if the Matomo Tracking API endpoint responds with an erroneous HTTP code.
+   * Logs if the Matomo Tracking API endpoint responds with an erroneous HTTP code. Defaults to
+   * false.
    */
   boolean logFailedTracking;
+
+  /**
+   * Disables SSL certificate validation. This is useful for testing with self-signed certificates.
+   * Do not use in production environments. Defaults to false.
+   *
+   * <p>Attention: This slows down performance
+
+   * @see #disableSslHostVerification
+   */
+  boolean disableSslCertValidation;
+
+  /**
+   * Disables SSL host verification. This is useful for testing with self-signed certificates. Do
+   * not use in production environments. Defaults to false.
+   *
+   * <p>Attention: This slows down performance
+   *
+   * @see #disableSslCertValidation
+   */
+  boolean disableSslHostVerification;
 
   /**
    * Validates the auth token. The auth token must be exactly 32 characters long.

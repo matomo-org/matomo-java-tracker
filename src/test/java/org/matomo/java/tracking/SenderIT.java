@@ -1,5 +1,9 @@
 package org.matomo.java.tracking;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.status;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -12,7 +16,7 @@ import org.junit.jupiter.api.Test;
 class SenderIT {
 
   private static final WireMockServer wireMockServer =
-      new WireMockServer(WireMockConfiguration.options().dynamicPort());
+      new WireMockServer(WireMockConfiguration.options().dynamicPort().dynamicHttpsPort());
 
   @BeforeAll
   static void beforeAll() {
@@ -33,8 +37,12 @@ class SenderIT {
 
   @Test
   void failsIfEndpointReturnsNotFound() {
-    TrackerConfiguration trackerConfiguration =
-        TrackerConfiguration.builder().apiEndpoint(URI.create(wireMockServer.baseUrl())).build();
+    TrackerConfiguration trackerConfiguration = TrackerConfiguration
+        .builder()
+        .apiEndpoint(URI.create(wireMockServer.baseUrl()))
+        .disableSslHostVerification(true)
+        .disableSslCertValidation(true)
+        .build();
 
     Sender sender =
         new Sender(trackerConfiguration, new QueryCreator(trackerConfiguration), Runnable::run);
@@ -62,6 +70,8 @@ class SenderIT {
     TrackerConfiguration trackerConfiguration = TrackerConfiguration
         .builder()
         .apiEndpoint(URI.create(wireMockServer.baseUrl()))
+        .disableSslCertValidation(true)
+        .disableSslHostVerification(true)
         .proxyHost("localhost")
         .proxyPort(wireMockServer.port())
         .build();
@@ -71,7 +81,7 @@ class SenderIT {
 
     assertThatThrownBy(() -> sender.sendSingle(new MatomoRequest()))
         .isInstanceOf(MatomoException.class)
-        .hasMessage("Tracking endpoint responded with code 400");
+        .hasMessage("Could not send request via GET");
   }
 
   @Test
@@ -79,6 +89,8 @@ class SenderIT {
     TrackerConfiguration trackerConfiguration = TrackerConfiguration
         .builder()
         .apiEndpoint(URI.create(wireMockServer.baseUrl()))
+        .disableSslCertValidation(true)
+        .disableSslHostVerification(true)
         .proxyHost("localhost")
         .proxyPort(wireMockServer.port())
         .proxyUserName("user")
@@ -90,7 +102,7 @@ class SenderIT {
 
     assertThatThrownBy(() -> sender.sendSingle(new MatomoRequest()))
         .isInstanceOf(MatomoException.class)
-        .hasMessage("Tracking endpoint responded with code 400");
+        .hasMessage("Could not send request via GET");
   }
 
   @Test
@@ -98,6 +110,8 @@ class SenderIT {
     TrackerConfiguration trackerConfiguration = TrackerConfiguration
         .builder()
         .apiEndpoint(URI.create(wireMockServer.baseUrl()))
+        .disableSslCertValidation(true)
+        .disableSslHostVerification(true)
         .logFailedTracking(true)
         .build();
 
@@ -107,6 +121,28 @@ class SenderIT {
     assertThatThrownBy(() -> sender.sendSingle(new MatomoRequest()))
         .isInstanceOf(MatomoException.class)
         .hasMessage("Tracking endpoint responded with code 404");
+  }
+
+  @Test
+  void skipSslCertificationValidation() {
+    wireMockServer.stubFor(get(urlPathEqualTo("/matomo_ssl.php")).willReturn(status(204)));
+    TrackerConfiguration trackerConfiguration =
+        TrackerConfiguration
+            .builder()
+            .apiEndpoint(URI.create(String.format("https://localhost:%d/matomo_ssl.php",
+                wireMockServer.httpsPort()
+            )))
+            .disableSslCertValidation(true)
+            .disableSslHostVerification(true)
+            .build();
+
+    Sender sender =
+        new Sender(trackerConfiguration, new QueryCreator(trackerConfiguration), Runnable::run);
+
+    sender.sendSingle(new MatomoRequest());
+
+    wireMockServer.verify(getRequestedFor(urlPathEqualTo("/matomo_ssl.php")));
+
   }
 
 }
