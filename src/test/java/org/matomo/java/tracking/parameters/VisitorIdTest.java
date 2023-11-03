@@ -159,4 +159,22 @@ class VisitorIdTest {
         .hasMessage("Hex string must not be longer than 16 characters");
   }
 
+  @Test
+  void createsVisitorIdFromUUID() {
+
+    VisitorId visitorId = VisitorId.fromUUID(
+        java.util.UUID.fromString("12345678-90ab-cdef-1234-567890abcdef")
+    );
+
+    assertThat(visitorId).hasToString("1234567890abcdef");
+
+  }
+
+  @Test
+  void failsOnNullUUID() {
+    assertThatThrownBy(() -> VisitorId.fromUUID(null))
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("uuid is marked non-null but is null");
+  }
+
 }

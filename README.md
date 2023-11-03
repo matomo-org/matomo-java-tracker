@@ -421,6 +421,7 @@ following breaking changes:
 * `visitorId` and `visitorCustomId` are of type `VisitorId`. You can build them easily
   using `VisitorId.fromHash(...)`.
 * You can use `VisitorId.fromHex()` to create a `VisitorId` from a string that contains only hexadecimal characters.
+* Or simply use `VisitorId.fromUUID()` to create a `VisitorId` from a `UUID` object.
 * VisitorId.fromHex() supports less than 16 hexadecimal characters. If the string is shorter than 16 characters,
   the remaining characters will be filled with zeros.
 

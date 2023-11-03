@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;
@@ -86,7 +87,12 @@ public class MatomoRequest {
   private String apiVersion = "1";
 
   /**
-   * The unique visitor ID. See {@link VisitorId}
+   * The unique visitor ID. See {@link VisitorId}. Default is {@link VisitorId#random()}
+   *
+   * <p>Since version 3.0.0 this parameter is of type {@link VisitorId} and not a String anymore.
+   * Use {@link VisitorId#fromHex(String)} to create a VisitorId from a hex string,
+   * {@link VisitorId#fromUUID(UUID)} to create it from a UUID or {@link VisitorId#fromHash(long)}
+   * to create it from a long value.
    */
   @TrackingParameter(name = "_id")
   @Default

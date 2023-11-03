@@ -9,7 +9,9 @@ package org.matomo.java.tracking.parameters;
 
 import java.security.SecureRandom;
 import java.util.Random;
+import java.util.UUID;
 import java.util.regex.Pattern;
+import lombok.NonNull;
 
 /**
  * The unique visitor ID, must be a 16 characters hexadecimal string. Every unique visitor must be assigned a different
@@ -54,6 +56,18 @@ public class VisitorId {
       remainingHash >>= Byte.SIZE;
     }
     return visitorId;
+  }
+
+  /**
+   * Creates a visitor id from a UUID.
+   *
+   * <p>Uses the most significant bits of the UUID to create the visitor id.
+   *
+   * @param uuid A UUID to create the visitor id from
+   * @return The visitor id for the given UUID
+   */
+  public static VisitorId fromUUID(@NonNull UUID uuid) {
+    return fromHash(uuid.getMostSignificantBits());
   }
 
   /**
