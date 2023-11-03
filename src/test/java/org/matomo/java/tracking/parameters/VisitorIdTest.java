@@ -177,4 +177,13 @@ class VisitorIdTest {
         .hasMessage("uuid is marked non-null but is null");
   }
 
+  @Test
+  void createsVisitorIdFromString() {
+
+    VisitorId visitorId = VisitorId.fromString("test");
+
+    assertThat(visitorId).hasToString("0000000000364492");
+
+  }
+
 }

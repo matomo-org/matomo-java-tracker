@@ -7,13 +7,15 @@
 
 package org.matomo.java.tracking.parameters;
 
+import lombok.NonNull;
+
 final class Hex {
 
   private Hex() {
     // utility class
   }
 
-  static String fromBytes(byte[] bytes) {
+  static String fromBytes(@NonNull byte[] bytes) {
     StringBuilder result = new StringBuilder(bytes.length * 2);
     for (byte b : bytes) {
       result.append(String.format("%02x", b));

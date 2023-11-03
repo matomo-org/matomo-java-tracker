@@ -19,7 +19,7 @@ import lombok.Value;
 
 /**
  * Describes the content for the Accept-Language header field that can be overridden by a custom parameter. The format
- * is specified in the corresponding <a href="http://tools.ietf.org/html/rfc4647">RFC 4647 Matching of Language Tags</a>
+ * is specified in the corresponding <a href="https://tools.ietf.org/html/rfc4647">RFC 4647 Matching of Language Tags</a>
  *
  * <p>Example: "en-US,en;q=0.8,de;q=0.6"
  */

@@ -141,7 +141,7 @@ public class MatomoRequest {
 
   /**
    * The campaign keyword (see
-   * <a href="http://matomo.org/docs/tracking-campaigns/">Tracking Campaigns</a>). Used to populate the <em>Referrers &gt; Campaigns</em> report (clicking on a
+   * <a href="https://matomo.org/docs/tracking-campaigns/">Tracking Campaigns</a>). Used to populate the <em>Referrers &gt; Campaigns</em> report (clicking on a
    * campaign loads all keywords for this campaign). This parameter will only be used for the first pageview of a visit.
    */
   @TrackingParameter(name = "_rck")
@@ -841,7 +841,7 @@ public class MatomoRequest {
    * Set the datetime of the request (normally the current time is used).
    * This can be used to record visits and page views in the past. The datetime
    * must be sent in UTC timezone. <em>Note: if you record data in the past, you will
-   * need to <a href="http://matomo.org/faq/how-to/faq_59">force Matomo to re-process
+   * need to <a href="https://matomo.org/faq/how-to/faq_59">force Matomo to re-process
    * reports for the past dates</a>.</em> If you set the <em>Request Datetime</em> to a datetime
    * older than four hours then <em>Auth Token</em> must be set. If you set
    * <em>Request Datetime</em> with a datetime in the last four hours then you

@@ -13,7 +13,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import java.net.URI;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ public class MatomoTracker {
    * Tracking HTTP API endpoint.
    *
    * @param hostUrl url endpoint to send requests to.  Usually in the format
-   *                <strong>http://your-matomo-domain.tld/matomo.php</strong>. Must not be null
+   *                <strong>https://your-matomo-domain.tld/matomo.php</strong>. Must not be null
    * @deprecated Please use {@link MatomoTracker#MatomoTracker(TrackerConfiguration)}
    */
   @Deprecated
@@ -51,7 +51,7 @@ public class MatomoTracker {
    * Tracking HTTP API endpoint.
    *
    * @param hostUrl url endpoint to send requests to.  Usually in the format
-   *                <strong>http://your-matomo-domain.tld/matomo.php</strong>.
+   *                <strong>https://your-matomo-domain.tld/matomo.php</strong>.
    * @param timeout the timeout of the sent request in milliseconds or -1 if not set
    * @deprecated Please use {@link MatomoTracker#MatomoTracker(TrackerConfiguration)}
    */
@@ -68,7 +68,7 @@ public class MatomoTracker {
    * Tracking HTTP API endpoint.
    *
    * @param hostUrl   url endpoint to send requests to.  Usually in the format
-   *                  <strong>http://your-matomo-domain.tld/matomo.php</strong>.
+   *                  <strong>https://your-matomo-domain.tld/matomo.php</strong>.
    * @param proxyHost The hostname or IP address of an optional HTTP proxy, null allowed
    * @param proxyPort The port of an HTTP proxy or -1 if not set
    * @param timeout   the timeout of the request in milliseconds or -1 if not set
@@ -104,20 +104,10 @@ public class MatomoTracker {
     requireNonNull(trackerConfiguration, "Tracker configuration must not be null");
     trackerConfiguration.validate();
     this.trackerConfiguration = trackerConfiguration;
-    ScheduledThreadPoolExecutor threadPoolExecutor = createThreadPoolExecutor();
     sender = new Sender(trackerConfiguration,
         new QueryCreator(trackerConfiguration),
-        threadPoolExecutor
-    );
-  }
-
-  @edu.umd.cs.findbugs.annotations.NonNull
-  private static ScheduledThreadPoolExecutor createThreadPoolExecutor() {
-    DaemonThreadFactory threadFactory = new DaemonThreadFactory();
-    ScheduledThreadPoolExecutor threadPoolExecutor =
-        new ScheduledThreadPoolExecutor(1, threadFactory);
-    threadPoolExecutor.setRemoveOnCancelPolicy(true);
-    return threadPoolExecutor;
+        Executors.newFixedThreadPool(trackerConfiguration.getThreadPoolSize()
+    ));
   }
 
   /**
@@ -125,7 +115,7 @@ public class MatomoTracker {
    * Tracking HTTP API endpoint via the provided proxy.
    *
    * @param hostUrl   url endpoint to send requests to.  Usually in the format
-   *                  <strong>http://your-matomo-domain.tld/matomo.php</strong>.
+   *                  <strong>https://your-matomo-domain.tld/matomo.php</strong>.
    * @param proxyHost url endpoint for the proxy, null allowed
    * @param proxyPort proxy server port number or -1 if not set
    * @deprecated Please use {@link MatomoTracker#MatomoTracker(TrackerConfiguration)}

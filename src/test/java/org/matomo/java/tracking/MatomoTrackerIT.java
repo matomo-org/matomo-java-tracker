@@ -10,6 +10,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.status;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static java.util.Collections.singleton;
+import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -21,6 +22,7 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Locale.LanguageRange;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,6 +57,8 @@ class MatomoTrackerIT {
 
   private CompletableFuture<Void> future;
 
+  private MatomoTracker matomoTracker;
+
   @BeforeAll
   static void beforeAll() {
     wireMockServer.start();
@@ -79,7 +83,9 @@ class MatomoTrackerIT {
   @Test
   void requiresSiteId() {
 
-    trackerConfigurationBuilder.apiEndpoint(URI.create("http://localhost:8099/matomo.php")).build();
+    trackerConfigurationBuilder
+        .apiEndpoint(URI.create(wireMockServer.baseUrl() + "/matomo.php"))
+        .build();
 
     assertThatThrownBy(this::whenSendsRequestAsync)
         .isInstanceOf(IllegalArgumentException.class)
@@ -88,13 +94,8 @@ class MatomoTrackerIT {
   }
 
   private void whenSendsRequestAsync() {
-    future =
-        new MatomoTracker(trackerConfigurationBuilder.build()).sendRequestAsync(requestBuilder.build());
-    try {
-      future.get();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+    matomoTracker = new MatomoTracker(trackerConfigurationBuilder.build());
+    future = matomoTracker.sendRequestAsync(requestBuilder.build());
   }
 
   @Test
@@ -110,19 +111,16 @@ class MatomoTrackerIT {
 
   private void givenTrackerConfigurationWithDefaultSiteId() {
     trackerConfigurationBuilder
-        .apiEndpoint(URI.create(String.format(
-            "http://localhost:%s/matomo.php",
-            wireMockServer.port()
-        )))
+        .apiEndpoint(URI.create(wireMockServer.baseUrl() + "/matomo.php"))
         .defaultSiteId(SITE_ID);
   }
 
   private void thenGetsRequest(String expectedQuery) {
-    assertThat(future).isNotCompletedExceptionally();
-    wireMockServer.verify(getRequestedFor(urlEqualTo(String.format(
-        "/matomo.php?%s",
-        expectedQuery
-    ))).withHeader("User-Agent", equalTo("MatomoJavaClient")));
+    assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
+      wireMockServer.verify(getRequestedFor(urlEqualTo(String.format("/matomo.php?%s",
+          expectedQuery
+      ))).withHeader("User-Agent", equalTo("MatomoJavaClient")));
+    });
   }
 
   @Test
@@ -143,9 +141,14 @@ class MatomoTrackerIT {
     givenTrackerConfigurationWithDefaultSiteId();
     requestBuilder.authToken("invalid-token-auth");
 
-    assertThatThrownBy(this::whenSendsRequestAsync)
-        .hasRootCauseInstanceOf(IllegalArgumentException.class)
-        .hasRootCauseMessage("Auth token must be exactly 32 characters long");
+    whenSendsRequestAsync();
+
+    assertThat(future)
+        .failsWithin(1, MINUTES)
+        .withThrowableThat()
+        .havingRootCause()
+        .isInstanceOf(IllegalArgumentException.class)
+        .withMessage("Auth token must be exactly 32 characters long");
 
   }
 
@@ -218,21 +221,18 @@ class MatomoTrackerIT {
   private void whenSendsBulkRequestAsync() {
     future = new MatomoTracker(trackerConfigurationBuilder.build()).sendBulkRequestAsync(singleton(
         requestBuilder.build()));
-    try {
-      future.get();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
   }
 
   private void thenPostsRequestWithoutAuthToken(String expectedQuery, String contentLength) {
-    assertThat(future).isNotCompletedExceptionally();
-    wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php"))
-        .withHeader("Content-Length", equalTo(contentLength))
-        .withHeader("Accept", equalTo("*/*"))
-        .withHeader("Content-Type", equalTo("application/json"))
-        .withHeader("User-Agent", equalTo("MatomoJavaClient"))
-        .withRequestBody(equalToJson("{\"requests\":[\"?" + expectedQuery + "\"]}")));
+    assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
+      wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php"))
+          .withHeader("Content-Length", equalTo(contentLength))
+          .withHeader("Accept", equalTo("*/*"))
+          .withHeader("Content-Type", equalTo("application/json"))
+          .withHeader("User-Agent", equalTo("MatomoJavaClient"))
+          .withRequestBody(equalToJson("{\"requests\":[\"?" + expectedQuery + "\"]}")));
+    });
+
   }
 
   @Test
@@ -257,11 +257,11 @@ class MatomoTrackerIT {
 
     whenSendsRequestAsync();
 
-    assertThat(future).isNotCompletedExceptionally();
-    wireMockServer.verify(getRequestedFor(urlPathEqualTo("/matomo.php")).withHeader(
-        "User-Agent",
-        equalTo("MatomoJavaClient")
-    ));
+    assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
+      wireMockServer.verify(getRequestedFor(urlPathEqualTo("/matomo.php")).withHeader("User-Agent",
+          equalTo("MatomoJavaClient")
+      ));
+    });
 
   }
 
@@ -272,12 +272,13 @@ class MatomoTrackerIT {
 
     whenSendsBulkRequestAsync();
 
-    assertThat(future).isNotCompletedExceptionally();
-    wireMockServer.verify(postRequestedFor(urlPathEqualTo("/matomo.php"))
-        .withHeader("Accept", equalTo("*/*"))
-        .withHeader("Content-Length", equalTo("90"))
-        .withHeader("Content-Type", equalTo("application/json"))
-        .withHeader("User-Agent", equalTo("MatomoJavaClient")));
+    assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
+      wireMockServer.verify(postRequestedFor(urlPathEqualTo("/matomo.php"))
+          .withHeader("Accept", equalTo("*/*"))
+          .withHeader("Content-Length", equalTo("90"))
+          .withHeader("Content-Type", equalTo("application/json"))
+          .withHeader("User-Agent", equalTo("MatomoJavaClient")));
+    });
 
   }
 
@@ -289,11 +290,11 @@ class MatomoTrackerIT {
 
     whenSendsRequestAsync();
 
-    assertThat(future).isNotCompletedExceptionally();
-    wireMockServer.verify(getRequestedFor(urlPathEqualTo("/matomo.php")).withHeader(
-        "User-Agent",
-        equalTo("Mozilla/5.0")
-    ));
+    assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
+      wireMockServer.verify(getRequestedFor(urlPathEqualTo("/matomo.php")).withHeader("User-Agent",
+          equalTo("Mozilla/5.0")
+      ));
+    });
 
   }
 
@@ -339,28 +340,30 @@ class MatomoTrackerIT {
 
     whenSendsBulkRequestAsync();
 
-    assertThat(future).isNotCompletedExceptionally();
-    wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php"))
-        .withHeader("Content-Length", equalTo("711"))
-        .withHeader("Accept", equalTo("*/*"))
-        .withHeader("Content-Type", equalTo("application/json"))
-        .withHeader("User-Agent", equalTo("MatomoJavaClient"))
-        .withRequestBody(equalToJson("{\"requests\":[\"?"
-            + "idsite=42&rec=1&action_name=Help+%2F+Feedback&url=https%3A%2F%2Fwww.daniel-heid.de%2Fportfolio&apiv=1&_id=2fa93d2858bc4867&urlref=https%3A%2F%2Fwww.daniel-heid.de%2Freferrer&_cvar=%7B%224%22%3A%5B%22customVariable1Key%22%2C%22customVariable1Value%22%5D%2C%225%22%3A%5B%22customVariable2Key%22%2C%22customVariable2Value%22%5D%7D&_idvc=2&_idts=1660070052&res=1024x768&lang=de%2Cde-de%3Bq%3D0.9%2Cen%3Bq%3D0.8&pv_id=lbBbxG&idgoal=0&revenue=12.34&ec_items=%5B%5B%22SKU%22%2C%22%22%2C%22%22%2C0.0%2C0%5D%2C%5B%22SKU%22%2C%22NAME%22%2C%22CATEGORY%22%2C123.4%2C0%5D%5D&token_auth=fdf6e8461ea9de33176b222519627f78&country=de&send_image=0&rand=someRandom"
-            + "\"],\"token_auth\" : \"" + "fdf6e8461ea9de33176b222519627f78" + "\"}")));
+    assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
+      wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php"))
+          .withHeader("Content-Length", equalTo("711"))
+          .withHeader("Accept", equalTo("*/*"))
+          .withHeader("Content-Type", equalTo("application/json"))
+          .withHeader("User-Agent", equalTo("MatomoJavaClient"))
+          .withRequestBody(equalToJson("{\"requests\":[\"?"
+              + "idsite=42&rec=1&action_name=Help+%2F+Feedback&url=https%3A%2F%2Fwww.daniel-heid.de%2Fportfolio&apiv=1&_id=2fa93d2858bc4867&urlref=https%3A%2F%2Fwww.daniel-heid.de%2Freferrer&_cvar=%7B%224%22%3A%5B%22customVariable1Key%22%2C%22customVariable1Value%22%5D%2C%225%22%3A%5B%22customVariable2Key%22%2C%22customVariable2Value%22%5D%7D&_idvc=2&_idts=1660070052&res=1024x768&lang=de%2Cde-de%3Bq%3D0.9%2Cen%3Bq%3D0.8&pv_id=lbBbxG&idgoal=0&revenue=12.34&ec_items=%5B%5B%22SKU%22%2C%22%22%2C%22%22%2C0.0%2C0%5D%2C%5B%22SKU%22%2C%22NAME%22%2C%22CATEGORY%22%2C123.4%2C0%5D%5D&token_auth=fdf6e8461ea9de33176b222519627f78&country=de&send_image=0&rand=someRandom"
+              + "\"],\"token_auth\" : \"" + "fdf6e8461ea9de33176b222519627f78" + "\"}")));
+
+    });
 
   }
 
   @Test
-  void doesNothingIfNotEnabled() {
+  void doesNothingIfNotEnabled() throws Exception {
 
     wireMockServer.resetRequests();
     givenTrackerConfigurationWithDefaultSiteId();
     trackerConfigurationBuilder.enabled(false);
 
     whenSendsRequestAsync();
+    future.get();
 
-    assertThat(future).isNotCompletedExceptionally();
     wireMockServer.verify(0, postRequestedFor(urlPathEqualTo("/matomo.php")));
 
   }
@@ -375,20 +378,24 @@ class MatomoTrackerIT {
         .build();
 
     // Prepare the tracker (stateless - can be used for multiple actions)
-    MatomoTracker tracker = new MatomoTracker(config);
+    MatomoTracker matomoTracker = new MatomoTracker(config);
 
-    // Track an action
-    CompletableFuture<Void> future = tracker.sendRequestAsync(MatomoRequest
+    // Track an action asynchronuously
+    CompletableFuture<Void> future = matomoTracker.sendRequestAsync(MatomoRequest
         .builder()
         .actionName("User Profile / Upload Profile Picture")
         .actionUrl("https://your-domain.net/user/profile/picture")
-        .visitorId(VisitorId.fromHash("some@email-adress.org".hashCode()))
+        .visitorId(VisitorId.fromString("some@email-adress.org"))
         // ...
         .build());
 
     // If you want to ensure the request has been handled:
-    if (future.isCompletedExceptionally()) {
-      // log, throw, ...
+    try {
+      future.get();
+    } catch (InterruptedException e) {
+      // Occurs if the current thread is interrupted while waiting
+    } catch (ExecutionException e) {
+      // Happens on any exception during the request
     }
   }
 
@@ -397,16 +404,17 @@ class MatomoTrackerIT {
 
     wireMockServer.stubFor(get(urlPathEqualTo("/failing")).willReturn(status(500)));
     trackerConfigurationBuilder
-        .apiEndpoint(URI.create(String.format("http://localhost:%d/failing",
-            wireMockServer.port()
-        )))
+        .apiEndpoint(URI.create(wireMockServer.baseUrl() + "/failing"))
         .defaultSiteId(SITE_ID);
 
-    assertThatThrownBy(this::whenSendsRequestAsync)
-        .hasRootCauseInstanceOf(MatomoException.class)
-        .hasRootCauseMessage("Tracking endpoint responded with code 500");
+    whenSendsRequestAsync();
 
-    assertThat(future).isCompletedExceptionally();
+    assertThat(future)
+        .failsWithin(1, MINUTES)
+        .withThrowableThat()
+        .havingRootCause()
+        .isInstanceOf(MatomoException.class)
+        .withMessage("Tracking endpoint responded with code 500");
 
   }
 
@@ -418,12 +426,12 @@ class MatomoTrackerIT {
 
     whenSendsRequestAsync();
 
-    assertThat(future).isNotCompletedExceptionally();
-    wireMockServer.verify(getRequestedFor(urlEqualTo(
-        "/matomo.php?idsite=42token_auth=fdf6e8461ea9de33176b222519627f78&rec=1&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom")).withHeader(
-        "User-Agent",
-        equalTo("MatomoJavaClient")
-    ));
+    assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
+      wireMockServer.verify(getRequestedFor(urlEqualTo(
+          "/matomo.php?idsite=42token_auth=fdf6e8461ea9de33176b222519627f78&rec=1&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom")).withHeader("User-Agent",
+          equalTo("MatomoJavaClient")
+      ));
+    });
 
   }
 
@@ -431,23 +439,23 @@ class MatomoTrackerIT {
   void includesMultipleQueriesInBulkRequest() throws Exception {
 
     givenTrackerConfigurationWithDefaultSiteId();
-    MatomoTracker tracker = new MatomoTracker(trackerConfigurationBuilder.build());
+    matomoTracker = new MatomoTracker(trackerConfigurationBuilder.build());
 
-    CompletableFuture<Void> future1 =
-        tracker.sendBulkRequestAsync(Arrays.asList(requestBuilder.actionName("First").build(),
+    future =
+        matomoTracker.sendBulkRequestAsync(Arrays.asList(requestBuilder.actionName("First").build(),
             requestBuilder.actionName("Second").build(),
             requestBuilder.actionName("Third").build()
         ));
-    future1.get();
 
-    assertThat(future1).isNotCompletedExceptionally();
-    wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php"))
-        .withHeader("Content-Length", equalTo("297"))
-        .withHeader("Accept", equalTo("*/*"))
-        .withHeader("Content-Type", equalTo("application/json"))
-        .withHeader("User-Agent", equalTo("MatomoJavaClient"))
-        .withRequestBody(equalToJson(
-            "{\"requests\" : [ \"?idsite=42&rec=1&action_name=First&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom\", \"?idsite=42&rec=1&action_name=Second&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom\", \"?idsite=42&rec=1&action_name=Third&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom\" ]}")));
+    assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
+      wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php"))
+          .withHeader("Content-Length", equalTo("297"))
+          .withHeader("Accept", equalTo("*/*"))
+          .withHeader("Content-Type", equalTo("application/json"))
+          .withHeader("User-Agent", equalTo("MatomoJavaClient"))
+          .withRequestBody(equalToJson(
+              "{\"requests\" : [ \"?idsite=42&rec=1&action_name=First&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom\", \"?idsite=42&rec=1&action_name=Second&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom\", \"?idsite=42&rec=1&action_name=Third&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom\" ]}")));
+    });
 
   }
 
@@ -457,19 +465,26 @@ class MatomoTrackerIT {
     givenTrackerConfigurationWithDefaultSiteId();
     requestBuilder.siteId(-1);
 
-    assertThatThrownBy(this::whenSendsRequestAsync)
-        .hasRootCauseInstanceOf(IllegalArgumentException.class)
-        .hasRootCauseMessage("Site ID must not be negative");
+    whenSendsRequestAsync();
+
+    assertThat(future)
+        .failsWithin(1, MINUTES)
+        .withThrowableThat()
+        .havingRootCause()
+        .isInstanceOf(IllegalArgumentException.class)
+        .withMessage("Site ID must not be negative");
+
+    ;
   }
 
   @Test
-  void doesNotSendRequestAsyncIfTrackerConfigurationIsDisabled() {
+  void doesNotSendRequestAsyncIfTrackerConfigurationIsDisabled() throws Exception {
     givenTrackerConfigurationWithDefaultSiteId();
     trackerConfigurationBuilder.enabled(false);
 
     whenSendsRequestAsync();
+    future.get();
 
-    assertThat(future).isNotCompletedExceptionally();
     wireMockServer.verify(0, getRequestedFor(urlPathEqualTo("/matomo.php")));
 
   }
@@ -503,42 +518,42 @@ class MatomoTrackerIT {
   }
 
   @Test
-  void doesNotSendBulkRequestAsyncIfTrackerConfigurationIsDisabled() {
+  void doesNotSendBulkRequestAsyncIfTrackerConfigurationIsDisabled() throws Exception {
     givenTrackerConfigurationWithDefaultSiteId();
     trackerConfigurationBuilder.enabled(false);
 
     whenSendsBulkRequestAsync();
 
-    assertThat(future).isNotCompletedExceptionally();
+    future.get();
     wireMockServer.verify(0, postRequestedFor(urlPathEqualTo("/matomo.php")));
   }
 
   @Test
   void sendsRequestAsyncAndAcceptsCallback() throws Exception {
     givenTrackerConfigurationWithDefaultSiteId();
-    MatomoTracker tracker = new MatomoTracker(trackerConfigurationBuilder.build());
+    matomoTracker = new MatomoTracker(trackerConfigurationBuilder.build());
     AtomicBoolean success = new AtomicBoolean();
-    CompletableFuture<Void> future = tracker.sendRequestAsync(requestBuilder.build(), v -> {
+    future = matomoTracker.sendRequestAsync(requestBuilder.build(), v -> {
       success.set(true);
     });
-    future.get();
-    assertThat(future).isNotCompletedExceptionally();
-    wireMockServer.verify(getRequestedFor(urlPathEqualTo("/matomo.php")));
+    assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
+      wireMockServer.verify(getRequestedFor(urlPathEqualTo("/matomo.php")));
+    });
     assertThat(success).isTrue();
   }
 
   @Test
   void sendsRequestsAsyncAndAcceptsCallback() throws Exception {
     givenTrackerConfigurationWithDefaultSiteId();
-    MatomoTracker tracker = new MatomoTracker(trackerConfigurationBuilder.build());
+    matomoTracker = new MatomoTracker(trackerConfigurationBuilder.build());
     AtomicBoolean success = new AtomicBoolean();
-    CompletableFuture<Void> future =
-        tracker.sendBulkRequestAsync(singleton(requestBuilder.build()), v -> {
+    future =
+        matomoTracker.sendBulkRequestAsync(singleton(requestBuilder.build()), v -> {
           success.set(true);
         });
-    future.get();
-    assertThat(future).isNotCompletedExceptionally();
-    wireMockServer.verify(postRequestedFor(urlPathEqualTo("/matomo.php")));
+    assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
+      wireMockServer.verify(postRequestedFor(urlPathEqualTo("/matomo.php")));
+    });
     assertThat(success).isTrue();
   }
 

@@ -1,4 +1,4 @@
-# Matomo Java Tracker
+# Official Matomo Java Tracker
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.piwik.java.tracking/matomo-java-tracker/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.piwik.java.tracking/matomo-java-tracker)
 [![Build Status](https://github.com/matomo-org/matomo-java-tracker/actions/workflows/build.yml/badge.svg)](https://github.com/matomo-org/matomo-java-tracker/actions/workflows/build.yml)
@@ -17,7 +17,7 @@ Features include:
 * Includes tracking parameters for campaigns, events, downloads, outlinks, site search, devices, visiors
 * Supports Java 8 and higher
 * Allows you to skip SSL certificate validation (not recommended for production)
-* Contains nearly no dependencies
+* Contains nearly no runtime dependencies (only SLF4J)
 * Allows asynchronous requests
 * Supports Matomo 4 and 5
 * Single and multiple requests can be sent
@@ -161,7 +161,7 @@ public class YourImplementation {
         MatomoRequest request = MatomoRequest
                 .builder()
                 .siteId(42)
-                .actionUrl("http://example.org/landing.html?pk_campaign=Email-Nov2011&pk_kwd=LearnMore") // include the query parameters to the url
+                .actionUrl("https://example.org/landing.html?pk_campaign=Email-Nov2011&pk_kwd=LearnMore") // include the query parameters to the url
                 .actionName("LearnMore")
                 .build();
     }
@@ -229,7 +229,8 @@ The Matomo Tracker currently supports the following builder methods:
   port and username must be set as well.
 * `.disableSslCertValidation(...)` If set to true, the SSL certificate of the Matomo server will not be validated. This
   should only be used for testing purposes. Default: false
-* `.disableSslHostVerification(...)` If set to true, the SSL host of the Matomo server will not be validated. This should
+* `.disableSslHostVerification(...)` If set to true, the SSL host of the Matomo server will not be validated. This
+  should
   only be used for testing purposes. Default: false
 
 To send a single request synchronously via GET, call
@@ -262,9 +263,7 @@ public class YourImplementation {
                 .apiEndpoint(URI.create("https://your-matomo-domain.tld/matomo.php"))
                 .build());
 
-        CompletableFuture<Void> future = tracker.sendRequestAsync(request);
-        // execute the request:
-        future.get();
+        tracker.sendRequestAsync(request);
 
     }
 
@@ -277,8 +276,6 @@ send a bulk request. Place your requests in an _Iterable_ data structure and cal
 ```java
 package example;
 
-import java.util.concurrent.CompletableFuture;
-import org.apache.http.HttpResponse;
 import org.matomo.java.tracking.MatomoRequest;
 import org.matomo.java.tracking.MatomoTracker;
 
@@ -287,7 +284,6 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 public class YourImplementation {
 
@@ -303,9 +299,7 @@ public class YourImplementation {
                 .apiEndpoint(URI.create("https://your-matomo-domain.tld/matomo.php"))
                 .build());
 
-        CompletableFuture<Void> future = tracker.sendBulkRequestAsync(requests);
-        // execute the request
-        future.get();
+        tracker.sendBulkRequestAsync(requests);
 
     }
 
@@ -319,7 +313,6 @@ the bulk request through
 ```java
 package example;
 
-import java.util.concurrent.CompletableFuture;
 import org.apache.http.HttpResponse;
 import org.matomo.java.tracking.MatomoLocale;
 import org.matomo.java.tracking.MatomoRequest;
@@ -331,7 +324,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 public class YourImplementation {
 
@@ -351,12 +343,8 @@ public class YourImplementation {
                 .apiEndpoint(URI.create("https://your-matomo-domain.tld/matomo.php"))
                 .build());
 
-        CompletableFuture<Void> future = tracker.sendBulkRequestAsync(
-                requests,
-                "33dc3f2536d3025974cccb4b4d2d98f4"
-        ); // second parameter is authentication token need for country override
-        // execute the request:
-        future.get();
+        // second parameter is authentication token need for country override
+        tracker.sendBulkRequestAsync(requests, "33dc3f2536d3025974cccb4b4d2d98f4");
 
 
     }
@@ -465,7 +453,7 @@ version can be used in your local Maven repository for testing purposes, e.g.
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see
+We use [SemVer](https://semver.org/) for versioning. For the versions available, see
 the [tags on this repository](https://github.com/matomo-org/matomo-java-tracker/tags).
 
 ## Contribute
@@ -489,6 +477,13 @@ process for submitting pull requests to us.
 
 We use Checkstyle and JaCoCo to ensure code quality. Please run `mvn verify` before submitting a pull request. Please
 provide tests for your changes. We use JUnit 5 for testing. Coverage should be at least 80%.
+
+## Other Java Matomo Tracker Implementations
+
+* [Matomo SDK for Android](https://github.com/matomo-org/matomo-sdk-android)
+* [piwik-tracking](https://github.com/ralscha/piwik-tracking)
+* [Matomo Tracking API Java Client](https://github.com/dheid/matomo-tracker) -> Most of the code was integrated in the
+  official Matomo Java Tracker
 
 ## License
 

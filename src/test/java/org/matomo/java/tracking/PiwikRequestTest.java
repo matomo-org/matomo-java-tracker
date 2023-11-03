@@ -28,15 +28,15 @@ class PiwikRequestTest {
 
   @BeforeEach
   void setUp() throws Exception {
-    request = new PiwikRequest(3, new URL("http://test.com"));
+    request = new PiwikRequest(3, new URL("https://test.com"));
   }
 
   @Test
   void testConstructor() throws Exception {
-    request = new PiwikRequest(3, new URL("http://test.com"));
+    request = new PiwikRequest(3, new URL("https://test.com"));
     assertThat(request.getSiteId()).isEqualTo(Integer.valueOf(3));
     assertThat(request.getRequired()).isTrue();
-    assertThat(request.getActionUrl()).isEqualTo("http://test.com");
+    assertThat(request.getActionUrl()).isEqualTo("https://test.com");
     assertThat(request.getVisitorId()).isNotNull();
     assertThat(request.getRandomValue()).isNotNull();
     assertThat(request.getApiVersion()).isEqualTo("1");
@@ -61,8 +61,8 @@ class PiwikRequestTest {
   void testActionUrl() {
     request.setActionUrl(null);
     assertThat(request.getActionUrl()).isNull();
-    request.setActionUrl("http://action.com");
-    assertThat(request.getActionUrl()).isEqualTo("http://action.com");
+    request.setActionUrl("https://action.com");
+    assertThat(request.getActionUrl()).isEqualTo("https://action.com");
   }
 
   /**
@@ -147,8 +147,8 @@ class PiwikRequestTest {
    */
   @Test
   void testContentTarget() {
-    request.setContentTarget("http://target.com");
-    assertThat(request.getContentTarget()).isEqualTo("http://target.com");
+    request.setContentTarget("https://target.com");
+    assertThat(request.getContentTarget()).isEqualTo("https://target.com");
   }
 
   /**
@@ -292,8 +292,8 @@ class PiwikRequestTest {
   @Test
   void testDownloadUrl() {
 
-    request.setDownloadUrl("http://download.com");
-    assertThat(request.getDownloadUrl()).isEqualTo("http://download.com");
+    request.setDownloadUrl("https://download.com");
+    assertThat(request.getDownloadUrl()).isEqualTo("https://download.com");
   }
 
   /**
@@ -537,8 +537,8 @@ class PiwikRequestTest {
    */
   @Test
   void testOutlinkUrl() {
-    request.setOutlinkUrl("http://outlink.com");
-    assertThat(request.getOutlinkUrl()).isEqualTo("http://outlink.com");
+    request.setOutlinkUrl("https://outlink.com");
+    assertThat(request.getOutlinkUrl()).isEqualTo("https://outlink.com");
   }
 
   /**
@@ -661,8 +661,8 @@ class PiwikRequestTest {
    */
   @Test
   void testReferrerUrl() {
-    request.setReferrerUrl("http://referrer.com");
-    assertThat(request.getReferrerUrl()).isEqualTo("http://referrer.com");
+    request.setReferrerUrl("https://referrer.com");
+    assertThat(request.getReferrerUrl()).isEqualTo("https://referrer.com");
   }
 
   /**

@@ -124,6 +124,15 @@ public class TrackerConfiguration {
   boolean disableSslHostVerification;
 
   /**
+   * The thread pool size for the async sender. Defaults to 2.
+   *
+   * <p>Attention: If you use this library in a web application, make sure that this thread pool
+   * does not exceed the thread pool of the web application. Otherwise, you might run into
+   * problems.
+   */
+  int threadPoolSize = 2;
+
+  /**
    * Validates the auth token. The auth token must be exactly 32 characters long.
    */
   public void validate() {

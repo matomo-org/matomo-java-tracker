@@ -7,6 +7,7 @@
 
 package org.matomo.java.tracking.parameters;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.security.SecureRandom;
 import java.util.Random;
 import java.util.UUID;
@@ -33,6 +34,7 @@ public class VisitorId {
    *
    * @return A randomly generated visitor id
    */
+  @edu.umd.cs.findbugs.annotations.NonNull
   public static VisitorId random() {
     VisitorId visitorId = new VisitorId();
     RANDOM.nextBytes(visitorId.representation);
@@ -48,6 +50,7 @@ public class VisitorId {
    * @param hash A number (e.g. a hash code) to create the visitor id from
    * @return Always the same visitor id for the same input
    */
+  @edu.umd.cs.findbugs.annotations.NonNull
   public static VisitorId fromHash(long hash) {
     VisitorId visitorId = new VisitorId();
     long remainingHash = hash;
@@ -66,6 +69,7 @@ public class VisitorId {
    * @param uuid A UUID to create the visitor id from
    * @return The visitor id for the given UUID
    */
+  @edu.umd.cs.findbugs.annotations.NonNull
   public static VisitorId fromUUID(@NonNull UUID uuid) {
     return fromHash(uuid.getMostSignificantBits());
   }
@@ -79,8 +83,9 @@ public class VisitorId {
    * @param inputHex A hexadecimal string to create the visitor id from
    * @return The visitor id for the given input
    */
-  public static VisitorId fromHex(String inputHex) {
-    if (inputHex == null || inputHex.trim().isEmpty()) {
+  @edu.umd.cs.findbugs.annotations.NonNull
+  public static VisitorId fromHex(@NonNull String inputHex) {
+    if (inputHex.trim().isEmpty()) {
       throw new IllegalArgumentException("Hex string must not be null or empty");
     }
     if (inputHex.length() > 16) {
@@ -101,12 +106,25 @@ public class VisitorId {
         throw new IllegalArgumentException("Input must be a valid hex string", e);
       }
     }
-
-
     return visitorId;
   }
 
+  /**
+   * Creates a visitor id from a string. The string will be hashed to create the visitor id.
+   *
+   * @param str A string to create the visitor id from
+   * @return The visitor id for the given string or null if the string is null or empty
+   */
+  @Nullable
+  public static VisitorId fromString(@Nullable String str) {
+    if (str == null || str.trim().isEmpty()) {
+      return null;
+    }
+    return fromHash(str.hashCode());
+  }
+
   @Override
+  @edu.umd.cs.findbugs.annotations.NonNull
   public String toString() {
     return Hex.fromBytes(representation);
   }
