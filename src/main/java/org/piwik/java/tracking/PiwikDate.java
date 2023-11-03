@@ -26,6 +26,7 @@ public class PiwikDate extends MatomoDate {
    *
    * @deprecated Use {@link Instant} instead.
    */
+  @Deprecated
   public PiwikDate() {
   }
 
@@ -35,6 +36,7 @@ public class PiwikDate extends MatomoDate {
    * @param epochMilli The time in milliseconds since the epoch
    * @deprecated Use {@link Instant} instead.
    */
+  @Deprecated
   public PiwikDate(long epochMilli) {
     super(epochMilli);
   }

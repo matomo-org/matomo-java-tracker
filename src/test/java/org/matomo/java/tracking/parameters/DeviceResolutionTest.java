@@ -39,4 +39,16 @@ class DeviceResolutionTest {
         .hasMessage("Wrong dimension size");
   }
 
+  @Test
+  void failsIfDeviceResolutionIsTooShort() {
+    assertThatThrownBy(() -> DeviceResolution.fromString("1"))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Wrong device resolution size");
+  }
+
+  @Test
+  void returnsNullIfDeviceResolutionIsEmpty() {
+    assertThat(DeviceResolution.fromString("")).isNull();
+  }
+
 }

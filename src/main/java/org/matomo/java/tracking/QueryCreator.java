@@ -89,9 +89,9 @@ class QueryCreator {
     for (TrackingParameterMethod method : TRACKING_PARAMETER_METHODS) {
       appendParameter(method, request, query);
     }
-    if (request.getCustomTrackingParameters() != null) {
+    if (request.getAdditionalParameters() != null) {
       for (Entry<String, Collection<Object>> entry : request
-          .getCustomTrackingParameters()
+          .getAdditionalParameters()
           .entrySet()) {
         for (Object value : entry.getValue()) {
           if (value != null && !value.toString().trim().isEmpty()) {

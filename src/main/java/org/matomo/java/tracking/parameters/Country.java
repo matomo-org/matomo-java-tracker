@@ -105,6 +105,7 @@ public class Country {
    * @deprecated Since you instantiate this class, you can determine the language on your own
    * using {@link Locale#getCountry()}
    */
+  @Deprecated
   public final void setLocale(Locale locale) {
     if (locale == null || locale.getCountry() == null || locale.getCountry().isEmpty()) {
       throw new IllegalArgumentException("Invalid locale");

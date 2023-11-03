@@ -7,6 +7,7 @@
 
 package org.matomo.java.tracking;
 
+import static java.util.Collections.singleton;
 import static java.util.Objects.requireNonNull;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -27,6 +28,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Tolerate;
 import org.matomo.java.tracking.parameters.AcceptLanguage;
 import org.matomo.java.tracking.parameters.Country;
 import org.matomo.java.tracking.parameters.CustomVariable;
@@ -44,7 +46,7 @@ import org.matomo.java.tracking.parameters.VisitorId;
  *
  * @author brettcsorba
  */
-@Builder
+@Builder(builderMethodName = "request")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -576,7 +578,7 @@ public class MatomoRequest {
 
   private Iterable<Object> dimensions;
 
-  private Map<String, Collection<Object>> customTrackingParameters;
+  private Map<String, Collection<Object>> additionalParameters;
 
   /**
    * Create a new request from the id of the site being tracked and the full
@@ -616,10 +618,10 @@ public class MatomoRequest {
    * @return the list of objects currently stored at the specified key
    */
   public List<Object> getCustomTrackingParameter(@NonNull String key) {
-    if (customTrackingParameters == null || customTrackingParameters.isEmpty()) {
+    if (additionalParameters == null || additionalParameters.isEmpty()) {
       return Collections.emptyList();
     }
-    Collection<Object> parameterValues = customTrackingParameters.get(key);
+    Collection<Object> parameterValues = additionalParameters.get(key);
     if (parameterValues == null || parameterValues.isEmpty()) {
       return Collections.emptyList();
     }
@@ -643,15 +645,15 @@ public class MatomoRequest {
   ) {
 
     if (value == null) {
-      if (customTrackingParameters != null) {
-        customTrackingParameters.remove(key);
+      if (additionalParameters != null) {
+        additionalParameters.remove(key);
       }
     } else {
-      if (customTrackingParameters == null) {
-        customTrackingParameters = new LinkedHashMap<>();
+      if (additionalParameters == null) {
+        additionalParameters = new LinkedHashMap<>();
       }
       Collection<Object> values =
-          customTrackingParameters.computeIfAbsent(key, k -> new ArrayList<>());
+          additionalParameters.computeIfAbsent(key, k -> new ArrayList<>());
       values.clear();
       values.add(value);
     }
@@ -666,17 +668,17 @@ public class MatomoRequest {
    * @param value the parameter's value.  Cannot be null
    */
   public void addCustomTrackingParameter(@NonNull String key, @NonNull Object value) {
-    if (customTrackingParameters == null) {
-      customTrackingParameters = new LinkedHashMap<>();
+    if (additionalParameters == null) {
+      additionalParameters = new LinkedHashMap<>();
     }
-    customTrackingParameters.computeIfAbsent(key, k -> new ArrayList<>()).add(value);
+    additionalParameters.computeIfAbsent(key, k -> new ArrayList<>()).add(value);
   }
 
   /**
    * Removes all custom tracking parameters.
    */
   public void clearCustomTrackingParameter() {
-    customTrackingParameters.clear();
+    additionalParameters.clear();
   }
 
   /**
@@ -939,6 +941,58 @@ public class MatomoRequest {
       visitCustomVariables = new CustomVariables();
     }
     setCustomVariable(visitCustomVariables, customVariable, index);
+  }
+
+  /**
+   * Sets a custom parameter to append to the Matomo tracking parameters.
+   *
+   * <p>Attention: If a parameter with the same name already exists, it will be appended twice!
+   *
+   * @param parameterName The name of the query parameter to append. Must not be null or empty.
+   * @param value The value of the query parameter to append. To remove the parameter, pass null.
+   */
+  @Deprecated
+  public void setParameter(@NonNull String parameterName, Object value) {
+    if (parameterName.trim().isEmpty()) {
+      throw new IllegalArgumentException("Parameter name must not be empty");
+    }
+    if (additionalParameters == null) {
+      if (value == null) {
+        return;
+      }
+      additionalParameters = new LinkedHashMap<>();
+    }
+    if (value == null) {
+      additionalParameters.remove(parameterName);
+    } else {
+      additionalParameters.put(parameterName, singleton(value));
+    }
+  }
+
+  /**
+   * Creates a new {@link MatomoRequestBuilder} instance. Only here for backwards compatibility.
+   *
+   * @deprecated Use {@link MatomoRequest#request()} instead.
+   */
+  @Deprecated
+  public static org.matomo.java.tracking.MatomoRequestBuilder builder() {
+    return new org.matomo.java.tracking.MatomoRequestBuilder();
+  }
+
+  /**
+   * Parses the given device resolution string and sets the {@link #deviceResolution} field.
+   *
+   * @param deviceResolution the device resolution string to parse. Format: "WIDTHxHEIGHT"
+   * @deprecated Use {@link #setDeviceResolution(DeviceResolution)} instead.
+   */
+  @Tolerate
+  @Deprecated
+  public void setDeviceResolution(@Nullable String deviceResolution) {
+    if (deviceResolution == null || deviceResolution.trim().isEmpty()) {
+      this.deviceResolution = null;
+    } else {
+      this.deviceResolution = DeviceResolution.fromString(deviceResolution);
+    }
   }
 
 }

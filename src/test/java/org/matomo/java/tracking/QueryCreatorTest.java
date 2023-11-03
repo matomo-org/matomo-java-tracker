@@ -243,18 +243,18 @@ class QueryCreatorTest {
     whenCreatesQuery();
     assertThat(query).isEqualTo(
         "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&cvar=%7B%227%22%3A%5B%22key%22%2C%22val%22%5D%7D&send_image=0&rand=random");
-    matomoRequestBuilder.customTrackingParameters(singletonMap("key", singleton("test")));
+    matomoRequestBuilder.additionalParameters(singletonMap("key", singleton("test")));
     whenCreatesQuery();
     assertThat(query).isEqualTo(
         "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&cvar=%7B%227%22%3A%5B%22key%22%2C%22val%22%5D%7D&send_image=0&rand=random&key=test");
-    matomoRequestBuilder.customTrackingParameters(singletonMap("key", asList("test", "test2")));
+    matomoRequestBuilder.additionalParameters(singletonMap("key", asList("test", "test2")));
     whenCreatesQuery();
     assertThat(query).isEqualTo(
         "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&cvar=%7B%227%22%3A%5B%22key%22%2C%22val%22%5D%7D&send_image=0&rand=random&key=test&key=test2");
     Map<String, Collection<Object>> customTrackingParameters = new HashMap<>();
     customTrackingParameters.put("key", asList("test", "test2"));
     customTrackingParameters.put("key2", Collections.singletonList("test3"));
-    matomoRequestBuilder.customTrackingParameters(customTrackingParameters);
+    matomoRequestBuilder.additionalParameters(customTrackingParameters);
     whenCreatesQuery();
     assertThat(query).isEqualTo(
         "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&cvar=%7B%227%22%3A%5B%22key%22%2C%22val%22%5D%7D&send_image=0&rand=random&key2=test3&key=test&key=test2");
@@ -302,7 +302,7 @@ class QueryCreatorTest {
         "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&send_image=0&rand=random");
     Map<String, Collection<Object>> customTrackingParameters = new HashMap<>();
     customTrackingParameters.put("ke/y", Collections.singletonList("te:st"));
-    matomoRequestBuilder.customTrackingParameters(customTrackingParameters);
+    matomoRequestBuilder.additionalParameters(customTrackingParameters);
     whenCreatesQuery();
     assertThat(query).isEqualTo(
         "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&send_image=0&rand=random&ke%2Fy=te%3Ast");

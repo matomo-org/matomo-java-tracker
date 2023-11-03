@@ -35,8 +35,11 @@ public class DeviceResolution {
       @Nullable
       String deviceResolution
   ) {
-    if (deviceResolution == null) {
+    if (deviceResolution == null || deviceResolution.trim().isEmpty()) {
       return null;
+    }
+    if (deviceResolution.length() < 3) {
+      throw new IllegalArgumentException("Wrong device resolution size");
     }
     String[] dimensions = deviceResolution.split("x");
     if (dimensions.length != 2) {

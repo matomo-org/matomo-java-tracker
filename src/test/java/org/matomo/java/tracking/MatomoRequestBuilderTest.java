@@ -1,9 +1,9 @@
 package org.matomo.java.tracking;
 
 import static java.util.Collections.singleton;
+import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import org.matomo.java.tracking.parameters.CustomVariables;
 
@@ -17,13 +17,12 @@ class MatomoRequestBuilderTest {
     CustomVariable visitCustomVariable =
         new CustomVariable("visitCustomVariableName", "visitCustomVariableValue");
 
-    MatomoRequest matomoRequest = MatomoRequest
-        .builder()
+    MatomoRequest matomoRequest = new MatomoRequestBuilder()
         .siteId(42)
         .actionName("ACTION_NAME")
         .actionUrl("https://www.your-domain.tld/some/page?query=foo")
         .referrerUrl("https://referrer.com")
-        .customTrackingParameters(Collections.singletonMap(
+        .additionalParameters(singletonMap(
             "trackingParameterName",
             singleton("trackingParameterValue")
         ))
@@ -51,4 +50,40 @@ class MatomoRequestBuilderTest {
     assertThat(matomoRequest.getCustomAction()).isTrue();
 
   }
+
+  @Test
+  void setCustomTrackingParameters() {
+    MatomoRequest matomoRequest = new MatomoRequestBuilder()
+        .customTrackingParameters(singletonMap("foo", "bar"))
+        .siteId(42)
+        .actionName("ACTION_NAME")
+        .actionUrl("https://www.your-domain.tld/some/page?query=foo")
+        .referrerUrl("https://referrer.com")
+        .build();
+
+    assertThat(matomoRequest.getCustomTrackingParameter("foo")).containsExactly("bar");
+  }
+
+  @Test
+  void setCustomTrackingParametersWithCollectopm() {
+    MatomoRequest matomoRequest = new MatomoRequestBuilder()
+        .customTrackingParameters(singletonMap("foo", singleton("bar")))
+        .siteId(42)
+        .actionName("ACTION_NAME")
+        .actionUrl("https://www.your-domain.tld/some/page?query=foo")
+        .referrerUrl("https://referrer.com")
+        .build();
+
+    assertThat(matomoRequest.getCustomTrackingParameter("foo")).containsExactly("bar");
+  }
+
+  @Test
+  void acceptsNullAsHeaderAcceptLanguage() {
+    MatomoRequest matomoRequest = new MatomoRequestBuilder()
+        .headerAcceptLanguage((String) null)
+        .build();
+
+    assertThat(matomoRequest.getHeaderAcceptLanguage()).isNull();
+  }
+
 }

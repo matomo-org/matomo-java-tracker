@@ -15,7 +15,7 @@ class MatomoRequestTest {
     request.setCustomTrackingParameter("foo", "bar");
 
     assertThat(request.getCustomTrackingParameter("baz")).isEmpty();
-    assertThat(request.getCustomTrackingParameters()).isNotEmpty();
+    assertThat(request.getAdditionalParameters()).isNotEmpty();
     assertThat(request.getCustomTrackingParameter("foo")).isNotEmpty();
   }
 
@@ -90,6 +90,45 @@ class MatomoRequestTest {
   void setVisitCustomVariableInitializesVisitCustomVariablesIfCustomVariableParameterIsNullAndIndexIsPositive() {
     request.setVisitCustomVariable(new CustomVariable("key", "value"), 1);
     assertThat(request.getVisitCustomVariables()).isNotNull();
+  }
+
+  @Test
+  void setsCustomParameter() {
+    request.setParameter("foo", 1);
+    assertThat(request.getCustomTrackingParameter("foo")).contains(1);
+  }
+
+  @Test
+  void failsToSetCustomParameterIfKeyIsNull() {
+    assertThatThrownBy(() -> request.setParameter(
+        null,
+        1
+    )).isInstanceOf(NullPointerException.class);
+  }
+
+  @Test
+  void doesNothingWhenSettingCustomParameterIfValueIsNull() {
+    request.setParameter("foo", null);
+    assertThat(request.getAdditionalParameters()).isNull();
+  }
+
+  @Test
+  void removesCustomParameter() {
+    request.setParameter("foo", 1);
+    request.setParameter("foo", null);
+    assertThat(request.getAdditionalParameters()).isEmpty();
+  }
+
+  @Test
+  void setsDeviceResolutionString() {
+    request.setDeviceResolution("1920x1080");
+    assertThat(request.getDeviceResolution().toString()).isEqualTo("1920x1080");
+  }
+
+  @Test
+  void failsIfSetParameterParameterNameIsBlank() {
+    assertThatThrownBy(() -> request.setParameter(" ", "bar")).isInstanceOf(
+        IllegalArgumentException.class);
   }
 
 }
