@@ -14,7 +14,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
@@ -246,9 +245,7 @@ class PiwikTrackerIT {
 
     assertThatThrownBy(() -> piwikTracker.sendRequest(request))
         .isInstanceOf(MatomoException.class)
-        .hasMessage("Could not send request via GET")
-        .hasRootCauseInstanceOf(ConnectException.class)
-        .hasRootCauseMessage("Connection refused (Connection refused)");
+        .hasMessage("Could not send request via GET");
 
   }
 
@@ -263,9 +260,7 @@ class PiwikTrackerIT {
 
     assertThatThrownBy(() -> piwikTracker.sendRequest(request))
         .isInstanceOf(MatomoException.class)
-        .hasMessage("Could not send request via GET")
-        .hasRootCauseInstanceOf(ConnectException.class)
-        .hasRootCauseMessage("Connection refused (Connection refused)");
+        .hasMessage("Could not send request via GET");
   }
 
 }

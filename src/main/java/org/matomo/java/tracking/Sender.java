@@ -41,9 +41,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 class Sender {
 
-  private static final TrustManager[] TRUST_ALL_MANAGERS = new TrustManager[] {
-      new TrustingX509TrustManager()
-  };
+  private static final TrustManager[] TRUST_ALL_MANAGERS =
+      new TrustManager[] {new TrustingX509TrustManager()};
   public static final TrustingHostnameVerifier TRUSTING_HOSTNAME_VERIFIER =
       new TrustingHostnameVerifier();
 
@@ -134,7 +133,10 @@ class Sender {
     }
   }
 
-  private HttpURLConnection openProxiedConnection(@NonNull URL url) throws IOException {
+  private HttpURLConnection openProxiedConnection(
+      @NonNull
+      URL url
+  ) throws IOException {
     requireNonNull(url, "URL must not be null");
     requireNonNull(trackerConfiguration.getProxyHost(), "Proxy host must not be null");
     if (trackerConfiguration.getProxyPort() <= 0) {
