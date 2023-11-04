@@ -1,10 +1,9 @@
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker</artifactId>
-    <version>3.0.0-rc2-SNAPSHOT</version>
+    <version>3.0.0-rc2</version>
     <packaging>jar</packaging>
 
     <name>Matomo Java Tracker</name>
@@ -42,7 +41,7 @@
         <connection>scm:git:https://@github.com/matomo-org/matomo-java-tracker.git</connection>
         <developerConnection>scm:git:https://github.com/matomo-org/matomo-java-tracker.git</developerConnection>
         <url>https://github.com/matomo-org/matomo-java-tracker</url>
-        <tag>HEAD</tag>
+        <tag>matomo-java-tracker-3.0.0-rc2</tag>
     </scm>
 
     <distributionManagement>
