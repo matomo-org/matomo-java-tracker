@@ -391,13 +391,13 @@ public class MatomoRequest {
   private String eventCategory;
 
   /**
-   * e.g. Play, Pause, Duration, Add Playlist, Downloaded, Clicked...
+   * An event action like Play, Pause, Duration, Add Playlist, Downloaded, Clicked...
    */
   @TrackingParameter(name = "e_a")
   private String eventAction;
 
   /**
-   * e.g. a Movie name, or Song name, or File name...
+   * The event name for example a Movie name, or Song name, or File name...
    */
   @TrackingParameter(name = "e_n")
   private String eventName;
@@ -541,7 +541,7 @@ public class MatomoRequest {
 
   /**
    * If set to 0 (send_image=0) Matomo will respond with an HTTP 204 response code instead of a GIF image. This improves
-   * performance and can fix errors if images are not allowed to be obtained directly (e.g. Chrome Apps). Available
+   * performance and can fix errors if images are not allowed to be obtained directly (like Chrome Apps). Available
    * since Matomo 2.10.0
    *
    * <p>Default is {@code false}
@@ -596,7 +596,7 @@ public class MatomoRequest {
    *
    * @param siteId    the id of the website we're tracking a visit/action for
    * @param actionUrl the full URL for the current action
-   * @deprecated Please use {@link MatomoRequest#builder()}
+   * @deprecated Please use {@link MatomoRequest#request()}
    */
   @Deprecated
   public MatomoRequest(int siteId, String actionUrl) {

@@ -30,7 +30,7 @@ public class VisitorId {
    * Static factory to generate a random visitor id.
    *
    * <p>Please consider creating a fixed id for each visitor by getting a hash code from e.g. the username and
-   * using {@link #fromHash(long)}
+   * using {@link #fromHash(long)} or {@link #fromString(String)} instead of using this method.
    *
    * @return A randomly generated visitor id
    */
@@ -47,7 +47,7 @@ public class VisitorId {
    * <p>You can use e.g. {@link Object#hashCode()} to generate a hash code for an object, e.g. a username
    * string as input.
    *
-   * @param hash A number (e.g. a hash code) to create the visitor id from
+   * @param hash A number (a hash code) to create the visitor id from
    * @return Always the same visitor id for the same input
    */
   @edu.umd.cs.findbugs.annotations.NonNull

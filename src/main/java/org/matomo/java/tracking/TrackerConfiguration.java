@@ -24,7 +24,7 @@ public class TrackerConfiguration {
 
   private static final Pattern AUTH_TOKEN_PATTERN = Pattern.compile("[a-z0-9]+");
   /**
-   * The Matomo Tracking HTTP API endpoint, e.g. https://your-matomo-domain.example/matomo.php
+   * The Matomo Tracking HTTP API endpoint, for example https://your-matomo-domain.example/matomo.php
    */
   @NonNull URI apiEndpoint;
 
