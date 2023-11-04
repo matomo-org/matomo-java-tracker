@@ -35,6 +35,17 @@ Further information on Matomo and Matomo HTTP tracking:
 * [Matomo Developer](https://developer.matomo.org/)
 * [The Matomo project](https://matomo.org/)
 
+Projects that use Matomo Java Tracker:
+
+* [Box-c - supports the UNC Libraries' Digital Collections Repository](https://github.com/UNC-Libraries/box-c)
+* [DSpace - provide durable access to digital resources](https://github.com/thanvanlong/dspace)
+* [Identifiers.org satellite Web SPA](https://github.com/identifiers-org/cloud-satellite-web-spa)
+* [Cloud native Resolver Web Service for identifiers.org](https://github.com/identifiers-org/cloud-ws-resolver)
+* [Resource Catalogue](https://github.com/madgeek-arc/resource-catalogue)
+* [INCEpTION - A semantic annotation platform offering intelligent assistance and knowledge management](https://github.com/inception-project/inception)
+* [QualiChain Analytics Intelligent Profiling](https://github.com/JoaoCabrita95/IP)
+* And many closed source projects that we are not aware of :smile:
+
 ## Table of Contents
 
 * [What Is New?](#what-is-new)
