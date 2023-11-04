@@ -290,7 +290,7 @@ public class YourImplementation {
     public void yourMethod() {
 
         Collection<MatomoRequest> requests = new ArrayList<>();
-        MatomoRequestBuilder builder = MatomoRequest.builder().siteId(42);
+        MatomoRequestBuilder builder = MatomoRequest.request().siteId(42);
         requests.add(builder.actionUrl("https://www.mydomain.com/some/page").actionName("Some Page").build());
         requests.add(builder.actionUrl("https://www.mydomain.com/another/page").actionName("Another Page").build());
 
@@ -330,7 +330,7 @@ public class YourImplementation {
     public void yourMethod() {
 
         Collection<MatomoRequest> requests = new ArrayList<>();
-        MatomoRequestBuilder builder = MatomoRequest.builder().siteId(42);
+        MatomoRequestBuilder builder = MatomoRequest.request().siteId(42);
         requests.add(builder.actionUrl("https://www.mydomain.com/some/page").actionName("Some Page").build());
         requests.add(builder
                 .actionUrl("https://www.mydomain.com/another/page")
