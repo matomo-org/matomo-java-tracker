@@ -22,7 +22,6 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Locale.LanguageRange;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -370,10 +369,10 @@ class MatomoTrackerIT {
   }
 
   @Test
-  void exampleWorks() {
+  void example() {
 
-    TrackerConfiguration configuration = TrackerConfiguration
-        .builder()
+    // Create the tracker configuration
+    TrackerConfiguration configuration = TrackerConfiguration.builder()
         .apiEndpoint(URI.create("https://your-domain.net/matomo/matomo.php"))
         .defaultSiteId(42) // if not explicitly specified by action
         .build();
@@ -381,23 +380,21 @@ class MatomoTrackerIT {
     // Prepare the tracker (stateless - can be used for multiple requests)
     MatomoTracker tracker = new MatomoTracker(configuration);
 
-    // Track an action asynchronously
-    CompletableFuture<Void> future = matomoTracker.sendBulkRequestAsync(MatomoRequest
+    MatomoRequest request = MatomoRequest
         .builder()
         .actionName("User Profile / Upload Profile Picture")
         .actionUrl("https://your-domain.net/user/profile/picture")
         .visitorId(VisitorId.fromString("some@email-adress.org"))
         // ...
-        .build());
+        .build();
 
-    // If you want to ensure the request has been handled:
-    try {
-      future.get();
-    } catch (InterruptedException e) {
-      // Occurs if the current thread is interrupted while waiting
-    } catch (ExecutionException e) {
-      // Happens on any exception during the request
-    }
+    // Send the request asynchronously (non-blocking) as an HTTP POST request (payload is JSON and contains the
+    // tracking parameters)
+    CompletableFuture<Void> future = tracker.sendBulkRequestAsync(request);
+
+    // If you want to ensure the request was sent without exceptions:
+    future.join(); // throws an unchecked exception if the request failed
+
   }
 
   @Test

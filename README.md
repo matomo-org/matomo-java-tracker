@@ -361,8 +361,6 @@ public class YourImplementation {
     }
 
 }
-
-
 ```
 
 ## Migration from Version 2 to 3

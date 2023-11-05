@@ -637,7 +637,9 @@ public class MatomoRequest {
    *
    * @param key   the parameter's key.  Cannot be null
    * @param value the parameter's value.  Removes the parameter if null
+   * @deprecated Use {@link MatomoRequest.MatomoRequestBuilder#additionalParameters(Map)} instead.
    */
+  @Deprecated
   public void setCustomTrackingParameter(
       @NonNull String key,
       @Nullable
@@ -666,6 +668,7 @@ public class MatomoRequest {
    *
    * @param key   the parameter's key.  Cannot be null
    * @param value the parameter's value.  Cannot be null
+   * @deprecated Use {@link MatomoRequest.MatomoRequestBuilder#additionalParameters(Map)} instead.
    */
   public void addCustomTrackingParameter(@NonNull String key, @NonNull Object value) {
     if (additionalParameters == null) {
@@ -676,7 +679,11 @@ public class MatomoRequest {
 
   /**
    * Removes all custom tracking parameters.
+   *
+   * @deprecated Please use {@link MatomoRequest.MatomoRequestBuilder#additionalParameters(Map)} instead so that you can
+   * manage the map yourself.
    */
+  @Deprecated
   public void clearCustomTrackingParameter() {
     additionalParameters.clear();
   }
@@ -697,8 +704,10 @@ public class MatomoRequest {
    *
    * @param index the index of the {@link EcommerceItem} to return
    * @return the {@link EcommerceItem} at the specified index
+   * @deprecated Use @link {@link MatomoRequest.MatomoRequestBuilder#ecommerceItems(EcommerceItems)} instead
    */
   @Nullable
+  @Deprecated
   public EcommerceItem getEcommerceItem(int index) {
     if (ecommerceItems == null || ecommerceItems.isEmpty()) {
       return null;
