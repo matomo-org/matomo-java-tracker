@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import java.net.URI;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -246,6 +247,17 @@ public class MatomoTracker {
     } else {
       log.warn("Not sending request, because tracker is disabled");
     }
+  }
+
+  /**
+   * Send multiple requests in a single HTTP call.  More efficient than sending
+   * several individual requests.
+   *
+   * @param requests the requests to send
+   * @return completable future to let you know when the request is done
+   */
+  public CompletableFuture<Void> sendBulkRequestAsync(MatomoRequest... requests) {
+    return sendBulkRequestAsync(Arrays.asList(requests), null, null);
   }
 
   /**

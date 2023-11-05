@@ -47,8 +47,7 @@ class MatomoTrackerIT {
 
   private static final int SITE_ID = 42;
 
-  private final TrackerConfigurationBuilder trackerConfigurationBuilder =
-      TrackerConfiguration.builder();
+  private final TrackerConfigurationBuilder trackerConfigurationBuilder = TrackerConfiguration.builder();
 
   private final MatomoRequestBuilder requestBuilder = MatomoRequest
       .builder()
@@ -83,9 +82,7 @@ class MatomoTrackerIT {
   @Test
   void requiresSiteId() {
 
-    trackerConfigurationBuilder
-        .apiEndpoint(URI.create(wireMockServer.baseUrl() + "/matomo.php"))
-        .build();
+    trackerConfigurationBuilder.apiEndpoint(URI.create(wireMockServer.baseUrl() + "/matomo.php")).build();
 
     assertThatThrownBy(this::whenSendsRequestAsync)
         .isInstanceOf(IllegalArgumentException.class)
@@ -117,9 +114,9 @@ class MatomoTrackerIT {
 
   private void thenGetsRequest(String expectedQuery) {
     assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
-      wireMockServer.verify(getRequestedFor(urlEqualTo(String.format("/matomo.php?%s",
-          expectedQuery
-      ))).withHeader("User-Agent", equalTo("MatomoJavaClient")));
+      wireMockServer.verify(getRequestedFor(urlEqualTo(String.format("/matomo.php?%s", expectedQuery))).withHeader("User-Agent",
+          equalTo("MatomoJavaClient")
+      ));
     });
   }
 
@@ -172,8 +169,7 @@ class MatomoTrackerIT {
 
     whenSendsRequestAsync();
 
-    thenGetsRequest(
-        "idsite=42&rec=1&apiv=1&_id=00bbccddeeff1122&java=0&send_image=0&rand=someRandom");
+    thenGetsRequest("idsite=42&rec=1&apiv=1&_id=00bbccddeeff1122&java=0&send_image=0&rand=someRandom");
 
   }
 
@@ -218,9 +214,20 @@ class MatomoTrackerIT {
 
   }
 
+  @Test
+  void sendsRequestsBulkAsynchronously() {
+
+    givenTrackerConfigurationWithDefaultSiteId();
+    matomoTracker = new MatomoTracker(trackerConfigurationBuilder.build());
+
+    future = matomoTracker.sendBulkRequestAsync(requestBuilder.build());
+
+    thenPostsRequestWithoutAuthToken("idsite=42&rec=1&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom", "90");
+
+  }
+
   private void whenSendsBulkRequestAsync() {
-    future = new MatomoTracker(trackerConfigurationBuilder.build()).sendBulkRequestAsync(singleton(
-        requestBuilder.build()));
+    future = new MatomoTracker(trackerConfigurationBuilder.build()).sendBulkRequestAsync(singleton(requestBuilder.build()));
   }
 
   private void thenPostsRequestWithoutAuthToken(String expectedQuery, String contentLength) {
@@ -311,9 +318,7 @@ class MatomoTrackerIT {
             .add(new CustomVariable("customVariable1Key", "customVariable1Value"), 4)
             .add(new CustomVariable("customVariable2Key", "customVariable2Value"), 5))
         .visitorVisitCount(2)
-        .visitorFirstVisitTimestamp(LocalDateTime
-            .of(2022, 8, 9, 18, 34, 12)
-            .toInstant(ZoneOffset.UTC))
+        .visitorFirstVisitTimestamp(LocalDateTime.of(2022, 8, 9, 18, 34, 12).toInstant(ZoneOffset.UTC))
         .deviceResolution(DeviceResolution.builder().width(1024).height(768).build())
         .headerAcceptLanguage(AcceptLanguage
             .builder()
@@ -327,13 +332,7 @@ class MatomoTrackerIT {
         .ecommerceItems(EcommerceItems
             .builder()
             .item(org.matomo.java.tracking.parameters.EcommerceItem.builder().sku("SKU").build())
-            .item(EcommerceItem
-                .builder()
-                .sku("SKU")
-                .name("NAME")
-                .category("CATEGORY")
-                .price(123.4)
-                .build())
+            .item(EcommerceItem.builder().sku("SKU").name("NAME").category("CATEGORY").price(123.4).build())
             .build())
         .authToken("fdf6e8461ea9de33176b222519627f78")
         .visitorCountry(Country.fromLanguageRanges("en-GB;q=0.7,de,de-DE;q=0.9,en;q=0.8,en-US;q=0.6"));
@@ -371,17 +370,17 @@ class MatomoTrackerIT {
   @Test
   void exampleWorks() {
 
-    TrackerConfiguration config = TrackerConfiguration
+    TrackerConfiguration configuration = TrackerConfiguration
         .builder()
         .apiEndpoint(URI.create("https://your-domain.net/matomo/matomo.php"))
         .defaultSiteId(42) // if not explicitly specified by action
         .build();
 
-    // Prepare the tracker (stateless - can be used for multiple actions)
-    MatomoTracker matomoTracker = new MatomoTracker(config);
+    // Prepare the tracker (stateless - can be used for multiple requests)
+    MatomoTracker tracker = new MatomoTracker(configuration);
 
-    // Track an action asynchronuously
-    CompletableFuture<Void> future = matomoTracker.sendRequestAsync(MatomoRequest
+    // Track an action asynchronously
+    CompletableFuture<Void> future = matomoTracker.sendBulkRequestAsync(MatomoRequest
         .builder()
         .actionName("User Profile / Upload Profile Picture")
         .actionUrl("https://your-domain.net/user/profile/picture")
@@ -403,9 +402,7 @@ class MatomoTrackerIT {
   void reportsErrors() {
 
     wireMockServer.stubFor(get(urlPathEqualTo("/failing")).willReturn(status(500)));
-    trackerConfigurationBuilder
-        .apiEndpoint(URI.create(wireMockServer.baseUrl() + "/failing"))
-        .defaultSiteId(SITE_ID);
+    trackerConfigurationBuilder.apiEndpoint(URI.create(wireMockServer.baseUrl() + "/failing")).defaultSiteId(SITE_ID);
 
     whenSendsRequestAsync();
 
@@ -441,11 +438,10 @@ class MatomoTrackerIT {
     givenTrackerConfigurationWithDefaultSiteId();
     matomoTracker = new MatomoTracker(trackerConfigurationBuilder.build());
 
-    future =
-        matomoTracker.sendBulkRequestAsync(Arrays.asList(requestBuilder.actionName("First").build(),
-            requestBuilder.actionName("Second").build(),
-            requestBuilder.actionName("Third").build()
-        ));
+    future = matomoTracker.sendBulkRequestAsync(Arrays.asList(requestBuilder.actionName("First").build(),
+        requestBuilder.actionName("Second").build(),
+        requestBuilder.actionName("Third").build()
+    ));
 
     assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
       wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php"))
@@ -547,10 +543,9 @@ class MatomoTrackerIT {
     givenTrackerConfigurationWithDefaultSiteId();
     matomoTracker = new MatomoTracker(trackerConfigurationBuilder.build());
     AtomicBoolean success = new AtomicBoolean();
-    future =
-        matomoTracker.sendBulkRequestAsync(singleton(requestBuilder.build()), v -> {
-          success.set(true);
-        });
+    future = matomoTracker.sendBulkRequestAsync(singleton(requestBuilder.build()), v -> {
+      success.set(true);
+    });
     assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
       wireMockServer.verify(postRequestedFor(urlPathEqualTo("/matomo.php")));
     });
