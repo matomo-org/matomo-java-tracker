@@ -503,14 +503,20 @@ public class MatomoRequest {
   /**
    * An override value for the country. Must be a two-letter ISO 3166 Alpha-2 country code.
    */
-  @TrackingParameter(name = "country", maxLength = 2)
+  @TrackingParameter(
+      name = "country",
+      maxLength = 2
+  )
   private Country visitorCountry;
 
   /**
    * An override value for the region. Should be set to a ISO 3166-2 region code, which are used by MaxMind's and
    * DB-IP's GeoIP2 databases. See here for a list of them for every country.
    */
-  @TrackingParameter(name = "region", maxLength = 2)
+  @TrackingParameter(
+      name = "region",
+      maxLength = 2
+  )
   private String visitorRegion;
 
   /**
@@ -649,9 +655,7 @@ public class MatomoRequest {
    */
   @Deprecated
   public void setCustomTrackingParameter(
-      @NonNull String key,
-      @Nullable
-      Object value
+      @NonNull String key, @Nullable Object value
   ) {
 
     if (value == null) {
@@ -662,8 +666,7 @@ public class MatomoRequest {
       if (additionalParameters == null) {
         additionalParameters = new LinkedHashMap<>();
       }
-      Collection<Object> values =
-          additionalParameters.computeIfAbsent(key, k -> new ArrayList<>());
+      Collection<Object> values = additionalParameters.computeIfAbsent(key, k -> new ArrayList<>());
       values.clear();
       values.add(value);
     }
@@ -678,6 +681,7 @@ public class MatomoRequest {
    * @param value the parameter's value.  Cannot be null
    * @deprecated Use {@link MatomoRequest.MatomoRequestBuilder#additionalParameters(Map)} instead.
    */
+  @Deprecated
   public void addCustomTrackingParameter(@NonNull String key, @NonNull Object value) {
     if (additionalParameters == null) {
       additionalParameters = new LinkedHashMap<>();
@@ -728,7 +732,9 @@ public class MatomoRequest {
    * and EcommerceId and EcommerceRevenue must first be set.
    *
    * @param item the {@link EcommerceItem} to add.  Cannot be null
+   * @deprecated Use @link {@link MatomoRequest.MatomoRequestBuilder#ecommerceItems(EcommerceItems)} instead
    */
+  @Deprecated
   public void addEcommerceItem(@NonNull EcommerceItem item) {
     if (ecommerceItems == null) {
       ecommerceItems = new EcommerceItems();
@@ -738,7 +744,10 @@ public class MatomoRequest {
 
   /**
    * Clears all {@link EcommerceItem} from this order.
+   *
+   * @deprecated Use @link {@link MatomoRequest.MatomoRequestBuilder#ecommerceItems(EcommerceItems)} instead
    */
+  @Deprecated
   public void clearEcommerceItems() {
     ecommerceItems.clear();
   }
@@ -748,7 +757,7 @@ public class MatomoRequest {
    *
    * @param key the key of the variable to get
    * @return the variable at the specified key, null if key is not present
-   * @deprecated Use the {@link #getPageCustomVariable(int)} method instead.
+   * @deprecated Use the {@link #getPageCustomVariables()} method instead.
    */
   @Nullable
   @Deprecated
@@ -773,6 +782,7 @@ public class MatomoRequest {
   }
 
   @Nullable
+  @Deprecated
   private static CustomVariable getCustomVariable(CustomVariables customVariables, int index) {
     if (customVariables == null) {
       return null;
@@ -790,10 +800,7 @@ public class MatomoRequest {
    */
   @Deprecated
   public void setPageCustomVariable(
-      @edu.umd.cs.findbugs.annotations.NonNull
-      String key,
-      @Nullable
-      String value
+      @edu.umd.cs.findbugs.annotations.NonNull String key, @Nullable String value
   ) {
     requireNonNull(key, "Key must not be null");
     if (value == null) {
@@ -820,8 +827,7 @@ public class MatomoRequest {
    */
   @Deprecated
   public void setPageCustomVariable(
-      @Nullable
-      CustomVariable customVariable, int index
+      @Nullable CustomVariable customVariable, int index
   ) {
     if (pageCustomVariables == null) {
       if (customVariable == null) {
@@ -832,10 +838,9 @@ public class MatomoRequest {
     setCustomVariable(pageCustomVariables, customVariable, index);
   }
 
+  @Deprecated
   private static void setCustomVariable(
-      CustomVariables customVariables,
-      @Nullable
-      CustomVariable customVariable, int index
+      CustomVariables customVariables, @Nullable CustomVariable customVariable, int index
   ) {
     if (customVariable == null) {
       customVariables.remove(index);
@@ -884,7 +889,7 @@ public class MatomoRequest {
    *
    * @param key the key of the variable to get
    * @return the variable at the specified key, null if key is not present
-   * @deprecated Use the {@link #getVisitCustomVariable(int)} method instead.
+   * @deprecated Use the {@link #getVisitCustomVariables()} method instead.
    */
   @Nullable
   @Deprecated
@@ -918,10 +923,7 @@ public class MatomoRequest {
    */
   @Deprecated
   public void setUserCustomVariable(
-      @edu.umd.cs.findbugs.annotations.NonNull
-      String key,
-      @Nullable
-      String value
+      @edu.umd.cs.findbugs.annotations.NonNull String key, @Nullable String value
   ) {
     requireNonNull(key, "Key must not be null");
     if (value == null) {
@@ -948,8 +950,7 @@ public class MatomoRequest {
    */
   @Deprecated
   public void setVisitCustomVariable(
-      @Nullable
-      CustomVariable customVariable, int index
+      @Nullable CustomVariable customVariable, int index
   ) {
     if (visitCustomVariables == null) {
       if (customVariable == null) {
@@ -966,7 +967,8 @@ public class MatomoRequest {
    * <p>Attention: If a parameter with the same name already exists, it will be appended twice!
    *
    * @param parameterName The name of the query parameter to append. Must not be null or empty.
-   * @param value The value of the query parameter to append. To remove the parameter, pass null.
+   * @param value         The value of the query parameter to append. To remove the parameter, pass null.
+   * @deprecated Use @link {@link MatomoRequest.MatomoRequestBuilder#additionalParameters(Map)} instead
    */
   @Deprecated
   public void setParameter(@NonNull String parameterName, Object value) {
