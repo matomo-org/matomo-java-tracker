@@ -114,7 +114,8 @@ class MatomoTrackerIT {
 
   private void thenGetsRequest(String expectedQuery) {
     assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
-      wireMockServer.verify(getRequestedFor(urlEqualTo(String.format("/matomo.php?%s", expectedQuery))).withHeader("User-Agent",
+      wireMockServer.verify(getRequestedFor(urlEqualTo(
+          String.format("/matomo.php?%s", expectedQuery))).withHeader("User-Agent",
           equalTo("MatomoJavaClient")
       ));
     });
@@ -227,7 +228,8 @@ class MatomoTrackerIT {
   }
 
   private void whenSendsBulkRequestAsync() {
-    future = new MatomoTracker(trackerConfigurationBuilder.build()).sendBulkRequestAsync(singleton(requestBuilder.build()));
+    future =
+        new MatomoTracker(trackerConfigurationBuilder.build()).sendBulkRequestAsync(singleton(requestBuilder.build()));
   }
 
   private void thenPostsRequestWithoutAuthToken(String expectedQuery, String contentLength) {
