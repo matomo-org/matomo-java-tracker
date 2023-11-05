@@ -19,7 +19,17 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * A class that sends {@link MatomoRequest}s to a specified Matomo server.
+ * The main class that sends {@link MatomoRequest}s to a specified Matomo server.
+ *
+ * <p>Contains several methods to send requests synchronously and asynchronously. The asynchronous methods return a
+ * {@link CompletableFuture} that can be used to wait for the request to finish. The synchronous methods block until
+ * the request is finished. The asynchronous methods are more efficient if you want to send multiple requests at once.
+ *
+ * Configure this tracker using the {@link TrackerConfiguration} class. You can use the
+ * {@link TrackerConfiguration#builder()} to create a new configuration. The configuration is immutable and can be
+ * reused for multiple trackers.
+ *
+ * The tracker is thread-safe and can be used by multiple threads at once.
  *
  * @author brettcsorba
  */
