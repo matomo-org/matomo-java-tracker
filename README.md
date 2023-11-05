@@ -14,7 +14,7 @@ Features include:
 
 * Track page views, goals, ecommerce transactions and items
 * Supports custom dimensions and custom variables
-* Includes tracking parameters for campaigns, events, downloads, outlinks, site search, devices, visiors
+* Includes tracking parameters for campaigns, events, downloads, outlinks, site search, devices, visitors
 * Supports Java 8 and higher
 * Allows you to skip SSL certificate validation (not recommended for production)
 * Contains nearly no runtime dependencies (only SLF4J)
@@ -53,14 +53,14 @@ Projects that use Matomo Java Tracker:
 * [Need help?](#need-help)
 * [Using this API](#using-this-api)
 * [Migration from Version 2 to 3](#migration-from-version-2-to-3)
-* [Building](#building)
+* [Building and Testing](#building-and-testing)
 * [Versioning](#versioning)
 * [Contribute](#contribute)
 * [License](#license)
 
 ## What Is New?
 
-Do you still use Matomo Java Tracker 2.x? We created version 3, that is compatible with Matomo 4 and 5 and contains less
+Do you still use Matomo Java Tracker 2.x? We created version 3, that is compatible with Matomo 4 and 5 and contains fewer
 dependencies. Release notes can be found here: https://github.com/matomo-org/matomo-java-tracker/releases
 
 Here are the most important changes:
@@ -75,7 +75,7 @@ Here are the most important changes:
 The Javadoc for this project is hosted as a GitHub page for this repo. The latest Javadoc can be
 found [here](https://matomo-org.github.io/matomo-java-tracker/javadoc/index.html). Javadoc folder older versions can be
 found here: https://javadoc.io/doc/org.piwik.java.tracking/matomo-java-tracker
-You can also build the Javadoc yourself. See the section [Building](#building) below.
+You can also build the Javadoc yourself. See the section [Building](#building-and-testing) below.
 
 ## Need help?
 
@@ -224,7 +224,7 @@ The Matomo Tracker currently supports the following builder methods:
 * `.delay(...)` The duration on how long the tracker collects actions until they will be sent out as a bulk request.
   Default: 1 seconds
 * `.enabled(...)` The tracker is enabled per default. You can disable it per configuration with this flag.
-* `.logFailedTracking(...)` Will send errors to the log if the Matomo Tracking API responds with an errornous HTTP code
+* `.logFailedTracking(...)` Will send errors to the log if the Matomo Tracking API responds with an erroneous HTTP code
 * `.connectTimeout(...)` allows you to change the default connection timeout of 10 seconds. 0 is
   interpreted as infinite, null uses the system default
 * `.socketTimeout(...)` allows you to change the default socket timeout of 10 seconds. 0 is
