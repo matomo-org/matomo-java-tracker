@@ -16,7 +16,6 @@ ij_wrap_on_typing = false
 
 [*.java]
 indent_size = 2
-max_line_length = 100
 ij_continuation_indent_size = 4
 ij_java_align_consecutive_assignments = false
 ij_java_align_consecutive_variable_declarations = false
@@ -155,7 +154,7 @@ ij_java_new_line_after_lparen_in_annotation = true
 ij_java_new_line_after_lparen_in_deconstruction_pattern = true
 ij_java_new_line_after_lparen_in_record_header = true
 ij_java_packages_to_use_import_on_demand = 
-ij_java_parameter_annotation_wrap = split_into_lines
+ij_java_parameter_annotation_wrap = normal
 ij_java_parameter_name_prefix = 
 ij_java_parameter_name_suffix = 
 ij_java_parentheses_expression_new_line_after_left_paren = true

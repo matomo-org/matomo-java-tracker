@@ -40,8 +40,7 @@ public class MatomoTracker {
    */
   @Deprecated
   public MatomoTracker(
-      @edu.umd.cs.findbugs.annotations.NonNull
-      String hostUrl
+      @edu.umd.cs.findbugs.annotations.NonNull String hostUrl
   ) {
     this(requireNonNull(hostUrl, "Host URL must not be null"), 0);
   }
@@ -57,8 +56,7 @@ public class MatomoTracker {
    */
   @Deprecated
   public MatomoTracker(
-      @edu.umd.cs.findbugs.annotations.NonNull
-      String hostUrl, int timeout
+      @edu.umd.cs.findbugs.annotations.NonNull String hostUrl, int timeout
   ) {
     this(requireNonNull(hostUrl, "Host URL must not be null"), null, 0, timeout);
   }
@@ -76,10 +74,7 @@ public class MatomoTracker {
    */
   @Deprecated
   public MatomoTracker(
-      @edu.umd.cs.findbugs.annotations.NonNull
-      String hostUrl,
-      @Nullable
-      String proxyHost, int proxyPort, int timeout
+      @edu.umd.cs.findbugs.annotations.NonNull String hostUrl, @Nullable String proxyHost, int proxyPort, int timeout
   ) {
     this(TrackerConfiguration
         .builder()
@@ -98,16 +93,16 @@ public class MatomoTracker {
    * @param trackerConfiguration Configurations parameters (you can use a builder)
    */
   public MatomoTracker(
-      @edu.umd.cs.findbugs.annotations.NonNull
-      TrackerConfiguration trackerConfiguration
+      @edu.umd.cs.findbugs.annotations.NonNull TrackerConfiguration trackerConfiguration
   ) {
     requireNonNull(trackerConfiguration, "Tracker configuration must not be null");
     trackerConfiguration.validate();
     this.trackerConfiguration = trackerConfiguration;
-    sender = new Sender(trackerConfiguration,
+    sender = new Sender(
+        trackerConfiguration,
         new QueryCreator(trackerConfiguration),
-        Executors.newFixedThreadPool(trackerConfiguration.getThreadPoolSize()
-    ));
+        Executors.newFixedThreadPool(trackerConfiguration.getThreadPoolSize())
+    );
   }
 
   /**
@@ -122,16 +117,17 @@ public class MatomoTracker {
    */
   @Deprecated
   public MatomoTracker(
-      @edu.umd.cs.findbugs.annotations.NonNull
-      String hostUrl,
-      @Nullable
-      String proxyHost, int proxyPort
+      @edu.umd.cs.findbugs.annotations.NonNull String hostUrl, @Nullable String proxyHost, int proxyPort
   ) {
     this(hostUrl, proxyHost, proxyPort, -1);
   }
 
   /**
-   * Sends a tracking request to Matomo.
+   * Sends a tracking request to Matomo using the HTTP GET method.
+   *
+   * <p>Use this method if you want to send a single request. If you want to send multiple requests at once, use
+   * {@link #sendBulkRequest(Iterable)} instead. If you want to send multiple requests asynchronously, use
+   * {@link #sendRequestAsync(MatomoRequest)} or {@link #sendBulkRequestAsync(Iterable)} instead.
    *
    * @param request request to send. must not be null
    * @deprecated use sendRequestAsync instead
@@ -147,30 +143,37 @@ public class MatomoTracker {
   }
 
   /**
-   * Send a request.
+   * Send a request asynchronously via HTTP GET.
+   *
+   * <p>Use this method if you want to send a single request. If you want to send multiple requests at once, use
+   * {@link #sendBulkRequestAsync(Iterable)} instead. If you want to send multiple requests synchronously, use
+   * {@link #sendRequest(MatomoRequest)} or {@link #sendBulkRequest(Iterable)} instead.
    *
    * @param request request to send
-   * @return future with response from this request
+   * @return completable future to let you know when the request is done
    */
   public CompletableFuture<Void> sendRequestAsync(
-      @edu.umd.cs.findbugs.annotations.NonNull
-      MatomoRequest request
+      @edu.umd.cs.findbugs.annotations.NonNull MatomoRequest request
   ) {
     return sendRequestAsync(request, null);
   }
 
   /**
-   * Send a request.
+   * Send a request asynchronously via HTTP GET and specify a callback that gets executed when the response arrives.
+   *
+   * <p>Use this method if you want to send a single request. If you want to send multiple requests at once, use
+   * {@link #sendBulkRequestAsync(Iterable, Consumer)} instead. If you want to send multiple requests synchronously, use
+   * {@link #sendRequest(MatomoRequest)} or {@link #sendBulkRequest(Iterable)} instead.
    *
    * @param request  request to send
    * @param callback callback that gets executed when response arrives, null allowed
-   * @return future with response from this request
+   * @return a completable future to let you know when the request is done
+   * @deprecated Please use {@link MatomoTracker#sendRequestAsync(MatomoRequest)} in combination with
+   * {@link CompletableFuture#thenAccept(Consumer)} instead
    */
+  @Deprecated
   public CompletableFuture<Void> sendRequestAsync(
-      @edu.umd.cs.findbugs.annotations.NonNull
-      MatomoRequest request,
-      @Nullable
-      Consumer<Void> callback
+      @edu.umd.cs.findbugs.annotations.NonNull MatomoRequest request, @Nullable Consumer<Void> callback
   ) {
     if (trackerConfiguration.isEnabled()) {
       validate(request);
@@ -186,8 +189,7 @@ public class MatomoTracker {
   }
 
   private void validate(
-      @edu.umd.cs.findbugs.annotations.NonNull
-      MatomoRequest request
+      @edu.umd.cs.findbugs.annotations.NonNull MatomoRequest request
   ) {
     if (trackerConfiguration.getDefaultSiteId() == null && request.getSiteId() == null) {
       throw new IllegalArgumentException("No default site ID and no request site ID is given");
@@ -195,31 +197,35 @@ public class MatomoTracker {
   }
 
   /**
-   * Send multiple requests in a single HTTP call.  More efficient than sending
-   * several individual requests.
+   * Send multiple requests in a single HTTP POST call.
+   *
+   * <p>More efficient than sending several individual requests. If you want to send a single request, use
+   * {@link #sendRequest(MatomoRequest)} instead. If you want to send multiple requests asynchronously, use
+   * {@link #sendBulkRequestAsync(Iterable)} instead.
    *
    * @param requests the requests to send
-   * @deprecated use sendBulkRequestAsync instead
    */
-  @Deprecated
   public void sendBulkRequest(@NonNull Iterable<? extends MatomoRequest> requests) {
     sendBulkRequest(requests, null);
   }
 
   /**
-   * Send multiple requests in a single HTTP call.  More efficient than sending
-   * several individual requests.  Specify the AuthToken if parameters that require
-   * an auth token is used.
+   * Send multiple requests in a single HTTP POST call. More efficient than sending
+   * several individual requests.
+   *
+   * <p>Specify the AuthToken if parameters that require an auth token is used. If you want to send a single request,
+   * use {@link #sendRequest(MatomoRequest)} instead. If you want to send multiple requests asynchronously, use
+   * {@link #sendBulkRequestAsync(Iterable)} instead.
    *
    * @param requests  the requests to send
-   * @param authToken specify if any of the parameters use require AuthToken, null allowed
-   * @deprecated use sendBulkRequestAsync instead
+   * @param authToken specify if any of the parameters use require AuthToken, if null the default auth token from the
+   *                  request or the tracker configuration is used.
+   * @deprecated use {@link #sendBulkRequest(Iterable)} instead and set the auth token in the tracker configuration or
+   * the requests directly.
    */
   @Deprecated
   public void sendBulkRequest(
-      @NonNull Iterable<? extends MatomoRequest> requests,
-      @Nullable
-      String authToken
+      @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String authToken
   ) {
     if (trackerConfiguration.isEnabled()) {
       for (MatomoRequest request : requests) {
@@ -237,11 +243,10 @@ public class MatomoTracker {
    * several individual requests.
    *
    * @param requests the requests to send
-   * @return future with response from these requests
+   * @return completable future to let you know when the request is done
    */
   public CompletableFuture<Void> sendBulkRequestAsync(
-      @edu.umd.cs.findbugs.annotations.NonNull
-      Iterable<? extends MatomoRequest> requests
+      @edu.umd.cs.findbugs.annotations.NonNull Iterable<? extends MatomoRequest> requests
   ) {
     return sendBulkRequestAsync(requests, null, null);
   }
@@ -252,17 +257,18 @@ public class MatomoTracker {
    * an auth token is used.
    *
    * @param requests  the requests to send
-   * @param authToken specify if any of the parameters use require AuthToken, null allowed
+   * @param authToken specify if any of the parameters use require AuthToken, if null the default auth token from the
+   *                  request or the tracker configuration is used
    * @param callback  callback that gets executed when response arrives, null allowed
-   * @return the response from these requests
+   * @return a completable future to let you know when the request is done
+   * @deprecated Please set the auth token in the tracker configuration or the requests directly and use
+   * {@link CompletableFuture#thenAccept(Consumer)} instead for the callback.
    */
+  @Deprecated
   public CompletableFuture<Void> sendBulkRequestAsync(
-      @edu.umd.cs.findbugs.annotations.NonNull
-      Iterable<? extends MatomoRequest> requests,
-      @Nullable
-      String authToken,
-      @Nullable
-      Consumer<Void> callback
+      @edu.umd.cs.findbugs.annotations.NonNull Iterable<? extends MatomoRequest> requests,
+      @Nullable String authToken,
+      @Nullable Consumer<Void> callback
   ) {
     if (trackerConfiguration.isEnabled()) {
       for (MatomoRequest request : requests) {
@@ -285,13 +291,11 @@ public class MatomoTracker {
    *
    * @param requests the requests to send
    * @param callback callback that gets executed when response arrives, null allowed
-   * @return future with response from these requests
+   * @return completable future to let you know when the request is done
    */
   public CompletableFuture<Void> sendBulkRequestAsync(
-      @edu.umd.cs.findbugs.annotations.NonNull
-      Iterable<? extends MatomoRequest> requests,
-      @Nullable
-      Consumer<Void> callback
+      @edu.umd.cs.findbugs.annotations.NonNull Iterable<? extends MatomoRequest> requests,
+      @Nullable Consumer<Void> callback
   ) {
     return sendBulkRequestAsync(requests, null, callback);
   }
@@ -303,13 +307,12 @@ public class MatomoTracker {
    *
    * @param requests  the requests to send
    * @param authToken specify if any of the parameters use require AuthToken, null allowed
-   * @return the response from these requests
+   * @return completable future to let you know when the request is done
+   * @deprecated Please set the auth token in the tracker configuration or the requests directly and use
+   * {@link #sendBulkRequestAsync(Iterable)} instead.
    */
   public CompletableFuture<Void> sendBulkRequestAsync(
-      @edu.umd.cs.findbugs.annotations.NonNull
-      Iterable<? extends MatomoRequest> requests,
-      @Nullable
-      String authToken
+      @edu.umd.cs.findbugs.annotations.NonNull Iterable<? extends MatomoRequest> requests, @Nullable String authToken
   ) {
     return sendBulkRequestAsync(requests, authToken, null);
   }
