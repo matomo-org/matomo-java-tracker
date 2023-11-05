@@ -10,6 +10,7 @@ package org.matomo.java.tracking;
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.Value;
 
 @Builder
@@ -22,13 +23,21 @@ class TrackingParameterMethod {
 
   Pattern pattern;
 
-  void validateParameterValue(Object parameterValue) {
+  int maxLength;
+
+  void validateParameterValue(@NonNull Object parameterValue) {
     if (pattern != null && parameterValue instanceof CharSequence && !pattern
         .matcher((CharSequence) parameterValue)
         .matches()) {
-      throw new IllegalArgumentException(String.format("Invalid value for %s. Must match regex %s",
+      throw new MatomoException(String.format("Invalid value for %s. Must match regex %s",
           parameterName,
           pattern
+      ));
+    }
+    if (parameterValue.toString().length() > maxLength) {
+      throw new MatomoException(String.format("Invalid value for %s. Must be less or equal than %d characters",
+          parameterName,
+          maxLength
       ));
     }
   }

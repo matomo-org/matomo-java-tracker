@@ -2,12 +2,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.piwik.java.tracking</groupId>
-    <artifactId>matomo-java-tracker</artifactId>
+    <artifactId>matomo-java-tracker-parent</artifactId>
     <version>3.0.0-rc3-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
-    <name>Matomo Java Tracker</name>
-    <description>Official Java implementation of the Matomo Tracking HTTP API.</description>
+    <name>Matomo Java Tracker Parent</name>
+    <description>Parent for Matomo Java Tracker modules.</description>
     <url>https://github.com/matomo-org/matomo-java-tracker</url>
 
     <licenses>
@@ -180,7 +180,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+                    <sourceDirectory>core/src/main/java</sourceDirectory>
                     <outputDirectory>${delombok.output}</outputDirectory>
                     <addOutputDirectory>false</addOutputDirectory>
                 </configuration>
@@ -329,48 +329,8 @@
         </profile>
     </profiles>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.github.spotbugs</groupId>
-            <artifactId>spotbugs-annotations</artifactId>
-            <version>4.8.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.10.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <version>3.24.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock</artifactId>
-            <version>2.27.2</version>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
+    <modules>
+        <module>core</module>
+        <module>test</module>
+    </modules>
 </project>

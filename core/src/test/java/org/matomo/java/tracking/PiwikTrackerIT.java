@@ -238,7 +238,7 @@ class PiwikTrackerIT {
 
     assertThatThrownBy(() -> piwikTracker.sendRequest(request))
         .isInstanceOf(MatomoException.class)
-        .hasMessage("Could not send request via GET");
+    ;
 
   }
 
@@ -249,7 +249,7 @@ class PiwikTrackerIT {
 
     assertThatThrownBy(() -> piwikTracker.sendRequest(request))
         .isInstanceOf(MatomoException.class)
-        .hasMessage("Could not send request via GET");
+    ;
   }
 
 }

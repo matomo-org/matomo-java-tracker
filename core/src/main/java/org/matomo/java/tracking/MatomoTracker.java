@@ -112,7 +112,7 @@ public class MatomoTracker {
     sender = new Sender(
         trackerConfiguration,
         new QueryCreator(trackerConfiguration),
-        Executors.newFixedThreadPool(trackerConfiguration.getThreadPoolSize())
+        Executors.newFixedThreadPool(trackerConfiguration.getThreadPoolSize(), new DaemonThreadFactory())
     );
   }
 
@@ -141,9 +141,7 @@ public class MatomoTracker {
    * {@link #sendRequestAsync(MatomoRequest)} or {@link #sendBulkRequestAsync(Iterable)} instead.
    *
    * @param request request to send. must not be null
-   * @deprecated use sendRequestAsync instead
    */
-  @Deprecated
   public void sendRequest(@NonNull MatomoRequest request) {
     if (trackerConfiguration.isEnabled()) {
       log.debug("Sending request via GET: {}", request);
@@ -205,6 +203,19 @@ public class MatomoTracker {
     if (trackerConfiguration.getDefaultSiteId() == null && request.getSiteId() == null) {
       throw new IllegalArgumentException("No default site ID and no request site ID is given");
     }
+  }
+
+  /**
+   * Send multiple requests in a single HTTP POST call.
+   *
+   * <p>More efficient than sending several individual requests. If you want to send a single request, use
+   * {@link #sendRequest(MatomoRequest)} instead. If you want to send multiple requests asynchronously, use
+   * {@link #sendBulkRequestAsync(Iterable)} instead.
+   *
+   * @param requests the requests to send
+   */
+  public void sendBulkRequest(MatomoRequest... requests) {
+    sendBulkRequest(Arrays.asList(requests), null);
   }
 
   /**

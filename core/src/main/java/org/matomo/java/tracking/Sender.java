@@ -31,6 +31,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -41,10 +42,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 class Sender {
 
-  private static final TrustManager[] TRUST_ALL_MANAGERS =
-      new TrustManager[] {new TrustingX509TrustManager()};
-  public static final TrustingHostnameVerifier TRUSTING_HOSTNAME_VERIFIER =
-      new TrustingHostnameVerifier();
+  private static final TrustManager[] TRUST_ALL_MANAGERS = {new TrustingX509TrustManager()};
+  private static final HostnameVerifier TRUSTING_HOSTNAME_VERIFIER = new TrustingHostnameVerifier();
 
   private final TrackerConfiguration trackerConfiguration;
 
@@ -56,8 +55,7 @@ class Sender {
 
   @NonNull
   CompletableFuture<Void> sendSingleAsync(
-      @NonNull
-      MatomoRequest request
+      @NonNull MatomoRequest request
   ) {
     return CompletableFuture.supplyAsync(() -> {
       sendSingle(request);
@@ -66,8 +64,7 @@ class Sender {
   }
 
   void sendSingle(
-      @NonNull
-      MatomoRequest request
+      @NonNull MatomoRequest request
   ) {
     String authToken = AuthToken.determineAuthToken(null, singleton(request), trackerConfiguration);
     RequestValidator.validate(request, authToken);
@@ -75,10 +72,7 @@ class Sender {
     URI apiEndpoint = trackerConfiguration.getApiEndpoint();
     try {
       connection = openConnection(apiEndpoint
-          .resolve(String.format("%s?%s",
-              apiEndpoint.getPath(),
-              queryCreator.createQuery(request, authToken)
-          ))
+          .resolve(String.format("%s?%s", apiEndpoint.getPath(), queryCreator.createQuery(request, authToken)))
           .toURL());
     } catch (MalformedURLException e) {
       throw new InvalidUrlException(e);
@@ -98,8 +92,7 @@ class Sender {
   private HttpURLConnection openConnection(URL url) {
     HttpURLConnection connection;
     try {
-      if (isEmpty(trackerConfiguration.getProxyHost())
-          || trackerConfiguration.getProxyPort() <= 0) {
+      if (isEmpty(trackerConfiguration.getProxyHost()) || trackerConfiguration.getProxyPort() <= 0) {
         log.debug("Proxy host or proxy port not configured. Will create connection without proxy");
         connection = (HttpURLConnection) url.openConnection();
       } else {
@@ -115,8 +108,7 @@ class Sender {
   }
 
   private void applySslConfiguration(
-      @NonNull
-      HttpsURLConnection connection
+      @NonNull HttpsURLConnection connection
   ) {
     requireNonNull(connection, "Connection must not be null");
     if (trackerConfiguration.isDisableSslCertValidation()) {
@@ -134,28 +126,22 @@ class Sender {
   }
 
   private HttpURLConnection openProxiedConnection(
-      @NonNull
-      URL url
+      @NonNull URL url
   ) throws IOException {
     requireNonNull(url, "URL must not be null");
     requireNonNull(trackerConfiguration.getProxyHost(), "Proxy host must not be null");
     if (trackerConfiguration.getProxyPort() <= 0) {
       throw new IllegalArgumentException("Proxy port must be configured");
     }
-    InetSocketAddress proxyAddress = new InetSocketAddress(trackerConfiguration.getProxyHost(),
-        trackerConfiguration.getProxyPort()
-    );
+    InetSocketAddress proxyAddress =
+        new InetSocketAddress(trackerConfiguration.getProxyHost(), trackerConfiguration.getProxyPort());
     Proxy proxy = new Proxy(Proxy.Type.HTTP, proxyAddress);
-    if (!isEmpty(trackerConfiguration.getProxyUserName())
-        && !isEmpty(trackerConfiguration.getProxyPassword())) {
+    if (!isEmpty(trackerConfiguration.getProxyUserName()) && !isEmpty(trackerConfiguration.getProxyPassword())) {
       Authenticator.setDefault(new ProxyAuthenticator(trackerConfiguration.getProxyUserName(),
           trackerConfiguration.getProxyPassword()
       ));
     }
-    log.debug("Using proxy {} on port {}",
-        trackerConfiguration.getProxyHost(),
-        trackerConfiguration.getProxyPort()
-    );
+    log.debug("Using proxy {} on port {}", trackerConfiguration.getProxyHost(), trackerConfiguration.getProxyPort());
     return (HttpURLConnection) url.openConnection(proxy);
   }
 
@@ -171,30 +157,25 @@ class Sender {
   }
 
   private void checkResponse(HttpURLConnection connection) throws IOException {
-    if (connection.getResponseCode() > 399) {
+    int responseCode = connection.getResponseCode();
+    if (responseCode > 399) {
       if (trackerConfiguration.isLogFailedTracking()) {
-        log.error("Received error code {}", connection.getResponseCode());
+        log.error("Received HTTP error code {} for URL {}", responseCode, connection.getURL());
       }
-      throw new MatomoException(
-          "Tracking endpoint responded with code " + connection.getResponseCode());
+      throw new MatomoException(String.format("Tracking endpoint responded with code %d", responseCode));
     }
   }
 
   private static boolean isEmpty(
-      @Nullable
-      String str
+      @Nullable String str
   ) {
     return str == null || str.isEmpty() || str.trim().isEmpty();
   }
 
   void sendBulk(
-      @NonNull
-      Iterable<? extends MatomoRequest> requests,
-      @Nullable
-      String overrideAuthToken
+      @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken
   ) {
-    String authToken =
-        AuthToken.determineAuthToken(overrideAuthToken, requests, trackerConfiguration);
+    String authToken = AuthToken.determineAuthToken(overrideAuthToken, requests, trackerConfiguration);
     sendBulk(StreamSupport.stream(requests.spliterator(), false).map(request -> {
       RequestValidator.validate(request, authToken);
       return queryCreator.createQuery(request, null);
@@ -202,10 +183,7 @@ class Sender {
   }
 
   private void sendBulk(
-      @NonNull
-      Collection<String> queries,
-      @Nullable
-      String authToken
+      @NonNull Collection<String> queries, @Nullable String authToken
   ) {
     requireNonNull(queries, "Queries must not be null");
     HttpURLConnection connection;
@@ -216,9 +194,7 @@ class Sender {
     }
     preparePostConnection(connection);
     configureAgentsAndTimeouts(connection);
-    log.debug("Sending bulk request using URI {} asynchronously",
-        trackerConfiguration.getApiEndpoint()
-    );
+    log.debug("Sending bulk request using URI {} asynchronously", trackerConfiguration.getApiEndpoint());
     OutputStream outputStream = null;
     try {
       connection.connect();
@@ -253,10 +229,7 @@ class Sender {
   }
 
   private static byte[] createPayload(
-      @NonNull
-      Collection<String> queries,
-      @Nullable
-      String authToken
+      @NonNull Collection<String> queries, @Nullable String authToken
   ) {
     requireNonNull(queries, "Queries must not be null");
     StringBuilder payload = new StringBuilder("{\"requests\":[");
@@ -277,13 +250,9 @@ class Sender {
 
   @NonNull
   CompletableFuture<Void> sendBulkAsync(
-      @NonNull
-      Iterable<? extends MatomoRequest> requests,
-      @Nullable
-      String overrideAuthToken
+      @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken
   ) {
-    String authToken =
-        AuthToken.determineAuthToken(overrideAuthToken, requests, trackerConfiguration);
+    String authToken = AuthToken.determineAuthToken(overrideAuthToken, requests, trackerConfiguration);
     synchronized (queries) {
       for (MatomoRequest request : requests) {
         RequestValidator.validate(request, authToken);
@@ -296,8 +265,7 @@ class Sender {
 
   @Nullable
   private Void sendBulkAsync(
-      @Nullable
-      String authToken
+      @Nullable String authToken
   ) {
     synchronized (queries) {
       if (!queries.isEmpty()) {

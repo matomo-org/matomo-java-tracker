@@ -369,35 +369,6 @@ class MatomoTrackerIT {
   }
 
   @Test
-  void example() {
-
-    // Create the tracker configuration
-    TrackerConfiguration configuration = TrackerConfiguration.builder()
-        .apiEndpoint(URI.create("https://your-domain.net/matomo/matomo.php"))
-        .defaultSiteId(42) // if not explicitly specified by action
-        .build();
-
-    // Prepare the tracker (stateless - can be used for multiple requests)
-    MatomoTracker tracker = new MatomoTracker(configuration);
-
-    MatomoRequest request = MatomoRequest
-        .builder()
-        .actionName("User Profile / Upload Profile Picture")
-        .actionUrl("https://your-domain.net/user/profile/picture")
-        .visitorId(VisitorId.fromString("some@email-adress.org"))
-        // ...
-        .build();
-
-    // Send the request asynchronously (non-blocking) as an HTTP POST request (payload is JSON and contains the
-    // tracking parameters)
-    CompletableFuture<Void> future = tracker.sendBulkRequestAsync(request);
-
-    // If you want to ensure the request was sent without exceptions:
-    future.join(); // throws an unchecked exception if the request failed
-
-  }
-
-  @Test
   void reportsErrors() {
 
     wireMockServer.stubFor(get(urlPathEqualTo("/failing")).willReturn(status(500)));
@@ -424,7 +395,7 @@ class MatomoTrackerIT {
 
     assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
       wireMockServer.verify(getRequestedFor(urlEqualTo(
-          "/matomo.php?idsite=42token_auth=fdf6e8461ea9de33176b222519627f78&rec=1&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom")).withHeader("User-Agent",
+          "/matomo.php?idsite=42&token_auth=fdf6e8461ea9de33176b222519627f78&rec=1&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom")).withHeader("User-Agent",
           equalTo("MatomoJavaClient")
       ));
     });

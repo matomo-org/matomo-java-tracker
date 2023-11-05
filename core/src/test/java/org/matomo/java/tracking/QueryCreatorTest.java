@@ -45,7 +45,7 @@ class QueryCreatorTest {
     whenCreatesQuery();
 
     assertThat(query).isEqualTo(
-        "idsite=42token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&send_image=0&rand=random-value");
+        "idsite=42&token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&send_image=0&rand=random-value");
 
   }
 
@@ -81,7 +81,7 @@ class QueryCreatorTest {
     whenCreatesQuery();
 
     assertThat(query).isEqualTo(
-        "idsite=42token_auth=f123bfc9a46de0bb5453afdab6f93200&rec=1&apiv=1&_id=112210f47de98115&send_image=0&rand=random-value");
+        "idsite=42&token_auth=f123bfc9a46de0bb5453afdab6f93200&rec=1&apiv=1&_id=112210f47de98115&send_image=0&rand=random-value");
 
   }
 
@@ -94,7 +94,7 @@ class QueryCreatorTest {
     whenCreatesQuery();
 
     assertThat(query).isEqualTo(
-        "idsite=42token_auth=e456bfc9a46de0bb5453afdab6f93200&rec=1&apiv=1&_id=112210f47de98115&token_auth=e456bfc9a46de0bb5453afdab6f93200&send_image=0&rand=random-value");
+        "idsite=42&token_auth=e456bfc9a46de0bb5453afdab6f93200&rec=1&apiv=1&_id=112210f47de98115&token_auth=e456bfc9a46de0bb5453afdab6f93200&send_image=0&rand=random-value");
 
   }
 
@@ -117,7 +117,7 @@ class QueryCreatorTest {
     whenCreatesQuery();
 
     assertThat(query).isEqualTo(
-        "idsite=42token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&fla=1&send_image=0&rand=random-value");
+        "idsite=42&token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&fla=1&send_image=0&rand=random-value");
 
   }
 
@@ -129,7 +129,7 @@ class QueryCreatorTest {
     whenCreatesQuery();
 
     assertThat(query).isEqualTo(
-        "idsite=42token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&java=0&send_image=0&rand=random-value");
+        "idsite=42&token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&java=0&send_image=0&rand=random-value");
 
   }
 
@@ -141,7 +141,7 @@ class QueryCreatorTest {
     whenCreatesQuery();
 
     assertThat(query).isEqualTo(
-        "idsite=42token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&url=https%3A%2F%2Fwww.daniel-heid.de%2Fsome%2Fpage%3Ffoo%3Dbar&apiv=1&_id=112210f47de98115&send_image=0&rand=random-value");
+        "idsite=42&token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&url=https%3A%2F%2Fwww.daniel-heid.de%2Fsome%2Fpage%3Ffoo%3Dbar&apiv=1&_id=112210f47de98115&send_image=0&rand=random-value");
 
   }
 
@@ -153,7 +153,7 @@ class QueryCreatorTest {
     whenCreatesQuery();
 
     assertThat(query).isEqualTo(
-        "idsite=42token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&urlref=https%3A%2F%2Fwww.daniel-heid.de%2Fsome%2Freferrer%3Ffoo2%3Dbar2&send_image=0&rand=random-value");
+        "idsite=42&token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&urlref=https%3A%2F%2Fwww.daniel-heid.de%2Fsome%2Freferrer%3Ffoo2%3Dbar2&send_image=0&rand=random-value");
 
   }
 
@@ -165,7 +165,7 @@ class QueryCreatorTest {
     whenCreatesQuery();
 
     assertThat(query).isEqualTo(
-        "idsite=42token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&link=https%3A%2F%2Fwww.daniel-heid.de%2Fsome%2Fexternal%2Flink%23&send_image=0&rand=random-value");
+        "idsite=42&token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&link=https%3A%2F%2Fwww.daniel-heid.de%2Fsome%2Fexternal%2Flink%23&send_image=0&rand=random-value");
 
   }
 
@@ -177,7 +177,7 @@ class QueryCreatorTest {
     whenCreatesQuery();
 
     assertThat(query).isEqualTo(
-        "idsite=42token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&download=https%3A%2F%2Fwww.daniel-heid.de%2Fsome%2Fdownload.pdf&send_image=0&rand=random-value");
+        "idsite=42&token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&download=https%3A%2F%2Fwww.daniel-heid.de%2Fsome%2Fdownload.pdf&send_image=0&rand=random-value");
 
   }
 
@@ -221,7 +221,7 @@ class QueryCreatorTest {
     whenCreatesQuery();
 
     assertThat(query).isEqualTo(
-        "idsite=42token_auth=fdf6e8461ea9de33176b222519627f78&rec=1&action_name=Help+%2F+Feedback&url=https%3A%2F%2Fwww.daniel-heid.de%2Fportfolio&apiv=1&_id=2fa93d2858bc4867&urlref=https%3A%2F%2Fwww.daniel-heid.de%2Freferrer&_cvar=%7B%225%22%3A%5B%22customVariable1Key%22%2C%22customVariable1Value%22%5D%2C%226%22%3A%5B%22customVariable2Key%22%2C%22customVariable2Value%22%5D%7D&_idvc=2&_viewts=1660070052&res=1024x768&lang=de%2Cde-de%3Bq%3D0.9%2Cen%3Bq%3D0.8&pv_id=lbBbxG&idgoal=0&revenue=12.34&ec_items=%5B%5B%22SKU%22%2C%22%22%2C%22%22%2C0.0%2C0%5D%2C%5B%22SKU%22%2C%22NAME%22%2C%22CATEGORY%22%2C123.4%2C0%5D%5D&token_auth=fdf6e8461ea9de33176b222519627f78&country=de&send_image=0&rand=random-value");
+        "idsite=42&token_auth=fdf6e8461ea9de33176b222519627f78&rec=1&action_name=Help+%2F+Feedback&url=https%3A%2F%2Fwww.daniel-heid.de%2Fportfolio&apiv=1&_id=2fa93d2858bc4867&urlref=https%3A%2F%2Fwww.daniel-heid.de%2Freferrer&_cvar=%7B%225%22%3A%5B%22customVariable1Key%22%2C%22customVariable1Value%22%5D%2C%226%22%3A%5B%22customVariable2Key%22%2C%22customVariable2Value%22%5D%7D&_idvc=2&_viewts=1660070052&res=1024x768&lang=de%2Cde-de%3Bq%3D0.9%2Cen%3Bq%3D0.8&pv_id=lbBbxG&idgoal=0&revenue=12.34&ec_items=%5B%5B%22SKU%22%2C%22%22%2C%22%22%2C0.0%2C0%5D%2C%5B%22SKU%22%2C%22NAME%22%2C%22CATEGORY%22%2C123.4%2C0%5D%5D&token_auth=fdf6e8461ea9de33176b222519627f78&country=de&send_image=0&rand=random-value");
 
   }
 
@@ -372,7 +372,7 @@ class QueryCreatorTest {
     whenCreatesQuery();
 
     assertThat(query).isEqualTo(
-        "idsite=42token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&e_a=&send_image=0&rand=random-value");
+        "idsite=42&token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&e_a=&send_image=0&rand=random-value");
 
   }
 
@@ -393,7 +393,7 @@ class QueryCreatorTest {
     whenCreatesQuery();
 
     assertThat(query).isEqualTo(
-        "idsite=42token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&send_image=0&rand=random-value&dimension1=firstDimension&dimension2=secondDimension");
+        "idsite=42&token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&send_image=0&rand=random-value&dimension1=firstDimension&dimension2=secondDimension");
   }
 
   @Test
@@ -403,7 +403,7 @@ class QueryCreatorTest {
     whenCreatesQuery();
 
     assertThat(query).isEqualTo(
-        "idsite=42token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&cs=ISO-8859-1&send_image=0&rand=random-value");
+        "idsite=42&token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&cs=ISO-8859-1&send_image=0&rand=random-value");
   }
 
 }

@@ -1,20 +1,13 @@
-# General System Files #
 *~
 *\.DS_Store
 *#*#
 *.swp
 info
-
-# Package Files #
 **/target/
-
-# virtual machine crash logs, see https://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-
-# IDEA files
 *.iml
 .idea
-
-# Eclipse files
 .classpath
 .project
+test/logs/*
+!test/logs/.gitkeep

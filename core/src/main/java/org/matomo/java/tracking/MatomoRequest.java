@@ -503,14 +503,14 @@ public class MatomoRequest {
   /**
    * An override value for the country. Must be a two-letter ISO 3166 Alpha-2 country code.
    */
-  @TrackingParameter(name = "country")
+  @TrackingParameter(name = "country", maxLength = 2)
   private Country visitorCountry;
 
   /**
    * An override value for the region. Should be set to a ISO 3166-2 region code, which are used by MaxMind's and
    * DB-IP's GeoIP2 databases. See here for a list of them for every country.
    */
-  @TrackingParameter(name = "region")
+  @TrackingParameter(name = "region", maxLength = 2)
   private String visitorRegion;
 
   /**
@@ -575,6 +575,14 @@ public class MatomoRequest {
   @TrackingParameter(name = "rand")
   @Default
   private RandomValue randomValue = RandomValue.random();
+
+
+  /**
+   * Meant to hold a random value that is generated before each request. Using it helps avoid the tracking request
+   * being cached by the browser or a proxy.
+   */
+  @TrackingParameter(name = "debug")
+  private Boolean debug;
 
   private Iterable<Object> dimensions;
 

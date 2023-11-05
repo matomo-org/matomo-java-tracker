@@ -28,8 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 class QueryCreator {
 
-  private static final TrackingParameterMethod[] TRACKING_PARAMETER_METHODS =
-      initializeTrackingParameterMethods();
+  private static final TrackingParameterMethod[] TRACKING_PARAMETER_METHODS = initializeTrackingParameterMethods();
 
   private final TrackerConfiguration trackerConfiguration;
 
@@ -45,19 +44,16 @@ class QueryCreator {
   }
 
   private static void addMethods(
-      Collection<TrackingParameterMethod> methods,
-      Member member,
-      TrackingParameter trackingParameter
+      Collection<TrackingParameterMethod> methods, Member member, TrackingParameter trackingParameter
   ) {
     try {
-      for (PropertyDescriptor pd : Introspector
-          .getBeanInfo(MatomoRequest.class)
-          .getPropertyDescriptors()) {
+      for (PropertyDescriptor pd : Introspector.getBeanInfo(MatomoRequest.class).getPropertyDescriptors()) {
         if (member.getName().equals(pd.getName())) {
           String regex = trackingParameter.regex();
           methods.add(TrackingParameterMethod
               .builder()
               .parameterName(trackingParameter.name())
+              .maxLength(trackingParameter.maxLength())
               .method(pd.getReadMethod())
               .pattern(regex == null || regex.isEmpty() || regex.trim().isEmpty() ? null :
                   Pattern.compile(trackingParameter.regex()))
@@ -70,10 +66,7 @@ class QueryCreator {
   }
 
   String createQuery(
-      @NonNull
-      MatomoRequest request,
-      @Nullable
-      String authToken
+      @NonNull MatomoRequest request, @Nullable String authToken
   ) {
     StringBuilder query = new StringBuilder(100);
     if (request.getSiteId() == null) {
@@ -84,15 +77,14 @@ class QueryCreator {
       if (authToken.length() != 32) {
         throw new IllegalArgumentException("Auth token must be exactly 32 characters long");
       }
+      appendAmpersand(query);
       query.append("token_auth=").append(authToken);
     }
     for (TrackingParameterMethod method : TRACKING_PARAMETER_METHODS) {
       appendParameter(method, request, query);
     }
     if (request.getAdditionalParameters() != null) {
-      for (Entry<String, Collection<Object>> entry : request
-          .getAdditionalParameters()
-          .entrySet()) {
+      for (Entry<String, Collection<Object>> entry : request.getAdditionalParameters().entrySet()) {
         for (Object value : entry.getValue()) {
           if (value != null && !value.toString().trim().isEmpty()) {
             appendAmpersand(query);
@@ -105,7 +97,7 @@ class QueryCreator {
       int i = 0;
       for (Object dimension : request.getDimensions()) {
         appendAmpersand(query);
-        query.append("dimension").append(i + 1).append('=').append(dimension);
+        query.append("dimension").append(i + 1).append('=').append(encode(dimension.toString()));
         i++;
       }
     }
@@ -147,8 +139,7 @@ class QueryCreator {
 
   @NonNull
   private static String encode(
-      @NonNull
-      String parameterValue
+      @NonNull String parameterValue
   ) {
     try {
       return URLEncoder.encode(parameterValue, "UTF-8");

@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  database:
+    image: mariadb:10.11.5-jammy
+    command: --max-allowed-packet=64MB
+    environment:
+      - MYSQL_ROOT_PASSWORD=matomo
+      - MYSQL_PASSWORD=matomo
+      - MYSQL_DATABASE=matomo
+      - MYSQL_USER=matomo
+  matomo:
+    image: matomo:4.15.1-apache
+    environment:
+      - MATOMO_DATABASE_HOST=database
+      - MATOMO_DATABASE_ADAPTER=mysql
+      - MATOMO_DATABASE_TABLES_PREFIX=matomo_
+      - MATOMO_DATABASE_USERNAME=matomo
+      - MATOMO_DATABASE_PASSWORD=matomo
+      - MATOMO_DATABASE_DBNAME=matomo
+    ports:
+      - '8080:80'

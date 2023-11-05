@@ -20,4 +20,6 @@ import java.lang.annotation.Target;
 
   String regex() default "";
 
+  int maxLength() default Integer.MAX_VALUE;
+
 }
