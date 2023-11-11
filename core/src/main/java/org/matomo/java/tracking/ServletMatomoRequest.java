@@ -64,7 +64,8 @@ public final class ServletMatomoRequest {
     Enumeration<String> headerNames = request.getHeaderNames();
     while (headerNames.hasMoreElements()) {
       String headerName = headerNames.nextElement();
-      if (headerName != null && !headerName.trim().isEmpty() && !RESTRICTED_HEADERS.contains(headerName.toLowerCase(Locale.ROOT))) {
+      if (headerName != null && !headerName.trim().isEmpty()
+          && !RESTRICTED_HEADERS.contains(headerName.toLowerCase(Locale.ROOT))) {
         headers.put(headerName, request.getHeader(headerName));
       }
     }
