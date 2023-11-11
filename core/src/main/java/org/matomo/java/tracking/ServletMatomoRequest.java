@@ -1,10 +1,16 @@
 package org.matomo.java.tracking;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import lombok.NonNull;
+
+import static java.util.Arrays.asList;
 
 
 /**
@@ -14,9 +20,16 @@ import lombok.NonNull;
  * #addServletRequestHeaders(MatomoRequest.MatomoRequestBuilder, HttpServletRequest) to add the headers to an existing
  * builder.
  */
-public final class ServletMatomoRequestCustomizer {
+public final class ServletMatomoRequest {
 
-  private ServletMatomoRequestCustomizer() {
+  /**
+   * Please ensure these values are always lower case.
+   */
+  private static final Set<String> RESTRICTED_HEADERS = Collections.unmodifiableSet(new HashSet<>(
+      asList("connection", "content-length", "expect", "host", "upgrade")
+  ));
+
+  private ServletMatomoRequest() {
     // should not be instantiated
   }
 
@@ -51,7 +64,9 @@ public final class ServletMatomoRequestCustomizer {
     Enumeration<String> headerNames = request.getHeaderNames();
     while (headerNames.hasMoreElements()) {
       String headerName = headerNames.nextElement();
-      headers.put(headerName, request.getHeader(headerName));
+      if (headerName != null && !headerName.trim().isEmpty() && !RESTRICTED_HEADERS.contains(headerName.toLowerCase(Locale.ROOT))) {
+        headers.put(headerName, request.getHeader(headerName));
+      }
     }
     return builder.headers(headers);
   }
