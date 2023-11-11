@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
@@ -64,10 +65,14 @@ public class Java17Sender implements Sender {
     String authToken = AuthToken.determineAuthToken(overrideAuthToken, requests, trackerConfiguration);
     Collection<String> queries = new ArrayList<>();
     Map<String, String> headers = new LinkedHashMap<>(10);
+    String headerUserAgent = null;
     for (MatomoRequest request : requests) {
       RequestValidator.validate(request, authToken);
       if (request.getHeaders() != null && !request.getHeaders().isEmpty()) {
         headers.putAll(request.getHeaders());
+      }
+      if (request.getHeaderUserAgent() != null && !request.getHeaderUserAgent().trim().isEmpty()) {
+        headerUserAgent = request.getHeaderUserAgent();
       }
       queries.add(queryCreator.createQuery(request, null));
     }
@@ -83,6 +88,7 @@ public class Java17Sender implements Sender {
             .build()
             .toBytes()));
     applyTrackerConfiguration(builder);
+    setUserAgentHeader(builder, headerUserAgent, headers);
     addHeaders(builder, headers);
     return builder.build();
   }
@@ -107,6 +113,7 @@ public class Java17Sender implements Sender {
             queryCreator.createQuery(request, authToken)
         )));
     applyTrackerConfiguration(builder);
+    setUserAgentHeader(builder, request.getHeaderUserAgent(), request.getHeaders());
     addHeaders(builder, request.getHeaders());
     return builder.build();
   }
@@ -135,7 +142,22 @@ public class Java17Sender implements Sender {
     if (trackerConfiguration.getSocketTimeout() != null && trackerConfiguration.getSocketTimeout().toMillis() > 0L) {
       builder.timeout(trackerConfiguration.getSocketTimeout());
     }
-    if (trackerConfiguration.getUserAgent() != null && !trackerConfiguration.getUserAgent().isEmpty()) {
+  }
+
+  private void setUserAgentHeader(
+      HttpRequest.Builder builder,
+      @Nullable String headerUserAgent,
+      @Nullable Map<String, String> headers
+  ) {
+    String userAgentHeader = null;
+    if ((headerUserAgent == null || headerUserAgent.trim().isEmpty()) && headers != null) {
+      TreeMap<String, String> caseInsensitiveMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+      caseInsensitiveMap.putAll(headers);
+      userAgentHeader = caseInsensitiveMap.get("User-Agent");
+    }
+    if ((userAgentHeader == null || userAgentHeader.trim().isEmpty())
+        && (headerUserAgent == null || headerUserAgent.trim().isEmpty())
+        && trackerConfiguration.getUserAgent() != null && !trackerConfiguration.getUserAgent().isEmpty()) {
       builder.header("User-Agent", trackerConfiguration.getUserAgent());
     }
   }

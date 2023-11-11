@@ -27,10 +27,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -89,6 +88,7 @@ class Java8Sender implements Sender {
       throw new InvalidUrlException(e);
     }
     applyTrackerConfiguration(connection);
+    setUserAgentProperty(connection, request.getHeaderUserAgent(), request.getHeaders());
     addHeaders(connection, request.getHeaders());
     log.debug("Sending single request using URI {} asynchronously", apiEndpoint);
     try {
@@ -165,14 +165,27 @@ class Java8Sender implements Sender {
 
   private void applyTrackerConfiguration(HttpURLConnection connection) {
     connection.setUseCaches(false);
-    if (trackerConfiguration.getUserAgent() != null && !trackerConfiguration.getUserAgent().isEmpty()) {
-      connection.setRequestProperty("User-Agent", trackerConfiguration.getUserAgent());
-    }
     if (trackerConfiguration.getConnectTimeout() != null) {
       connection.setConnectTimeout((int) trackerConfiguration.getConnectTimeout().toMillis());
     }
     if (trackerConfiguration.getSocketTimeout() != null) {
       connection.setReadTimeout((int) trackerConfiguration.getSocketTimeout().toMillis());
+    }
+  }
+
+  private void setUserAgentProperty(
+      @NonNull HttpURLConnection connection, @Nullable String headerUserAgent, @Nullable Map<String, String> headers
+  ) {
+    String userAgentHeader = null;
+    if ((headerUserAgent == null || headerUserAgent.trim().isEmpty()) && headers != null) {
+      TreeMap<String, String> caseInsensitiveMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+      caseInsensitiveMap.putAll(headers);
+      userAgentHeader = caseInsensitiveMap.get("User-Agent");
+    }
+    if ((userAgentHeader == null || userAgentHeader.trim().isEmpty())
+        && (headerUserAgent == null || headerUserAgent.trim().isEmpty())
+        && trackerConfiguration.getUserAgent() != null && !trackerConfiguration.getUserAgent().isEmpty()) {
+      connection.setRequestProperty("User-Agent", trackerConfiguration.getUserAgent());
     }
   }
 
@@ -197,18 +210,28 @@ class Java8Sender implements Sender {
       @NonNull @lombok.NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken
   ) {
     String authToken = AuthToken.determineAuthToken(overrideAuthToken, requests, trackerConfiguration);
+    Collection<String> queries = new ArrayList<>();
     Map<String, String> headers = new LinkedHashMap<>();
-    sendBulk(StreamSupport.stream(requests.spliterator(), false).map(request -> {
+    String headerUserAgent = null;
+    for (MatomoRequest request : requests) {
       RequestValidator.validate(request, authToken);
       if (request.getHeaders() != null && !request.getHeaders().isEmpty()) {
         headers.putAll(request.getHeaders());
       }
-      return queryCreator.createQuery(request, null);
-    }).collect(Collectors.toList()), authToken, headers);
+      if (headerUserAgent == null && request.getHeaderUserAgent() != null
+          && !request.getHeaderUserAgent().trim().isEmpty()) {
+        headerUserAgent = request.getHeaderUserAgent();
+      }
+      queries.add(queryCreator.createQuery(request, null));
+    }
+    sendBulk(queries, authToken, headers, headerUserAgent);
   }
 
   private void sendBulk(
-      @NonNull @lombok.NonNull Collection<String> queries, @Nullable String authToken, Map<String, String> headers
+      @NonNull @lombok.NonNull Collection<String> queries,
+      @Nullable String authToken,
+      Map<String, String> headers,
+      String headerUserAgent
   ) {
     if (queries.isEmpty()) {
       throw new IllegalArgumentException("Queries must not be empty");
@@ -221,6 +244,7 @@ class Java8Sender implements Sender {
     }
     preparePostConnection(connection);
     applyTrackerConfiguration(connection);
+    setUserAgentProperty(connection, headerUserAgent, headers);
     addHeaders(connection, headers);
     log.debug("Sending bulk request using URI {} asynchronously", trackerConfiguration.getApiEndpoint());
     OutputStream outputStream = null;
@@ -263,6 +287,7 @@ class Java8Sender implements Sender {
   ) {
     String authToken = AuthToken.determineAuthToken(overrideAuthToken, requests, trackerConfiguration);
     final Map<String, String> headers = new LinkedHashMap<>();
+    String headerUserAgent = findHeaderUserAgent(requests);
     synchronized (queries) {
       for (MatomoRequest request : requests) {
         RequestValidator.validate(request, authToken);
@@ -273,20 +298,30 @@ class Java8Sender implements Sender {
         queries.add(query);
       }
     }
-    return CompletableFuture.supplyAsync(() -> sendBulkAsync(authToken, headers), executor);
+    return CompletableFuture.supplyAsync(() -> sendBulkAsync(authToken, headers, headerUserAgent), executor);
   }
 
   @Nullable
   private Void sendBulkAsync(
-      @Nullable String authToken, Map<String, String> headers
+      @Nullable String authToken, Map<String, String> headers, String headerUserAgent
   ) {
     synchronized (queries) {
       if (!queries.isEmpty()) {
-        sendBulk(queries, authToken, headers);
+        sendBulk(queries, authToken, headers, headerUserAgent);
         queries.clear();
       }
       return null;
     }
+  }
+
+  @Nullable
+  private static String findHeaderUserAgent(@NonNull Iterable<? extends MatomoRequest> requests) {
+    for (MatomoRequest request : requests) {
+      if (request.getHeaderUserAgent() != null && !request.getHeaderUserAgent().trim().isEmpty()) {
+        return request.getHeaderUserAgent();
+      }
+    }
+    return null;
   }
 
 }

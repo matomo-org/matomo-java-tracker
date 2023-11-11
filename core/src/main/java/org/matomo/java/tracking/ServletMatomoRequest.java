@@ -69,6 +69,6 @@ public final class ServletMatomoRequest {
         headers.put(headerName, request.getHeader(headerName));
       }
     }
-    return builder.headers(headers);
+    return builder.headers(headers).visitorIp(request.getRemoteAddr());
   }
 }
