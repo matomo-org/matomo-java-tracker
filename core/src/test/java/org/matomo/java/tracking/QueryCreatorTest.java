@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -388,12 +389,15 @@ class QueryCreatorTest {
 
   @Test
   void createsQueryWithDimensions() {
-    matomoRequestBuilder.dimensions(asList("firstDimension", "secondDimension"));
+    Map<Long, Object> dimensions = new LinkedHashMap<>();
+    dimensions.put(1L, "firstDimension");
+    dimensions.put(3L, "thirdDimension");
+    matomoRequestBuilder.dimensions(dimensions);
 
     whenCreatesQuery();
 
     assertThat(query).isEqualTo(
-        "idsite=42&token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&send_image=0&rand=random-value&dimension1=firstDimension&dimension2=secondDimension");
+        "idsite=42&token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&send_image=0&rand=random-value&dimension1=firstDimension&dimension3=thirdDimension");
   }
 
   @Test

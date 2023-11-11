@@ -7,6 +7,8 @@
 
 package org.piwik.java.tracking;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.matomo.java.tracking.MatomoTracker;
 
 /**
@@ -25,7 +27,7 @@ public class PiwikTracker extends MatomoTracker {
    * @deprecated Use {@link MatomoTracker} instead.
    */
   @Deprecated
-  public PiwikTracker(String hostUrl) {
+  public PiwikTracker(@NonNull String hostUrl) {
     super(hostUrl);
   }
 
@@ -37,7 +39,7 @@ public class PiwikTracker extends MatomoTracker {
    * @deprecated Use {@link MatomoTracker} instead.
    */
   @Deprecated
-  public PiwikTracker(String hostUrl, int timeout) {
+  public PiwikTracker(@NonNull String hostUrl, int timeout) {
     super(hostUrl, timeout);
   }
 
@@ -50,7 +52,7 @@ public class PiwikTracker extends MatomoTracker {
    * @deprecated Use {@link MatomoTracker} instead.
    */
   @Deprecated
-  public PiwikTracker(String hostUrl, String proxyHost, int proxyPort) {
+  public PiwikTracker(@NonNull String hostUrl, @Nullable String proxyHost, int proxyPort) {
     super(hostUrl, proxyHost, proxyPort);
   }
 
@@ -65,7 +67,7 @@ public class PiwikTracker extends MatomoTracker {
    * @deprecated Use {@link MatomoTracker} instead.
    */
   @Deprecated
-  public PiwikTracker(String hostUrl, String proxyHost, int proxyPort, int timeout) {
+  public PiwikTracker(@NonNull String hostUrl, @Nullable String proxyHost, int proxyPort, int timeout) {
     super(hostUrl, proxyHost, proxyPort, timeout);
   }
 

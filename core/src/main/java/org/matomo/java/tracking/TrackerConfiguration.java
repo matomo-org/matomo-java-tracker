@@ -12,7 +12,6 @@ import java.net.URI;
 import java.time.Duration;
 import java.util.regex.Pattern;
 import lombok.Builder;
-import lombok.NonNull;
 import lombok.Value;
 
 /**
@@ -23,10 +22,11 @@ import lombok.Value;
 public class TrackerConfiguration {
 
   private static final Pattern AUTH_TOKEN_PATTERN = Pattern.compile("[a-z0-9]+");
+
   /**
    * The Matomo Tracking HTTP API endpoint, for example https://your-matomo-domain.example/matomo.php
    */
-  @NonNull URI apiEndpoint;
+  URI apiEndpoint;
 
   /**
    * The default ID of the website that will be used if not specified explicitly.
@@ -83,7 +83,7 @@ public class TrackerConfiguration {
    * password must also be set.
    */
   @Nullable
-  String proxyUserName;
+  String proxyUsername;
 
   /**
    * The corresponding password for the basic auth proxy user. The proxy host, port and username must be set as well.
@@ -95,7 +95,7 @@ public class TrackerConfiguration {
    * A custom user agent to be set. Defaults to "MatomoJavaClient"
    */
   @Builder.Default
-  @NonNull String userAgent = "MatomoJavaClient";
+  String userAgent = "MatomoJavaClient";
 
   /**
    * Logs if the Matomo Tracking API endpoint responds with an erroneous HTTP code. Defaults to
@@ -117,7 +117,11 @@ public class TrackerConfiguration {
    * Disables SSL host verification. This is useful for testing with self-signed certificates. Do
    * not use in production environments. Defaults to false.
    *
-   * <p>Attention: This slows down performance
+   * <p>If you use the Java 17 of the Matomo Java Tracker, this setting is ignored. Instead, you
+   * have to set the system property {@code jdk.internal.httpclient.disableHostnameVerification} as
+   * described in the
+   * <a href="https://download.java.net/java/early_access/jdk22/docs/api/java.net.http/module-summary.html">Module
+   * java.net.http</a>.
    *
    * @see #disableSslCertValidation
    */
@@ -130,12 +134,16 @@ public class TrackerConfiguration {
    * does not exceed the thread pool of the web application. Otherwise, you might run into
    * problems.
    */
+  @Builder.Default
   int threadPoolSize = 2;
 
   /**
    * Validates the auth token. The auth token must be exactly 32 characters long.
    */
   public void validate() {
+    if (apiEndpoint == null) {
+      throw new IllegalArgumentException("API endpoint must not be null");
+    }
     if (defaultAuthToken != null) {
       if (defaultAuthToken.trim().length() != 32) {
         throw new IllegalArgumentException("Auth token must be exactly 32 characters long");
@@ -144,6 +152,36 @@ public class TrackerConfiguration {
         throw new IllegalArgumentException(
             "Auth token must contain only lowercase letters and numbers");
       }
+    }
+    if (defaultSiteId != null && defaultSiteId < 0) {
+      throw new IllegalArgumentException("Default site ID must not be negative");
+    }
+    if (proxyHost != null && proxyPort < 1) {
+      throw new IllegalArgumentException("Proxy port must be greater than 0");
+    }
+    if (proxyPort > 0 && proxyHost == null) {
+      throw new IllegalArgumentException("Proxy host must be set if port is set");
+    }
+    if (proxyUsername != null && proxyHost == null) {
+      throw new IllegalArgumentException("Proxy host must be set if username is set");
+    }
+    if (proxyPassword != null && proxyHost == null) {
+      throw new IllegalArgumentException("Proxy host must be set if password is set");
+    }
+    if (proxyUsername != null && proxyPassword == null) {
+      throw new IllegalArgumentException("Proxy password must be set if username is set");
+    }
+    if (proxyPassword != null && proxyUsername == null) {
+      throw new IllegalArgumentException("Proxy username must be set if password is set");
+    }
+    if (socketTimeout != null && socketTimeout.isNegative()) {
+      throw new IllegalArgumentException("Socket timeout must not be negative");
+    }
+    if (connectTimeout != null && connectTimeout.isNegative()) {
+      throw new IllegalArgumentException("Connect timeout must not be negative");
+    }
+    if (threadPoolSize < 1) {
+      throw new IllegalArgumentException("Thread pool size must be greater than 0");
     }
   }
 }

@@ -163,4 +163,20 @@ class RequestValidatorTest {
 
   }
 
+  @Test
+  void failsIfSiteIdIsNegative() {
+    request.setSiteId(-1);
+
+    assertThatThrownBy(() -> RequestValidator.validate(request, null))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Site ID must not be negative");
+  }
+
+  @Test
+  void failsIfAuthTokenIsNot32CharactersLong() {
+    assertThatThrownBy(() -> RequestValidator.validate(request, "123456789012345678901234567890"))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Auth token must be exactly 32 characters long");
+  }
+
 }

@@ -75,10 +75,10 @@ class PiwikTrackerIT {
    * Test of sendRequestAsync method, of class PiwikTracker.
    */
   @Test
-  void testSendRequestAsync() throws Exception {
+  void testSendRequestAsync() {
     request.setCustomTrackingParameter("parameterName", "parameterValue");
 
-    CompletableFuture<Void> future = piwikTracker.sendRequestAsync(request);
+    CompletableFuture<?> future = piwikTracker.sendRequestAsync(request);
 
     assertThat(future).isNotCompletedExceptionally();
     assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
@@ -162,7 +162,7 @@ class PiwikTrackerIT {
    * Test of sendBulkRequestAsync method, of class PiwikTracker.
    */
   @Test
-  void testSendBulkRequestAsync_Iterable() throws Exception {
+  void testSendBulkRequestAsync_Iterable() {
     List<PiwikRequest> requests = Collections.singletonList(request);
     request.setCustomTrackingParameter("parameterName", "parameterValue");
 
@@ -198,7 +198,7 @@ class PiwikTrackerIT {
 
 
   @Test
-  void testSendBulkRequestAsync_Iterable_String() throws Exception {
+  void testSendBulkRequestAsync_Iterable_String() {
 
     List<PiwikRequest> requests = Collections.singletonList(request);
     request.setCustomTrackingParameter("parameterName", "parameterValue");

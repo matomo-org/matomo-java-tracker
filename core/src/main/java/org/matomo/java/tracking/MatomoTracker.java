@@ -7,16 +7,15 @@
 
 package org.matomo.java.tracking;
 
-import static java.util.Objects.requireNonNull;
-
 import edu.umd.cs.findbugs.annotations.Nullable;
 import java.net.URI;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import lombok.AccessLevel;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -39,7 +38,10 @@ public class MatomoTracker {
 
   private final TrackerConfiguration trackerConfiguration;
 
-  private final Sender sender;
+  @Setter(AccessLevel.PROTECTED)
+  private SenderFactory senderFactory = new ServiceLoaderSenderFactory();
+
+  private Sender sender;
 
   /**
    * Creates a tracker that will send {@link MatomoRequest}s to the specified
@@ -51,9 +53,9 @@ public class MatomoTracker {
    */
   @Deprecated
   public MatomoTracker(
-      @edu.umd.cs.findbugs.annotations.NonNull String hostUrl
+      @NonNull String hostUrl
   ) {
-    this(requireNonNull(hostUrl, "Host URL must not be null"), 0);
+    this(hostUrl, 0);
   }
 
   /**
@@ -67,9 +69,9 @@ public class MatomoTracker {
    */
   @Deprecated
   public MatomoTracker(
-      @edu.umd.cs.findbugs.annotations.NonNull String hostUrl, int timeout
+      @NonNull String hostUrl, int timeout
   ) {
-    this(requireNonNull(hostUrl, "Host URL must not be null"), null, 0, timeout);
+    this(hostUrl, null, 0, timeout);
   }
 
   /**
@@ -85,12 +87,12 @@ public class MatomoTracker {
    */
   @Deprecated
   public MatomoTracker(
-      @edu.umd.cs.findbugs.annotations.NonNull String hostUrl, @Nullable String proxyHost, int proxyPort, int timeout
+      @NonNull String hostUrl, @Nullable String proxyHost, int proxyPort, int timeout
   ) {
     this(TrackerConfiguration
         .builder()
         .enabled(true)
-        .apiEndpoint(URI.create(requireNonNull(hostUrl, "Host URL must not be null")))
+        .apiEndpoint(URI.create(hostUrl))
         .proxyHost(proxyHost)
         .proxyPort(proxyPort)
         .connectTimeout(timeout == -1 ? Duration.ofSeconds(5L) : Duration.ofSeconds(timeout))
@@ -104,16 +106,10 @@ public class MatomoTracker {
    * @param trackerConfiguration Configurations parameters (you can use a builder)
    */
   public MatomoTracker(
-      @edu.umd.cs.findbugs.annotations.NonNull TrackerConfiguration trackerConfiguration
+      @NonNull TrackerConfiguration trackerConfiguration
   ) {
-    requireNonNull(trackerConfiguration, "Tracker configuration must not be null");
     trackerConfiguration.validate();
     this.trackerConfiguration = trackerConfiguration;
-    sender = new Sender(
-        trackerConfiguration,
-        new QueryCreator(trackerConfiguration),
-        Executors.newFixedThreadPool(trackerConfiguration.getThreadPoolSize(), new DaemonThreadFactory())
-    );
   }
 
   /**
@@ -128,7 +124,7 @@ public class MatomoTracker {
    */
   @Deprecated
   public MatomoTracker(
-      @edu.umd.cs.findbugs.annotations.NonNull String hostUrl, @Nullable String proxyHost, int proxyPort
+      @NonNull String hostUrl, @Nullable String proxyHost, int proxyPort
   ) {
     this(hostUrl, proxyHost, proxyPort, -1);
   }
@@ -145,9 +141,17 @@ public class MatomoTracker {
   public void sendRequest(@NonNull MatomoRequest request) {
     if (trackerConfiguration.isEnabled()) {
       log.debug("Sending request via GET: {}", request);
+      validate(request);
+      initializeSender();
       sender.sendSingle(request);
     } else {
       log.warn("Not sending request, because tracker is disabled");
+    }
+  }
+
+  private void initializeSender() {
+    if (sender == null) {
+      sender = senderFactory.createSender(trackerConfiguration, new QueryCreator(trackerConfiguration));
     }
   }
 
@@ -161,8 +165,8 @@ public class MatomoTracker {
    * @param request request to send
    * @return completable future to let you know when the request is done
    */
-  public CompletableFuture<Void> sendRequestAsync(
-      @edu.umd.cs.findbugs.annotations.NonNull MatomoRequest request
+  public CompletableFuture<?> sendRequestAsync(
+      @NonNull MatomoRequest request
   ) {
     return sendRequestAsync(request, null);
   }
@@ -176,18 +180,21 @@ public class MatomoTracker {
    *
    * @param request  request to send
    * @param callback callback that gets executed when response arrives, null allowed
-   * @return a completable future to let you know when the request is done
+   * @return a completable future to let you know when the request is done. The future contains either the request (if
+   * no callback is specified) or null (if a callback is specified)
    * @deprecated Please use {@link MatomoTracker#sendRequestAsync(MatomoRequest)} in combination with
    * {@link CompletableFuture#thenAccept(Consumer)} instead
    */
   @Deprecated
-  public CompletableFuture<Void> sendRequestAsync(
-      @edu.umd.cs.findbugs.annotations.NonNull MatomoRequest request, @Nullable Consumer<Void> callback
+  public CompletableFuture<?> sendRequestAsync(
+      @NonNull MatomoRequest request,
+      @Nullable Consumer<MatomoRequest> callback
   ) {
     if (trackerConfiguration.isEnabled()) {
       validate(request);
       log.debug("Sending async request via GET: {}", request);
-      CompletableFuture<Void> future = sender.sendSingleAsync(request);
+      initializeSender();
+      CompletableFuture<MatomoRequest> future = sender.sendSingleAsync(request);
       if (callback != null) {
         return future.thenAccept(callback);
       }
@@ -198,7 +205,7 @@ public class MatomoTracker {
   }
 
   private void validate(
-      @edu.umd.cs.findbugs.annotations.NonNull MatomoRequest request
+      @NonNull MatomoRequest request
   ) {
     if (trackerConfiguration.getDefaultSiteId() == null && request.getSiteId() == null) {
       throw new IllegalArgumentException("No default site ID and no request site ID is given");
@@ -254,6 +261,7 @@ public class MatomoTracker {
         validate(request);
       }
       log.debug("Sending requests via POST: {}", requests);
+      initializeSender();
       sender.sendBulk(requests, authToken);
     } else {
       log.warn("Not sending request, because tracker is disabled");
@@ -279,7 +287,7 @@ public class MatomoTracker {
    * @return completable future to let you know when the request is done
    */
   public CompletableFuture<Void> sendBulkRequestAsync(
-      @edu.umd.cs.findbugs.annotations.NonNull Iterable<? extends MatomoRequest> requests
+      @NonNull Iterable<? extends MatomoRequest> requests
   ) {
     return sendBulkRequestAsync(requests, null, null);
   }
@@ -299,7 +307,7 @@ public class MatomoTracker {
    */
   @Deprecated
   public CompletableFuture<Void> sendBulkRequestAsync(
-      @edu.umd.cs.findbugs.annotations.NonNull Iterable<? extends MatomoRequest> requests,
+      @NonNull Iterable<? extends MatomoRequest> requests,
       @Nullable String authToken,
       @Nullable Consumer<Void> callback
   ) {
@@ -308,6 +316,7 @@ public class MatomoTracker {
         validate(request);
       }
       log.debug("Sending async requests via POST: {}", requests);
+      initializeSender();
       CompletableFuture<Void> future = sender.sendBulkAsync(requests, authToken);
       if (callback != null) {
         return future.thenAccept(callback);
@@ -327,7 +336,7 @@ public class MatomoTracker {
    * @return completable future to let you know when the request is done
    */
   public CompletableFuture<Void> sendBulkRequestAsync(
-      @edu.umd.cs.findbugs.annotations.NonNull Iterable<? extends MatomoRequest> requests,
+      @NonNull Iterable<? extends MatomoRequest> requests,
       @Nullable Consumer<Void> callback
   ) {
     return sendBulkRequestAsync(requests, null, callback);
@@ -345,7 +354,7 @@ public class MatomoTracker {
    * {@link #sendBulkRequestAsync(Iterable)} instead.
    */
   public CompletableFuture<Void> sendBulkRequestAsync(
-      @edu.umd.cs.findbugs.annotations.NonNull Iterable<? extends MatomoRequest> requests, @Nullable String authToken
+      @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String authToken
   ) {
     return sendBulkRequestAsync(requests, authToken, null);
   }

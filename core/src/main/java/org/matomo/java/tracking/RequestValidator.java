@@ -8,12 +8,10 @@
 package org.matomo.java.tracking;
 
 
-import static java.util.Objects.requireNonNull;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import lombok.NonNull;
 
 final class RequestValidator {
 
@@ -27,7 +25,6 @@ final class RequestValidator {
       @Nullable
       CharSequence authToken
   ) {
-    requireNonNull(request, "Request must not be null");
     if (request.getSiteId() != null && request.getSiteId() < 0) {
       throw new IllegalArgumentException("Site ID must not be negative");
     }

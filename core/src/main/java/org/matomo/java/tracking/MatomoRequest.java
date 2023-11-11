@@ -8,7 +8,6 @@
 package org.matomo.java.tracking;
 
 import static java.util.Collections.singleton;
-import static java.util.Objects.requireNonNull;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 import java.nio.charset.Charset;
@@ -590,9 +589,27 @@ public class MatomoRequest {
   @TrackingParameter(name = "debug")
   private Boolean debug;
 
-  private Iterable<Object> dimensions;
+  /**
+   * Custom Dimension values for specific Custom Dimension IDs.
+   *
+   * <p><a href="https://plugins.matomo.org/CustomDimensions">Custom Dimensions plugin</a> must be installed. See the
+   * <a href="https://matomo.org/docs/custom-dimensions/">Custom Dimensions guide</a>. Requires Matomo at least 2.15.1
+   */
+  private Map<Long, Object> dimensions;
 
+  /**
+   * Allows you to specify additional HTTP request parameters that will be sent to Matomo.
+   *
+   * <p>For example, you can use this to set the <em>Accept-Language</em> header, or to set the <em>Content-Type</em>.
+   */
   private Map<String, Collection<Object>> additionalParameters;
+
+  /**
+   * You can set additional HTTP headers for the request sent to Matomo.
+   *
+   * <p>For example, you can use this to set the <em>Accept-Language</em> header, or to set the <em>Content-Type</em>.
+   */
+  private Map<String, String> headers;
 
   /**
    * Create a new request from the id of the site being tracked and the full
@@ -800,9 +817,8 @@ public class MatomoRequest {
    */
   @Deprecated
   public void setPageCustomVariable(
-      @edu.umd.cs.findbugs.annotations.NonNull String key, @Nullable String value
+      @NonNull String key, @Nullable String value
   ) {
-    requireNonNull(key, "Key must not be null");
     if (value == null) {
       if (pageCustomVariables == null) {
         return;
@@ -923,9 +939,8 @@ public class MatomoRequest {
    */
   @Deprecated
   public void setUserCustomVariable(
-      @edu.umd.cs.findbugs.annotations.NonNull String key, @Nullable String value
+      @NonNull String key, @Nullable String value
   ) {
-    requireNonNull(key, "Key must not be null");
     if (value == null) {
       if (visitCustomVariables == null) {
         return;

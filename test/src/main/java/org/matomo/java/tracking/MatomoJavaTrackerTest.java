@@ -1,7 +1,5 @@
 package org.matomo.java.tracking;
 
-import static java.util.Arrays.asList;
-
 import com.github.javafaker.Country;
 import com.github.javafaker.Faker;
 import java.net.URI;
@@ -9,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -68,7 +67,7 @@ class MatomoJavaTrackerTest {
 
   private void sendRequestAsync() {
     MatomoRequest request = randomRequest();
-    CompletableFuture<Void> future = tracker.sendRequestAsync(request);
+    CompletableFuture<?> future = tracker.sendRequestAsync(request);
     future.thenAccept(v -> System.out.printf("Successfully sent async single request to Matomo server: %s%n", request));
   }
 
@@ -179,7 +178,7 @@ class MatomoJavaTrackerTest {
         .contentPiece(faker.ancient().god())
         .contentTarget("https://" + faker.internet().url())
         .contentInteraction(faker.app().name())
-        .dimensions(asList(faker.artist().name(), faker.dog().name()))
+        .dimensions(Map.of(1L, faker.artist().name(), 2L, faker.dog().name()))
         .debug(true)
         .build();
   }

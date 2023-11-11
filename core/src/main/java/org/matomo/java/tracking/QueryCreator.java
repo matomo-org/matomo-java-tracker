@@ -94,11 +94,11 @@ class QueryCreator {
       }
     }
     if (request.getDimensions() != null) {
-      int i = 0;
-      for (Object dimension : request.getDimensions()) {
-        appendAmpersand(query);
-        query.append("dimension").append(i + 1).append('=').append(encode(dimension.toString()));
-        i++;
+      for (Entry<Long, Object> entry : request.getDimensions().entrySet()) {
+        if (entry.getKey() != null && entry.getValue() != null) {
+          appendAmpersand(query);
+          query.append("dimension").append(entry.getKey()).append('=').append(encode(entry.getValue().toString()));
+        }
       }
     }
     return query.toString();

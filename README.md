@@ -15,7 +15,7 @@ Features include:
 * Track page views, goals, ecommerce transactions and items
 * Supports custom dimensions and custom variables
 * Includes tracking parameters for campaigns, events, downloads, outlinks, site search, devices, visitors
-* Supports Java 8 and higher
+* Supports Java 8 and higher (if you use Java 17, please use artifact matomo-java-tracker-java17)
 * Allows you to skip SSL certificate validation (not recommended for production)
 * Contains nearly no runtime dependencies (only SLF4J)
 * Allows asynchronous requests
@@ -25,6 +25,8 @@ Features include:
 * Ensures correct values are sent to Matomo Tracking API
 * Includes debug and error logging
 * Easy to integrate in frameworks, e.g. Spring: Just create the MatomoTracker Spring bean and use it in other beans
+
+Please prefer the Java 17 version as the Java 8 will become obsolete in the future.
 
 Further information on Matomo and Matomo HTTP tracking:
 
@@ -70,6 +72,7 @@ Here are the most important changes:
 * less dependencies
 * new dimension parameter
 * special types allow to provide valid parameters now
+* a new implementation for Java 17 uses the HttpClient available since Java 11
 
 ## Javadoc
 
@@ -89,21 +92,71 @@ You can also build the Javadoc yourself. See the section [Building](#building-an
 ## Using this API
 
 See the following sections for information on how to use this API. For more information, see the Javadoc. We also
-recommend
-to read the [Tracking API User Guide](https://matomo.org/guide/apis/tracking-api/).
+recommend to read the [Tracking API User Guide](https://matomo.org/guide/apis/tracking-api/).
 The [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api) is well
 documented and contains many examples.
 
 ### Add library to your build
 
-Add a dependency on Matomo Java Tracker using Maven:
+Add a dependency on Matomo Java Tracker using Maven. For Java 8:
+
+```xml
+<dependency>
+    <groupId>org.piwik.java.tracking</groupId>
+    <artifactId>matomo-java-tracker</artifactId>
+    <version>3.0.0</version>
+</dependency>
+```
+
+For Java 17:
+
+```xml
+<dependency>
+    <groupId>org.piwik.java.tracking</groupId>
+    <artifactId>matomo-java-tracker-java17</artifactId>
+    <version>3.0.0</version>
+</dependency>
+```
+
+or Gradle (Java 8):
+
+```groovy
+dependencies {
+    implementation("org.piwik.java.tracking:matomo-java-tracker:3.0.0")
+}
+```
+
+or Gradle (Java 17):
+
+```groovy
+dependencies {
+    implementation("org.piwik.java.tracking:matomo-java-tracker-java17:3.0.0")
+}
+```
+
+or Gradle with Kotlin DSL (Java 8)
+
+```kotlin
+implementation("org.piwik.java.tracking:matomo-java-tracker:3.0.0")
+```
+
+or Gradle with Kotlin DSL (Java 17)
+
+```kotlin
+implementation("org.piwik.java.tracking:matomo-java-tracker-java17:3.0.0")
+```
+
+### Spring Boot Module
+
+If you use Spring Boot, you can use the Spring Boot Autoconfigure artifact. It will create a MatomoTracker bean for you
+and allows you to configure the tracker via application properties. Add the following dependency to your build:
 
 ```xml
 
 <dependency>
     <groupId>org.piwik.java.tracking</groupId>
-    <artifactId>matomo-java-tracker</artifactId>
-    <version>3.0.0-rc1</version>
+    <artifactId>matomo-java-tracker-spring-boot-starter</artifactId>
+    <version>3.0.0</version>
 </dependency>
 ```
 
@@ -111,14 +164,49 @@ or Gradle:
 
 ```groovy
 dependencies {
-    implementation("org.piwik.java.tracking:matomo-java-tracker:3.0.0-rc1")
+    implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:3.0.0")
 }
 ```
 
-or Gradle with Kotlin DSL:
+or Gradle with Kotlin DSL
 
 ```kotlin
-implementation("org.piwik.java.tracking:matomo-java-tracker:3.0.0-rc1")
+implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:3.0.0")
+```
+
+The following properties are supported:
+
+| Property Name                                | Description                                                                                                                                            |
+|----------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| matomo.tracker.api-endpoint (required)       | The URL to the Matomo Tracking API endpoint. Must be set.                                                                                              |
+| matomo.tracker.default-site-id               | If you provide a default site id, it will be taken if the action does not contain a site id.                                                           |
+| matomo.tracker.default-token-auth            | If you provide a default token auth, it will be taken if the action does not contain a token auth.                                                     |
+| matomo.tracker.enabled                       | The tracker is enabled per default. You can disable it per configuration with this flag.                                                               |
+| matomo.tracker.log-failed-tracking           | Will send errors to the log if the Matomo Tracking API responds with an erroneous HTTP code                                                            |
+| matomo.tracker.connect-timeout               | allows you to change the default connection timeout of 10 seconds. 0 is interpreted as infinite, null uses the system default                          |
+| matomo.tracker.socket-timeout                | allows you to change the default socket timeout of 10 seconds. 0 is interpreted as infinite, null uses the system default                              |
+| matomo.tracker.user-agent                    | used by the request made to the endpoint is `MatomoJavaClient` per default. You can change it by using this builder method.                            |
+| matomo.tracker.proxy-host                    | The hostname or IP address of an optional HTTP proxy. `proxyPort` must be configured as well                                                           |
+| matomo.tracker.proxy-port                    | The port of an HTTP proxy. `proxyHost` must be configured as well.                                                                                     |
+| matomo.tracker.proxy-username                | If the HTTP proxy requires a username for basic authentication, it can be configured with this method. Proxy host, port and password must also be set. |
+| matomo.tracker.proxy-password                | The corresponding password for the basic auth proxy user. The proxy host, port and username must be set as well.                                       |
+| matomo.tracker.disable-ssl-cert-validation   | If set to true, the SSL certificate of the Matomo server will not be validated. This should only be used for testing purposes. Default: false          |
+| matomo.tracker.disable-ssl-host-verification | If set to true, the SSL host of the Matomo server will not be validated. This should only be used for testing purposes. Default: false                 |
+| matomo.tracker.thread-pool-size              | The number of threads that will be used to asynchronously send requests. Default: 2                                                                    |
+
+To ensure the `MatomoTracker` bean is created by the autoconfigure module, you have to add the following property to
+your `application.properties` file:
+
+```properties
+matomo.tracker.api-endpoint=https://your-matomo-domain.tld/matomo.php
+```
+
+Or if you use YAML:
+
+```yaml
+matomo:
+  tracker:
+    api-endpoint: https://your-matomo-domain.tld/matomo.php
 ```
 
 ### Create a Request
@@ -183,7 +271,8 @@ public class YourImplementation {
 See [Tracking Campaigns](https://matomo.org/docs/tracking-campaigns/) for more information. All HTTP query parameters
 denoted on
 the [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api) can be set using the appropriate
-getters and setters. See [MatomoRequest](core/src/main/java/org/matomo/java/tracking/MatomoRequest.java) for the mappings of
+getters and setters. See [MatomoRequest](core/src/main/java/org/matomo/java/tracking/MatomoRequest.java) for the
+mappings of
 the
 parameters to their corresponding attributes.
 
@@ -221,8 +310,6 @@ The Matomo Tracker currently supports the following builder methods:
 * `.defaultSiteId(...)` If you provide a default site id, it will be taken if the action does not contain a site id.
 * `.defaultTokenAuth(...)` If you provide a default token auth, it will be taken if the action does not contain a token
   auth.
-* `.delay(...)` The duration on how long the tracker collects actions until they will be sent out as a bulk request.
-  Default: 1 seconds
 * `.enabled(...)` The tracker is enabled per default. You can disable it per configuration with this flag.
 * `.logFailedTracking(...)` Will send errors to the log if the Matomo Tracking API responds with an erroneous HTTP code
 * `.connectTimeout(...)` allows you to change the default connection timeout of 10 seconds. 0 is
@@ -234,15 +321,15 @@ The Matomo Tracker currently supports the following builder methods:
 * `.proxyHost(...)` The hostname or IP address of an optional HTTP proxy. `proxyPort` must be
   configured as well
 * `.proxyPort(...)` The port of an HTTP proxy. `proxyHost` must be configured as well.
-* `.proxyUserName(...)` If the HTTP proxy requires a username for basic authentication, it can be
+* `.proxyUsername(...)` If the HTTP proxy requires a username for basic authentication, it can be
   configured with this method. Proxy host, port and password must also be set.
 * `.proxyPassword(...)` The corresponding password for the basic auth proxy user. The proxy host,
   port and username must be set as well.
 * `.disableSslCertValidation(...)` If set to true, the SSL certificate of the Matomo server will not be validated. This
   should only be used for testing purposes. Default: false
 * `.disableSslHostVerification(...)` If set to true, the SSL host of the Matomo server will not be validated. This
-  should
-  only be used for testing purposes. Default: false
+  should only be used for testing purposes. Default: false
+* `.threadPoolSize(...)` The number of threads that will be used to asynchronously send requests. Default: 2
 
 To send a single request synchronously via GET, call
 
@@ -446,7 +533,18 @@ This project can be tested and built by calling
 mvn install
 ```
 
-This repository contains the modules `core` and `test`. The built jars and javadoc can be found in `target`. By using the Maven goal `install, a snapshot
+This project contains the following modules:
+
+* `core` contains the core functionality of the Matomo Java Tracker
+* `java8` contains the Java 8 implementation of the Matomo Java Tracker
+* `java17` contains the Java 17 implementation of the Matomo Java Tracker using the HttpClient available since Java 11
+  (recommended)
+* `spring-boot-autoconfigure` contains the Spring Boot autoconfigure module
+* `test` contains tools for manual test against a local Matomo instance created with Docker (see below)
+
+
+The built jars and javadoc can be found in `target`. By using
+the Maven goal `install, a snapshot
 version can be used in your local Maven repository for testing purposes, e.g.
 
 ```xml
@@ -466,6 +564,7 @@ Start the docker containers with
 ```shell
 docker-compose up -d
 ```
+
 You need to adapt your config.ini.php file and change
 the following line:
 
@@ -491,7 +590,8 @@ The following snippets helps you to do this quickly:
 docker-compose exec matomo sed -i 's/localhost/localhost:8080/g' /var/www/html/config/config.ini.php
 ```
 
-After the installation you can run `MatomoJavaTrackerTest` in the module `test` to test the tracker. It will send multiple randomized
+After the installation you can run `MatomoJavaTrackerTest` in the module `test` to test the tracker. It will send
+multiple randomized
 requests to the local Matomo instance.
 
 To enable debug logging, you append the following line to the `config.ini.php` file:
