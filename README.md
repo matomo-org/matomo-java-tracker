@@ -637,6 +637,7 @@ provide tests for your changes. We use JUnit 5 for testing. Coverage should be a
 ## Other Java Matomo Tracker Implementations
 
 * [Matomo SDK for Android](https://github.com/matomo-org/matomo-sdk-android)
+* [Piwik SDK Android]( https://github.com/lkogler/piwik-sdk-android)
 * [piwik-tracking](https://github.com/ralscha/piwik-tracking)
 * [Matomo Tracking API Java Client](https://github.com/dheid/matomo-tracker) -> Most of the code was integrated in the
   official Matomo Java Tracker
