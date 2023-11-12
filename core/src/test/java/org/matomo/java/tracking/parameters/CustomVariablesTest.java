@@ -36,15 +36,13 @@ class CustomVariablesTest {
     assertThat(customVariables.get("a")).isEqualTo("b");
     assertThat(customVariables.get(5)).isEqualTo(c);
     assertThat(customVariables.get(3)).isNull();
-    assertThat(customVariables).hasToString(
-        "{\"1\":[\"a\",\"b\"],\"2\":[\"c\",\"d\"],\"5\":[\"a\",\"e\"]}");
+    assertThat(customVariables).hasToString("{\"1\":[\"a\",\"b\"],\"2\":[\"c\",\"d\"],\"5\":[\"a\",\"e\"]}");
     CustomVariable d = new CustomVariable("a", "f");
     customVariables.add(d);
     assertThat(customVariables.get("a")).isEqualTo("f");
     assertThat(customVariables.get(1)).isEqualTo(d);
     assertThat(customVariables.get(5)).isEqualTo(d);
-    assertThat(customVariables).hasToString(
-        "{\"1\":[\"a\",\"f\"],\"2\":[\"c\",\"d\"],\"5\":[\"a\",\"f\"]}");
+    assertThat(customVariables).hasToString("{\"1\":[\"a\",\"f\"],\"2\":[\"c\",\"d\"],\"5\":[\"a\",\"f\"]}");
     customVariables.remove("a");
     assertThat(customVariables.get("a")).isNull();
     assertThat(customVariables.get(1)).isNull();
@@ -164,6 +162,17 @@ class CustomVariablesTest {
         .isInstanceOf(NullPointerException.class)
         .hasMessage("key is marked non-null but is null")
         .hasNoCause();
+  }
+
+  @Test
+  void parseCustomVariables() {
+    CustomVariables customVariables =
+        CustomVariables.parse(
+            "{\"1\":[\"VAR 1 set, var 2 not set\",\"yes\"],\"3\":[\"var 3 set\",\"yes!!!!\"]}");
+    assertThat(customVariables.get(1).getKey()).isEqualTo("VAR 1 set, var 2 not set");
+    assertThat(customVariables.get(1).getValue()).isEqualTo("yes");
+    assertThat(customVariables.get(3).getKey()).isEqualTo("var 3 set");
+    assertThat(customVariables.get(3).getValue()).isEqualTo("yes!!!!");
   }
 
 }

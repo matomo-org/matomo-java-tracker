@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.StringTokenizer;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
@@ -129,6 +130,52 @@ public class CustomVariables {
 
   boolean isEmpty() {
     return variables.isEmpty();
+  }
+
+
+  /**
+   * Parses a JSON representation of custom variables.
+   *
+   * <p>The format is as follows: {@code {"1":["key1","value1"],"2":["key2","value2"]}}
+   *
+   * <p>Example: {@code {"1":["OS","Windows"],"2":["Browser","Firefox"]}}
+   *
+   * <p>This is mainly used to parse the custom variables from the cookie.
+   *
+   * @param value The JSON representation of the custom variables to parse or null
+   * @return The parsed custom variables or null if the given value is null or empty
+   */
+  @Nullable
+  public static CustomVariables parse(@Nullable String value) {
+    if (value == null || value.isEmpty()) {
+      return null;
+    }
+
+    CustomVariables customVariables = new CustomVariables();
+    StringTokenizer tokenizer = new StringTokenizer(value, ":{}\"");
+
+    Integer key = null;
+    String customVariableKey = null;
+    String customVariableValue = null;
+    while (tokenizer.hasMoreTokens()) {
+      String token = tokenizer.nextToken().trim();
+      if (!token.isEmpty()) {
+        if (token.matches("\\d+")) {
+          key = Integer.parseInt(token);
+        } else if (token.startsWith("[") && key != null) {
+          customVariableKey = tokenizer.nextToken();
+          tokenizer.nextToken();
+          customVariableValue = tokenizer.nextToken();
+        } else if (key != null && customVariableKey != null && customVariableValue != null) {
+          customVariables.add(new CustomVariable(customVariableKey, customVariableValue), key);
+        } else if (token.equals(",")) {
+          key = null;
+          customVariableKey = null;
+          customVariableValue = null;
+        }
+      }
+    }
+    return customVariables;
   }
 
   /**

@@ -4,6 +4,8 @@ import static java.util.Collections.singleton;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import java.net.CookieStore;
+import java.net.HttpCookie;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -33,6 +35,9 @@ public class Java17Sender implements Sender {
 
   @lombok.NonNull
   private final HttpClient httpClient;
+
+  @lombok.NonNull
+  private final CookieStore cookieStore;
 
   @NonNull
   @Override
@@ -66,6 +71,7 @@ public class Java17Sender implements Sender {
     Collection<String> queries = new ArrayList<>();
     Map<String, String> headers = new LinkedHashMap<>(10);
     String headerUserAgent = null;
+    cookieStore.removeAll();
     for (MatomoRequest request : requests) {
       RequestValidator.validate(request, authToken);
       if (request.getHeaders() != null && !request.getHeaders().isEmpty()) {
@@ -75,6 +81,7 @@ public class Java17Sender implements Sender {
         headerUserAgent = request.getHeaderUserAgent();
       }
       queries.add(queryCreator.createQuery(request, null));
+      addCookies(request);
     }
     HttpRequest.Builder builder = HttpRequest
         .newBuilder()
@@ -102,9 +109,23 @@ public class Java17Sender implements Sender {
   }
 
   @NonNull
+  private <T> CompletableFuture<T> sendAsyncAndCheckResponse(
+      @NonNull HttpRequest httpRequest, @Nullable T result
+  ) {
+    return send(httpRequest,
+        () -> httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.discarding()).thenApply(response -> {
+          checkResponse(response, httpRequest);
+          return result;
+        })
+    );
+  }
+
+  @NonNull
   private HttpRequest buildHttpGetRequest(@NonNull MatomoRequest request) {
     String authToken = AuthToken.determineAuthToken(null, singleton(request), trackerConfiguration);
     RequestValidator.validate(request, authToken);
+    cookieStore.removeAll();
+    addCookies(request);
     URI apiEndpoint = trackerConfiguration.getApiEndpoint();
     HttpRequest.Builder builder = HttpRequest
         .newBuilder()
@@ -118,54 +139,13 @@ public class Java17Sender implements Sender {
     return builder.build();
   }
 
-  private void addHeaders(@NonNull HttpRequest.Builder builder, @Nullable Map<String, String> headers) {
-    if (headers != null) {
-      for (Map.Entry<String, String> header : headers.entrySet()) {
-        builder.header(header.getKey(), header.getValue());
-      }
-    }
-  }
-
-  @NonNull
-  private <T> CompletableFuture<T> sendAsyncAndCheckResponse(
-      @NonNull HttpRequest httpRequest, @Nullable T result
-  ) {
-    return send(httpRequest,
-        () -> httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.discarding()).thenApply(response -> {
-          checkResponse(response, httpRequest);
-          return result;
-        })
-    );
-  }
-
-  private void applyTrackerConfiguration(@NonNull HttpRequest.Builder builder) {
-    if (trackerConfiguration.getSocketTimeout() != null && trackerConfiguration.getSocketTimeout().toMillis() > 0L) {
-      builder.timeout(trackerConfiguration.getSocketTimeout());
-    }
-  }
-
-  private void setUserAgentHeader(
-      HttpRequest.Builder builder,
-      @Nullable String headerUserAgent,
-      @Nullable Map<String, String> headers
-  ) {
-    String userAgentHeader = null;
-    if ((headerUserAgent == null || headerUserAgent.trim().isEmpty()) && headers != null) {
-      TreeMap<String, String> caseInsensitiveMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-      caseInsensitiveMap.putAll(headers);
-      userAgentHeader = caseInsensitiveMap.get("User-Agent");
-    }
-    if ((userAgentHeader == null || userAgentHeader.trim().isEmpty())
-        && (headerUserAgent == null || headerUserAgent.trim().isEmpty())
-        && trackerConfiguration.getUserAgent() != null && !trackerConfiguration.getUserAgent().isEmpty()) {
-      builder.header("User-Agent", trackerConfiguration.getUserAgent());
-    }
-  }
-
   private <T> T send(
       @NonNull HttpRequest httpRequest, @NonNull Callable<T> callable
   ) {
     try {
+      log.debug("Sending request to Matomo: {}", httpRequest);
+      log.debug("Headers: {}", httpRequest.headers());
+      log.debug("Cookies: {}", cookieStore.getCookies());
       return callable.call();
     } catch (Exception e) {
       if (trackerConfiguration.isLogFailedTracking()) {
@@ -181,6 +161,47 @@ public class Java17Sender implements Sender {
         log.error("Received HTTP error code {} for URL {}", response.statusCode(), httpRequest.uri());
       }
       throw new MatomoException(String.format("Tracking endpoint responded with code %d", response.statusCode()));
+    }
+  }
+
+  private void addCookies(MatomoRequest request) {
+    if (request.getSessionId() != null && !request.getSessionId().isEmpty()) {
+      cookieStore.add(null, new HttpCookie("MATOMO_SESSID", request.getSessionId()));
+    }
+    if (request.getCookies() != null) {
+      for (Map.Entry<String, String> entry : request.getCookies().entrySet()) {
+        cookieStore.add(null, new HttpCookie(entry.getKey(), entry.getValue()));
+      }
+    }
+  }
+
+  private void applyTrackerConfiguration(@NonNull HttpRequest.Builder builder) {
+    if (trackerConfiguration.getSocketTimeout() != null && trackerConfiguration.getSocketTimeout().toMillis() > 0L) {
+      builder.timeout(trackerConfiguration.getSocketTimeout());
+    }
+  }
+
+  private void setUserAgentHeader(
+      HttpRequest.Builder builder, @Nullable String headerUserAgent, @Nullable Map<String, String> headers
+  ) {
+    String userAgentHeader = null;
+    if ((headerUserAgent == null || headerUserAgent.trim().isEmpty()) && headers != null) {
+      TreeMap<String, String> caseInsensitiveMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+      caseInsensitiveMap.putAll(headers);
+      userAgentHeader = caseInsensitiveMap.get("User-Agent");
+    }
+    if ((userAgentHeader == null || userAgentHeader.trim().isEmpty()) && (
+        headerUserAgent == null || headerUserAgent.trim().isEmpty())
+        && trackerConfiguration.getUserAgent() != null && !trackerConfiguration.getUserAgent().isEmpty()) {
+      builder.header("User-Agent", trackerConfiguration.getUserAgent());
+    }
+  }
+
+  private void addHeaders(@NonNull HttpRequest.Builder builder, @Nullable Map<String, String> headers) {
+    if (headers != null) {
+      for (Map.Entry<String, String> header : headers.entrySet()) {
+        builder.header(header.getKey(), header.getValue());
+      }
     }
   }
 }

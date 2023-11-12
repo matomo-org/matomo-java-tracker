@@ -15,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import java.net.CookieManager;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.time.Duration;
@@ -37,29 +38,46 @@ class Java17SenderIT {
 
   @Test
   void failsIfTrackerConfigurationIsNotSet() {
+    CookieManager cookieManager = new CookieManager();
     assertThatThrownBy(() -> new Java17Sender(
         null,
         new QueryCreator(TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build()),
-        HttpClient.newHttpClient()
+        HttpClient.newBuilder().cookieHandler(cookieManager).build(),
+        cookieManager.getCookieStore()
     )).isInstanceOf(NullPointerException.class).hasMessage("trackerConfiguration is marked non-null but is null");
   }
 
   @Test
   void failsIfQueryCreatorIsNotSet() {
+    CookieManager cookieManager = new CookieManager();
     assertThatThrownBy(() -> new Java17Sender(
         TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build(),
         null,
-        HttpClient.newHttpClient()
+        HttpClient.newBuilder().cookieHandler(cookieManager).build(),
+        cookieManager.getCookieStore()
     )).isInstanceOf(NullPointerException.class).hasMessage("queryCreator is marked non-null but is null");
   }
 
   @Test
   void failsIfHttpClientIsNotSet() {
+    CookieManager cookieManager = new CookieManager();
     assertThatThrownBy(() -> new Java17Sender(
         TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build(),
         new QueryCreator(TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build()),
-        null
+        null,
+        cookieManager.getCookieStore()
     )).isInstanceOf(NullPointerException.class).hasMessage("httpClient is marked non-null but is null");
+  }
+
+  @Test
+  void failsIfCookieStoreIsNotSet() {
+    CookieManager cookieManager = new CookieManager();
+    assertThatThrownBy(() -> new Java17Sender(
+        TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build(),
+        new QueryCreator(TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build()),
+        HttpClient.newBuilder().cookieHandler(cookieManager).build(),
+        null
+    )).isInstanceOf(NullPointerException.class).hasMessage("cookieStore is marked non-null but is null");
   }
 
   @Test

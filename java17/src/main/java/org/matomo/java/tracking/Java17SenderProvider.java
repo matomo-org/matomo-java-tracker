@@ -1,6 +1,7 @@
 package org.matomo.java.tracking;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
+import java.net.CookieManager;
 import java.net.InetSocketAddress;
 import java.net.ProxySelector;
 import java.net.http.HttpClient;
@@ -20,8 +21,10 @@ public class Java17SenderProvider implements SenderProvider {
   public Sender provideSender(
       TrackerConfiguration trackerConfiguration, QueryCreator queryCreator
   ) {
+    CookieManager cookieManager = new CookieManager();
     HttpClient.Builder builder = HttpClient
         .newBuilder()
+        .cookieHandler(cookieManager)
         .executor(Executors.newFixedThreadPool(trackerConfiguration.getThreadPoolSize(), new DaemonThreadFactory()))
     ;
     if (trackerConfiguration.getConnectTimeout() != null && trackerConfiguration.getConnectTimeout().toMillis() > 0L) {
@@ -51,7 +54,7 @@ public class Java17SenderProvider implements SenderProvider {
       throw new MatomoException("Please disable SSL hostname verification manually using the system parameter -Djdk.internal.httpclient.disableHostnameVerification=true");
     }
 
-    return new Java17Sender(trackerConfiguration, queryCreator, builder.build());
+    return new Java17Sender(trackerConfiguration, queryCreator, builder.build(), cookieManager.getCookieStore());
   }
 
   private static boolean isEmpty(

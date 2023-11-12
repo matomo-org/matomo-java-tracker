@@ -31,6 +31,8 @@ class MockHttpServletRequest implements HttpServletRequest {
 
   private Map<String, String> headers;
 
+  private Collection<Cookie> cookies;
+
   @Override
   public String getAuthType() {
     return null;
@@ -38,7 +40,7 @@ class MockHttpServletRequest implements HttpServletRequest {
 
   @Override
   public Cookie[] getCookies() {
-    return new Cookie[0];
+    return cookies == null ? null : cookies.toArray(new Cookie[0]);
   }
 
   @Override
@@ -58,7 +60,7 @@ class MockHttpServletRequest implements HttpServletRequest {
 
   @Override
   public Enumeration<String> getHeaderNames() {
-    return Collections.enumeration(headers.keySet());
+    return headers == null ? Collections.emptyEnumeration() : Collections.enumeration(headers.keySet());
   }
 
   @Override

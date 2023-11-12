@@ -148,7 +148,7 @@ implementation("org.piwik.java.tracking:matomo-java-tracker-java17:3.0.0")
 
 ### Spring Boot Module
 
-If you use Spring Boot, you can use the Spring Boot Autoconfigure artifact. It will create a MatomoTracker bean for you
+If you use Spring Boot 3, you can use the Spring Boot Starter artifact. It will create a MatomoTracker bean for you
 and allows you to configure the tracker via application properties. Add the following dependency to your build:
 
 ```xml
@@ -194,7 +194,7 @@ The following properties are supported:
 | matomo.tracker.disable-ssl-host-verification | If set to true, the SSL host of the Matomo server will not be validated. This should only be used for testing purposes. Default: false                 |
 | matomo.tracker.thread-pool-size              | The number of threads that will be used to asynchronously send requests. Default: 2                                                                    |
 
-To ensure the `MatomoTracker` bean is created by the autoconfigure module, you have to add the following property to
+To ensure the `MatomoTracker` bean is created by the auto configuration, you have to add the following property to
 your `application.properties` file:
 
 ```properties
@@ -209,28 +209,113 @@ matomo:
     api-endpoint: https://your-matomo-domain.tld/matomo.php
 ```
 
-### Create a Request
+You can automatically add the `MatomoTrackerFilter` to your Spring Boot application if you add the following property:
 
-Each MatomoRequest represents an action the user has taken that you want tracked by your Matomo server. Create a
-MatomoRequest through
+```properties
+matomo.tracker.filter.enabled=true
+```
+
+Or if you use YAML:
+
+```yaml
+matomo:
+  tracker:
+    filter:
+      enabled: true
+```
+
+The filter uses `ServletMatomoRequest` to create a `MatomoRequest` from a `HttpServletRequest` on every filter call.
+
+### Sending a Tracking Request
+
+To let the Matomo Java Tracker send a request to the Matomo instance, you need the following minimal code:
 
 ```java
-
+import java.net.URI;
 import org.matomo.java.tracking.MatomoRequest;
+import org.matomo.java.tracking.MatomoTracker;
+import org.matomo.java.tracking.TrackerConfiguration;
+import org.matomo.java.tracking.parameters.VisitorId;
 
-public class YourImplementation {
+public class SendExample {
 
-    public void yourMethod() {
-        MatomoRequest request = MatomoRequest.builder()
-                                             .siteId(42)
-                                             .actionUrl("https://www.mydomain.com/signup")
-                                             .actionName("Signup")
-                                             .build();
+  public static void main(String[] args) {
+
+    TrackerConfiguration configuration = TrackerConfiguration
+        .builder()
+        .apiEndpoint(URI.create("https://www.yourdomain.com/matomo.php"))
+        .defaultSiteId(1)
+        .defaultAuthToken("ee6e3dd9ed1b61f5328cf5978b5a8c71")
+        .logFailedTracking(true)
+        .build();
+
+    MatomoTracker tracker = new MatomoTracker(configuration);
+
+    tracker.sendRequestAsync(MatomoRequest
+        .request()
+        .actionName("Checkout")
+        .actionUrl("https://www.yourdomain.com/checkout")
+        .visitorId(VisitorId.fromString("customer@mail.com"))
+        .build()
+    );
+    
+  }
+
+}
+```
+
+This will send a request to the Matomo instance at https://www.yourdomain.com/matomo.php and track a page view for the
+visitor customer@mail.com with the action name "Checkout" and action URL "https://www.yourdomain.com/checkout" for
+the site with id 1. The request will be sent asynchronously, that means the method will return immediately and your
+application will not wait for the response of the Matomo server. In the configuration we set the default site id to 1
+and configure the default auth token. With `logFailedTracking` we enable logging of failed tracking requests.
+
+If you have multiple requests to wish to track, it may be more efficient to send them in a single HTTP call. To do this,
+send a bulk request. Place your requests in an _Iterable_ data structure and call
+
+```java
+import java.net.URI;
+import org.matomo.java.tracking.MatomoRequest;
+import org.matomo.java.tracking.MatomoTracker;
+import org.matomo.java.tracking.TrackerConfiguration;
+import org.matomo.java.tracking.parameters.VisitorId;
+
+public class BulkExample {
+
+    public static void main(String[] args) {
+
+        TrackerConfiguration configuration = TrackerConfiguration
+                .builder()
+                .apiEndpoint(URI.create("https://www.yourdomain.com/matomo.php"))
+                .defaultSiteId(1)
+                .defaultAuthToken("ee6e3dd9ed1b61f5328cf5978b5a8c71")
+                .logFailedTracking(true)
+                .build();
+
+        MatomoTracker tracker = new MatomoTracker(configuration);
+
+        VisitorId visitorId = VisitorId.fromString("customer@mail.com");
+        tracker.sendBulkRequestAsync(
+                MatomoRequest
+                        .request()
+                        .actionName("Checkout")
+                        .actionUrl("https://www.yourdomain.com/checkout")
+                        .visitorId(visitorId)
+                        .build(),
+                MatomoRequest
+                        .request()
+                        .actionName("Payment")
+                        .actionUrl("https://www.yourdomain.com/checkout")
+                        .visitorId(visitorId)
+                        .build()
+        );
+
     }
 
 }
-
 ```
+
+This will send two requests in a single HTTP call. The requests will be sent asynchronously.
 
 Per default every request has the following default parameters:
 
@@ -242,68 +327,55 @@ Per default every request has the following default parameters:
 | apiVersion      | 1                              |
 | responseAsImage | false                          |
 
-Overwrite these properties as desired.
+Overwrite these properties as desired. We strongly recommend your to determine the visitor id for every user using
+a unique identifier, e.g. an email address. If you do not provide a visitor id, a random visitor id will be generated.
 
 Note that if you want to be able to track campaigns using *Referrers &gt; Campaigns*, you must add the correct
-URL parameters to your actionUrl. For matomoJavaTrackerTest,
-
-```java
-
-package matomoJavaTrackerTest;
-
-import org.matomo.java.tracking.MatomoRequest;
-
-public class YourImplementation {
-
-    public void yourMethod() {
-
-        MatomoRequest request = MatomoRequest.builder()
-                                             .siteId(42)
-                                             .actionUrl(
-                                                     "https://matomoJavaTrackerTest.org/landing.html?pk_campaign=Email-Nov2011&pk_kwd=LearnMore") // include the query parameters to the url
-                                             .actionName("LearnMore")
-                                             .build();
-    }
-
-}
-```
-
-See [Tracking Campaigns](https://matomo.org/docs/tracking-campaigns/) for more information. All HTTP query parameters
-denoted on
-the [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api) can be set using the appropriate
-getters and setters. See [MatomoRequest](core/src/main/java/org/matomo/java/tracking/MatomoRequest.java) for the
-mappings of
-the
-parameters to their corresponding attributes.
+URL parameters to your actionUrl. See [Tracking Campaigns](https://matomo.org/docs/tracking-campaigns/) for more information. All HTTP query parameters
+denoted on the [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api) can be set using the appropriate getters and setters. See
+[MatomoRequest](core/src/main/java/org/matomo/java/tracking/MatomoRequest.java) for the mappings of the parameters to their corresponding attributes.
 
 Requests are validated prior to sending. If a request is invalid, a `MatomoException` will be thrown.
 
-### Sending Requests
-
-Create a MatomoTracker using the constructor
+In a Servlet environment, it might be easier to use the `ServletMatomoRequest` class to create a `MatomoRequest` from a
+`HttpServletRequest`:
 
 ```java
-package matomoJavaTrackerTest;
-
-import java.net.URI;
+import jakarta.servlet.http.HttpServletRequest;
+import org.matomo.java.tracking.MatomoRequest;
 import org.matomo.java.tracking.MatomoTracker;
-import org.matomo.java.tracking.TrackerConfiguration;
+import org.matomo.java.tracking.parameters.DeviceResolution;
+import org.matomo.java.tracking.ServletMatomoRequest;
 
-public class YourImplementation {
+public class ServletMatomoRequestExample {
 
-    public void yourMethod() {
+    private final MatomoTracker tracker;
 
-        MatomoTracker tracker = new MatomoTracker(TrackerConfiguration.builder()
-                                                                      .apiEndpoint(URI.create(
-                                                                              "https://your-matomo-domain.tld/matomo.php"))
-                                                                      .build());
-
+    public ServletMatomoRequestExample(MatomoTracker tracker) {
+        this.tracker = tracker;
+    }
+    
+    public void someControllerMethod(HttpServletRequest req) {
+        MatomoRequest matomoRequest = ServletMatomoRequest
+                .fromServletRequest(req)
+                .actionName("Some Controller Action")
+                // ...
+                .build();
+        tracker.sendRequestAsync(matomoRequest);
+        // ...
     }
 
 }
 ```
 
-The Matomo Tracker currently supports the following builder methods:
+The `ServletMatomoRequest` automatically sets the action URL, applies browser request headers, corresponding Matomo
+cookies and the visitor IP address. It sets the visitor ID, Matomo session ID, custom variables and heatmap
+if Matomo cookies are present.
+
+### Tracking Configuration
+
+The `MatomoTracker` can be configured using the `TrackerConfiguration` object. The following configuration options are
+available:
 
 * `.apiEndpoint(...)` An `URI` object that points to the Matomo Tracking API endpoint of your Matomo installation. Must
   be set.
@@ -330,123 +402,6 @@ The Matomo Tracker currently supports the following builder methods:
 * `.disableSslHostVerification(...)` If set to true, the SSL host of the Matomo server will not be validated. This
   should only be used for testing purposes. Default: false
 * `.threadPoolSize(...)` The number of threads that will be used to asynchronously send requests. Default: 2
-
-To send a single request synchronously via GET, call
-
-```java
-package matomoJavaTrackerTest;
-
-import org.apache.http.HttpResponse;
-import org.matomo.java.tracking.MatomoRequest;
-import org.matomo.java.tracking.MatomoTracker;
-
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
-public class YourImplementation {
-
-    public void yourMethod() {
-
-        MatomoRequest request = MatomoRequest.builder()
-                                             .siteId(42)
-                                             .actionUrl("https://www.mydomain.com/some/page")
-                                             .actionName("Signup")
-                                             .build();
-
-        MatomoTracker tracker = new MatomoTracker(TrackerConfiguration.builder()
-                                                                      .apiEndpoint(URI.create(
-                                                                              "https://your-matomo-domain.tld/matomo.php"))
-                                                                      .build());
-
-        tracker.sendRequestAsync(request);
-
-    }
-
-}
-```
-
-If you have multiple requests to wish to track, it may be more efficient to send them in a single HTTP call. To do this,
-send a bulk request. Place your requests in an _Iterable_ data structure and call
-
-```java
-package matomoJavaTrackerTest;
-
-import org.matomo.java.tracking.MatomoRequest;
-import org.matomo.java.tracking.MatomoTracker;
-
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.concurrent.ExecutionException;
-
-public class YourImplementation {
-
-    public void yourMethod() {
-
-        Collection<MatomoRequest> requests = new ArrayList<>();
-        MatomoRequestBuilder builder = MatomoRequest.request().siteId(42);
-        requests.add(builder.actionUrl("https://www.mydomain.com/some/page").actionName("Some Page").build());
-        requests.add(builder.actionUrl("https://www.mydomain.com/another/page").actionName("Another Page").build());
-
-        MatomoTracker tracker = new MatomoTracker(TrackerConfiguration.builder()
-                                                                      .apiEndpoint(URI.create(
-                                                                              "https://your-matomo-domain.tld/matomo.php"))
-                                                                      .build());
-
-        tracker.sendBulkRequestAsync(requests);
-
-    }
-
-}
-
-```
-
-If some of the parameters that you've specified in the bulk request require AuthToken to be set, this can also be set in
-the bulk request through
-
-```java
-package matomoJavaTrackerTest;
-
-import org.apache.http.HttpResponse;
-import org.matomo.java.tracking.MatomoLocale;
-import org.matomo.java.tracking.MatomoRequest;
-import org.matomo.java.tracking.MatomoTracker;
-
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.concurrent.ExecutionException;
-
-public class YourImplementation {
-
-    public void yourMethod() {
-
-        Collection<MatomoRequest> requests = new ArrayList<>();
-        MatomoRequestBuilder builder = MatomoRequest.request().siteId(42);
-        requests.add(builder.actionUrl("https://www.mydomain.com/some/page").actionName("Some Page").build());
-        requests.add(builder.actionUrl("https://www.mydomain.com/another/page")
-                            .actionName("Another Page")
-                            .visitorCountry(new MatomoLocale(Locale.GERMANY))
-                            .build());
-
-        MatomoTracker tracker = new MatomoTracker(TrackerConfiguration.builder()
-                                                                      .apiEndpoint(URI.create(
-                                                                              "https://your-matomo-domain.tld/matomo.php"))
-                                                                      .build());
-
-        // second parameter is authentication token need for country override
-        tracker.sendBulkRequestAsync(requests, "33dc3f2536d3025974cccb4b4d2d98f4");
-
-
-    }
-
-}
-```
 
 ## Migration from Version 2 to 3
 
@@ -520,7 +475,7 @@ following breaking changes:
 * `customTrackingParameters` in `MatomoRequestBuilder` requires a `Map<String, Collection<String>>` instead
   of `Map<String, String>`
 * `pageCustomVariables` and `visitCustomVariables` are of type `CustomVariables` instead of collections. Create them
-  with `CustomVariables.builder().variable(customVariable)`
+  with `new CustomVariables().add(customVariable)`
 * `setPageCustomVariable` and `getPageCustomVariable` no longer accept a string as an index. Please use integers
   instead.
 * Custom variables will be sent URL encoded
@@ -539,7 +494,9 @@ This project contains the following modules:
 * `java8` contains the Java 8 implementation of the Matomo Java Tracker
 * `java17` contains the Java 17 implementation of the Matomo Java Tracker using the HttpClient available since Java 11
   (recommended)
-* `spring-boot-autoconfigure` contains the Spring Boot autoconfigure module
+* `servlet` contains `SerlvetMatomoRequest` to create a `MatomoRequest` from a `HttpServletRequest` and a filter
+  `MatomoTrackingFilter` that can be used to track requests to a servlet
+* `spring` contains the Spring Boot Starter
 * `test` contains tools for manual test against a local Matomo instance created with Docker (see below)
 
 
@@ -590,7 +547,7 @@ The following snippets helps you to do this quickly:
 docker-compose exec matomo sed -i 's/localhost/localhost:8080/g' /var/www/html/config/config.ini.php
 ```
 
-After the installation you can run `MatomoJavaTrackerTest` in the module `test` to test the tracker. It will send
+After the installation you can run `MatomoTrackerTester` in the module `test` to test the tracker. It will send
 multiple randomized
 requests to the local Matomo instance.
 
@@ -606,6 +563,13 @@ Use the following snippet to do this:
 ```shell
 docker-compose exec matomo sh -c 'echo -e "\n\n[Tracker]\ndebug = 1\n" >> /var/www/html/config/config.ini.php'
 ```
+
+To test the servlet integration, run `MatomoServletTester` in your favorite IDE. It starts an embedded Jetty server
+that serves a simple servlet. The servlet sends a request to the local Matomo instance if you call the URL
+http://localhost:8090/track.html. Maybe you need to disable support for the Do Not Track preference in Matomo to get the
+request tracked: Go to _Administration &gt; Privacy &gt; Do Not Track_ and disable the checkbox _Respect Do Not Track.
+We also recommend to install the Custom Variables plugin from Marketplace to the test custom variables feature and
+setup some dimensions.
 
 ## Versioning
 

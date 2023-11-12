@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -8,11 +9,12 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>matomo-java-tracker-spring-boot-starter</artifactId>
+    <artifactId>matomo-java-tracker-servlet</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Matomo Java Tracker Spring Boot Starter</name>
-    <description>Spring integration of Matomo Java Tracker</description>
+    <name>Matomo Java Tracker Servlet</name>
+    <description>Integrates Matomo Java Tracker into your servlet based application</description>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -22,12 +24,7 @@
     <dependencies>
         <dependency>
             <groupId>org.piwik.java.tracking</groupId>
-            <artifactId>matomo-java-tracker-java17</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.piwik.java.tracking</groupId>
-            <artifactId>matomo-java-tracker-servlet</artifactId>
+            <artifactId>matomo-java-tracker-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -36,18 +33,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -55,8 +46,18 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -10,12 +10,15 @@ package org.matomo.java.tracking.spring;
 import java.net.URI;
 import java.util.List;
 import org.matomo.java.tracking.MatomoTracker;
+import org.matomo.java.tracking.MatomoTrackerFilter;
 import org.matomo.java.tracking.TrackerConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.lang.NonNull;
 
 /**
  * {@link AutoConfiguration Auto configuration} for Matomo Tracker.
@@ -39,8 +42,9 @@ public class MatomoTrackerAutoConfiguration {
    */
   @Bean
   @ConditionalOnMissingBean
+  @NonNull
   public TrackerConfiguration.TrackerConfigurationBuilder trackerConfigurationBuilder(
-      List<TrackerConfigurationBuilderCustomizer> customizers
+      @NonNull List<TrackerConfigurationBuilderCustomizer> customizers
   ) {
     TrackerConfiguration.TrackerConfigurationBuilder builder = TrackerConfiguration.builder();
     customizers.forEach(customizer -> customizer.customize(builder));
@@ -61,6 +65,7 @@ public class MatomoTrackerAutoConfiguration {
    */
   @Bean
   @ConditionalOnMissingBean
+  @NonNull
   public TrackerConfiguration trackerConfiguration(
       TrackerConfiguration.TrackerConfigurationBuilder builder
   ) {
@@ -77,8 +82,9 @@ public class MatomoTrackerAutoConfiguration {
    * @see TrackerConfiguration.TrackerConfigurationBuilder
    */
   @Bean
+  @NonNull
   public StandardTrackerConfigurationBuilderCustomizer standardTrackerConfigurationBuilderCustomizer(
-      MatomoTrackerProperties properties
+      @NonNull MatomoTrackerProperties properties
   ) {
     return new StandardTrackerConfigurationBuilderCustomizer(properties);
   }
@@ -94,8 +100,28 @@ public class MatomoTrackerAutoConfiguration {
    */
   @Bean
   @ConditionalOnMissingBean
-  public MatomoTracker matomoTracker(TrackerConfiguration trackerConfiguration) {
+  @NonNull
+  public MatomoTracker matomoTracker(@NonNull TrackerConfiguration trackerConfiguration) {
     return new MatomoTracker(trackerConfiguration);
+  }
+
+  /**
+   * A {@link FilterRegistrationBean} for the {@link MatomoTrackerFilter}.
+   *
+   * <p>Only created if a bean of the same type is not already configured. The filter is only registered if
+   * {@code matomo.filter.enabled} is set to {@code true}.
+   *
+   * @param matomoTracker the {@link MatomoTracker} instance (never {@code null})
+   * @return the {@link FilterRegistrationBean} instance (never {@code null})
+   */
+  @Bean
+  @ConditionalOnMissingBean
+  @ConditionalOnProperty(value = "matomo.filter.enabled", havingValue = "true")
+  @NonNull
+  public FilterRegistrationBean<MatomoTrackerFilter> matomoTrackerSpringFilter(
+      @NonNull MatomoTracker matomoTracker
+  ) {
+    return new FilterRegistrationBean<>(new MatomoTrackerFilter(matomoTracker));
   }
 
 }

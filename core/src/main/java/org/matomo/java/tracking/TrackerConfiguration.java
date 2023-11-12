@@ -50,7 +50,7 @@ public class TrackerConfiguration {
    * <p>A timeout value of zero is interpreted as an infinite timeout.
    * A `null` value is interpreted as undefined (system default if applicable).</p>
    *
-   * <p>Default: 10 seconds</p>
+   * <p>Default: 5 seconds</p>
    */
   @Builder.Default
   Duration connectTimeout = Duration.ofSeconds(5L);
@@ -62,7 +62,7 @@ public class TrackerConfiguration {
    * <p>A timeout value of zero is interpreted as an infinite timeout.
    * A `null value is interpreted as undefined (system default if applicable).</p>
    *
-   * <p>Default: 30 seconds</p>
+   * <p>Default: 5 seconds</p>
    */
   @Builder.Default
   Duration socketTimeout = Duration.ofSeconds(5L);

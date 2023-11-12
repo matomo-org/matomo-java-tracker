@@ -1,4 +1,4 @@
-package org.matomo.java.tracking;
+package org.matomo.java.tracking.test;
 
 import com.github.javafaker.Country;
 import com.github.javafaker.Faker;
@@ -11,6 +11,10 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import lombok.extern.slf4j.Slf4j;
+import org.matomo.java.tracking.MatomoRequest;
+import org.matomo.java.tracking.MatomoTracker;
+import org.matomo.java.tracking.TrackerConfiguration;
 import org.matomo.java.tracking.parameters.AcceptLanguage;
 import org.matomo.java.tracking.parameters.CustomVariable;
 import org.matomo.java.tracking.parameters.CustomVariables;
@@ -20,14 +24,15 @@ import org.matomo.java.tracking.parameters.EcommerceItems;
 import org.matomo.java.tracking.parameters.UniqueId;
 import org.matomo.java.tracking.parameters.VisitorId;
 
-class MatomoJavaTrackerTest {
+@Slf4j
+class MatomoTrackerTester {
 
   private final MatomoTracker tracker;
 
   private final Faker faker = new Faker();
   private final List<VisitorId> vistors = new ArrayList<>(5);
 
-  MatomoJavaTrackerTest(TrackerConfiguration configuration) {
+  MatomoTrackerTester(TrackerConfiguration configuration) {
     tracker = new MatomoTracker(configuration);
     for (int i = 0; i < 5; i++) {
       vistors.add(VisitorId.random());
@@ -44,38 +49,38 @@ class MatomoJavaTrackerTest {
         .logFailedTracking(true)
         .build();
 
-    MatomoJavaTrackerTest matomoJavaTrackerTest = new MatomoJavaTrackerTest(configuration);
+    MatomoTrackerTester matomoTrackerTester = new MatomoTrackerTester(configuration);
 
-    matomoJavaTrackerTest.sendRequestAsync();
-    matomoJavaTrackerTest.sendBulkRequestsAsync();
-    matomoJavaTrackerTest.sendRequest();
-    matomoJavaTrackerTest.sendBulkRequests();
+    matomoTrackerTester.sendRequestAsync();
+    matomoTrackerTester.sendBulkRequestsAsync();
+    matomoTrackerTester.sendRequest();
+    matomoTrackerTester.sendBulkRequests();
 
   }
 
   private void sendRequest() {
     MatomoRequest request = randomRequest();
     tracker.sendRequest(request);
-    System.out.printf("Successfully sent single request to Matomo server: %s%n", request);
+    log.info("Successfully sent single request to Matomo server: {}", request);
   }
 
   private void sendBulkRequests() {
     List<MatomoRequest> requests = randomRequests();
     tracker.sendBulkRequest(requests);
-    System.out.printf("Successfully sent bulk requests to Matomo server: %s%n", requests);
+    log.info("Successfully sent bulk requests to Matomo server: {}", requests);
   }
 
   private void sendRequestAsync() {
     MatomoRequest request = randomRequest();
     CompletableFuture<?> future = tracker.sendRequestAsync(request);
-    future.thenAccept(v -> System.out.printf("Successfully sent async single request to Matomo server: %s%n", request));
+    future.thenAccept(v -> log.info("Successfully sent async single request to Matomo server: {}", request));
   }
 
   private void sendBulkRequestsAsync() {
     List<MatomoRequest> requests = randomRequests();
     tracker
         .sendBulkRequestAsync(requests)
-        .thenAccept(v -> System.out.printf("Successfully sent async bulk requests to Matomo server: %s%n", requests));
+        .thenAccept(v -> log.info("Successfully sent async bulk requests to Matomo server: {}", requests));
   }
 
   private List<MatomoRequest> randomRequests() {

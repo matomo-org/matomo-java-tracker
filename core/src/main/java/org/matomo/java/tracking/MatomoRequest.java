@@ -100,6 +100,14 @@ public class MatomoRequest {
   private VisitorId visitorId = VisitorId.random();
 
   /**
+   * Tracks if the visitor is a returning visitor.
+   *
+   * <p>This is done by storing a visitor ID in a 1st party cookie.
+   */
+  @TrackingParameter(name = "_idn")
+  private Boolean newVisitor;
+
+  /**
    * The full HTTP Referrer URL. This value is used to determine how someone got to your website (ie, through a website,
    * search engine or campaign)
    */
@@ -590,6 +598,13 @@ public class MatomoRequest {
   private Boolean debug;
 
   /**
+   * The Matomo session ID sent as a cookie {@code MATOMO_SESSID}.
+   *
+   * <p>If not null a cookie with the name {@code MATOMO_SESSID} will be sent with the value of this parameter.
+   */
+  private String sessionId;
+
+  /**
    * Custom Dimension values for specific Custom Dimension IDs.
    *
    * <p><a href="https://plugins.matomo.org/CustomDimensions">Custom Dimensions plugin</a> must be installed. See the
@@ -610,6 +625,14 @@ public class MatomoRequest {
    * <p>For example, you can use this to set the <em>Accept-Language</em> header, or to set the <em>Content-Type</em>.
    */
   private Map<String, String> headers;
+
+  /**
+   * Appends additional cookies to the request.
+   *
+   * <p>This allows you to add Matomo specific cookies, like {@code _pk_id} or {@code _pk_sess} coming from Matomo
+   * responses to the request.
+   */
+  private Map<String, String> cookies;
 
   /**
    * Create a new request from the id of the site being tracked and the full

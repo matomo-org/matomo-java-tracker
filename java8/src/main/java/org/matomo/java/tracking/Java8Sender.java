@@ -25,6 +25,7 @@ import java.net.URL;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -90,6 +91,7 @@ class Java8Sender implements Sender {
     applyTrackerConfiguration(connection);
     setUserAgentProperty(connection, request.getHeaderUserAgent(), request.getHeaders());
     addHeaders(connection, request.getHeaders());
+    addCookies(connection, request.getSessionId(), request.getCookies());
     log.debug("Sending single request using URI {} asynchronously", apiEndpoint);
     try {
       connection.connect();
@@ -98,14 +100,6 @@ class Java8Sender implements Sender {
       throw new MatomoException("Could not send request via GET", e);
     } finally {
       connection.disconnect();
-    }
-  }
-
-  private void addHeaders(@NonNull HttpURLConnection connection, @Nullable Map<String, String> headers) {
-    if (headers != null) {
-      for (Map.Entry<String, String> header : headers.entrySet()) {
-        connection.setRequestProperty(header.getKey(), header.getValue());
-      }
     }
   }
 
@@ -127,21 +121,78 @@ class Java8Sender implements Sender {
     return connection;
   }
 
-  private void applySslConfiguration(
-      @NonNull @lombok.NonNull HttpsURLConnection connection
+  private void applyTrackerConfiguration(HttpURLConnection connection) {
+    connection.setUseCaches(false);
+    if (trackerConfiguration.getConnectTimeout() != null) {
+      connection.setConnectTimeout((int) trackerConfiguration.getConnectTimeout().toMillis());
+    }
+    if (trackerConfiguration.getSocketTimeout() != null) {
+      connection.setReadTimeout((int) trackerConfiguration.getSocketTimeout().toMillis());
+    }
+  }
+
+  private void setUserAgentProperty(
+      @NonNull HttpURLConnection connection, @Nullable String headerUserAgent, @Nullable Map<String, String> headers
   ) {
-    if (trackerConfiguration.isDisableSslCertValidation()) {
-      try {
-        SSLContext sslContext = SSLContext.getInstance("SSL");
-        sslContext.init(null, TRUST_ALL_MANAGERS, new SecureRandom());
-        connection.setSSLSocketFactory(sslContext.getSocketFactory());
-      } catch (Exception e) {
-        throw new MatomoException("Could not disable SSL certification validation", e);
+    String userAgentHeader = null;
+    if ((headerUserAgent == null || headerUserAgent.trim().isEmpty()) && headers != null) {
+      TreeMap<String, String> caseInsensitiveMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+      caseInsensitiveMap.putAll(headers);
+      userAgentHeader = caseInsensitiveMap.get("User-Agent");
+    }
+    if ((userAgentHeader == null || userAgentHeader.trim().isEmpty()) && (
+        headerUserAgent == null || headerUserAgent.trim().isEmpty())
+        && trackerConfiguration.getUserAgent() != null && !trackerConfiguration.getUserAgent().isEmpty()) {
+      connection.setRequestProperty("User-Agent", trackerConfiguration.getUserAgent());
+    }
+  }
+
+  private void addHeaders(@NonNull HttpURLConnection connection, @Nullable Map<String, String> headers) {
+    if (headers != null) {
+      for (Map.Entry<String, String> header : headers.entrySet()) {
+        connection.setRequestProperty(header.getKey(), header.getValue());
       }
     }
-    if (trackerConfiguration.isDisableSslHostVerification()) {
-      connection.setHostnameVerifier(TRUSTING_HOSTNAME_VERIFIER);
+  }
+
+  private static void addCookies(
+      HttpURLConnection connection, String sessionId, Map<String, String> cookies
+  ) {
+    StringBuilder cookiesValue = new StringBuilder();
+    if (sessionId != null && !sessionId.isEmpty()) {
+      cookiesValue.append("MATOMO_SESSID=").append(sessionId);
+      if (cookies != null && !cookies.isEmpty()) {
+        cookiesValue.append("; ");
+      }
     }
+    if (cookies != null) {
+      for (Iterator<Map.Entry<String, String>> iterator = cookies.entrySet().iterator(); iterator.hasNext(); ) {
+        Map.Entry<String, String> entry = iterator.next();
+        cookiesValue.append(entry.getKey()).append("=").append(entry.getValue());
+        if (iterator.hasNext()) {
+          cookiesValue.append("; ");
+        }
+      }
+    }
+    if (cookiesValue.length() > 0) {
+      connection.setRequestProperty("Cookie", cookiesValue.toString());
+    }
+  }
+
+  private void checkResponse(HttpURLConnection connection) throws IOException {
+    int responseCode = connection.getResponseCode();
+    if (responseCode > 399) {
+      if (trackerConfiguration.isLogFailedTracking()) {
+        log.error("Received HTTP error code {} for URL {}", responseCode, connection.getURL());
+      }
+      throw new MatomoException(String.format("Tracking endpoint responded with code %d", responseCode));
+    }
+  }
+
+  private static boolean isEmpty(
+      @Nullable String str
+  ) {
+    return str == null || str.isEmpty() || str.trim().isEmpty();
   }
 
   private HttpURLConnection openProxiedConnection(
@@ -163,46 +214,21 @@ class Java8Sender implements Sender {
     return (HttpURLConnection) url.openConnection(proxy);
   }
 
-  private void applyTrackerConfiguration(HttpURLConnection connection) {
-    connection.setUseCaches(false);
-    if (trackerConfiguration.getConnectTimeout() != null) {
-      connection.setConnectTimeout((int) trackerConfiguration.getConnectTimeout().toMillis());
-    }
-    if (trackerConfiguration.getSocketTimeout() != null) {
-      connection.setReadTimeout((int) trackerConfiguration.getSocketTimeout().toMillis());
-    }
-  }
-
-  private void setUserAgentProperty(
-      @NonNull HttpURLConnection connection, @Nullable String headerUserAgent, @Nullable Map<String, String> headers
+  private void applySslConfiguration(
+      @NonNull @lombok.NonNull HttpsURLConnection connection
   ) {
-    String userAgentHeader = null;
-    if ((headerUserAgent == null || headerUserAgent.trim().isEmpty()) && headers != null) {
-      TreeMap<String, String> caseInsensitiveMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-      caseInsensitiveMap.putAll(headers);
-      userAgentHeader = caseInsensitiveMap.get("User-Agent");
-    }
-    if ((userAgentHeader == null || userAgentHeader.trim().isEmpty())
-        && (headerUserAgent == null || headerUserAgent.trim().isEmpty())
-        && trackerConfiguration.getUserAgent() != null && !trackerConfiguration.getUserAgent().isEmpty()) {
-      connection.setRequestProperty("User-Agent", trackerConfiguration.getUserAgent());
-    }
-  }
-
-  private void checkResponse(HttpURLConnection connection) throws IOException {
-    int responseCode = connection.getResponseCode();
-    if (responseCode > 399) {
-      if (trackerConfiguration.isLogFailedTracking()) {
-        log.error("Received HTTP error code {} for URL {}", responseCode, connection.getURL());
+    if (trackerConfiguration.isDisableSslCertValidation()) {
+      try {
+        SSLContext sslContext = SSLContext.getInstance("SSL");
+        sslContext.init(null, TRUST_ALL_MANAGERS, new SecureRandom());
+        connection.setSSLSocketFactory(sslContext.getSocketFactory());
+      } catch (Exception e) {
+        throw new MatomoException("Could not disable SSL certification validation", e);
       }
-      throw new MatomoException(String.format("Tracking endpoint responded with code %d", responseCode));
     }
-  }
-
-  private static boolean isEmpty(
-      @Nullable String str
-  ) {
-    return str == null || str.isEmpty() || str.trim().isEmpty();
+    if (trackerConfiguration.isDisableSslHostVerification()) {
+      connection.setHostnameVerifier(TRUSTING_HOSTNAME_VERIFIER);
+    }
   }
 
   @Override
@@ -213,25 +239,37 @@ class Java8Sender implements Sender {
     Collection<String> queries = new ArrayList<>();
     Map<String, String> headers = new LinkedHashMap<>();
     String headerUserAgent = null;
+    String sessionId = null;
+    Map<String, String> cookies = null;
     for (MatomoRequest request : requests) {
       RequestValidator.validate(request, authToken);
       if (request.getHeaders() != null && !request.getHeaders().isEmpty()) {
         headers.putAll(request.getHeaders());
       }
-      if (headerUserAgent == null && request.getHeaderUserAgent() != null
-          && !request.getHeaderUserAgent().trim().isEmpty()) {
+      if (headerUserAgent == null && request.getHeaderUserAgent() != null && !request
+          .getHeaderUserAgent()
+          .trim()
+          .isEmpty()) {
         headerUserAgent = request.getHeaderUserAgent();
       }
       queries.add(queryCreator.createQuery(request, null));
+      if (request.getSessionId() != null && !request.getSessionId().isEmpty()) {
+        sessionId = request.getSessionId();
+      }
+      if (request.getCookies() != null && !request.getCookies().isEmpty()) {
+        cookies = request.getCookies();
+      }
     }
-    sendBulk(queries, authToken, headers, headerUserAgent);
+    sendBulk(queries, authToken, headers, headerUserAgent, sessionId, cookies);
   }
 
   private void sendBulk(
       @NonNull @lombok.NonNull Collection<String> queries,
       @Nullable String authToken,
       Map<String, String> headers,
-      String headerUserAgent
+      String headerUserAgent,
+      String sessionId,
+      Map<String, String> cookies
   ) {
     if (queries.isEmpty()) {
       throw new IllegalArgumentException("Queries must not be empty");
@@ -246,6 +284,7 @@ class Java8Sender implements Sender {
     applyTrackerConfiguration(connection);
     setUserAgentProperty(connection, headerUserAgent, headers);
     addHeaders(connection, headers);
+    addCookies(connection, sessionId, cookies);
     log.debug("Sending bulk request using URI {} asynchronously", trackerConfiguration.getApiEndpoint());
     OutputStream outputStream = null;
     try {
@@ -286,8 +325,10 @@ class Java8Sender implements Sender {
       @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken
   ) {
     String authToken = AuthToken.determineAuthToken(overrideAuthToken, requests, trackerConfiguration);
-    final Map<String, String> headers = new LinkedHashMap<>();
+    Map<String, String> headers = new LinkedHashMap<>();
     String headerUserAgent = findHeaderUserAgent(requests);
+    String sessionId = findSessionId(requests);
+    Map<String, String> cookies = findCookies(requests);
     synchronized (queries) {
       for (MatomoRequest request : requests) {
         RequestValidator.validate(request, authToken);
@@ -298,16 +339,18 @@ class Java8Sender implements Sender {
         queries.add(query);
       }
     }
-    return CompletableFuture.supplyAsync(() -> sendBulkAsync(authToken, headers, headerUserAgent), executor);
+    return CompletableFuture.supplyAsync(() ->
+        sendBulkAsync(authToken, headers, headerUserAgent, sessionId, cookies), executor);
   }
 
   @Nullable
   private Void sendBulkAsync(
-      @Nullable String authToken, Map<String, String> headers, String headerUserAgent
+      @Nullable String authToken, Map<String, String> headers, String headerUserAgent, String sessionId,
+      Map<String, String> cookies
   ) {
     synchronized (queries) {
       if (!queries.isEmpty()) {
-        sendBulk(queries, authToken, headers, headerUserAgent);
+        sendBulk(queries, authToken, headers, headerUserAgent, sessionId, cookies);
         queries.clear();
       }
       return null;
@@ -319,6 +362,24 @@ class Java8Sender implements Sender {
     for (MatomoRequest request : requests) {
       if (request.getHeaderUserAgent() != null && !request.getHeaderUserAgent().trim().isEmpty()) {
         return request.getHeaderUserAgent();
+      }
+    }
+    return null;
+  }
+
+  private String findSessionId(Iterable<? extends MatomoRequest> requests) {
+    for (MatomoRequest request : requests) {
+      if (request.getHeaderUserAgent() != null && !request.getHeaderUserAgent().trim().isEmpty()) {
+        return request.getHeaderUserAgent();
+      }
+    }
+    return null;
+  }
+
+  private Map<String, String> findCookies(Iterable<? extends MatomoRequest> requests) {
+    for (MatomoRequest request : requests) {
+      if (request.getCookies() != null && !request.getCookies().isEmpty()) {
+        return request.getCookies();
       }
     }
     return null;
