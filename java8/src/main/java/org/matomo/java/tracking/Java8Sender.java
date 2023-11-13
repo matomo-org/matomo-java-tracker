@@ -46,7 +46,7 @@ import lombok.extern.slf4j.Slf4j;
  * exit even if the thread pool is not shut down.
  *
  * <p>If you use a newer Java version, please use the newer Java implementation from the Matomo Java Tracker for
- * Java 17.
+ * Java 11.
  */
 @Slf4j
 @RequiredArgsConstructor

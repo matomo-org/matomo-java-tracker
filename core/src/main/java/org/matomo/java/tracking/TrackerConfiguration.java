@@ -117,7 +117,7 @@ public class TrackerConfiguration {
    * Disables SSL host verification. This is useful for testing with self-signed certificates. Do
    * not use in production environments. Defaults to false.
    *
-   * <p>If you use the Java 17 of the Matomo Java Tracker, this setting is ignored. Instead, you
+   * <p>If you use the Java 11 of the Matomo Java Tracker, this setting is ignored. Instead, you
    * have to set the system property {@code jdk.internal.httpclient.disableHostnameVerification} as
    * described in the
    * <a href="https://download.java.net/java/early_access/jdk22/docs/api/java.net.http/module-summary.html">Module

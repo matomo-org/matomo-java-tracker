@@ -8,16 +8,16 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>matomo-java-tracker-java17</artifactId>
+    <artifactId>matomo-java-tracker-java11</artifactId>
     <version>3.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Matomo Java Tracker Java 17</name>
-    <description>Official Java implementation of the Matomo Tracking HTTP API for Java 17.</description>
+    <name>Matomo Java Tracker Java 11</name>
+    <description>Official Java implementation of the Matomo Tracking HTTP API for Java 11.</description>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
     <dependencies>

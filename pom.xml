@@ -360,7 +360,7 @@
     <modules>
         <module>core</module>
         <module>java8</module>
-        <module>java17</module>
+        <module>java11</module>
         <module>servlet</module>
         <module>spring</module>
         <module>test</module>

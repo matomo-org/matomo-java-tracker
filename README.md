@@ -15,7 +15,7 @@ Features include:
 * Track page views, goals, ecommerce transactions and items
 * Supports custom dimensions and custom variables
 * Includes tracking parameters for campaigns, events, downloads, outlinks, site search, devices, visitors
-* Supports Java 8 and higher (if you use Java 17, please use artifact matomo-java-tracker-java17)
+* Supports Java 8 and higher (if you use Java 11, please use artifact matomo-java-tracker-java11)
 * Allows you to skip SSL certificate validation (not recommended for production)
 * Contains nearly no runtime dependencies (only SLF4J)
 * Allows asynchronous requests
@@ -26,7 +26,7 @@ Features include:
 * Includes debug and error logging
 * Easy to integrate in frameworks, e.g. Spring: Just create the MatomoTracker Spring bean and use it in other beans
 
-Please prefer the Java 17 version as the Java 8 will become obsolete in the future.
+Please prefer the Java 11 version as the Java 8 will become obsolete in the future.
 
 Further information on Matomo and Matomo HTTP tracking:
 
@@ -72,7 +72,7 @@ Here are the most important changes:
 * less dependencies
 * new dimension parameter
 * special types allow to provide valid parameters now
-* a new implementation for Java 17 uses the HttpClient available since Java 11
+* a new implementation for Java 11 uses the HttpClient available since Java 11
 
 ## Javadoc
 
@@ -107,12 +107,12 @@ Add a dependency on Matomo Java Tracker using Maven. For Java 8:
 </dependency>
 ```
 
-For Java 17:
+For Java 11:
 
 ```xml
 <dependency>
     <groupId>org.piwik.java.tracking</groupId>
-    <artifactId>matomo-java-tracker-java17</artifactId>
+    <artifactId>matomo-java-tracker-java11</artifactId>
     <version>3.0.0</version>
 </dependency>
 ```
@@ -125,11 +125,11 @@ dependencies {
 }
 ```
 
-or Gradle (Java 17):
+or Gradle (Java 11):
 
 ```groovy
 dependencies {
-    implementation("org.piwik.java.tracking:matomo-java-tracker-java17:3.0.0")
+    implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.0.0")
 }
 ```
 
@@ -139,10 +139,10 @@ or Gradle with Kotlin DSL (Java 8)
 implementation("org.piwik.java.tracking:matomo-java-tracker:3.0.0")
 ```
 
-or Gradle with Kotlin DSL (Java 17)
+or Gradle with Kotlin DSL (Java 11)
 
 ```kotlin
-implementation("org.piwik.java.tracking:matomo-java-tracker-java17:3.0.0")
+implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.0.0")
 ```
 
 ### Spring Boot Module
@@ -491,7 +491,7 @@ This project contains the following modules:
 
 * `core` contains the core functionality of the Matomo Java Tracker
 * `java8` contains the Java 8 implementation of the Matomo Java Tracker
-* `java17` contains the Java 17 implementation of the Matomo Java Tracker using the HttpClient available since Java 11
+* `java11` contains the Java 11 implementation of the Matomo Java Tracker using the HttpClient available since Java 11
   (recommended)
 * `servlet` contains `SerlvetMatomoRequest` to create a `MatomoRequest` from a `HttpServletRequest` and a filter
   `MatomoTrackingFilter` that can be used to track requests to a servlet

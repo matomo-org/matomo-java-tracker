@@ -25,7 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 @WireMockTest(httpsEnabled = true)
-class Java17SenderIT {
+class Java11SenderIT {
 
   private Sender sender;
 
@@ -39,7 +39,7 @@ class Java17SenderIT {
   @Test
   void failsIfTrackerConfigurationIsNotSet() {
     CookieManager cookieManager = new CookieManager();
-    assertThatThrownBy(() -> new Java17Sender(
+    assertThatThrownBy(() -> new Java11Sender(
         null,
         new QueryCreator(TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build()),
         HttpClient.newBuilder().cookieHandler(cookieManager).build(),
@@ -50,7 +50,7 @@ class Java17SenderIT {
   @Test
   void failsIfQueryCreatorIsNotSet() {
     CookieManager cookieManager = new CookieManager();
-    assertThatThrownBy(() -> new Java17Sender(
+    assertThatThrownBy(() -> new Java11Sender(
         TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build(),
         null,
         HttpClient.newBuilder().cookieHandler(cookieManager).build(),
@@ -61,7 +61,7 @@ class Java17SenderIT {
   @Test
   void failsIfHttpClientIsNotSet() {
     CookieManager cookieManager = new CookieManager();
-    assertThatThrownBy(() -> new Java17Sender(
+    assertThatThrownBy(() -> new Java11Sender(
         TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build(),
         new QueryCreator(TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build()),
         null,
@@ -72,7 +72,7 @@ class Java17SenderIT {
   @Test
   void failsIfCookieStoreIsNotSet() {
     CookieManager cookieManager = new CookieManager();
-    assertThatThrownBy(() -> new Java17Sender(
+    assertThatThrownBy(() -> new Java11Sender(
         TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build(),
         new QueryCreator(TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build()),
         HttpClient.newBuilder().cookieHandler(cookieManager).build(),
@@ -108,7 +108,7 @@ class Java17SenderIT {
   }
 
   private void givenSender() {
-    sender = new Java17SenderProvider().provideSender(trackerConfiguration, new QueryCreator(trackerConfiguration));
+    sender = new Java11SenderProvider().provideSender(trackerConfiguration, new QueryCreator(trackerConfiguration));
   }
 
   @Test

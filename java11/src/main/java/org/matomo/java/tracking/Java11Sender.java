@@ -21,11 +21,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * A {@link Sender} implementation that uses the Java 17 HTTP client.
+ * A {@link Sender} implementation that uses the Java 11 HTTP client.
  */
 @RequiredArgsConstructor
 @Slf4j
-public class Java17Sender implements Sender {
+public class Java11Sender implements Sender {
 
   @lombok.NonNull
   private final TrackerConfiguration trackerConfiguration;

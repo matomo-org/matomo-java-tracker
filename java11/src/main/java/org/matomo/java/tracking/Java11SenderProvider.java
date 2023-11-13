@@ -11,9 +11,9 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
 /**
- * Provides a {@link Sender} implementation based on Java 17.
+ * Provides a {@link Sender} implementation based on Java 11.
  */
-public class Java17SenderProvider implements SenderProvider {
+public class Java11SenderProvider implements SenderProvider {
 
   private static final TrustManager[] TRUST_ALL_MANAGERS = {new TrustingX509TrustManager()};
 
@@ -54,7 +54,7 @@ public class Java17SenderProvider implements SenderProvider {
       throw new MatomoException("Please disable SSL hostname verification manually using the system parameter -Djdk.internal.httpclient.disableHostnameVerification=true");
     }
 
-    return new Java17Sender(trackerConfiguration, queryCreator, builder.build(), cookieManager.getCookieStore());
+    return new Java11Sender(trackerConfiguration, queryCreator, builder.build(), cookieManager.getCookieStore());
   }
 
   private static boolean isEmpty(

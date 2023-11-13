@@ -15,7 +15,7 @@ class ServiceLoaderSenderFactory implements SenderFactory {
     Map<String, SenderProvider> senderProviders = StreamSupport
         .stream(serviceLoader.spliterator(), false)
         .collect(toMap(senderProvider -> senderProvider.getClass().getName(), Function.identity()));
-    SenderProvider senderProvider = senderProviders.get("org.matomo.java.tracking.Java17SenderProvider");
+    SenderProvider senderProvider = senderProviders.get("org.matomo.java.tracking.Java11SenderProvider");
     if (senderProvider == null) {
       senderProvider = senderProviders.get("org.matomo.java.tracking.Java8SenderProvider");
     }
