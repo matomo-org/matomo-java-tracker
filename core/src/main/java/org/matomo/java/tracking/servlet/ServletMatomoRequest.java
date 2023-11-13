@@ -101,10 +101,6 @@ public final class ServletMatomoRequest {
   private static String determineVisitorIp(
       @edu.umd.cs.findbugs.annotations.NonNull HttpServletRequestWrapper request
   ) {
-    String realIpHeader = request.getHeader("X-Real-Ip");
-    if (isNotEmpty(realIpHeader)) {
-      return realIpHeader;
-    }
     String forwardedForHeader = request.getHeader("X-Forwarded-For");
     if (isNotEmpty(forwardedForHeader)) {
       return forwardedForHeader;

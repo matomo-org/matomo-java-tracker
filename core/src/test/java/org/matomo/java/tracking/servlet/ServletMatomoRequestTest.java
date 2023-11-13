@@ -174,17 +174,4 @@ class ServletMatomoRequestTest {
     assertThat(matomoRequest.getVisitorIp()).isEqualTo("44.55.66.77");
   }
 
-  @Test
-  void determinerVisitorIpFromXRealIpHeader() {
-    HttpServletRequestWrapper request = HttpServletRequestWrapper
-        .builder()
-        .headers(singletonMap("x-real-ip", "44.55.66.77"))
-        .build();
-
-    MatomoRequest.MatomoRequestBuilder builder = ServletMatomoRequest.fromServletRequest(request);
-
-    MatomoRequest matomoRequest = builder.build();
-    assertThat(matomoRequest.getVisitorIp()).isEqualTo("44.55.66.77");
-  }
-
 }
