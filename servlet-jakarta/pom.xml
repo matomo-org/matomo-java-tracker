@@ -4,12 +4,12 @@
     <parent>
         <groupId>org.piwik.java.tracking</groupId>
         <artifactId>matomo-java-tracker-parent</artifactId>
-        <version>3.0.2-SNAPSHOT</version>
+        <version>3.0.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>matomo-java-tracker-servlet-jakarta</artifactId>
-    <version>3.0.2-SNAPSHOT</version>
+    <version>3.0.2</version>
     <packaging>jar</packaging>
 
     <name>Matomo Java Tracker Servlet Jakarta</name>
