@@ -115,7 +115,6 @@ public class MatomoTrackerAutoConfiguration {
    * @return the {@link FilterRegistrationBean} instance (never {@code null})
    */
   @Bean
-  @ConditionalOnMissingBean
   @ConditionalOnProperty(value = "matomo.tracker.filter.enabled", havingValue = "true")
   @NonNull
   public FilterRegistrationBean<MatomoTrackerFilter> matomoTrackerSpringFilter(
