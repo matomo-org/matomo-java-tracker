@@ -22,7 +22,7 @@ jobs:
       - id: version
         run: |
           VERSION=$( mvn -B help:evaluate -Dexpression=project.version -q -DforceStdout )
-          echo "::set-output name=version::${VERSION#-SNAPSHOT}"
+          echo "::set-output name=version::${VERSION%-SNAPSHOT}"
       - run: mvn -B release:prepare release:perform
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
