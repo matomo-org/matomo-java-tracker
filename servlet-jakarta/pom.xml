@@ -23,7 +23,7 @@
     <dependencies>
         <dependency>
             <groupId>org.piwik.java.tracking</groupId>
-            <artifactId>matomo-java-tracker-core</artifactId>
+            <artifactId>matomo-java-tracker-java11</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
