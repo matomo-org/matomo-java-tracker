@@ -8,34 +8,37 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>matomo-java-tracker-test</artifactId>
+    <artifactId>matomo-java-tracker-servlet-jakarta</artifactId>
+    <version>3.0.2-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
-    <name>Matomo Java Tracker Test</name>
-    <description>Test application for Matomo Java Tracker</description>
+    <name>Matomo Java Tracker Servlet Jakarta</name>
+    <description>Integrates Matomo Java Tracker into your Jakarta servlet based application</description>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <maven.install.skip>true</maven.install.skip>
-        <maven.release.skip>true</maven.release.skip>
-        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.piwik.java.tracking</groupId>
-            <artifactId>matomo-java-tracker-java11</artifactId>
+            <artifactId>matomo-java-tracker-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.piwik.java.tracking</groupId>
-            <artifactId>matomo-java-tracker-servlet-jakarta</artifactId>
-            <version>${project.version}</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.0.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.javafaker</groupId>
-            <artifactId>javafaker</artifactId>
-            <version>1.0.2</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -43,13 +46,25 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.ee10</groupId>
             <artifactId>jetty-ee10-servlet</artifactId>
             <version>12.0.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

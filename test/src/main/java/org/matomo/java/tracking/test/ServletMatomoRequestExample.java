@@ -3,7 +3,8 @@ package org.matomo.java.tracking.test;
 import jakarta.servlet.http.HttpServletRequest;
 import org.matomo.java.tracking.MatomoRequest;
 import org.matomo.java.tracking.MatomoTracker;
-import org.matomo.java.tracking.ServletMatomoRequest;
+import org.matomo.java.tracking.servlet.JakartaHttpServletWrapper;
+import org.matomo.java.tracking.servlet.ServletMatomoRequest;
 
 /**
  * This is an example of how to use the ServletMatomoRequest class.
@@ -23,7 +24,7 @@ public class ServletMatomoRequestExample {
    */
   public void someControllerMethod(HttpServletRequest req) {
     MatomoRequest matomoRequest = ServletMatomoRequest
-        .fromServletRequest(req)
+        .fromServletRequest(JakartaHttpServletWrapper.fromHttpServletRequest(req))
         .actionName("Some Controller Action")
         // ...
         .build();

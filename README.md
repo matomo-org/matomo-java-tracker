@@ -343,8 +343,8 @@ In a Servlet environment, it might be easier to use the `ServletMatomoRequest` c
 import jakarta.servlet.http.HttpServletRequest;
 import org.matomo.java.tracking.MatomoRequest;
 import org.matomo.java.tracking.MatomoTracker;
-import org.matomo.java.tracking.parameters.DeviceResolution;
-import org.matomo.java.tracking.ServletMatomoRequest;
+import org.matomo.java.tracking.servlet.JakartaHttpServletWrapper;
+import org.matomo.java.tracking.servlet.ServletMatomoRequest;
 
 public class ServletMatomoRequestExample {
 
@@ -353,10 +353,10 @@ public class ServletMatomoRequestExample {
     public ServletMatomoRequestExample(MatomoTracker tracker) {
         this.tracker = tracker;
     }
-    
+
     public void someControllerMethod(HttpServletRequest req) {
         MatomoRequest matomoRequest = ServletMatomoRequest
-                .fromServletRequest(req)
+                .fromServletRequest(JakartaHttpServletWrapper.fromHttpServletRequest(req))
                 .actionName("Some Controller Action")
                 // ...
                 .build();
@@ -369,7 +369,8 @@ public class ServletMatomoRequestExample {
 
 The `ServletMatomoRequest` automatically sets the action URL, applies browser request headers, corresponding Matomo
 cookies and the visitor IP address. It sets the visitor ID, Matomo session ID, custom variables and heatmap
-if Matomo cookies are present.
+if Matomo cookies are present. Since there was a renaming from Java EE (javax) to Jakarta EE (jakarta), we provide a
+wrapper class `JakartaHttpServletWrapper` for Jakarta and `JavaxHttpServletWrapper` for javax.
 
 ### Tracking Configuration
 
