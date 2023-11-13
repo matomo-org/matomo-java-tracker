@@ -192,6 +192,7 @@ The following properties are supported:
 | matomo.tracker.disable-ssl-cert-validation   | If set to true, the SSL certificate of the Matomo server will not be validated. This should only be used for testing purposes. Default: false          |
 | matomo.tracker.disable-ssl-host-verification | If set to true, the SSL host of the Matomo server will not be validated. This should only be used for testing purposes. Default: false                 |
 | matomo.tracker.thread-pool-size              | The number of threads that will be used to asynchronously send requests. Default: 2                                                                    |
+| matomo.tracker.filter.enabled                | Enables a servlet filter that tracks every request within the application                                                                              |
 
 To ensure the `MatomoTracker` bean is created by the auto configuration, you have to add the following property to
 your `application.properties` file:
