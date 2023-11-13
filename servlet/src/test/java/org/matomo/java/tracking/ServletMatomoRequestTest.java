@@ -71,7 +71,10 @@ class ServletMatomoRequestTest {
 
   @Test
   void failsIfBuilderIsNull() {
-    assertThatThrownBy(() -> ServletMatomoRequest.addServletRequestHeaders(null, new MockHttpServletRequest()))
+    assertThatThrownBy(() -> ServletMatomoRequest.addServletRequestHeaders(
+        null,
+        new MockHttpServletRequest()
+    ))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("builder is marked non-null but is null");
   }
@@ -85,7 +88,9 @@ class ServletMatomoRequestTest {
 
     MatomoRequest matomoRequest = builder.build();
     assertThat(matomoRequest.getVisitorId()).hasToString("be40d677d6c7270b");
-    assertThat(matomoRequest.getCookies()).hasSize(1).containsEntry("_pk_id.1.1fff", "be40d677d6c7270b.1699801331.");
+    assertThat(matomoRequest.getCookies())
+        .hasSize(1)
+        .containsEntry("_pk_id.1.1fff", "be40d677d6c7270b.1699801331.");
   }
 
   @ParameterizedTest
@@ -124,11 +129,23 @@ class ServletMatomoRequestTest {
     MatomoRequest.MatomoRequestBuilder builder = ServletMatomoRequest.fromServletRequest(request);
 
     MatomoRequest matomoRequest = builder.build();
-    assertThat(matomoRequest.getVisitCustomVariables().get(1).getKey()).isEqualTo("VAR 1 set, var 2 not set");
+    assertThat(matomoRequest.getVisitCustomVariables().get(1).getKey()).isEqualTo(
+        "VAR 1 set, var 2 not set");
     assertThat(matomoRequest.getVisitCustomVariables().get(1).getValue()).isEqualTo("yes");
     assertThat(matomoRequest.getVisitCustomVariables().get(3).getKey()).isEqualTo("var 3 set");
     assertThat(matomoRequest.getVisitCustomVariables().get(3).getValue()).isEqualTo("yes!!!!");
 
+  }
+
+  @Test
+  void determinerVisitorIpFromXForwardedForHeader() {
+    MockHttpServletRequest request = new MockHttpServletRequest();
+    request.setHeaders(singletonMap("X-Forwarded-For", "44.55.66.77"));
+
+    MatomoRequest.MatomoRequestBuilder builder = ServletMatomoRequest.fromServletRequest(request);
+
+    MatomoRequest matomoRequest = builder.build();
+    assertThat(matomoRequest.getVisitorIp()).isEqualTo("44.55.66.77");
   }
 
 }

@@ -2,6 +2,7 @@ package org.matomo.java.tracking;
 
 import static java.util.Arrays.asList;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Collections;
@@ -18,11 +19,12 @@ import org.matomo.java.tracking.parameters.VisitorId;
 
 
 /**
- * Adds the headers from a {@link HttpServletRequest} to a {@link MatomoRequest.MatomoRequestBuilder}.
+ * Adds the headers from a {@link HttpServletRequest} to a
+ * {@link MatomoRequest.MatomoRequestBuilder}.
  *
- * <p>Use #fromServletRequest(HttpServletRequest) to create a new builder with the headers from the request or
- * #addServletRequestHeaders(MatomoRequest.MatomoRequestBuilder, HttpServletRequest) to add the headers to an existing
- * builder.
+ * <p>Use #fromServletRequest(HttpServletRequest) to create a new builder with the headers from the
+ * request or #addServletRequestHeaders(MatomoRequest.MatomoRequestBuilder, HttpServletRequest) to
+ * add the headers to an existing builder.
  */
 public final class ServletMatomoRequest {
 
@@ -30,7 +32,13 @@ public final class ServletMatomoRequest {
    * Please ensure these values are always lower case.
    */
   private static final Set<String> RESTRICTED_HEADERS =
-      Collections.unmodifiableSet(new HashSet<>(asList("connection", "content-length", "expect", "host", "upgrade")));
+      Collections.unmodifiableSet(new HashSet<>(asList(
+          "connection",
+          "content-length",
+          "expect",
+          "host",
+          "upgrade"
+      )));
 
   private ServletMatomoRequest() {
     // should not be instantiated
@@ -39,10 +47,11 @@ public final class ServletMatomoRequest {
   /**
    * Creates a new builder with the headers from the request.
    *
-   * <p>Use #addServletRequestHeaders(MatomoRequest.MatomoRequestBuilder, HttpServletRequest) to add the headers to an
-   * existing builder.
+   * <p>Use #addServletRequestHeaders(MatomoRequest.MatomoRequestBuilder, HttpServletRequest) to
+   * add the headers to an existing builder.
    *
    * @param request the request to get the headers from (must not be null)
+   *
    * @return a new builder with the headers from the request (never null)
    */
   @edu.umd.cs.findbugs.annotations.NonNull
@@ -53,10 +62,12 @@ public final class ServletMatomoRequest {
   /**
    * Adds the headers from the request to an existing builder.
    *
-   * <p>Use #fromServletRequest(HttpServletRequest) to create a new builder with the headers from the request.
+   * <p>Use #fromServletRequest(HttpServletRequest) to create a new builder with the headers from
+   * the request.
    *
    * @param builder the builder to add the headers to (must not be null)
    * @param request the request to get the headers from (must not be null)
+   *
    * @return the builder with the headers added (never null)
    */
   @edu.umd.cs.findbugs.annotations.NonNull
@@ -66,8 +77,43 @@ public final class ServletMatomoRequest {
     return builder
         .actionUrl(request.getRequestURL() == null ? null : request.getRequestURL().toString())
         .headers(collectHeaders(request))
-        .visitorIp(request.getRemoteAddr())
+        .visitorIp(determineVisitorIp(request))
         .cookies(processCookies(builder, request));
+  }
+
+  @edu.umd.cs.findbugs.annotations.NonNull
+  private static Map<String, String> collectHeaders(
+      @edu.umd.cs.findbugs.annotations.NonNull HttpServletRequest request
+  ) {
+    Map<String, String> headers = new HashMap<>(10);
+    Enumeration<String> headerNames = request.getHeaderNames();
+    while (headerNames.hasMoreElements()) {
+      String headerName = headerNames.nextElement();
+      if (headerName != null && !headerName.trim().isEmpty() && !RESTRICTED_HEADERS.contains(
+          headerName.toLowerCase(
+              Locale.ROOT))) {
+        headers.put(headerName, request.getHeader(headerName));
+      }
+    }
+    return headers;
+  }
+
+  @Nullable
+  private static String determineVisitorIp(
+      @edu.umd.cs.findbugs.annotations.NonNull HttpServletRequest request
+  ) {
+    String realIpHeader = request.getHeader("X-Real-Ip");
+    if (isNotEmpty(realIpHeader)) {
+      return realIpHeader;
+    }
+    String forwardedForHeader = request.getHeader("X-Forwarded-For");
+    if (isNotEmpty(forwardedForHeader)) {
+      return forwardedForHeader;
+    }
+    if (isNotEmpty(request.getRemoteAddr())) {
+      return request.getRemoteAddr();
+    }
+    return null;
   }
 
   @edu.umd.cs.findbugs.annotations.NonNull
@@ -79,12 +125,16 @@ public final class ServletMatomoRequest {
     if (request.getCookies() != null) {
       builder.supportsCookies(Boolean.TRUE);
       for (Cookie cookie : request.getCookies()) {
-        if (cookie.getValue() != null && !cookie.getValue().trim().isEmpty()) {
+        if (isNotEmpty(cookie.getValue())) {
           processCookie(builder, cookies, cookie.getName(), cookie.getValue());
         }
       }
     }
     return cookies;
+  }
+
+  private static boolean isNotEmpty(String forwardedForHeader) {
+    return forwardedForHeader != null && !forwardedForHeader.trim().isEmpty();
   }
 
   private static void processCookie(
@@ -120,21 +170,5 @@ public final class ServletMatomoRequest {
       builder.visitorId(VisitorId.fromHex(cookieValues[0])).newVisitor(Boolean.FALSE);
       cookies.put(cookieName, cookieValue);
     }
-  }
-
-  @edu.umd.cs.findbugs.annotations.NonNull
-  private static Map<String, String> collectHeaders(
-      @edu.umd.cs.findbugs.annotations.NonNull HttpServletRequest request
-  ) {
-    Map<String, String> headers = new HashMap<>(10);
-    Enumeration<String> headerNames = request.getHeaderNames();
-    while (headerNames.hasMoreElements()) {
-      String headerName = headerNames.nextElement();
-      if (headerName != null && !headerName.trim().isEmpty() && !RESTRICTED_HEADERS.contains(headerName.toLowerCase(
-          Locale.ROOT))) {
-        headers.put(headerName, request.getHeader(headerName));
-      }
-    }
-    return headers;
   }
 }

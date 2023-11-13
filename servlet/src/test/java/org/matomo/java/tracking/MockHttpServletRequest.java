@@ -22,6 +22,7 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import lombok.Setter;
@@ -29,7 +30,7 @@ import lombok.Setter;
 @Setter
 class MockHttpServletRequest implements HttpServletRequest {
 
-  private Map<String, String> headers;
+  private Map<String, String> headers = new LinkedHashMap<>();
 
   private Collection<Cookie> cookies;
 
