@@ -209,7 +209,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <sourceDirectory>core/src/main/java</sourceDirectory>
+                    <sourceDirectory>src/main/java</sourceDirectory>
                     <outputDirectory>${delombok.output}</outputDirectory>
                     <addOutputDirectory>false</addOutputDirectory>
                 </configuration>
@@ -227,7 +227,6 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.6.2</version>
                 <configuration>
-                    <quiet>true</quiet>
                     <sourcepath>${delombok.output}</sourcepath>
                     <doclint>none</doclint>
                 </configuration>
