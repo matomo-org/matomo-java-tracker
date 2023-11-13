@@ -77,7 +77,7 @@ Here are the most important changes:
 ## Javadoc
 
 The Javadoc for all versions can be found 
-[at javadoc.io](https://javadoc.io/doc/org.piwik.java.tracking/matomo-java-tracker/latest/index.html). Thanks to
+[at javadoc.io](https://javadoc.io/doc/org.piwik.java.tracking/matomo-java-tracker-core/latest/index.html). Thanks to
 [javadoc.io](https://javadoc.io) for hosting it.
 
 ## Need help?
