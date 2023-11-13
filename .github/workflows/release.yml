@@ -41,3 +41,12 @@ jobs:
           java-version: 17
           target-folder: javadoc
           project: maven
+      - uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_USERNAME: github-actions
+          SLACK_ICON: https://m-img.org/spai/w_147+q_lossless+ret_img+to_webp/matomo.org/wp-content/uploads/2020/03/matomo-logo-winner-mobile3.png
+          SLACK_ICON_EMOJI: ':tada:'
+          SLACK_TITLE: Matomo Java Tracker ${{ steps.version.outputs.version }} released
+          SLACK_MESSAGE: "Exciting news! :star2: We're thrilled to share that a new version of the Matomo Java Tracker was staged and will become available soon, packed with awesome features and improvements. :rocket: See https://github.com/matomo-org/matomo-java-tracker/releases for release notes."
+          SLACK_FOOTER: "Thanks for being awesome! :heart:"
