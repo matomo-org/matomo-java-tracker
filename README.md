@@ -76,10 +76,9 @@ Here are the most important changes:
 
 ## Javadoc
 
-The Javadoc for this project is hosted as a GitHub page for this repo. The latest Javadoc can be
-found [here](https://matomo-org.github.io/matomo-java-tracker/javadoc/index.html). Javadoc folder older versions can be
-found here: https://javadoc.io/doc/org.piwik.java.tracking/matomo-java-tracker
-You can also build the Javadoc yourself. See the section [Building](#building-and-testing) below.
+The Javadoc for all versions can be found 
+[at javadoc.io](https://javadoc.io/doc/org.piwik.java.tracking/matomo-java-tracker/latest/index.html). Thanks to
+[javadoc.io](https://javadoc.io) for hosting it.
 
 ## Need help?
 
