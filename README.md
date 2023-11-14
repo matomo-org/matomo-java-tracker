@@ -39,7 +39,6 @@ Further information on Matomo and Matomo HTTP tracking:
 
 Projects that use Matomo Java Tracker:
 
-* [Digitale Ehrenamtskarte](https://github.com/digitalfabrik/entitlementcard)
 * [Box-c - supports the UNC Libraries' Digital Collections Repository](https://github.com/UNC-Libraries/box-c)
 * [DSpace - provide durable access to digital resources](https://github.com/thanvanlong/dspace)
 * [Identifiers.org satellite Web SPA](https://github.com/identifiers-org/cloud-satellite-web-spa)
@@ -47,7 +46,9 @@ Projects that use Matomo Java Tracker:
 * [Resource Catalogue](https://github.com/madgeek-arc/resource-catalogue)
 * [INCEpTION - A semantic annotation platform offering intelligent assistance and knowledge management](https://github.com/inception-project/inception)
 * [QualiChain Analytics Intelligent Profiling](https://github.com/JoaoCabrita95/IP)
-* And many closed source projects that we are not aware of :smile:
+* [Digitale Ehrenamtskarte](https://github.com/digitalfabrik/entitlementcard)
+* [skidfuscator-java-obfuscator](https://github.com/skidfuscatordev/skidfuscator-java-obfuscator)
+*  And many closed source projects that we are not aware of :smile:
 
 ## Table of Contents
 
