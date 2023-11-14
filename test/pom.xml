@@ -16,15 +16,6 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <maven.surefire.skip>true</maven.surefire.skip>
-        <maven.jar.skip>true</maven.jar.skip>
-        <maven.source.skip>true</maven.source.skip>
-        <maven.javadoc.skip>true</maven.javadoc.skip>
-        <maven.failsafe.skip>true</maven.failsafe.skip>
-        <maven.jacoco.skip>true</maven.jacoco.skip>
-        <maven.install.skip>true</maven.install.skip>
-        <maven.release.skip>true</maven.release.skip>
-        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <dependencies>
