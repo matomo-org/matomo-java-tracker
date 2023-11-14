@@ -41,6 +41,7 @@ public final class JakartaHttpServletWrapper {
         .builder()
         .requestURL(request.getRequestURL())
         .remoteAddr(request.getRemoteAddr())
+        .remoteUser(request.getRemoteUser())
         .headers(headers)
         .cookies(cookies == null ? null : cookies.toArray(new CookieWrapper[0]))
         .build();

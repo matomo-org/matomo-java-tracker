@@ -77,6 +77,7 @@ public final class ServletMatomoRequest {
         .actionUrl(request.getRequestURL() == null ? null : request.getRequestURL().toString())
         .headers(collectHeaders(request))
         .visitorIp(determineVisitorIp(request))
+        .userId(request.getRemoteUser())
         .cookies(processCookies(builder, request));
   }
 

@@ -11,31 +11,34 @@ import org.matomo.java.tracking.MatomoRequest;
 
 class ServletMatomoRequestTest {
 
+  private MatomoRequest.MatomoRequestBuilder requestBuilder;
+  
+  private HttpServletRequestWrapper.HttpServletRequestWrapperBuilder wrapperBuilder = 
+      HttpServletRequestWrapper.builder();
+
   @Test
   void addsServletRequestHeaders() {
 
-    HttpServletRequestWrapper request = HttpServletRequestWrapper
-        .builder()
+    wrapperBuilder
         .headers(singletonMap("headername", "headerValue"))
         .build();
 
-    MatomoRequest.MatomoRequestBuilder builder = ServletMatomoRequest.fromServletRequest(request);
+    whenBuildsRequest();
 
-    MatomoRequest matomoRequest = builder.build();
+    MatomoRequest matomoRequest = requestBuilder.build();
     assertThat(matomoRequest.getHeaders()).hasSize(1).containsEntry("headername", "headerValue");
   }
 
   @Test
   void skipsEmptyHeaderNames() {
 
-    HttpServletRequestWrapper request = HttpServletRequestWrapper
-        .builder()
+    wrapperBuilder
         .headers(singletonMap("", "headerValue"))
         .build();
 
-    MatomoRequest.MatomoRequestBuilder builder = ServletMatomoRequest.fromServletRequest(request);
+    whenBuildsRequest();
 
-    MatomoRequest matomoRequest = builder.build();
+    MatomoRequest matomoRequest = requestBuilder.build();
     assertThat(matomoRequest.getHeaders()).isEmpty();
 
   }
@@ -43,14 +46,13 @@ class ServletMatomoRequestTest {
   @Test
   void skipsBlankHeaderNames() {
 
-    HttpServletRequestWrapper request = HttpServletRequestWrapper
-        .builder()
+    wrapperBuilder
         .headers(singletonMap(" ", "headerValue"))
         .build();
 
-    MatomoRequest.MatomoRequestBuilder builder = ServletMatomoRequest.fromServletRequest(request);
+    whenBuildsRequest();
 
-    MatomoRequest matomoRequest = builder.build();
+    MatomoRequest matomoRequest = requestBuilder.build();
     assertThat(matomoRequest.getHeaders()).isEmpty();
 
   }
@@ -58,14 +60,13 @@ class ServletMatomoRequestTest {
   @ParameterizedTest
   @ValueSource(strings = {"connection", "content-length", "expect", "host", "upgrade"})
   void doesNotAddRestrictedHeaders(String restrictedHeader) {
-    HttpServletRequestWrapper request = HttpServletRequestWrapper
-        .builder()
+    wrapperBuilder
         .headers(singletonMap(restrictedHeader, "headerValue"))
         .build();
 
-    MatomoRequest.MatomoRequestBuilder builder = ServletMatomoRequest.fromServletRequest(request);
+    whenBuildsRequest();
 
-    MatomoRequest matomoRequest = builder.build();
+    MatomoRequest matomoRequest = requestBuilder.build();
     assertThat(matomoRequest.getHeaders()).isEmpty();
   }
 
@@ -88,16 +89,15 @@ class ServletMatomoRequestTest {
 
   @Test
   void extractsVisitorIdFromCookie() {
-    HttpServletRequestWrapper request = HttpServletRequestWrapper
-        .builder()
+    wrapperBuilder
         .cookies(new CookieWrapper[] {
           new CookieWrapper("_pk_id.1.1fff", "be40d677d6c7270b.1699801331.")
         })
         .build();
 
-    MatomoRequest.MatomoRequestBuilder builder = ServletMatomoRequest.fromServletRequest(request);
+    whenBuildsRequest();
 
-    MatomoRequest matomoRequest = builder.build();
+    MatomoRequest matomoRequest = requestBuilder.build();
     assertThat(matomoRequest.getVisitorId()).hasToString("be40d677d6c7270b");
     assertThat(matomoRequest.getCookies())
         .hasSize(1)
@@ -109,21 +109,19 @@ class ServletMatomoRequestTest {
       strings = {"_pk_ses.1.1fff", "_pk_ref.1.1fff", "_pk_hsr.1.1fff"}
   )
   void extractsMatomoCookies(String cookieName) {
-    HttpServletRequestWrapper request = HttpServletRequestWrapper
-        .builder()
+    wrapperBuilder
         .cookies(new CookieWrapper[] {new CookieWrapper(cookieName, "anything")})
         .build();
 
-    MatomoRequest.MatomoRequestBuilder builder = ServletMatomoRequest.fromServletRequest(request);
+    whenBuildsRequest();
 
-    MatomoRequest matomoRequest = builder.build();
+    MatomoRequest matomoRequest = requestBuilder.build();
     assertThat(matomoRequest.getCookies()).hasSize(1).containsEntry(cookieName, "anything");
   }
 
   @Test
   void extractsSessionIdFromMatomoSessIdCookie() {
-    HttpServletRequestWrapper request = HttpServletRequestWrapper
-        .builder()
+    wrapperBuilder
         .cookies(new CookieWrapper[] {
           new CookieWrapper(
               "MATOMO_SESSID",
@@ -132,16 +130,15 @@ class ServletMatomoRequestTest {
         })
         .build();
 
-    MatomoRequest.MatomoRequestBuilder builder = ServletMatomoRequest.fromServletRequest(request);
+    whenBuildsRequest();
 
-    MatomoRequest matomoRequest = builder.build();
+    MatomoRequest matomoRequest = requestBuilder.build();
     assertThat(matomoRequest.getSessionId()).isEqualTo("2cbf8b5ba00fbf9ba70853308cd0944a");
   }
 
   @Test
   void parsesVisitCustomVariablesFromCookie() {
-    HttpServletRequestWrapper request = HttpServletRequestWrapper
-        .builder()
+    wrapperBuilder
         .cookies(new CookieWrapper[] {
           new CookieWrapper(
               "_pk_cvar.1.1fff",
@@ -150,9 +147,9 @@ class ServletMatomoRequestTest {
         })
         .build();
 
-    MatomoRequest.MatomoRequestBuilder builder = ServletMatomoRequest.fromServletRequest(request);
+    whenBuildsRequest();
 
-    MatomoRequest matomoRequest = builder.build();
+    MatomoRequest matomoRequest = requestBuilder.build();
     assertThat(matomoRequest.getVisitCustomVariables().get(1).getKey()).isEqualTo(
         "VAR 1 set, var 2 not set");
     assertThat(matomoRequest.getVisitCustomVariables().get(1).getValue()).isEqualTo("yes");
@@ -163,15 +160,42 @@ class ServletMatomoRequestTest {
 
   @Test
   void determinerVisitorIpFromXForwardedForHeader() {
-    HttpServletRequestWrapper request = HttpServletRequestWrapper
-        .builder()
+    wrapperBuilder
         .headers(singletonMap("x-forwarded-for", "44.55.66.77"))
         .build();
 
-    MatomoRequest.MatomoRequestBuilder builder = ServletMatomoRequest.fromServletRequest(request);
+    whenBuildsRequest();
 
-    MatomoRequest matomoRequest = builder.build();
+    MatomoRequest matomoRequest = requestBuilder.build();
     assertThat(matomoRequest.getVisitorIp()).isEqualTo("44.55.66.77");
+  }
+
+  @Test
+  void setsActionUrlFromRequestURL() {
+    wrapperBuilder
+        .requestURL(new StringBuffer("https://localhost/test"))
+        .build();
+
+    whenBuildsRequest();
+
+    MatomoRequest matomoRequest = requestBuilder.build();
+    assertThat(matomoRequest.getActionUrl()).isEqualTo("https://localhost/test");
+  }
+
+  @Test
+  void setsUserIdFromRemoteUser() {
+    wrapperBuilder
+        .remoteUser("remote-user")
+        .build();
+
+    whenBuildsRequest();
+
+    MatomoRequest matomoRequest = requestBuilder.build();
+    assertThat(matomoRequest.getUserId()).isEqualTo("remote-user");
+  }
+
+  private void whenBuildsRequest() {
+    requestBuilder = ServletMatomoRequest.fromServletRequest(wrapperBuilder.build());
   }
 
 }

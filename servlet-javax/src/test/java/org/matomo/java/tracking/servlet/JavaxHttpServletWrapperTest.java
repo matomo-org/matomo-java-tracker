@@ -1,5 +1,6 @@
 package org.matomo.java.tracking.servlet;
 
+import static java.util.Collections.singleton;
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,13 +15,15 @@ class JavaxHttpServletWrapperTest {
 
     MockHttpServletRequest servlet = new MockHttpServletRequest();
     servlet.setRequestURL(new StringBuffer("http://localhost"));
+    servlet.setRemoteUser("remote-user");
     servlet.setHeaders(singletonMap("Accept-Language", "en-US,en;q=0.9,de;q=0.8"));
-    servlet.setCookies(List.of(new Cookie("foo", "bar")));
+    servlet.setCookies(singleton(new Cookie("foo", "bar")));
 
     HttpServletRequestWrapper httpServletRequestWrapper =
         JavaxHttpServletWrapper.fromHttpServletRequest(servlet);
 
     assertThat(httpServletRequestWrapper.getRequestURL()).hasToString("http://localhost");
+    assertThat(httpServletRequestWrapper.getRemoteUser()).hasToString("remote-user");
     assertThat(httpServletRequestWrapper.getHeaders())
         .containsEntry("accept-language", "en-US,en;q=0.9,de;q=0.8");
     assertThat(httpServletRequestWrapper.getCookies())

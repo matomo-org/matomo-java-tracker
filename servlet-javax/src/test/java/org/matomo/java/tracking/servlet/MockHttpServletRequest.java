@@ -33,6 +33,8 @@ class MockHttpServletRequest implements HttpServletRequest {
 
   private StringBuffer requestURL;
 
+  private String remoteUser;
+
   private Map<String, String> headers = new LinkedHashMap<>();
 
   private Collection<Cookie> cookies;
@@ -94,11 +96,6 @@ class MockHttpServletRequest implements HttpServletRequest {
 
   @Override
   public String getQueryString() {
-    return null;
-  }
-
-  @Override
-  public String getRemoteUser() {
     return null;
   }
 

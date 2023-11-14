@@ -16,12 +16,19 @@ import lombok.Value;
 @Value
 public class HttpServletRequestWrapper {
 
+  @Nullable
   StringBuffer requestURL;
 
+  @Nullable
   String remoteAddr;
 
+  @Nullable
+  String remoteUser;
+
+  @Nullable
   Map<String, String> headers;
 
+  @Nullable
   CookieWrapper[] cookies;
 
   /**
