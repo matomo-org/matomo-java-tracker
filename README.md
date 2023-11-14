@@ -48,6 +48,7 @@ Projects that use Matomo Java Tracker:
 * [QualiChain Analytics Intelligent Profiling](https://github.com/JoaoCabrita95/IP)
 * [Digitale Ehrenamtskarte](https://github.com/digitalfabrik/entitlementcard)
 * [skidfuscator-java-obfuscator](https://github.com/skidfuscatordev/skidfuscator-java-obfuscator)
+* [DnA](https://github.com/mercedes-benz/DnA)
 *  And many closed source projects that we are not aware of :smile:
 
 ## Table of Contents
