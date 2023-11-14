@@ -39,6 +39,7 @@ Further information on Matomo and Matomo HTTP tracking:
 
 Projects that use Matomo Java Tracker:
 
+* [Digitale Ehrenamtskarte](https://github.com/digitalfabrik/entitlementcard)
 * [Box-c - supports the UNC Libraries' Digital Collections Repository](https://github.com/UNC-Libraries/box-c)
 * [DSpace - provide durable access to digital resources](https://github.com/thanvanlong/dspace)
 * [Identifiers.org satellite Web SPA](https://github.com/identifiers-org/cloud-satellite-web-spa)
