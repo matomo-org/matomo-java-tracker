@@ -236,33 +236,32 @@ To let the Matomo Java Tracker send a request to the Matomo instance, you need t
 ```java
 import java.net.URI;
 import org.matomo.java.tracking.MatomoRequest;
+import org.matomo.java.tracking.MatomoRequests;
 import org.matomo.java.tracking.MatomoTracker;
 import org.matomo.java.tracking.TrackerConfiguration;
 import org.matomo.java.tracking.parameters.VisitorId;
 
 public class SendExample {
 
-  public static void main(String[] args) {
+    public static void main(String[] args) {
 
-    TrackerConfiguration configuration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create("https://www.yourdomain.com/matomo.php"))
-        .defaultSiteId(1)
-        .defaultAuthToken("ee6e3dd9ed1b61f5328cf5978b5a8c71")
-        .logFailedTracking(true)
-        .build();
+        TrackerConfiguration configuration = TrackerConfiguration
+                .builder()
+                .apiEndpoint(URI.create("https://www.yourdomain.com/matomo.php"))
+                .defaultSiteId(1)
+                .defaultAuthToken("ee6e3dd9ed1b61f5328cf5978b5a8c71")
+                .logFailedTracking(true)
+                .build();
 
-    MatomoTracker tracker = new MatomoTracker(configuration);
+        MatomoTracker tracker = new MatomoTracker(configuration);
 
-    tracker.sendRequestAsync(MatomoRequest
-        .request()
-        .actionName("Checkout")
-        .actionUrl("https://www.yourdomain.com/checkout")
-        .visitorId(VisitorId.fromString("customer@mail.com"))
-        .build()
-    );
-    
-  }
+        tracker.sendRequestAsync(MatomoRequests
+                .event("Training", "Workout completed", "Bench press", 60.0)
+                .visitorId(VisitorId.fromString("customer@mail.com"))
+                .build()
+        );
+
+    }
 
 }
 ```
@@ -279,6 +278,7 @@ send a bulk request. Place your requests in an _Iterable_ data structure and cal
 ```java
 import java.net.URI;
 import org.matomo.java.tracking.MatomoRequest;
+import org.matomo.java.tracking.MatomoRequests;
 import org.matomo.java.tracking.MatomoTracker;
 import org.matomo.java.tracking.TrackerConfiguration;
 import org.matomo.java.tracking.parameters.VisitorId;
@@ -299,23 +299,19 @@ public class BulkExample {
 
         VisitorId visitorId = VisitorId.fromString("customer@mail.com");
         tracker.sendBulkRequestAsync(
-                MatomoRequest
-                        .request()
-                        .actionName("Checkout")
-                        .actionUrl("https://www.yourdomain.com/checkout")
-                        .visitorId(visitorId)
-                        .build(),
-                MatomoRequest
-                        .request()
-                        .actionName("Payment")
-                        .actionUrl("https://www.yourdomain.com/checkout")
-                        .visitorId(visitorId)
-                        .build()
+                MatomoRequests.siteSearch("Running shoes", "Running", 120L)
+                              .visitorId(visitorId).build(),
+                MatomoRequests.pageView("VelocityStride ProX Running Shoes")
+                              .visitorId(visitorId).build(),
+                MatomoRequests.ecommerceOrder("QXZ-789LMP", 100.0, 124.0, 19.0, 10.0, 5.0)
+                              .visitorId(visitorId)
+                              .build()
         );
 
     }
 
 }
+
 ```
 
 This will send two requests in a single HTTP call. The requests will be sent asynchronously.
@@ -346,7 +342,9 @@ In a Servlet environment, it might be easier to use the `ServletMatomoRequest` c
 ```java
 import jakarta.servlet.http.HttpServletRequest;
 import org.matomo.java.tracking.MatomoRequest;
+import org.matomo.java.tracking.MatomoRequests;
 import org.matomo.java.tracking.MatomoTracker;
+import org.matomo.java.tracking.parameters.VisitorId;
 import org.matomo.java.tracking.servlet.JakartaHttpServletWrapper;
 import org.matomo.java.tracking.servlet.ServletMatomoRequest;
 
@@ -358,10 +356,16 @@ public class ServletMatomoRequestExample {
         this.tracker = tracker;
     }
 
-    public void someControllerMethod(HttpServletRequest req) {
+    public void someControllerMethod(HttpServletRequest request) {
         MatomoRequest matomoRequest = ServletMatomoRequest
-                .fromServletRequest(JakartaHttpServletWrapper.fromHttpServletRequest(req))
-                .actionName("Some Controller Action")
+                .addServletRequestHeaders(
+                        MatomoRequests.contentImpression(
+                                "Latest Product Announced",
+                                "Main Blog Text",
+                                "https://www.yourdomain.com/blog/2018/10/01/new-product-launches"
+                        ),
+                        JakartaHttpServletWrapper.fromHttpServletRequest(request)
+                ).visitorId(VisitorId.fromString("customer@mail.com"))
                 // ...
                 .build();
         tracker.sendRequestAsync(matomoRequest);

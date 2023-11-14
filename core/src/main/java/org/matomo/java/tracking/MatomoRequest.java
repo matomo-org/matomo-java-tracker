@@ -449,7 +449,7 @@ public class MatomoRequest {
   private String contentInteraction;
 
   /**
-   * he unique string identifier for the ecommerce order (required when tracking an ecommerce
+   * The unique string identifier for the ecommerce order (required when tracking an ecommerce
    * order). you must set &idgoal=0 in the request to track an ecommerce interaction: cart update or
    * an ecommerce order.
    */

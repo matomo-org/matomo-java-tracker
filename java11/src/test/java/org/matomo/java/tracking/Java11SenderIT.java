@@ -41,10 +41,13 @@ class Java11SenderIT {
     CookieManager cookieManager = new CookieManager();
     assertThatThrownBy(() -> new Java11Sender(
         null,
-        new QueryCreator(TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build()),
+        new QueryCreator(TrackerConfiguration.builder()
+                                             .apiEndpoint(URI.create("http://localhost"))
+                                             .build()),
         HttpClient.newBuilder().cookieHandler(cookieManager).build(),
         cookieManager.getCookieStore()
-    )).isInstanceOf(NullPointerException.class).hasMessage("trackerConfiguration is marked non-null but is null");
+    )).isInstanceOf(NullPointerException.class)
+      .hasMessage("trackerConfiguration is marked non-null but is null");
   }
 
   @Test
@@ -55,7 +58,8 @@ class Java11SenderIT {
         null,
         HttpClient.newBuilder().cookieHandler(cookieManager).build(),
         cookieManager.getCookieStore()
-    )).isInstanceOf(NullPointerException.class).hasMessage("queryCreator is marked non-null but is null");
+    )).isInstanceOf(NullPointerException.class)
+      .hasMessage("queryCreator is marked non-null but is null");
   }
 
   @Test
@@ -63,10 +67,13 @@ class Java11SenderIT {
     CookieManager cookieManager = new CookieManager();
     assertThatThrownBy(() -> new Java11Sender(
         TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build(),
-        new QueryCreator(TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build()),
+        new QueryCreator(TrackerConfiguration.builder()
+                                             .apiEndpoint(URI.create("http://localhost"))
+                                             .build()),
         null,
         cookieManager.getCookieStore()
-    )).isInstanceOf(NullPointerException.class).hasMessage("httpClient is marked non-null but is null");
+    )).isInstanceOf(NullPointerException.class)
+      .hasMessage("httpClient is marked non-null but is null");
   }
 
   @Test
@@ -74,10 +81,13 @@ class Java11SenderIT {
     CookieManager cookieManager = new CookieManager();
     assertThatThrownBy(() -> new Java11Sender(
         TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build(),
-        new QueryCreator(TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build()),
+        new QueryCreator(TrackerConfiguration.builder()
+                                             .apiEndpoint(URI.create("http://localhost"))
+                                             .build()),
         HttpClient.newBuilder().cookieHandler(cookieManager).build(),
         null
-    )).isInstanceOf(NullPointerException.class).hasMessage("cookieStore is marked non-null but is null");
+    )).isInstanceOf(NullPointerException.class)
+      .hasMessage("cookieStore is marked non-null but is null");
   }
 
   @Test
@@ -89,7 +99,8 @@ class Java11SenderIT {
         .build();
     givenSender();
 
-    assertThatThrownBy(() -> sender.sendSingle(new MatomoRequest()))
+    assertThatThrownBy(() -> sender.sendSingle(MatomoRequests.ecommerceCartUpdate(50.0)
+                                                             .goalId(0).build()))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("invalid URI scheme telnet");
   }
@@ -108,7 +119,10 @@ class Java11SenderIT {
   }
 
   private void givenSender() {
-    sender = new Java11SenderProvider().provideSender(trackerConfiguration, new QueryCreator(trackerConfiguration));
+    sender = new Java11SenderProvider().provideSender(
+        trackerConfiguration,
+        new QueryCreator(trackerConfiguration)
+    );
   }
 
   @Test
@@ -146,7 +160,10 @@ class Java11SenderIT {
   @Test
   void failsAndDoesNotLogIfCouldNotConnectToEndpoint() {
     trackerConfiguration =
-        TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost:1234")).userAgent("").build();
+        TrackerConfiguration.builder()
+                            .apiEndpoint(URI.create("http://localhost:1234"))
+                            .userAgent("")
+                            .build();
 
     givenSender();
 
@@ -213,7 +230,8 @@ class Java11SenderIT {
     stubFor(get(urlPathEqualTo("/matomo_ssl.php")).willReturn(status(204)));
     trackerConfiguration = TrackerConfiguration
         .builder()
-        .apiEndpoint(URI.create(String.format("https://localhost:%d/matomo_ssl.php",
+        .apiEndpoint(URI.create(String.format(
+            "https://localhost:%d/matomo_ssl.php",
             wireMockRuntimeInfo.getHttpsPort()
         )))
         .disableSslCertValidation(true)
@@ -221,7 +239,7 @@ class Java11SenderIT {
 
     givenSender();
 
-    sender.sendSingle(new MatomoRequest());
+    sender.sendSingle(MatomoRequests.goal(2, 60.0).build());
 
     verify(getRequestedFor(urlPathEqualTo("/matomo_ssl.php")));
 
@@ -237,9 +255,14 @@ class Java11SenderIT {
 
     givenSender();
 
-    sender.sendSingle(MatomoRequest.request().headers(singletonMap("headerName", "headerValue")).build());
+    sender.sendSingle(MatomoRequests.ping()
+                                    .headers(singletonMap("headerName", "headerValue"))
+                                    .build());
 
-    verify(getRequestedFor(urlPathEqualTo("/matomo.php")).withHeader("headerName", equalTo("headerValue")));
+    verify(getRequestedFor(urlPathEqualTo("/matomo.php")).withHeader(
+        "headerName",
+        equalTo("headerValue")
+    ));
   }
 
   @Test
@@ -252,9 +275,15 @@ class Java11SenderIT {
 
     givenSender();
 
-    sender.sendBulk(List.of(MatomoRequest.request().headers(singletonMap("headerName", "headerValue")).build()), null);
+    sender.sendBulk(List.of(MatomoRequests.goal(1, 23.50).headers(singletonMap(
+        "headerName",
+        "headerValue"
+    )).build()), null);
 
-    verify(postRequestedFor(urlPathEqualTo("/matomo.php")).withHeader("headerName", equalTo("headerValue")));
+    verify(postRequestedFor(urlPathEqualTo("/matomo.php")).withHeader(
+        "headerName",
+        equalTo("headerValue")
+    ));
   }
 
   @Test
@@ -267,7 +296,7 @@ class Java11SenderIT {
 
     givenSender();
 
-    sender.sendBulk(List.of(MatomoRequest.request().headers(emptyMap()).build()), null);
+    sender.sendBulk(List.of(MatomoRequests.pageView("Contact").headers(emptyMap()).build()), null);
 
     verify(postRequestedFor(urlPathEqualTo("/matomo.php")).withoutHeader("headerName"));
   }
@@ -288,12 +317,16 @@ class Java11SenderIT {
         .build()), null);
 
     future.join();
-    verify(postRequestedFor(urlPathEqualTo("/matomo.php")).withHeader("headerName", equalTo("headerValue")));
+    verify(postRequestedFor(urlPathEqualTo("/matomo.php")).withHeader(
+        "headerName",
+        equalTo("headerValue")
+    ));
   }
 
   @Test
   void failsOnSendSingleAsyncIfRequestIsNull() {
-    trackerConfiguration = TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost:1234")).build();
+    trackerConfiguration =
+        TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost:1234")).build();
 
     givenSender();
 
@@ -304,7 +337,8 @@ class Java11SenderIT {
 
   @Test
   void failsOnSendSingleIfRequestIsNull() {
-    trackerConfiguration = TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost:1234")).build();
+    trackerConfiguration =
+        TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost:1234")).build();
 
     givenSender();
 
@@ -315,7 +349,8 @@ class Java11SenderIT {
 
   @Test
   void failsOnSendBulkAsyncIfRequestsIsNull() {
-    trackerConfiguration = TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost:1234")).build();
+    trackerConfiguration =
+        TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost:1234")).build();
 
     givenSender();
 
@@ -326,7 +361,8 @@ class Java11SenderIT {
 
   @Test
   void failsOnSendBulkAsyncIfRequestIsNull() {
-    trackerConfiguration = TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost:1234")).build();
+    trackerConfiguration =
+        TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost:1234")).build();
 
     givenSender();
 
@@ -337,11 +373,16 @@ class Java11SenderIT {
 
   @Test
   void failsOnSendBulkAsyncIfOverrideAuthTokenIsMalformed() {
-    trackerConfiguration = TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost:1234")).build();
+    trackerConfiguration =
+        TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost:1234")).build();
 
     givenSender();
 
-    assertThatThrownBy(() -> sender.sendBulkAsync(List.of(MatomoRequest.request().build()), "telnet://localhost"))
+    assertThatThrownBy(() -> sender.sendBulkAsync(
+        List.of(MatomoRequests
+            .siteSearch("Special offers", "Products", 5L).build()),
+        "telnet://localhost"
+    ))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Auth token must be exactly 32 characters long");
   }

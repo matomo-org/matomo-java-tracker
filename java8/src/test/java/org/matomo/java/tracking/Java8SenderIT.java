@@ -35,7 +35,8 @@ class Java8SenderIT {
 
   @Test
   void sendSingleFailsIfQueryIsMalformed() {
-    trackerConfiguration = TrackerConfiguration.builder().apiEndpoint(URI.create("telnet://localhost")).build();
+    trackerConfiguration =
+        TrackerConfiguration.builder().apiEndpoint(URI.create("telnet://localhost")).build();
     givenSender();
 
     assertThatThrownBy(() -> sender.sendSingle(new MatomoRequest()))
@@ -62,7 +63,8 @@ class Java8SenderIT {
 
   @Test
   void failsIfCouldNotConnectToEndpoint() {
-    trackerConfiguration = TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost:1234")).build();
+    trackerConfiguration =
+        TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost:1234")).build();
 
     givenSender();
 
@@ -131,14 +133,17 @@ class Java8SenderIT {
     wireMockServer.stubFor(get(urlPathEqualTo("/matomo_ssl.php")).willReturn(status(204)));
     trackerConfiguration = TrackerConfiguration
         .builder()
-        .apiEndpoint(URI.create(String.format("https://localhost:%d/matomo_ssl.php", wireMockServer.httpsPort())))
+        .apiEndpoint(URI.create(String.format(
+            "https://localhost:%d/matomo_ssl.php",
+            wireMockServer.httpsPort()
+        )))
         .disableSslCertValidation(true)
         .disableSslHostVerification(true)
         .build();
 
     givenSender();
 
-    sender.sendSingle(new MatomoRequest());
+    sender.sendSingle(MatomoRequests.pageView("Join Us").build());
 
     wireMockServer.verify(getRequestedFor(urlPathEqualTo("/matomo_ssl.php")));
 
@@ -149,14 +154,23 @@ class Java8SenderIT {
     wireMockServer.stubFor(get(urlPathEqualTo("/matomo.php")).willReturn(status(204)));
     trackerConfiguration = TrackerConfiguration
         .builder()
-        .apiEndpoint(URI.create(String.format("http://localhost:%d/matomo.php", wireMockServer.port())))
+        .apiEndpoint(URI.create(String.format(
+            "http://localhost:%d/matomo.php",
+            wireMockServer.port()
+        )))
         .disableSslCertValidation(true)
         .disableSslHostVerification(true)
         .build();
 
     givenSender();
 
-    sender.sendSingle(MatomoRequest.request().headers(singletonMap("headerName", "headerValue")).build());
+    sender.sendSingle(MatomoRequests
+        .action("http://localhost/example", ActionType.LINK)
+        .headers(singletonMap(
+            "headerName",
+            "headerValue"
+        ))
+        .build());
 
     wireMockServer.verify(getRequestedFor(urlPathEqualTo("/matomo.php")).withHeader(
         "headerName",
@@ -170,7 +184,10 @@ class Java8SenderIT {
     wireMockServer.stubFor(post(urlPathEqualTo("/matomo.php")).willReturn(status(204)));
     trackerConfiguration = TrackerConfiguration
         .builder()
-        .apiEndpoint(URI.create(String.format("http://localhost:%d/matomo.php", wireMockServer.port())))
+        .apiEndpoint(URI.create(String.format(
+            "http://localhost:%d/matomo.php",
+            wireMockServer.port()
+        )))
         .disableSslCertValidation(true)
         .disableSslHostVerification(true)
         .build();
@@ -178,7 +195,9 @@ class Java8SenderIT {
     givenSender();
 
     sender.sendBulk(
-        singleton(MatomoRequest.request().headers(singletonMap("headerName", "headerValue")).build()),
+        singleton(MatomoRequests.ecommerceCartUpdate(50.0).goalId(0)
+                               .headers(singletonMap("headerName", "headerValue"))
+                               .build()),
         null
     );
 
@@ -195,7 +214,10 @@ class Java8SenderIT {
     wireMockServer.stubFor(post(urlPathEqualTo("/matomo.php")).willReturn(status(204)));
     trackerConfiguration = TrackerConfiguration
         .builder()
-        .apiEndpoint(URI.create(String.format("http://localhost:%d/matomo.php", wireMockServer.port())))
+        .apiEndpoint(URI.create(String.format(
+            "http://localhost:%d/matomo.php",
+            wireMockServer.port()
+        )))
         .disableSslCertValidation(true)
         .disableSslHostVerification(true)
         .build();
@@ -217,7 +239,11 @@ class Java8SenderIT {
 
 
   private void givenSender() {
-    sender = new Java8Sender(trackerConfiguration, new QueryCreator(trackerConfiguration), Runnable::run);
+    sender = new Java8Sender(
+        trackerConfiguration,
+        new QueryCreator(trackerConfiguration),
+        Runnable::run
+    );
   }
 
 }

@@ -1,7 +1,7 @@
 package org.matomo.java.tracking.test;
 
 import java.net.URI;
-import org.matomo.java.tracking.MatomoRequest;
+import org.matomo.java.tracking.MatomoRequests;
 import org.matomo.java.tracking.MatomoTracker;
 import org.matomo.java.tracking.TrackerConfiguration;
 import org.matomo.java.tracking.parameters.VisitorId;
@@ -30,18 +30,13 @@ public class BulkExample {
 
     VisitorId visitorId = VisitorId.fromString("customer@mail.com");
     tracker.sendBulkRequestAsync(
-        MatomoRequest
-            .request()
-            .actionName("Checkout")
-            .actionUrl("https://www.yourdomain.com/checkout")
-            .visitorId(visitorId)
-            .build(),
-        MatomoRequest
-            .request()
-            .actionName("Payment")
-            .actionUrl("https://www.yourdomain.com/checkout")
-            .visitorId(visitorId)
-            .build()
+        MatomoRequests.siteSearch("Running shoes", "Running", 120L)
+                      .visitorId(visitorId).build(),
+        MatomoRequests.pageView("VelocityStride ProX Running Shoes")
+                      .visitorId(visitorId).build(),
+        MatomoRequests.ecommerceOrder("QXZ-789LMP", 100.0, 124.0, 19.0, 10.0, 5.0)
+                      .visitorId(visitorId)
+                      .build()
     );
 
   }

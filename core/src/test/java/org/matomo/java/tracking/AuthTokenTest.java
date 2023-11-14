@@ -12,7 +12,9 @@ class AuthTokenTest {
   void determineAuthTokenReturnsAuthTokenFromRequest() {
 
     MatomoRequest request =
-        MatomoRequest.builder().authToken("bdeca231a312ab12cde124131bedfa23").build();
+        MatomoRequests
+            .event("Inbox", "Open", null, null)
+            .authToken("bdeca231a312ab12cde124131bedfa23").build();
 
     String authToken = AuthToken.determineAuthToken(null, singleton(request), null);
 
@@ -37,7 +39,7 @@ class AuthTokenTest {
   @Test
   void determineAuthTokenFromTrackerConfigurationIfRequestTokenIsEmpty() {
 
-    MatomoRequest request = MatomoRequest.builder().authToken("").build();
+    MatomoRequest request = MatomoRequests.ping().authToken("").build();
 
     TrackerConfiguration trackerConfiguration = TrackerConfiguration
         .builder()
@@ -54,7 +56,7 @@ class AuthTokenTest {
   @Test
   void determineAuthTokenFromTrackerConfigurationIfRequestTokenIsBlank() {
 
-    MatomoRequest request = MatomoRequest.builder().authToken(" ").build();
+    MatomoRequest request = MatomoRequests.pageView("Help").authToken(" ").build();
 
     TrackerConfiguration trackerConfiguration = TrackerConfiguration
         .builder()

@@ -1,7 +1,7 @@
 package org.matomo.java.tracking.test;
 
 import java.net.URI;
-import org.matomo.java.tracking.MatomoRequest;
+import org.matomo.java.tracking.MatomoRequests;
 import org.matomo.java.tracking.MatomoTracker;
 import org.matomo.java.tracking.TrackerConfiguration;
 import org.matomo.java.tracking.parameters.VisitorId;
@@ -28,10 +28,8 @@ public class SendExample {
 
     MatomoTracker tracker = new MatomoTracker(configuration);
 
-    tracker.sendRequestAsync(MatomoRequest
-        .request()
-        .actionName("Checkout")
-        .actionUrl("https://www.yourdomain.com/checkout")
+    tracker.sendRequestAsync(MatomoRequests
+        .event("Training", "Workout completed", "Bench press", 60.0)
         .visitorId(VisitorId.fromString("customer@mail.com"))
         .build()
     );
