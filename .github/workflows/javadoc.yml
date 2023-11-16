@@ -12,3 +12,5 @@ jobs:
           java-version: 17
           target-folder: javadoc
           project: maven
+          custom-command: mvn -B javadoc:javadoc
+          subdirectories: core java8 java11 servlet-jakarta servlet-javax spring
