@@ -28,6 +28,8 @@ Features include:
 
 Please prefer the Java 11 version as the Java 8 will become obsolete in the future.
 
+You can find our [Developer Guide here](https://developer.matomo.org/api-reference/tracking-java)
+
 Further information on Matomo and Matomo HTTP tracking:
 
 * [Matomo PHP Tracker](https://github.com/matomo-org/matomo-php-tracker)
@@ -77,6 +79,8 @@ Here are the most important changes:
 * special types allow to provide valid parameters now
 * a new implementation for Java 11 uses the HttpClient available since Java 11
 
+See also the [Developer Guide here](https://developer.matomo.org/api-reference/tracking-java)
+
 ## Javadoc
 
 The Javadoc for all versions can be found 
@@ -85,6 +89,7 @@ The Javadoc for all versions can be found
 
 ## Need help?
 
+* Check the [Developer Guide](https://developer.matomo.org/api-reference/tracking-java)
 * Open an issue in the [Issue Tracker](https://github.com/matomo-org/matomo-java-tracker/issues)
 * Use [our GitHub discussions](https://github.com/matomo-org/matomo-java-tracker/discussions)
 * Ask your question on [Stackoverflow with the tag `matomo`](https://stackoverflow.com/questions/tagged/matomo)
