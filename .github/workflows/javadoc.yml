@@ -1,0 +1,15 @@
+name: Deploy Javadoc
+on:
+  workflow_dispatch:
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: MathieuSoysal/Javadoc-publisher.yml@v2.4.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          javadoc-branch: javadoc
+          java-version: 17
+          target-folder: javadoc
+          project: maven
+          subdirectories: core java8 java11 servlet-jakarta servlet-javax spring

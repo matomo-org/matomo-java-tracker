@@ -277,6 +277,49 @@ the site with id 1. The request will be sent asynchronously, that means the meth
 application will not wait for the response of the Matomo server. In the configuration we set the default site id to 1
 and configure the default auth token. With `logFailedTracking` we enable logging of failed tracking requests.
 
+If you want to perform an operation after a successful asynchronous call to Matomo, you can use the completable future
+result like this:
+
+```java
+
+import java.net.URI;
+import org.matomo.java.tracking.MatomoRequests;
+import org.matomo.java.tracking.MatomoTracker;
+import org.matomo.java.tracking.TrackerConfiguration;
+import org.matomo.java.tracking.parameters.VisitorId;
+
+public class ConsumerExample {
+
+    public static void main(String[] args) {
+
+        TrackerConfiguration configuration = TrackerConfiguration
+                .builder()
+                .apiEndpoint(URI.create("https://www.yourdomain.com/matomo.php"))
+                .defaultSiteId(1)
+                .defaultAuthToken("ee6e3dd9ed1b61f5328cf5978b5a8c71")
+                .logFailedTracking(true)
+                .build();
+
+        MatomoTracker tracker = new MatomoTracker(configuration);
+
+        MatomoRequest request = MatomoRequests
+                .event("Training", "Workout completed", "Bench press", 60.0)
+                .visitorId(VisitorId.fromString("customer@mail.com"))
+                .build();
+
+        tracker.sendRequestAsync(request)
+                .thenAccept(req -> System.out.printf("Sent request %s%n", req))
+                .exceptionally(throwable -> {
+                    System.err.printf("Failed to send request: %s%n", throwable.getMessage());
+                    return null;
+                });
+
+    }
+
+}
+
+```
+
 If you have multiple requests to wish to track, it may be more efficient to send them in a single HTTP call. To do this,
 send a bulk request. Place your requests in an _Iterable_ data structure and call
 
@@ -333,6 +376,64 @@ Per default every request has the following default parameters:
 
 Overwrite these properties as desired. We strongly recommend your to determine the visitor id for every user using
 a unique identifier, e.g. an email address. If you do not provide a visitor id, a random visitor id will be generated.
+
+Ecommerce requests contain ecommerce items, that can be fluently build:
+
+```java
+
+import java.net.URI;
+import org.matomo.java.tracking.MatomoRequest;
+import org.matomo.java.tracking.MatomoRequests;
+import org.matomo.java.tracking.MatomoTracker;
+import org.matomo.java.tracking.TrackerConfiguration;
+import org.matomo.java.tracking.parameters.EcommerceItem;
+import org.matomo.java.tracking.parameters.EcommerceItems;
+import org.matomo.java.tracking.parameters.VisitorId;
+
+public class EcommerceExample {
+
+  public static void main(String[] args) {
+
+    TrackerConfiguration configuration = TrackerConfiguration
+        .builder()
+        .apiEndpoint(URI.create("https://www.yourdomain.com/matomo.php"))
+        .defaultSiteId(1)
+        .defaultAuthToken("ee6e3dd9ed1b61f5328cf5978b5a8c71")
+        .logFailedTracking(true)
+        .build();
+
+    MatomoTracker tracker = new MatomoTracker(configuration);
+
+    tracker.sendBulkRequestAsync(MatomoRequests
+        .ecommerceCartUpdate(50.0)
+        .ecommerceItems(EcommerceItems
+            .builder()
+            .item(EcommerceItem
+                .builder()
+                .sku("XYZ12345")
+                .name("Matomo - The big book about web analytics")
+                .category("Education & Teaching")
+                .price(23.1)
+                .quantity(2)
+                .build())
+            .item(EcommerceItem
+                .builder()
+                .sku("B0C2WV3MRJ")
+                .name("Matomo for data visualization")
+                .category("Education & Teaching")
+                .price(15.0)
+                .quantity(1)
+                .build())
+            .build())
+        .visitorId(VisitorId.fromString("customer@mail.com"))
+        .build()
+    );
+
+  }
+
+}
+
+```
 
 Note that if you want to be able to track campaigns using *Referrers &gt; Campaigns*, you must add the correct
 URL parameters to your actionUrl. See [Tracking Campaigns](https://matomo.org/docs/tracking-campaigns/) for more information. All HTTP query parameters

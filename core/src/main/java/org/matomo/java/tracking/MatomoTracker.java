@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.Setter;
@@ -163,12 +164,12 @@ public class MatomoTracker {
    * {@link #sendRequest(MatomoRequest)} or {@link #sendBulkRequest(Iterable)} instead.
    *
    * @param request request to send
-   * @return completable future to let you know when the request is done
+   * @return completable future to let you know when the request is done. Contains the request.
    */
-  public CompletableFuture<?> sendRequestAsync(
+  public CompletableFuture<MatomoRequest> sendRequestAsync(
       @NonNull MatomoRequest request
   ) {
-    return sendRequestAsync(request, null);
+    return sendRequestAsync(request, Function.identity());
   }
 
   /**
@@ -179,26 +180,23 @@ public class MatomoTracker {
    * {@link #sendRequest(MatomoRequest)} or {@link #sendBulkRequest(Iterable)} instead.
    *
    * @param request  request to send
-   * @param callback callback that gets executed when response arrives, null allowed
-   * @return a completable future to let you know when the request is done. The future contains either the request (if
-   * no callback is specified) or null (if a callback is specified)
+   * @param callback callback that gets executed when response arrives, must not be null
+   * @return a completable future to let you know when the request is done. The future contains
+   * the callback result.
    * @deprecated Please use {@link MatomoTracker#sendRequestAsync(MatomoRequest)} in combination with
    * {@link CompletableFuture#thenAccept(Consumer)} instead
    */
   @Deprecated
-  public CompletableFuture<?> sendRequestAsync(
+  public <T> CompletableFuture<T> sendRequestAsync(
       @NonNull MatomoRequest request,
-      @Nullable Consumer<MatomoRequest> callback
+      @NonNull Function<MatomoRequest, T> callback
   ) {
     if (trackerConfiguration.isEnabled()) {
       validate(request);
       log.debug("Sending async request via GET: {}", request);
       initializeSender();
       CompletableFuture<MatomoRequest> future = sender.sendSingleAsync(request);
-      if (callback != null) {
-        return future.thenAccept(callback);
-      }
-      return future;
+      return future.thenApply(callback);
     }
     log.warn("Not sending request, because tracker is disabled");
     return CompletableFuture.completedFuture(null);
