@@ -106,6 +106,7 @@ class MatomoTrackerIT {
     matomoTracker.sendRequestAsync(request, request -> {
       assertThat(request).isEqualTo(request);
       callbackCalled.set(true);
+      return null;
     });
 
     TestSender testSender = senderFactory.getTestSender();

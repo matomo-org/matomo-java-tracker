@@ -474,6 +474,7 @@ class MatomoTrackerIT {
     AtomicBoolean success = new AtomicBoolean();
     future = matomoTracker.sendRequestAsync(requestBuilder.build(), request -> {
       success.set(true);
+      return null;
     });
     assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
       verify(getRequestedFor(urlPathEqualTo("/matomo.php")));
