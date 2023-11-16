@@ -12,4 +12,3 @@ jobs:
           java-version: 17
           target-folder: javadoc
           project: maven
-          subdirectories: core java8 java11 servlet-jakarta servlet-javax spring
