@@ -23,6 +23,10 @@ class TrackingParameterMethod {
 
   Pattern pattern;
 
+  double min;
+
+  double max;
+
   int maxLength;
 
   void validateParameterValue(@NonNull Object parameterValue) {
@@ -34,11 +38,29 @@ class TrackingParameterMethod {
           pattern
       ));
     }
-    if (parameterValue.toString().length() > maxLength) {
+    if (maxLength != 0 && parameterValue.toString().length() > maxLength) {
       throw new MatomoException(String.format("Invalid value for %s. Must be less or equal than %d characters",
           parameterName,
           maxLength
       ));
+    }
+    if (parameterValue instanceof Number) {
+      Number number = (Number) parameterValue;
+      if (number.doubleValue() < min) {
+        throw new MatomoException(String.format(
+            "Invalid value for %s. Must be greater or equal than %s",
+            parameterName,
+            min % 1 == 0 ? Long.toString((long) min) : min
+        ));
+
+      }
+      if (number.doubleValue() > max) {
+        throw new MatomoException(String.format(
+            "Invalid value for %s. Must be less or equal than %s",
+            parameterName,
+            max % 1 == 0 ? Long.toString((long) max) : max
+        ));
+      }
     }
   }
 

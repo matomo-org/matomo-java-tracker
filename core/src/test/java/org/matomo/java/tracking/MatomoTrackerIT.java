@@ -211,6 +211,21 @@ class MatomoTrackerIT {
 
   }
 
+  @Test
+  void appliesGoalId() {
+
+    matomoTracker = new MatomoTracker(HOST_URL);
+    matomoTracker.setSenderFactory(senderFactory);
+    request.setEcommerceId("some-id");
+
+    matomoTracker.sendRequest(request);
+
+    TestSender testSender = senderFactory.getTestSender();
+    thenContainsRequest(testSender, "rec=1&idsite=1&action_name=test&apiv=1&_id=00000000343efaf5&idgoal=0&ec_id=some-id&send_image=0&rand=test-random");
+    assertThat(testSender.getTrackerConfiguration().getApiEndpoint()).hasToString(HOST_URL);
+
+  }
+
   private void thenContainsRequest(TestSender testSender, String query) {
     assertThat(testSender.getRequests()).containsExactly(request);
     assertThat(testSender.getQueries()).containsExactly(query);

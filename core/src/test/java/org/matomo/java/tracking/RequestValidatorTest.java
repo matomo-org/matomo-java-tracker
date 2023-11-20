@@ -2,7 +2,6 @@ package org.matomo.java.tracking;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.Instant;
 import java.util.Locale;
 import org.junit.jupiter.api.Test;
 import org.piwik.java.tracking.PiwikDate;
@@ -12,81 +11,6 @@ class RequestValidatorTest {
 
   private final MatomoRequest request = new MatomoRequest();
 
-  @Test
-  void testEcommerceRevenue() {
-
-    request.setEcommerceRevenue(20.0);
-
-    assertThatThrownBy(() -> RequestValidator.validate(request, null))
-        .isInstanceOf(MatomoException.class)
-        .hasMessage("Goal ID must be set if ecommerce parameters are used");
-
-  }
-
-  @Test
-  void testEcommerceDiscount() {
-    request.setEcommerceDiscount(1.0);
-
-    assertThatThrownBy(() -> RequestValidator.validate(request, null))
-        .isInstanceOf(MatomoException.class)
-        .hasMessage("Goal ID must be set if ecommerce parameters are used");
-
-  }
-
-  @Test
-  void testEcommerceId() {
-    request.setEcommerceId("1");
-
-    assertThatThrownBy(() -> RequestValidator.validate(request, null))
-        .isInstanceOf(MatomoException.class)
-        .hasMessage("Goal ID must be set if ecommerce parameters are used");
-  }
-
-  @Test
-  void testEcommerceSubtotal() {
-    request.setEcommerceSubtotal(20.0);
-
-    assertThatThrownBy(() -> RequestValidator.validate(request, null))
-        .isInstanceOf(MatomoException.class)
-        .hasMessage("Goal ID must be set if ecommerce parameters are used");
-  }
-
-  @Test
-  void testEcommerceShippingCost() {
-    request.setEcommerceShippingCost(20.0);
-
-    assertThatThrownBy(() -> RequestValidator.validate(request, null))
-        .isInstanceOf(MatomoException.class)
-        .hasMessage("Goal ID must be set if ecommerce parameters are used");
-  }
-
-  @Test
-  void testEcommerceLastOrderTimestamp() {
-    request.setEcommerceLastOrderTimestamp(Instant.ofEpochSecond(1000L));
-
-    assertThatThrownBy(() -> RequestValidator.validate(request, null))
-        .isInstanceOf(MatomoException.class)
-        .hasMessage("Goal ID must be set if ecommerce parameters are used");
-  }
-
-  @Test
-  void testEcommerceTax() {
-    request.setEcommerceTax(20.0);
-
-    assertThatThrownBy(() -> RequestValidator.validate(request, null))
-        .isInstanceOf(MatomoException.class)
-        .hasMessage("Goal ID must be set if ecommerce parameters are used");
-  }
-
-  @Test
-  void testEcommerceItemE() {
-
-    request.addEcommerceItem(new EcommerceItem("sku", "name", "category", 1.0, 2));
-
-    assertThatThrownBy(() -> RequestValidator.validate(request, null))
-        .isInstanceOf(MatomoException.class)
-        .hasMessage("Goal ID must be set if ecommerce parameters are used");
-  }
 
   @Test
   void testSearchResultsCount() {
@@ -106,7 +30,7 @@ class RequestValidatorTest {
     assertThatThrownBy(() -> RequestValidator.validate(request, null))
         .isInstanceOf(MatomoException.class)
         .hasMessage(
-            "Auth token must be present if longitude, latitude, region, city or country are set");
+            "Auth token must be present if visitor longitude, latitude, region, city, country or IP are set");
   }
 
   @Test
@@ -116,7 +40,7 @@ class RequestValidatorTest {
     assertThatThrownBy(() -> RequestValidator.validate(request, null))
         .isInstanceOf(MatomoException.class)
         .hasMessage(
-            "Auth token must be present if longitude, latitude, region, city or country are set");
+            "Auth token must be present if visitor longitude, latitude, region, city, country or IP are set");
   }
 
   @Test
@@ -126,7 +50,7 @@ class RequestValidatorTest {
     assertThatThrownBy(() -> RequestValidator.validate(request, null))
         .isInstanceOf(MatomoException.class)
         .hasMessage(
-            "Auth token must be present if longitude, latitude, region, city or country are set");
+            "Auth token must be present if visitor longitude, latitude, region, city, country or IP are set");
   }
 
   @Test
@@ -136,7 +60,7 @@ class RequestValidatorTest {
     assertThatThrownBy(() -> RequestValidator.validate(request, null))
         .isInstanceOf(MatomoException.class)
         .hasMessage(
-            "Auth token must be present if longitude, latitude, region, city or country are set");
+            "Auth token must be present if visitor longitude, latitude, region, city, country or IP are set");
   }
 
   @Test
@@ -148,7 +72,7 @@ class RequestValidatorTest {
     assertThatThrownBy(() -> RequestValidator.validate(request, null))
         .isInstanceOf(MatomoException.class)
         .hasMessage(
-            "Auth token must be present if longitude, latitude, region, city or country are set");
+            "Auth token must be present if visitor longitude, latitude, region, city, country or IP are set");
   }
 
   @Test
@@ -161,15 +85,6 @@ class RequestValidatorTest {
         .isInstanceOf(MatomoException.class)
         .hasMessage("Auth token must be present if request timestamp is more than four hours ago");
 
-  }
-
-  @Test
-  void failsIfSiteIdIsNegative() {
-    request.setSiteId(-1);
-
-    assertThatThrownBy(() -> RequestValidator.validate(request, null))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Site ID must not be negative");
   }
 
   @Test

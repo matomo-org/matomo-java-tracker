@@ -30,7 +30,7 @@ import org.matomo.java.tracking.parameters.VisitorId;
 class QueryCreatorTest {
 
   private final MatomoRequest.MatomoRequestBuilder matomoRequestBuilder = MatomoRequest
-      .builder()
+      .request()
       .visitorId(VisitorId.fromHash(1234567890123456789L))
       .randomValue(RandomValue.fromString("random-value"));
 
@@ -408,6 +408,136 @@ class QueryCreatorTest {
 
     assertThat(query).isEqualTo(
         "idsite=42&token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&cs=ISO-8859-1&send_image=0&rand=random-value");
+  }
+
+  @Test
+  void failsIfIdSiteIsNegative() {
+    matomoRequestBuilder.siteId(-1);
+
+    assertThatThrownBy(this::whenCreatesQuery)
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseInstanceOf(MatomoException.class)
+        .hasRootCauseMessage("Invalid value for idsite. Must be greater or equal than 1");
+  }
+
+  @Test
+  void failsIfIdSiteIsZero() {
+    matomoRequestBuilder.siteId(0);
+
+    assertThatThrownBy(this::whenCreatesQuery)
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseInstanceOf(MatomoException.class)
+        .hasRootCauseMessage("Invalid value for idsite. Must be greater or equal than 1");
+  }
+
+  @Test
+  void failsIfCurrentHourIsNegative() {
+    matomoRequestBuilder.currentHour(-1);
+
+    assertThatThrownBy(this::whenCreatesQuery)
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseInstanceOf(MatomoException.class)
+        .hasRootCauseMessage("Invalid value for h. Must be greater or equal than 0");
+  }
+
+  @Test
+  void failsIfCurrentHourIsGreaterThan23() {
+    matomoRequestBuilder.currentHour(24);
+
+    assertThatThrownBy(this::whenCreatesQuery)
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseInstanceOf(MatomoException.class)
+        .hasRootCauseMessage("Invalid value for h. Must be less or equal than 23");
+  }
+
+  @Test
+  void failsIfCurrentMinuteIsNegative() {
+    matomoRequestBuilder.currentMinute(-1);
+
+    assertThatThrownBy(this::whenCreatesQuery)
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseInstanceOf(MatomoException.class)
+        .hasRootCauseMessage("Invalid value for m. Must be greater or equal than 0");
+  }
+
+  @Test
+  void failsIfCurrentMinuteIsGreaterThan59() {
+    matomoRequestBuilder.currentMinute(60);
+
+    assertThatThrownBy(this::whenCreatesQuery)
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseInstanceOf(MatomoException.class)
+        .hasRootCauseMessage("Invalid value for m. Must be less or equal than 59");
+  }
+
+  @Test
+  void failsIfCurrentSecondIsNegative() {
+    matomoRequestBuilder.currentSecond(-1);
+
+    assertThatThrownBy(this::whenCreatesQuery)
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseInstanceOf(MatomoException.class)
+        .hasRootCauseMessage("Invalid value for s. Must be greater or equal than 0");
+  }
+
+  @Test
+  void failsIfCurrentSecondIsGreaterThan59() {
+    matomoRequestBuilder.currentSecond(60);
+
+    assertThatThrownBy(this::whenCreatesQuery)
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseInstanceOf(MatomoException.class)
+        .hasRootCauseMessage("Invalid value for s. Must be less or equal than 59");
+  }
+
+  @Test
+  void failsIfLatitudeIsLessThanMinus90() {
+    matomoRequestBuilder.visitorLatitude(-90.1);
+
+    assertThatThrownBy(this::whenCreatesQuery)
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseInstanceOf(MatomoException.class)
+        .hasRootCauseMessage("Invalid value for lat. Must be greater or equal than -90");
+  }
+
+  @Test
+  void failsIfLatitudeIsGreaterThan90() {
+    matomoRequestBuilder.visitorLatitude(90.1);
+
+    assertThatThrownBy(this::whenCreatesQuery)
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseInstanceOf(MatomoException.class)
+        .hasRootCauseMessage("Invalid value for lat. Must be less or equal than 90");
+  }
+
+  @Test
+  void failsIfLongitudeIsLessThanMinus180() {
+    matomoRequestBuilder.visitorLongitude(-180.1);
+
+    assertThatThrownBy(this::whenCreatesQuery)
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseMessage("Invalid value for long. Must be greater or equal than -180");
+  }
+
+  @Test
+  void failsIfLongitudeIsGreaterThan180() {
+    matomoRequestBuilder.visitorLongitude(180.1);
+
+    assertThatThrownBy(this::whenCreatesQuery)
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseMessage("Invalid value for long. Must be less or equal than 180");
   }
 
 }

@@ -41,7 +41,7 @@ import org.matomo.java.tracking.parameters.VisitorId;
 
 /**
  * A class that implements the <a href="https://developer.matomo.org/api-reference/tracking-api">
- * Matomo Tracking HTTP API</a>.  These requests can be sent using {@link MatomoTracker}.
+ * Matomo Tracking HTTP API</a>. These requests can be sent using {@link MatomoTracker}.
  *
  * @author brettcsorba
  */
@@ -55,7 +55,7 @@ public class MatomoRequest {
 
   /**
    * The ID of the website we're tracking a visit/action for. Only needed, if no default site id is
-   * configured
+   * configured.
    */
   @TrackingParameter(name = "rec")
   @Default
@@ -63,9 +63,12 @@ public class MatomoRequest {
 
   /**
    * The ID of the website we're tracking a visit/action for. Only needed, if no default site id is
-   * configured
+   * configured.
    */
-  @TrackingParameter(name = "idsite")
+  @TrackingParameter(
+      name = "idsite",
+      min = 1
+  )
   private Integer siteId;
 
   /**
@@ -130,7 +133,7 @@ public class MatomoRequest {
    * database). Then you would manually increment the counts by one on each new visit or "session",
    * depending on how you choose to define a visit.
    */
-  @TrackingParameter(name = "_idvc")
+  @TrackingParameter(name = "_idvc", min = 0)
   private Integer visitorVisitCount;
 
   /**
@@ -156,9 +159,9 @@ public class MatomoRequest {
   /**
    * The campaign keyword (see
    * <a href="https://matomo.org/docs/tracking-campaigns/">Tracking Campaigns</a>). Used to
-   * populate
-   * the <em>Referrers &gt; Campaigns</em> report (clicking on a campaign loads all keywords for
-   * this campaign). This parameter will only be used for the first pageview of a visit.
+   * populate the <em>Referrers &gt; Campaigns</em> report (clicking on a campaign loads all
+   * keywords for this campaign). This parameter will only be used for the first pageview of a
+   * visit.
    */
   @TrackingParameter(name = "_rck")
   private String campaignKeyword;
@@ -172,19 +175,31 @@ public class MatomoRequest {
   /**
    * The current hour (local time).
    */
-  @TrackingParameter(name = "h")
+  @TrackingParameter(
+      name = "h",
+      min = 0,
+      max = 23
+  )
   private Integer currentHour;
 
   /**
    * The current minute (local time).
    */
-  @TrackingParameter(name = "m")
+  @TrackingParameter(
+      name = "m",
+      min = 0,
+      max = 59
+  )
   private Integer currentMinute;
 
   /**
    * The current second (local time).
    */
-  @TrackingParameter(name = "s")
+  @TrackingParameter(
+      name = "s",
+      min = 0,
+      max = 59
+  )
   private Integer currentSecond;
 
   /**
@@ -321,7 +336,10 @@ public class MatomoRequest {
    * results displayed on the results page. When keywords are tracked with &search_count=0 they will
    * appear in the "No Result Search Keyword" report.
    */
-  @TrackingParameter(name = "search_count")
+  @TrackingParameter(
+      name = "search_count",
+      min = 0
+  )
   private Long searchResultsCount;
 
   /**
@@ -335,9 +353,9 @@ public class MatomoRequest {
 
   /**
    * If specified, the tracking request will trigger a conversion for the goal of the website being
-   * tracked with this ID.
+   * tracked with this ID. The value 0 tracks an ecommerce interaction.
    */
-  @TrackingParameter(name = "idgoal")
+  @TrackingParameter(name = "idgoal", min = 0)
   private Integer goalId;
 
   /**
@@ -365,39 +383,39 @@ public class MatomoRequest {
   /**
    * How long it took to connect to server.
    */
-  @TrackingParameter(name = "pf_net")
+  @TrackingParameter(name = "pf_net", min = 0)
   private Long networkTime;
 
   /**
    * How long it took the server to generate page.
    */
-  @TrackingParameter(name = "pf_srv")
+  @TrackingParameter(name = "pf_srv", min = 0)
   private Long serverTime;
 
   /**
    * How long it takes the browser to download the response from the server.
    */
-  @TrackingParameter(name = "pf_tfr")
+  @TrackingParameter(name = "pf_tfr", min = 0)
   private Long transferTime;
 
   /**
    * How long the browser spends loading the webpage after the response was fully received until the
    * user can start interacting with it.
    */
-  @TrackingParameter(name = "pf_dm1")
+  @TrackingParameter(name = "pf_dm1", min = 0)
   private Long domProcessingTime;
 
   /**
    * How long it takes for the browser to load media and execute any Javascript code listening for
    * the DOMContentLoaded event.
    */
-  @TrackingParameter(name = "pf_dm2")
+  @TrackingParameter(name = "pf_dm2", min = 0)
   private Long domCompletionTime;
 
   /**
    * How long it takes the browser to execute Javascript code waiting for the window.load event.
    */
-  @TrackingParameter(name = "pf_onl")
+  @TrackingParameter(name = "pf_onl", min = 0)
   private Long onloadTime;
 
   /**
@@ -450,8 +468,7 @@ public class MatomoRequest {
 
   /**
    * The unique string identifier for the ecommerce order (required when tracking an ecommerce
-   * order). you must set &idgoal=0 in the request to track an ecommerce interaction: cart update or
-   * an ecommerce order.
+   * order).
    */
   @TrackingParameter(name = "ec_id")
   private String ecommerceId;
@@ -546,13 +563,13 @@ public class MatomoRequest {
   /**
    * An override value for the visitor's latitude, eg 22.456.
    */
-  @TrackingParameter(name = "lat")
+  @TrackingParameter(name = "lat", min = -90, max = 90)
   private Double visitorLatitude;
 
   /**
    * An override value for the visitor's longitude, eg 22.456.
    */
-  @TrackingParameter(name = "long")
+  @TrackingParameter(name = "long", min = -180, max = 180)
   private Double visitorLongitude;
 
   /**
@@ -670,7 +687,7 @@ public class MatomoRequest {
    *
    * <p>Optional for crash analytics
    */
-  @TrackingParameter(name = "cra_rl")
+  @TrackingParameter(name = "cra_rl", min = 0)
   private Integer crashLine;
 
   /**
@@ -678,15 +695,14 @@ public class MatomoRequest {
    *
    * <p>Optional for crash analytics
    */
-  @TrackingParameter(name = "cra_rc")
+  @TrackingParameter(name = "cra_rc", min = 0)
   private Integer crashColumn;
 
   /**
    * The Matomo session ID sent as a cookie {@code MATOMO_SESSID}.
    *
    * <p>If not null a cookie with the name {@code MATOMO_SESSID} will be sent with the value of
-   * this
-   * parameter.
+   * this parameter.
    */
   private String sessionId;
 

@@ -142,7 +142,7 @@ public class MatomoTracker {
   public void sendRequest(@NonNull MatomoRequest request) {
     if (trackerConfiguration.isEnabled()) {
       log.debug("Sending request via GET: {}", request);
-      validate(request);
+      applyGoalIdAndCheckSiteId(request);
       initializeSender();
       sender.sendSingle(request);
     } else {
@@ -192,7 +192,7 @@ public class MatomoTracker {
       @NonNull Function<MatomoRequest, T> callback
   ) {
     if (trackerConfiguration.isEnabled()) {
-      validate(request);
+      applyGoalIdAndCheckSiteId(request);
       log.debug("Sending async request via GET: {}", request);
       initializeSender();
       CompletableFuture<MatomoRequest> future = sender.sendSingleAsync(request);
@@ -202,9 +202,17 @@ public class MatomoTracker {
     return CompletableFuture.completedFuture(null);
   }
 
-  private void validate(
+  private void applyGoalIdAndCheckSiteId(
       @NonNull MatomoRequest request
   ) {
+    if (request.getGoalId() == null && (
+        request.getEcommerceId() != null || request.getEcommerceRevenue() != null
+            || request.getEcommerceDiscount() != null || request.getEcommerceItems() != null
+            || request.getEcommerceLastOrderTimestamp() != null
+            || request.getEcommerceShippingCost() != null || request.getEcommerceSubtotal() != null
+            || request.getEcommerceTax() != null)) {
+      request.setGoalId(0);
+    }
     if (trackerConfiguration.getDefaultSiteId() == null && request.getSiteId() == null) {
       throw new IllegalArgumentException("No default site ID and no request site ID is given");
     }
@@ -256,7 +264,7 @@ public class MatomoTracker {
   ) {
     if (trackerConfiguration.isEnabled()) {
       for (MatomoRequest request : requests) {
-        validate(request);
+        applyGoalIdAndCheckSiteId(request);
       }
       log.debug("Sending requests via POST: {}", requests);
       initializeSender();
@@ -311,7 +319,7 @@ public class MatomoTracker {
   ) {
     if (trackerConfiguration.isEnabled()) {
       for (MatomoRequest request : requests) {
-        validate(request);
+        applyGoalIdAndCheckSiteId(request);
       }
       log.debug("Sending async requests via POST: {}", requests);
       initializeSender();

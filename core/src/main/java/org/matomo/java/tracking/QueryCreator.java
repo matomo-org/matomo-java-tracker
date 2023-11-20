@@ -28,7 +28,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 class QueryCreator {
 
-  private static final TrackingParameterMethod[] TRACKING_PARAMETER_METHODS = initializeTrackingParameterMethods();
+  private static final TrackingParameterMethod[] TRACKING_PARAMETER_METHODS =
+      initializeTrackingParameterMethods();
 
   private final TrackerConfiguration trackerConfiguration;
 
@@ -44,15 +45,20 @@ class QueryCreator {
   }
 
   private static void addMethods(
-      Collection<TrackingParameterMethod> methods, Member member, TrackingParameter trackingParameter
+      Collection<TrackingParameterMethod> methods,
+      Member member,
+      TrackingParameter trackingParameter
   ) {
     try {
-      for (PropertyDescriptor pd : Introspector.getBeanInfo(MatomoRequest.class).getPropertyDescriptors()) {
+      for (PropertyDescriptor pd : Introspector.getBeanInfo(MatomoRequest.class)
+                                               .getPropertyDescriptors()) {
         if (member.getName().equals(pd.getName())) {
           String regex = trackingParameter.regex();
           methods.add(TrackingParameterMethod
               .builder()
               .parameterName(trackingParameter.name())
+              .min(trackingParameter.min())
+              .max(trackingParameter.max())
               .maxLength(trackingParameter.maxLength())
               .method(pd.getReadMethod())
               .pattern(regex == null || regex.isEmpty() || regex.trim().isEmpty() ? null :
@@ -97,7 +103,10 @@ class QueryCreator {
       for (Entry<Long, Object> entry : request.getDimensions().entrySet()) {
         if (entry.getKey() != null && entry.getValue() != null) {
           appendAmpersand(query);
-          query.append("dimension").append(entry.getKey()).append('=').append(encode(entry.getValue().toString()));
+          query.append("dimension")
+               .append(entry.getKey())
+               .append('=')
+               .append(encode(entry.getValue().toString()));
         }
       }
     }

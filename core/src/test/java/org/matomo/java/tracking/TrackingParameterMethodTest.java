@@ -35,6 +35,8 @@ class TrackingParameterMethodTest {
         .parameterName("foo")
         .pattern(Pattern.compile("bar"))
         .maxLength(255)
+        .min(1)
+        .max(1)
         .build();
 
     trackingParameterMethod.validateParameterValue(1);
@@ -62,6 +64,26 @@ class TrackingParameterMethodTest {
     assertThatThrownBy(() -> trackingParameterMethod.validateParameterValue("foobar"))
         .isInstanceOf(MatomoException.class)
         .hasMessage("Invalid value for foo. Must be less or equal than 3 characters");
+  }
+
+  @Test
+  void failIfParameterValueIsLessThanMin() {
+    TrackingParameterMethod trackingParameterMethod =
+        TrackingParameterMethod.builder().parameterName("foo").min(3.0).build();
+
+    assertThatThrownBy(() -> trackingParameterMethod.validateParameterValue(1))
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Invalid value for foo. Must be greater or equal than 3");
+  }
+
+  @Test
+  void failIfParameterValueIsGreaterThanMax() {
+    TrackingParameterMethod trackingParameterMethod =
+        TrackingParameterMethod.builder().parameterName("foo").max(3.0).build();
+
+    assertThatThrownBy(() -> trackingParameterMethod.validateParameterValue(4))
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Invalid value for foo. Must be less or equal than 3");
   }
 
 }

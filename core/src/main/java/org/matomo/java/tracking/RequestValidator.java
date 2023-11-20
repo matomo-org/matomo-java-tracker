@@ -25,26 +25,16 @@ final class RequestValidator {
       @Nullable
       CharSequence authToken
   ) {
-    if (request.getSiteId() != null && request.getSiteId() < 0) {
-      throw new IllegalArgumentException("Site ID must not be negative");
-    }
-    if (request.getGoalId() == null && (
-        request.getEcommerceId() != null || request.getEcommerceRevenue() != null
-            || request.getEcommerceDiscount() != null || request.getEcommerceItems() != null
-            || request.getEcommerceLastOrderTimestamp() != null
-            || request.getEcommerceShippingCost() != null || request.getEcommerceSubtotal() != null
-            || request.getEcommerceTax() != null)) {
-      throw new MatomoException("Goal ID must be set if ecommerce parameters are used");
-    }
+
     if (request.getSearchResultsCount() != null && request.getSearchQuery() == null) {
       throw new MatomoException("Search query must be set if search results count is set");
     }
     if (authToken == null) {
       if (request.getVisitorLongitude() != null || request.getVisitorLatitude() != null
           || request.getVisitorRegion() != null || request.getVisitorCity() != null
-          || request.getVisitorCountry() != null) {
+          || request.getVisitorCountry() != null || request.getVisitorIp() != null) {
         throw new MatomoException(
-            "Auth token must be present if longitude, latitude, region, city or country are set");
+            "Auth token must be present if visitor longitude, latitude, region, city, country or IP are set");
       }
       if (request.getRequestTimestamp() != null && request
           .getRequestTimestamp()

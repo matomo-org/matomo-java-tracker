@@ -428,8 +428,8 @@ class MatomoTrackerIT {
         .failsWithin(1, MINUTES)
         .withThrowableThat()
         .havingRootCause()
-        .isInstanceOf(IllegalArgumentException.class)
-        .withMessage("Site ID must not be negative");
+        .isInstanceOf(MatomoException.class)
+        .withMessage("Invalid value for idsite. Must be greater or equal than 1");
 
     ;
   }

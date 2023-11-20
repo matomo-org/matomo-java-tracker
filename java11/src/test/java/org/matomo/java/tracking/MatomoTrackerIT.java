@@ -409,8 +409,10 @@ class MatomoTrackerIT {
     requestBuilder.siteId(-1);
 
     assertThatThrownBy(this::whenSendsRequestAsync)
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Site ID must not be negative");
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseInstanceOf(MatomoException.class)
+        .hasRootCauseMessage("Invalid value for idsite. Must be greater or equal than 1");
 
   }
 

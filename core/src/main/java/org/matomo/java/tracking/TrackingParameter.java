@@ -20,6 +20,10 @@ import java.lang.annotation.Target;
 
   String regex() default "";
 
+  double min() default Double.MIN_VALUE;
+
+  double max() default Double.MAX_VALUE;
+
   int maxLength() default Integer.MAX_VALUE;
 
 }
