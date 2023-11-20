@@ -90,12 +90,11 @@ class QueryCreator {
       appendParameter(method, request, query);
     }
     if (request.getAdditionalParameters() != null) {
-      for (Entry<String, Collection<Object>> entry : request.getAdditionalParameters().entrySet()) {
-        for (Object value : entry.getValue()) {
-          if (value != null && !value.toString().trim().isEmpty()) {
-            appendAmpersand(query);
-            query.append(encode(entry.getKey())).append('=').append(encode(value.toString()));
-          }
+      for (Entry<String, Object> entry : request.getAdditionalParameters().entrySet()) {
+        Object value = entry.getValue();
+        if (value != null && !value.toString().trim().isEmpty()) {
+          appendAmpersand(query);
+          query.append(encode(entry.getKey())).append('=').append(encode(value.toString()));
         }
       }
     }

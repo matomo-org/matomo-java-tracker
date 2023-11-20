@@ -9,8 +9,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale.LanguageRange;
@@ -247,19 +245,19 @@ class QueryCreatorTest {
     matomoRequestBuilder.additionalParameters(singletonMap("key", singleton("test")));
     whenCreatesQuery();
     assertThat(query).isEqualTo(
-        "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&cvar=%7B%227%22%3A%5B%22key%22%2C%22val%22%5D%7D&send_image=0&rand=random&key=test");
+        "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&cvar=%7B%227%22%3A%5B%22key%22%2C%22val%22%5D%7D&send_image=0&rand=random&key=%5Btest%5D");
     matomoRequestBuilder.additionalParameters(singletonMap("key", asList("test", "test2")));
     whenCreatesQuery();
     assertThat(query).isEqualTo(
-        "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&cvar=%7B%227%22%3A%5B%22key%22%2C%22val%22%5D%7D&send_image=0&rand=random&key=test&key=test2");
-    Map<String, Collection<Object>> customTrackingParameters = new HashMap<>();
-    customTrackingParameters.put("key", asList("test", "test2"));
-    customTrackingParameters.put("key2", Collections.singletonList("test3"));
+        "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&cvar=%7B%227%22%3A%5B%22key%22%2C%22val%22%5D%7D&send_image=0&rand=random&key=%5Btest%2C+test2%5D");
+    Map<String, Object> customTrackingParameters = new HashMap<>();
+    customTrackingParameters.put("key", "test2");
+    customTrackingParameters.put("key2", "test3");
     matomoRequestBuilder.additionalParameters(customTrackingParameters);
     whenCreatesQuery();
     assertThat(query).isEqualTo(
-        "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&cvar=%7B%227%22%3A%5B%22key%22%2C%22val%22%5D%7D&send_image=0&rand=random&key2=test3&key=test&key=test2");
-    customTrackingParameters.put("key", Collections.singletonList("test4"));
+        "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&cvar=%7B%227%22%3A%5B%22key%22%2C%22val%22%5D%7D&send_image=0&rand=random&key2=test3&key=test2");
+    customTrackingParameters.put("key", "test4");
     whenCreatesQuery();
     assertThat(query).isEqualTo(
         "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&cvar=%7B%227%22%3A%5B%22key%22%2C%22val%22%5D%7D&send_image=0&rand=random&key2=test3&key=test4");
@@ -301,24 +299,24 @@ class QueryCreatorTest {
     whenCreatesQuery();
     assertThat(query).isEqualTo(
         "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&send_image=0&rand=random");
-    Map<String, Collection<Object>> customTrackingParameters = new HashMap<>();
-    customTrackingParameters.put("ke/y", Collections.singletonList("te:st"));
+    Map<String, Object> customTrackingParameters = new HashMap<>();
+    customTrackingParameters.put("ke/y", "te:st");
     matomoRequestBuilder.additionalParameters(customTrackingParameters);
     whenCreatesQuery();
     assertThat(query).isEqualTo(
         "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&send_image=0&rand=random&ke%2Fy=te%3Ast");
-    customTrackingParameters.put("ke/y", asList("te:st", "te:st2"));
+    customTrackingParameters.put("ke/y", "te:st2");
     whenCreatesQuery();
     assertThat(query).isEqualTo(
-        "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&send_image=0&rand=random&ke%2Fy=te%3Ast&ke%2Fy=te%3Ast2");
-    customTrackingParameters.put("ke/y2", Collections.singletonList("te:st3"));
+        "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&send_image=0&rand=random&ke%2Fy=te%3Ast2");
+    customTrackingParameters.put("ke/y2", "te:st3");
     whenCreatesQuery();
     assertThat(query).isEqualTo(
-        "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&send_image=0&rand=random&ke%2Fy=te%3Ast&ke%2Fy=te%3Ast2&ke%2Fy2=te%3Ast3");
-    customTrackingParameters.put("ke/y", asList("te:st3", "te:st4"));
+        "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&send_image=0&rand=random&ke%2Fy=te%3Ast2&ke%2Fy2=te%3Ast3");
+    customTrackingParameters.put("ke/y", "te:st3");
     whenCreatesQuery();
     assertThat(query).isEqualTo(
-        "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&send_image=0&rand=random&ke%2Fy=te%3Ast3&ke%2Fy=te%3Ast4&ke%2Fy2=te%3Ast3");
+        "rec=1&idsite=3&url=http%3A%2F%2Ftest.com&apiv=1&_id=1234567890123456&send_image=0&rand=random&ke%2Fy=te%3Ast3&ke%2Fy2=te%3Ast3");
     matomoRequestBuilder
         .randomValue(null)
         .siteId(null)
@@ -328,7 +326,7 @@ class QueryCreatorTest {
         .visitorId(null)
         .actionUrl(null);
     whenCreatesQuery();
-    assertThat(query).isEqualTo("idsite=42&ke%2Fy=te%3Ast3&ke%2Fy=te%3Ast4&ke%2Fy2=te%3Ast3");
+    assertThat(query).isEqualTo("idsite=42&ke%2Fy=te%3Ast3&ke%2Fy2=te%3Ast3");
 
   }
 

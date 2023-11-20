@@ -14,9 +14,9 @@ class MatomoRequestTest {
 
     request.setCustomTrackingParameter("foo", "bar");
 
-    assertThat(request.getCustomTrackingParameter("baz")).isEmpty();
+    assertThat(request.getCustomTrackingParameter("baz")).isNull();
     assertThat(request.getAdditionalParameters()).isNotEmpty();
-    assertThat(request.getCustomTrackingParameter("foo")).isNotEmpty();
+    assertThat(request.getCustomTrackingParameter("foo")).isEqualTo("bar");
   }
 
   @Test
@@ -95,7 +95,7 @@ class MatomoRequestTest {
   @Test
   void setsCustomParameter() {
     request.setParameter("foo", 1);
-    assertThat(request.getCustomTrackingParameter("foo")).contains(1);
+    assertThat(request.getCustomTrackingParameter("foo")).isEqualTo(1);
   }
 
   @Test

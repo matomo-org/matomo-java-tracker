@@ -1,13 +1,7 @@
 package org.matomo.java.tracking;
 
-import static java.util.Collections.singleton;
-
 import edu.umd.cs.findbugs.annotations.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
-import java.util.stream.Collectors;
-import lombok.NonNull;
 import org.matomo.java.tracking.parameters.AcceptLanguage;
 
 /**
@@ -48,22 +42,8 @@ public class MatomoRequestBuilder extends MatomoRequest.MatomoRequestBuilder {
    */
   @Deprecated
   public MatomoRequestBuilder customTrackingParameters(@Nullable Map<String, Object> parameters) {
-    if (parameters == null || parameters.isEmpty()) {
-      additionalParameters(null);
-    } else {
-      additionalParameters(parameters.entrySet().stream().collect(Collectors.toMap(
-          e -> e.getKey(),
-          e -> toCollection(e)
-      )));
-    }
+    additionalParameters(parameters);
     return this;
-  }
-
-  private static Collection<Object> toCollection(@NonNull Map.Entry<String, Object> e) {
-    if (e.getValue() instanceof Collection) {
-      return (Collection<Object>) e.getValue();
-    }
-    return new ArrayList<>(singleton(e.getValue()));
   }
 
 }

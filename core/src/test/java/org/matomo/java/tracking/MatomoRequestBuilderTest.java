@@ -1,6 +1,5 @@
 package org.matomo.java.tracking;
 
-import static java.util.Collections.singleton;
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,7 +23,7 @@ class MatomoRequestBuilderTest {
         .referrerUrl("https://referrer.com")
         .additionalParameters(singletonMap(
             "trackingParameterName",
-            singleton("trackingParameterValue")
+            "trackingParameterValue"
         ))
         .pageCustomVariables(new CustomVariables().add(pageCustomVariable, 2))
         .visitCustomVariables(new CustomVariables().add(visitCustomVariable, 3))
@@ -41,7 +40,7 @@ class MatomoRequestBuilderTest {
     assertThat(matomoRequest.getResponseAsImage()).isFalse();
     assertThat(matomoRequest.getRequired()).isTrue();
     assertThat(matomoRequest.getReferrerUrl()).isEqualTo("https://referrer.com");
-    assertThat(matomoRequest.getCustomTrackingParameter("trackingParameterName")).containsExactly(
+    assertThat(matomoRequest.getCustomTrackingParameter("trackingParameterName")).isEqualTo(
         "trackingParameterValue");
     assertThat(matomoRequest.getPageCustomVariables()).hasToString(
         "{\"2\":[\"pageCustomVariableName\",\"pageCustomVariableValue\"]}");
@@ -61,20 +60,20 @@ class MatomoRequestBuilderTest {
         .referrerUrl("https://referrer.com")
         .build();
 
-    assertThat(matomoRequest.getCustomTrackingParameter("foo")).containsExactly("bar");
+    assertThat(matomoRequest.getCustomTrackingParameter("foo")).isEqualTo("bar");
   }
 
   @Test
   void setCustomTrackingParametersWithCollectopm() {
     MatomoRequest matomoRequest = new MatomoRequestBuilder()
-        .customTrackingParameters(singletonMap("foo", singleton("bar")))
+        .customTrackingParameters(singletonMap("foo", "bar"))
         .siteId(42)
         .actionName("ACTION_NAME")
         .actionUrl("https://www.your-domain.tld/some/page?query=foo")
         .referrerUrl("https://referrer.com")
         .build();
 
-    assertThat(matomoRequest.getCustomTrackingParameter("foo")).containsExactly("bar");
+    assertThat(matomoRequest.getCustomTrackingParameter("foo")).isEqualTo("bar");
   }
 
   @Test

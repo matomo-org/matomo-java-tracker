@@ -10,7 +10,6 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.Locale;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -193,7 +192,7 @@ class PiwikRequestTest {
 
   @Test
   void testGetCustomTrackingParameter_FT() {
-    assertThat(request.getCustomTrackingParameter("key")).isEmpty();
+    assertThat(request.getCustomTrackingParameter("key")).isNull();
   }
 
   @Test
@@ -209,28 +208,26 @@ class PiwikRequestTest {
   @Test
   void testSetCustomTrackingParameter1() {
     request.setCustomTrackingParameter("key", "value");
-    List<Object> l = request.getCustomTrackingParameter("key");
-    assertThat(l).hasSize(1);
-    assertThat(l.get(0)).isEqualTo("value");
+    Object l = request.getCustomTrackingParameter("key");
+    assertThat(l).isEqualTo("value");
     request.setCustomTrackingParameter("key", "value2");
   }
 
   @Test
   void testSetCustomTrackingParameter2() {
     request.setCustomTrackingParameter("key", "value2");
-    List<Object> l = request.getCustomTrackingParameter("key");
-    assertThat(l).hasSize(1);
-    assertThat(l.get(0)).isEqualTo("value2");
+    Object l = request.getCustomTrackingParameter("key");
+    assertThat(l).isEqualTo("value2");
     request.setCustomTrackingParameter("key", null);
     l = request.getCustomTrackingParameter("key");
-    assertThat(l).isEmpty();
+    assertThat(l).isNull();
   }
 
   @Test
   void testSetCustomTrackingParameter3() {
     request.setCustomTrackingParameter("key", null);
-    List<Object> l = request.getCustomTrackingParameter("key");
-    assertThat(l).isEmpty();
+    Object l = request.getCustomTrackingParameter("key");
+    assertThat(l).isNull();
   }
 
   @Test
@@ -244,37 +241,26 @@ class PiwikRequestTest {
   }
 
   @Test
-  void testAddCustomTrackingParameter_FT() {
-    try {
-      request.addCustomTrackingParameter("key", null);
-      fail("Exception should have been thrown.");
-    } catch (NullPointerException e) {
-      assertThat(e.getLocalizedMessage()).isEqualTo("value is marked non-null but is null");
-    }
-  }
-
-  @Test
   void testAddCustomTrackingParameter1() {
     request.addCustomTrackingParameter("key", "value");
-    List<Object> l = request.getCustomTrackingParameter("key");
-    assertThat(l).hasSize(1);
-    assertThat(l.get(0)).isEqualTo("value");
+    Object l = request.getCustomTrackingParameter("key");
+    assertThat(l).isEqualTo("value");
   }
 
   @Test
   void testAddCustomTrackingParameter2() {
     request.addCustomTrackingParameter("key", "value");
     request.addCustomTrackingParameter("key", "value2");
-    List<Object> l = request.getCustomTrackingParameter("key");
-    assertThat(l).hasSize(2).contains(new String[] {"value"}).contains(new String[] {"value2"});
+    Object l = request.getCustomTrackingParameter("key");
+    assertThat(l).isEqualTo("value2");
   }
 
   @Test
   void testClearCustomTrackingParameter() {
     request.setCustomTrackingParameter("key", "value");
     request.clearCustomTrackingParameter();
-    List<Object> l = request.getCustomTrackingParameter("key");
-    assertThat(l).isEmpty();
+    Object l = request.getCustomTrackingParameter("key");
+    assertThat(l).isNull();
   }
 
   /**

@@ -73,7 +73,7 @@ dependencies. Release notes can be found here: https://github.com/matomo-org/mat
 
 Here are the most important changes:
 
-* Matomo Java Tracker 3.1.1 is compatible with Matomo 4 and 5
+* Matomo Java Tracker 3.2.0 is compatible with Matomo 4 and 5
 * less dependencies
 * new dimension parameter
 * special types allow to provide valid parameters now
@@ -111,7 +111,7 @@ Add a dependency on Matomo Java Tracker using Maven. For Java 8:
 <dependency>
     <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker</artifactId>
-    <version>3.1.1</version>
+    <version>3.2.0</version>
 </dependency>
 ```
 
@@ -121,7 +121,7 @@ For Java 11:
 <dependency>
     <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker-java11</artifactId>
-    <version>3.1.1</version>
+    <version>3.2.0</version>
 </dependency>
 ```
 
@@ -129,7 +129,7 @@ or Gradle (Java 8):
 
 ```groovy
 dependencies {
-    implementation("org.piwik.java.tracking:matomo-java-tracker:3.1.1")
+    implementation("org.piwik.java.tracking:matomo-java-tracker:3.2.0")
 }
 ```
 
@@ -137,20 +137,20 @@ or Gradle (Java 11):
 
 ```groovy
 dependencies {
-    implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.1.1")
+    implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.2.0")
 }
 ```
 
 or Gradle with Kotlin DSL (Java 8)
 
 ```kotlin
-implementation("org.piwik.java.tracking:matomo-java-tracker:3.1.1")
+implementation("org.piwik.java.tracking:matomo-java-tracker:3.2.0")
 ```
 
 or Gradle with Kotlin DSL (Java 11)
 
 ```kotlin
-implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.1.1")
+implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.2.0")
 ```
 
 ### Spring Boot Module
@@ -163,7 +163,7 @@ and allows you to configure the tracker via application properties. Add the foll
 <dependency>
     <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker-spring-boot-starter</artifactId>
-    <version>3.1.1</version>
+    <version>3.2.0</version>
 </dependency>
 ```
 
@@ -171,14 +171,14 @@ or Gradle:
 
 ```groovy
 dependencies {
-    implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:3.1.1")
+    implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:3.2.0")
 }
 ```
 
 or Gradle with Kotlin DSL
 
 ```kotlin
-implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:3.1.1")
+implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:3.2.0")
 ```
 
 The following properties are supported:
@@ -623,7 +623,7 @@ version can be used in your local Maven repository for testing purposes, e.g.
 <dependency>
     <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker</artifactId>
-    <version>3.1.1-rc2-SNAPSHOT</version>
+    <version>3.2.1-SNAPSHOT</version>
 </dependency>
 ```
 

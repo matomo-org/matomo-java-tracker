@@ -7,16 +7,10 @@
 
 package org.matomo.java.tracking;
 
-import static java.util.Collections.singleton;
-
 import edu.umd.cs.findbugs.annotations.Nullable;
 import java.nio.charset.Charset;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -722,7 +716,7 @@ public class MatomoRequest {
    * <p>For example, you can use this to set the <em>Accept-Language</em> header, or to set the
    * <em>Content-Type</em>.
    */
-  private Map<String, Collection<Object>> additionalParameters;
+  private Map<String, Object> additionalParameters;
 
   /**
    * You can set additional HTTP headers for the request sent to Matomo.
@@ -776,17 +770,14 @@ public class MatomoRequest {
    *
    * @param key the key of the parameter whose list of objects to get.  Cannot be null
    *
-   * @return the list of objects currently stored at the specified key
+   * @return the parameter at the specified key, null if nothing at this key
    */
-  public List<Object> getCustomTrackingParameter(@NonNull String key) {
+  @Nullable
+  public Object getCustomTrackingParameter(@NonNull String key) {
     if (additionalParameters == null || additionalParameters.isEmpty()) {
-      return Collections.emptyList();
+      return null;
     }
-    Collection<Object> parameterValues = additionalParameters.get(key);
-    if (parameterValues == null || parameterValues.isEmpty()) {
-      return Collections.emptyList();
-    }
-    return Collections.unmodifiableList(new ArrayList<>(parameterValues));
+    return additionalParameters.get(key);
   }
 
   /**
@@ -813,28 +804,25 @@ public class MatomoRequest {
       if (additionalParameters == null) {
         additionalParameters = new LinkedHashMap<>();
       }
-      Collection<Object> values = additionalParameters.computeIfAbsent(key, k -> new ArrayList<>());
-      values.clear();
-      values.add(value);
+      additionalParameters.put(key, value);
     }
   }
 
   /**
-   * Add a custom tracking parameter to the specified key.  This allows users to have multiple
-   * parameters with the same name and different values, commonly used during situations where list
-   * parameters are needed
+   * Add a custom tracking parameter to the specified key.  If there is already a parameter at this
+   * key, the new value replaces the old value.
    *
    * @param key   the parameter's key.  Cannot be null
-   * @param value the parameter's value.  Cannot be null
+   * @param value the parameter's value.  May be null
    *
    * @deprecated Use {@link MatomoRequest.MatomoRequestBuilder#additionalParameters(Map)} instead.
    */
   @Deprecated
-  public void addCustomTrackingParameter(@NonNull String key, @NonNull Object value) {
+  public void addCustomTrackingParameter(@NonNull String key, @Nullable Object value) {
     if (additionalParameters == null) {
       additionalParameters = new LinkedHashMap<>();
     }
-    additionalParameters.computeIfAbsent(key, k -> new ArrayList<>()).add(value);
+    additionalParameters.put(key, value);
   }
 
   /**
@@ -1149,7 +1137,7 @@ public class MatomoRequest {
     if (value == null) {
       additionalParameters.remove(parameterName);
     } else {
-      additionalParameters.put(parameterName, singleton(value));
+      additionalParameters.put(parameterName, value);
     }
   }
 
