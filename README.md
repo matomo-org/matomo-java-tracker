@@ -5,26 +5,23 @@
 [![Average time to resolve an issue](https://isitmaintained.com/badge/resolution/matomo-org/matomo-java-tracker.svg)](https://isitmaintained.com/project/matomo-org/matomo-java-tracker "Average time to resolve an issue")
 [![Percentage of issues still open](https://isitmaintained.com/badge/open/matomo-org/matomo-java-tracker.svg)](https://isitmaintained.com/project/matomo-org/matomo-java-tracker "Percentage of issues still open")
 
-Matomo Java Tracker is the official Java implementation of
-the [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api). The tracker allows you to track
-visits, goals and ecommerce transactions and items. It is designed to be used in server-side applications, such as
-Java-based web applications or web services.
+The Matomo Java Tracker functions as the official Java implementation for the [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api). This versatile tracker empowers you to monitor visits, goals, and ecommerce transactions and items. Specifically designed for integration into server-side applications, it seamlessly integrates with Java-based web applications or web services.
 
-Features include:
+Key features:
 
-* Track page views, goals, ecommerce transactions and items
-* Supports custom dimensions and custom variables
-* Includes tracking parameters for campaigns, events, downloads, outlinks, site search, devices, visitors
-* Supports Java 8 and higher (if you use Java 11, please use artifact matomo-java-tracker-java11)
-* Allows you to skip SSL certificate validation (not recommended for production)
-* Contains nearly no runtime dependencies (only SLF4J)
-* Allows asynchronous requests
-* Supports Matomo 4 and 5
-* Single and multiple requests can be sent
-* Well documented with Javadoc
-* Ensures correct values are sent to Matomo Tracking API
-* Includes debug and error logging
-* Easy to integrate in frameworks, e.g. Spring: Just create the MatomoTracker Spring bean and use it in other beans
+* Comprehensive tracking capabilities: Monitor page views, goals, ecommerce transactions, and items.
+* Customization options: Support for custom dimensions and variables.
+* Extensive tracking parameters: Capture data on campaigns, events, downloads, outlinks, site searches, devices, and visitors.
+* Java compatibility: Supports Java 8 and higher, with a dedicated artifact (matomo-java-tracker-java11) for Java 11.
+* SSL certificate flexibility: Option to skip SSL certificate validation (caution: not recommended for production).
+* Minimal runtime dependencies: Relies solely on SLF4J.
+* Asynchronous request support: Permits non-blocking requests.
+* Compatibility with Matomo versions 4 and 5.
+* Versatile request handling: Send both single and multiple requests.
+* Robust documentation: Thoroughly documented with Javadoc for easy reference.
+* Data accuracy assurance: Ensures correct values are transmitted to the Matomo Tracking API.
+* Logging capabilities: Include debug and error logging for effective troubleshooting.
+* Seamless integration: Easily integrates into frameworks such as Spring by creating the MatomoTracker Spring bean for use in other beans.
 
 Please prefer the Java 11 version as the Java 8 will become obsolete in the future.
 
