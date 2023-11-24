@@ -5,13 +5,17 @@
 [![Average time to resolve an issue](https://isitmaintained.com/badge/resolution/matomo-org/matomo-java-tracker.svg)](https://isitmaintained.com/project/matomo-org/matomo-java-tracker "Average time to resolve an issue")
 [![Percentage of issues still open](https://isitmaintained.com/badge/open/matomo-org/matomo-java-tracker.svg)](https://isitmaintained.com/project/matomo-org/matomo-java-tracker "Percentage of issues still open")
 
-The Matomo Java Tracker functions as the official Java implementation for the [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api). This versatile tracker empowers you to monitor visits, goals, and ecommerce transactions and items. Specifically designed for integration into server-side applications, it seamlessly integrates with Java-based web applications or web services.
+The Matomo Java Tracker functions as the official Java implementation for
+the [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api). This versatile tracker empowers
+you to monitor visits, goals, and ecommerce transactions and items. Specifically designed for integration into
+server-side applications, it seamlessly integrates with Java-based web applications or web services.
 
 Key features:
 
 * Comprehensive tracking capabilities: Monitor page views, goals, ecommerce transactions, and items.
 * Customization options: Support for custom dimensions and variables.
-* Extensive tracking parameters: Capture data on campaigns, events, downloads, outlinks, site searches, devices, and visitors.
+* Extensive tracking parameters: Capture data on campaigns, events, downloads, outlinks, site searches, devices, and
+  visitors.
 * Java compatibility: Supports Java 8 and higher, with a dedicated artifact (matomo-java-tracker-java11) for Java 11.
 * SSL certificate flexibility: Option to skip SSL certificate validation (caution: not recommended for production).
 * Minimal runtime dependencies: Relies solely on SLF4J.
@@ -21,7 +25,8 @@ Key features:
 * Robust documentation: Thoroughly documented with Javadoc for easy reference.
 * Data accuracy assurance: Ensures correct values are transmitted to the Matomo Tracking API.
 * Logging capabilities: Include debug and error logging for effective troubleshooting.
-* Seamless integration: Easily integrates into frameworks such as Spring by creating the MatomoTracker Spring bean for use in other beans.
+* Seamless integration: Easily integrates into frameworks such as Spring by creating the MatomoTracker Spring bean for
+  use in other beans.
 
 Please prefer the Java 11 version as the Java 8 will become obsolete in the future.
 
@@ -48,7 +53,7 @@ Projects that use Matomo Java Tracker:
 * [Digitale Ehrenamtskarte](https://github.com/digitalfabrik/entitlementcard)
 * [skidfuscator-java-obfuscator](https://github.com/skidfuscatordev/skidfuscator-java-obfuscator)
 * [DnA](https://github.com/mercedes-benz/DnA)
-*  And many closed source projects that we are not aware of :smile:
+* And many closed source projects that we are not aware of :smile:
 
 ## Table of Contents
 
@@ -80,7 +85,7 @@ See also the [Developer Guide here](https://developer.matomo.org/api-reference/t
 
 ## Javadoc
 
-The Javadoc for all versions can be found 
+The Javadoc for all versions can be found
 [at javadoc.io](https://javadoc.io/doc/org.piwik.java.tracking/matomo-java-tracker-core/latest/index.html). Thanks to
 [javadoc.io](https://javadoc.io) for hosting it.
 
@@ -100,11 +105,38 @@ recommend to read the [Tracking API User Guide](https://matomo.org/guide/apis/tr
 The [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api) is well
 documented and contains many examples.
 
+This project contains the following Maven artifacts:
+
+1. **matomo-java-tracker-core**: This artifact is the core module of the Matomo Java Tracker project. It provides the
+   main functionality of the Matomo Java Tracker, which is a Java implementation for the Matomo Tracking HTTP API. This
+   module is designed to be used as a base for other modules in the project that provide additional functionality or
+   integrations.
+2. **matomo-java-tracker**: This is a specific implementation of the core module designed for Java 8. It provides the
+   main functionality of the Matomo Java Tracker and is built upon the core. This artifact is
+   specifically designed for applications running on Java 8.
+3. **matomo-java-tracker-java11**: This artifact is a Java 11 implementation of the Matomo Java Tracker. It uses the
+   HttpClient available since Java 11. It is recommended to use this version if you are using Java 11 or higher.
+4. **matomo-java-tracker-spring-boot-starter**: This artifact is a Spring Boot Starter for the Matomo Java Tracker. It
+   provides auto-configuration for the Matomo Java Tracker in a Spring Boot application. By including this artifact in
+   your project, you can take advantage of Spring Boot's auto-configuration features to automatically set up and
+   configure the Matomo Java Tracker.
+5. **matomo-java-tracker-servlet-jakarta**: This artifact is specifically designed for applications using the Jakarta
+   Servlet API (part of Jakarta EE).
+6. **matomo-java-tracker-servlet-javax**: This artifact is specifically designed for applications using the older Java
+   Servlet API (part of Java EE).
+7. **matomo-java-tracker-test**: This artifact contains tools for manual testing against a local Matomo instance created
+   with Docker. It contains a tester class that sends randomized requests to a local Matomo instance and a servlet that
+   can be used to test the servlet integration.
+
+Each of these artifacts serves a different purpose and can be used depending on the specific needs of your project and
+the Java version you are using.
+
 ### Add library to your build
 
 Add a dependency on Matomo Java Tracker using Maven. For Java 8:
 
 ```xml
+
 <dependency>
     <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker</artifactId>
@@ -115,6 +147,7 @@ Add a dependency on Matomo Java Tracker using Maven. For Java 8:
 For Java 11:
 
 ```xml
+
 <dependency>
     <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker-java11</artifactId>
@@ -210,8 +243,8 @@ Or if you use YAML:
 
 ```yaml
 matomo:
-  tracker:
-    api-endpoint: https://your-matomo-domain.tld/matomo.php
+    tracker:
+        api-endpoint: https://your-matomo-domain.tld/matomo.php
 ```
 
 You can automatically add the `MatomoTrackerFilter` to your Spring Boot application if you add the following property:
@@ -224,9 +257,9 @@ Or if you use YAML:
 
 ```yaml
 matomo:
-  tracker:
-    filter:
-      enabled: true
+    tracker:
+        filter:
+            enabled: true
 ```
 
 The filter uses `ServletMatomoRequest` to create a `MatomoRequest` from a `HttpServletRequest` on every filter call.
@@ -345,12 +378,12 @@ public class BulkExample {
         VisitorId visitorId = VisitorId.fromString("customer@mail.com");
         tracker.sendBulkRequestAsync(
                 MatomoRequests.siteSearch("Running shoes", "Running", 120L)
-                              .visitorId(visitorId).build(),
+                        .visitorId(visitorId).build(),
                 MatomoRequests.pageView("VelocityStride ProX Running Shoes")
-                              .visitorId(visitorId).build(),
+                        .visitorId(visitorId).build(),
                 MatomoRequests.ecommerceOrder("QXZ-789LMP", 100.0, 124.0, 19.0, 10.0, 5.0)
-                              .visitorId(visitorId)
-                              .build()
+                        .visitorId(visitorId)
+                        .build()
         );
 
     }
@@ -389,53 +422,56 @@ import org.matomo.java.tracking.parameters.VisitorId;
 
 public class EcommerceExample {
 
-  public static void main(String[] args) {
+    public static void main(String[] args) {
 
-    TrackerConfiguration configuration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create("https://www.yourdomain.com/matomo.php"))
-        .defaultSiteId(1)
-        .defaultAuthToken("ee6e3dd9ed1b61f5328cf5978b5a8c71")
-        .logFailedTracking(true)
-        .build();
-
-    MatomoTracker tracker = new MatomoTracker(configuration);
-
-    tracker.sendBulkRequestAsync(MatomoRequests
-        .ecommerceCartUpdate(50.0)
-        .ecommerceItems(EcommerceItems
-            .builder()
-            .item(EcommerceItem
+        TrackerConfiguration configuration = TrackerConfiguration
                 .builder()
-                .sku("XYZ12345")
-                .name("Matomo - The big book about web analytics")
-                .category("Education & Teaching")
-                .price(23.1)
-                .quantity(2)
-                .build())
-            .item(EcommerceItem
-                .builder()
-                .sku("B0C2WV3MRJ")
-                .name("Matomo for data visualization")
-                .category("Education & Teaching")
-                .price(15.0)
-                .quantity(1)
-                .build())
-            .build())
-        .visitorId(VisitorId.fromString("customer@mail.com"))
-        .build()
-    );
+                .apiEndpoint(URI.create("https://www.yourdomain.com/matomo.php"))
+                .defaultSiteId(1)
+                .defaultAuthToken("ee6e3dd9ed1b61f5328cf5978b5a8c71")
+                .logFailedTracking(true)
+                .build();
 
-  }
+        MatomoTracker tracker = new MatomoTracker(configuration);
+
+        tracker.sendBulkRequestAsync(MatomoRequests
+                .ecommerceCartUpdate(50.0)
+                .ecommerceItems(EcommerceItems
+                        .builder()
+                        .item(EcommerceItem
+                                .builder()
+                                .sku("XYZ12345")
+                                .name("Matomo - The big book about web analytics")
+                                .category("Education & Teaching")
+                                .price(23.1)
+                                .quantity(2)
+                                .build())
+                        .item(EcommerceItem
+                                .builder()
+                                .sku("B0C2WV3MRJ")
+                                .name("Matomo for data visualization")
+                                .category("Education & Teaching")
+                                .price(15.0)
+                                .quantity(1)
+                                .build())
+                        .build())
+                .visitorId(VisitorId.fromString("customer@mail.com"))
+                .build()
+        );
+
+    }
 
 }
 
 ```
 
 Note that if you want to be able to track campaigns using *Referrers &gt; Campaigns*, you must add the correct
-URL parameters to your actionUrl. See [Tracking Campaigns](https://matomo.org/docs/tracking-campaigns/) for more information. All HTTP query parameters
-denoted on the [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api) can be set using the appropriate getters and setters. See
-[MatomoRequest](core/src/main/java/org/matomo/java/tracking/MatomoRequest.java) for the mappings of the parameters to their corresponding attributes.
+URL parameters to your actionUrl. See [Tracking Campaigns](https://matomo.org/docs/tracking-campaigns/) for more
+information. All HTTP query parameters
+denoted on the [Matomo Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api) can be set using the
+appropriate getters and setters. See
+[MatomoRequest](core/src/main/java/org/matomo/java/tracking/MatomoRequest.java) for the mappings of the parameters to
+their corresponding attributes.
 
 Requests are validated prior to sending. If a request is invalid, a `MatomoException` will be thrown.
 
@@ -598,18 +634,6 @@ This project can be tested and built by calling
 ```shell
 mvn install
 ```
-
-This project contains the following modules:
-
-* `core` contains the core functionality of the Matomo Java Tracker
-* `java8` contains the Java 8 implementation of the Matomo Java Tracker
-* `java11` contains the Java 11 implementation of the Matomo Java Tracker using the HttpClient available since Java 11
-  (recommended)
-* `servlet` contains `SerlvetMatomoRequest` to create a `MatomoRequest` from a `HttpServletRequest` and a filter
-  `MatomoTrackingFilter` that can be used to track requests to a servlet
-* `spring` contains the Spring Boot Starter
-* `test` contains tools for manual test against a local Matomo instance created with Docker (see below)
-
 
 The built jars and javadoc can be found in `target`. By using
 the Maven goal `install, a snapshot
