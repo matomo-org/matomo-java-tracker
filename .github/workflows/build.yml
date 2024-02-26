@@ -27,4 +27,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 80
           min-coverage-changed-files: 80
-      - uses: scacap/action-surefire-report@v1.7.3
+      - uses: scacap/action-surefire-report@v1.8.0
