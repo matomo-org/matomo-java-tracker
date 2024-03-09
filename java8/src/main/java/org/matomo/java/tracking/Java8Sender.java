@@ -30,7 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -59,7 +59,7 @@ class Java8Sender implements Sender {
 
   private final QueryCreator queryCreator;
 
-  private final Executor executor;
+  private final ExecutorService executorService;
   private final Collection<String> queries = new ArrayList<>(16);
 
   @Override
@@ -70,7 +70,7 @@ class Java8Sender implements Sender {
     return CompletableFuture.supplyAsync(() -> {
       sendSingle(request);
       return request;
-    }, executor);
+    }, executorService);
   }
 
   @Override
@@ -340,7 +340,7 @@ class Java8Sender implements Sender {
       }
     }
     return CompletableFuture.supplyAsync(() ->
-        sendBulkAsync(authToken, headers, headerUserAgent, sessionId, cookies), executor);
+        sendBulkAsync(authToken, headers, headerUserAgent, sessionId, cookies), executorService);
   }
 
   @Nullable
@@ -385,4 +385,8 @@ class Java8Sender implements Sender {
     return null;
   }
 
+  @Override
+  public void close() {
+    ExecutorServiceCloser.close(executorService);
+  }
 }

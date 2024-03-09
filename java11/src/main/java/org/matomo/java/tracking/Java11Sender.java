@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,9 +40,14 @@ public class Java11Sender implements Sender {
   @lombok.NonNull
   private final CookieStore cookieStore;
 
+  @lombok.NonNull
+  private final ExecutorService executorService;
+
   @NonNull
   @Override
-  public CompletableFuture<MatomoRequest> sendSingleAsync(@NonNull @lombok.NonNull MatomoRequest request) {
+  public CompletableFuture<MatomoRequest> sendSingleAsync(
+      @NonNull @lombok.NonNull MatomoRequest request
+  ) {
     return sendAsyncAndCheckResponse(buildHttpGetRequest(request), request);
   }
 
@@ -51,14 +57,19 @@ public class Java11Sender implements Sender {
   }
 
   private void sendAndCheckResponse(@NonNull HttpRequest httpRequest) {
-    checkResponse(send(httpRequest, () -> httpClient.send(httpRequest, HttpResponse.BodyHandlers.discarding())),
+    checkResponse(
+        send(
+            httpRequest,
+            () -> httpClient.send(httpRequest, HttpResponse.BodyHandlers.discarding())
+        ),
         httpRequest
     );
   }
 
   @Override
   public void sendBulk(
-      @NonNull @lombok.NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken
+      @NonNull @lombok.NonNull Iterable<? extends MatomoRequest> requests,
+      @Nullable String overrideAuthToken
   ) {
     sendAndCheckResponse(buildHttpPostRequest(requests, overrideAuthToken));
   }
@@ -67,7 +78,8 @@ public class Java11Sender implements Sender {
   private HttpRequest buildHttpPostRequest(
       @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken
   ) {
-    String authToken = AuthToken.determineAuthToken(overrideAuthToken, requests, trackerConfiguration);
+    String authToken =
+        AuthToken.determineAuthToken(overrideAuthToken, requests, trackerConfiguration);
     Collection<String> queries = new ArrayList<>();
     Map<String, String> headers = new LinkedHashMap<>(10);
     String headerUserAgent = null;
@@ -103,7 +115,8 @@ public class Java11Sender implements Sender {
   @NonNull
   @Override
   public CompletableFuture<Void> sendBulkAsync(
-      @NonNull @lombok.NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken
+      @NonNull @lombok.NonNull Iterable<? extends MatomoRequest> requests,
+      @Nullable String overrideAuthToken
   ) {
     return sendAsyncAndCheckResponse(buildHttpPostRequest(requests, overrideAuthToken), null);
   }
@@ -112,11 +125,13 @@ public class Java11Sender implements Sender {
   private <T> CompletableFuture<T> sendAsyncAndCheckResponse(
       @NonNull HttpRequest httpRequest, @Nullable T result
   ) {
-    return send(httpRequest,
-        () -> httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.discarding()).thenApply(response -> {
-          checkResponse(response, httpRequest);
-          return result;
-        })
+    return send(
+        httpRequest,
+        () -> httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.discarding())
+                        .thenApply(response -> {
+                          checkResponse(response, httpRequest);
+                          return result;
+                        })
     );
   }
 
@@ -129,7 +144,8 @@ public class Java11Sender implements Sender {
     URI apiEndpoint = trackerConfiguration.getApiEndpoint();
     HttpRequest.Builder builder = HttpRequest
         .newBuilder()
-        .uri(apiEndpoint.resolve(String.format("%s?%s",
+        .uri(apiEndpoint.resolve(String.format(
+            "%s?%s",
             apiEndpoint.getPath(),
             queryCreator.createQuery(request, authToken)
         )));
@@ -155,12 +171,22 @@ public class Java11Sender implements Sender {
     }
   }
 
-  private void checkResponse(@NonNull HttpResponse<Void> response, @NonNull HttpRequest httpRequest) {
+  private void checkResponse(
+      @NonNull HttpResponse<Void> response,
+      @NonNull HttpRequest httpRequest
+  ) {
     if (response.statusCode() > 399) {
       if (trackerConfiguration.isLogFailedTracking()) {
-        log.error("Received HTTP error code {} for URL {}", response.statusCode(), httpRequest.uri());
+        log.error(
+            "Received HTTP error code {} for URL {}",
+            response.statusCode(),
+            httpRequest.uri()
+        );
       }
-      throw new MatomoException(String.format("Tracking endpoint responded with code %d", response.statusCode()));
+      throw new MatomoException(String.format(
+          "Tracking endpoint responded with code %d",
+          response.statusCode()
+      ));
     }
   }
 
@@ -176,13 +202,16 @@ public class Java11Sender implements Sender {
   }
 
   private void applyTrackerConfiguration(@NonNull HttpRequest.Builder builder) {
-    if (trackerConfiguration.getSocketTimeout() != null && trackerConfiguration.getSocketTimeout().toMillis() > 0L) {
+    if (trackerConfiguration.getSocketTimeout() != null
+        && trackerConfiguration.getSocketTimeout().toMillis() > 0L) {
       builder.timeout(trackerConfiguration.getSocketTimeout());
     }
   }
 
   private void setUserAgentHeader(
-      HttpRequest.Builder builder, @Nullable String headerUserAgent, @Nullable Map<String, String> headers
+      HttpRequest.Builder builder,
+      @Nullable String headerUserAgent,
+      @Nullable Map<String, String> headers
   ) {
     String userAgentHeader = null;
     if ((headerUserAgent == null || headerUserAgent.trim().isEmpty()) && headers != null) {
@@ -197,11 +226,19 @@ public class Java11Sender implements Sender {
     }
   }
 
-  private void addHeaders(@NonNull HttpRequest.Builder builder, @Nullable Map<String, String> headers) {
+  private void addHeaders(
+      @NonNull HttpRequest.Builder builder,
+      @Nullable Map<String, String> headers
+  ) {
     if (headers != null) {
       for (Map.Entry<String, String> header : headers.entrySet()) {
         builder.header(header.getKey(), header.getValue());
       }
     }
+  }
+
+  @Override
+  public void close() {
+    ExecutorServiceCloser.close(executorService);
   }
 }

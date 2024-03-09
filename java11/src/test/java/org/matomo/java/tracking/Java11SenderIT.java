@@ -21,6 +21,7 @@ import java.net.http.HttpClient;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +46,8 @@ class Java11SenderIT {
                                              .apiEndpoint(URI.create("http://localhost"))
                                              .build()),
         HttpClient.newBuilder().cookieHandler(cookieManager).build(),
-        cookieManager.getCookieStore()
+        cookieManager.getCookieStore(),
+        Executors.newFixedThreadPool(2, new DaemonThreadFactory())
     )).isInstanceOf(NullPointerException.class)
       .hasMessage("trackerConfiguration is marked non-null but is null");
   }
@@ -57,7 +59,8 @@ class Java11SenderIT {
         TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build(),
         null,
         HttpClient.newBuilder().cookieHandler(cookieManager).build(),
-        cookieManager.getCookieStore()
+        cookieManager.getCookieStore(),
+        Executors.newFixedThreadPool(2, new DaemonThreadFactory())
     )).isInstanceOf(NullPointerException.class)
       .hasMessage("queryCreator is marked non-null but is null");
   }
@@ -71,7 +74,8 @@ class Java11SenderIT {
                                              .apiEndpoint(URI.create("http://localhost"))
                                              .build()),
         null,
-        cookieManager.getCookieStore()
+        cookieManager.getCookieStore(),
+        Executors.newFixedThreadPool(2, new DaemonThreadFactory())
     )).isInstanceOf(NullPointerException.class)
       .hasMessage("httpClient is marked non-null but is null");
   }
@@ -85,7 +89,8 @@ class Java11SenderIT {
                                              .apiEndpoint(URI.create("http://localhost"))
                                              .build()),
         HttpClient.newBuilder().cookieHandler(cookieManager).build(),
-        null
+        null,
+        Executors.newFixedThreadPool(2, new DaemonThreadFactory())
     )).isInstanceOf(NullPointerException.class)
       .hasMessage("cookieStore is marked non-null but is null");
   }

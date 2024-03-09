@@ -30,4 +30,15 @@ public class MatomoTrackerFilter extends HttpFilter {
     tracker.sendRequestAsync(matomoRequest);
     super.doFilter(req, res, chain);
   }
+
+  @Override
+  public void destroy() {
+    if (tracker != null) {
+      try {
+        tracker.close();
+      } catch (Exception e) {
+        throw new RuntimeException("Could not close tracker", e);
+      }
+    }
+  }
 }

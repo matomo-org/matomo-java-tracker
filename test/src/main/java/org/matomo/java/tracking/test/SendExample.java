@@ -26,13 +26,15 @@ public class SendExample {
         .logFailedTracking(true)
         .build();
 
-    MatomoTracker tracker = new MatomoTracker(configuration);
-
-    tracker.sendRequestAsync(MatomoRequests
-        .event("Training", "Workout completed", "Bench press", 60.0)
-        .visitorId(VisitorId.fromString("customer@mail.com"))
-        .build()
-    );
+    try (MatomoTracker tracker = new MatomoTracker(configuration)) {
+      tracker.sendRequestAsync(MatomoRequests
+          .event("Training", "Workout completed", "Bench press", 60.0)
+          .visitorId(VisitorId.fromString("customer@mail.com"))
+          .build()
+      );
+    } catch (Exception e) {
+      throw new RuntimeException("Could not close tracker", e);
+    }
   }
 
 }

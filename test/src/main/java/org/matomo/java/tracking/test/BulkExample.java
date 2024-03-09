@@ -26,18 +26,20 @@ public class BulkExample {
         .logFailedTracking(true)
         .build();
 
-    MatomoTracker tracker = new MatomoTracker(configuration);
-
-    VisitorId visitorId = VisitorId.fromString("customer@mail.com");
-    tracker.sendBulkRequestAsync(
-        MatomoRequests.siteSearch("Running shoes", "Running", 120L)
-                      .visitorId(visitorId).build(),
-        MatomoRequests.pageView("VelocityStride ProX Running Shoes")
-                      .visitorId(visitorId).build(),
-        MatomoRequests.ecommerceOrder("QXZ-789LMP", 100.0, 124.0, 19.0, 10.0, 5.0)
-                      .visitorId(visitorId)
-                      .build()
-    );
+    try (MatomoTracker tracker = new MatomoTracker(configuration)) {
+      VisitorId visitorId = VisitorId.fromString("customer@mail.com");
+      tracker.sendBulkRequestAsync(
+          MatomoRequests.siteSearch("Running shoes", "Running", 120L)
+              .visitorId(visitorId).build(),
+          MatomoRequests.pageView("VelocityStride ProX Running Shoes")
+              .visitorId(visitorId).build(),
+          MatomoRequests.ecommerceOrder("QXZ-789LMP", 100.0, 124.0, 19.0, 10.0, 5.0)
+              .visitorId(visitorId)
+              .build()
+      );
+    } catch (Exception e) {
+      throw new RuntimeException("Could not close tracker", e);
+    }
 
   }
 

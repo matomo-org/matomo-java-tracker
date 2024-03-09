@@ -16,6 +16,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -242,7 +243,7 @@ class Java8SenderIT {
     sender = new Java8Sender(
         trackerConfiguration,
         new QueryCreator(trackerConfiguration),
-        Runnable::run
+        Executors.newFixedThreadPool(2, new DaemonThreadFactory())
     );
   }
 

@@ -51,4 +51,8 @@ class TestSender implements Sender {
     throw new UnsupportedOperationException();
   }
 
+  @Override
+  public void close() {
+    // do nothing
+  }
 }

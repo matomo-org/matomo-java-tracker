@@ -27,19 +27,21 @@ public class ConsumerExample {
         .logFailedTracking(true)
         .build();
 
-    MatomoTracker tracker = new MatomoTracker(configuration);
+    try (MatomoTracker tracker = new MatomoTracker(configuration)) {
+      MatomoRequest request = MatomoRequests
+          .event("Training", "Workout completed", "Bench press", 60.0)
+          .visitorId(VisitorId.fromString("customer@mail.com"))
+          .build();
 
-    MatomoRequest request = MatomoRequests
-        .event("Training", "Workout completed", "Bench press", 60.0)
-        .visitorId(VisitorId.fromString("customer@mail.com"))
-        .build();
-
-    tracker.sendRequestAsync(request)
-           .thenAccept(req -> System.out.printf("Sent request %s%n", req))
-           .exceptionally(throwable -> {
-             System.err.printf("Failed to send request: %s%n", throwable.getMessage());
-             return null;
-           });
+      tracker.sendRequestAsync(request)
+          .thenAccept(req -> System.out.printf("Sent request %s%n", req))
+          .exceptionally(throwable -> {
+            System.err.printf("Failed to send request: %s%n", throwable.getMessage());
+            return null;
+          });
+    } catch (Exception e) {
+      throw new RuntimeException("Could not close tracker", e);
+    }
 
   }
 

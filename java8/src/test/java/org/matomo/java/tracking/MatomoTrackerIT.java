@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Locale.LanguageRange;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,6 +68,13 @@ class MatomoTrackerIT {
     wireMockServer.resetRequests();
     wireMockServer.stubFor(post(urlPathEqualTo("/matomo.php")).willReturn(status(204)));
     wireMockServer.stubFor(get(urlPathEqualTo("/matomo.php")).willReturn(status(204)));
+  }
+
+  @AfterEach
+  void closeTracker() throws Exception {
+    if (matomoTracker != null) {
+      matomoTracker.close();
+    }
   }
 
   @Test

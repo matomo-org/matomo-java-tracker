@@ -69,4 +69,8 @@ class TestSender implements Sender {
     requests.add(request);
   }
 
+  @Override
+  public void close() {
+    // do nothing
+  }
 }

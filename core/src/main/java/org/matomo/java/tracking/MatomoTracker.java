@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author brettcsorba
  */
 @Slf4j
-public class MatomoTracker {
+public class MatomoTracker implements AutoCloseable {
 
   private final TrackerConfiguration trackerConfiguration;
 
@@ -364,4 +364,12 @@ public class MatomoTracker {
   ) {
     return sendBulkRequestAsync(requests, authToken, null);
   }
+
+  @Override
+  public void close() throws Exception {
+    if (sender != null) {
+      sender.close();
+    }
+  }
+
 }

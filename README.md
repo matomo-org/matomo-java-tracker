@@ -75,7 +75,7 @@ dependencies. Release notes can be found here: https://github.com/matomo-org/mat
 
 Here are the most important changes:
 
-* Matomo Java Tracker 3.2.0 is compatible with Matomo 4 and 5
+* Matomo Java Tracker 3.3.0 is compatible with Matomo 4 and 5
 * less dependencies
 * new dimension parameter
 * special types allow to provide valid parameters now
@@ -140,7 +140,7 @@ Add a dependency on Matomo Java Tracker using Maven. For Java 8:
 <dependency>
     <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker</artifactId>
-    <version>3.2.0</version>
+    <version>3.3.0</version>
 </dependency>
 ```
 
@@ -151,7 +151,7 @@ For Java 11:
 <dependency>
     <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker-java11</artifactId>
-    <version>3.2.0</version>
+    <version>3.3.0</version>
 </dependency>
 ```
 
@@ -159,7 +159,7 @@ or Gradle (Java 8):
 
 ```groovy
 dependencies {
-    implementation("org.piwik.java.tracking:matomo-java-tracker:3.2.0")
+    implementation("org.piwik.java.tracking:matomo-java-tracker:3.3.0")
 }
 ```
 
@@ -167,20 +167,20 @@ or Gradle (Java 11):
 
 ```groovy
 dependencies {
-    implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.2.0")
+    implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.3.0")
 }
 ```
 
 or Gradle with Kotlin DSL (Java 8)
 
 ```kotlin
-implementation("org.piwik.java.tracking:matomo-java-tracker:3.2.0")
+implementation("org.piwik.java.tracking:matomo-java-tracker:3.3.0")
 ```
 
 or Gradle with Kotlin DSL (Java 11)
 
 ```kotlin
-implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.2.0")
+implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.3.0")
 ```
 
 ### Spring Boot Module
@@ -193,7 +193,7 @@ and allows you to configure the tracker via application properties. Add the foll
 <dependency>
     <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker-spring-boot-starter</artifactId>
-    <version>3.2.0</version>
+    <version>3.3.0</version>
 </dependency>
 ```
 
@@ -201,14 +201,14 @@ or Gradle:
 
 ```groovy
 dependencies {
-    implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:3.2.0")
+    implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:3.3.0")
 }
 ```
 
 or Gradle with Kotlin DSL
 
 ```kotlin
-implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:3.2.0")
+implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:3.3.0")
 ```
 
 The following properties are supported:
@@ -270,14 +270,21 @@ To let the Matomo Java Tracker send a request to the Matomo instance, you need t
 
 ```java
 import java.net.URI;
-import org.matomo.java.tracking.MatomoRequest;
 import org.matomo.java.tracking.MatomoRequests;
 import org.matomo.java.tracking.MatomoTracker;
 import org.matomo.java.tracking.TrackerConfiguration;
 import org.matomo.java.tracking.parameters.VisitorId;
 
+/**
+ * Example for sending a request.
+ */
 public class SendExample {
 
+    /**
+     * Example for sending a request.
+     *
+     * @param args ignored
+     */
     public static void main(String[] args) {
 
         TrackerConfiguration configuration = TrackerConfiguration
@@ -288,17 +295,19 @@ public class SendExample {
                 .logFailedTracking(true)
                 .build();
 
-        MatomoTracker tracker = new MatomoTracker(configuration);
-
-        tracker.sendRequestAsync(MatomoRequests
-                .event("Training", "Workout completed", "Bench press", 60.0)
-                .visitorId(VisitorId.fromString("customer@mail.com"))
-                .build()
-        );
-
+        try (MatomoTracker tracker = new MatomoTracker(configuration)) {
+            tracker.sendRequestAsync(MatomoRequests
+                    .event("Training", "Workout completed", "Bench press", 60.0)
+                    .visitorId(VisitorId.fromString("customer@mail.com"))
+                    .build()
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Could not close tracker", e);
+        }
     }
 
 }
+
 ```
 
 This will send a request to the Matomo instance at https://www.yourdomain.com/matomo.php and track a page view for the
@@ -311,15 +320,23 @@ If you want to perform an operation after a successful asynchronous call to Mato
 result like this:
 
 ```java
-
 import java.net.URI;
+import org.matomo.java.tracking.MatomoRequest;
 import org.matomo.java.tracking.MatomoRequests;
 import org.matomo.java.tracking.MatomoTracker;
 import org.matomo.java.tracking.TrackerConfiguration;
 import org.matomo.java.tracking.parameters.VisitorId;
 
+/**
+ * Example for sending a request and performing an action when the request was sent successfully.
+ */
 public class ConsumerExample {
 
+    /**
+     * Example for sending a request and performing an action when the request was sent successfully.
+     *
+     * @param args ignored
+     */
     public static void main(String[] args) {
 
         TrackerConfiguration configuration = TrackerConfiguration
@@ -330,23 +347,26 @@ public class ConsumerExample {
                 .logFailedTracking(true)
                 .build();
 
-        MatomoTracker tracker = new MatomoTracker(configuration);
+        try (MatomoTracker tracker = new MatomoTracker(configuration)) {
+            MatomoRequest request = MatomoRequests
+                    .event("Training", "Workout completed", "Bench press", 60.0)
+                    .visitorId(VisitorId.fromString("customer@mail.com"))
+                    .build();
 
-        MatomoRequest request = MatomoRequests
-                .event("Training", "Workout completed", "Bench press", 60.0)
-                .visitorId(VisitorId.fromString("customer@mail.com"))
-                .build();
-
-        tracker.sendRequestAsync(request)
-                .thenAccept(req -> System.out.printf("Sent request %s%n", req))
-                .exceptionally(throwable -> {
-                    System.err.printf("Failed to send request: %s%n", throwable.getMessage());
-                    return null;
-                });
+            tracker.sendRequestAsync(request)
+                    .thenAccept(req -> System.out.printf("Sent request %s%n", req))
+                    .exceptionally(throwable -> {
+                        System.err.printf("Failed to send request: %s%n", throwable.getMessage());
+                        return null;
+                    });
+        } catch (Exception e) {
+            throw new RuntimeException("Could not close tracker", e);
+        }
 
     }
 
 }
+
 
 ```
 
@@ -355,14 +375,21 @@ send a bulk request. Place your requests in an _Iterable_ data structure and cal
 
 ```java
 import java.net.URI;
-import org.matomo.java.tracking.MatomoRequest;
 import org.matomo.java.tracking.MatomoRequests;
 import org.matomo.java.tracking.MatomoTracker;
 import org.matomo.java.tracking.TrackerConfiguration;
 import org.matomo.java.tracking.parameters.VisitorId;
 
+/**
+ * Example for sending multiple requests in one bulk request.
+ */
 public class BulkExample {
 
+    /**
+     * Example for sending multiple requests in one bulk request.
+     *
+     * @param args ignored
+     */
     public static void main(String[] args) {
 
         TrackerConfiguration configuration = TrackerConfiguration
@@ -373,23 +400,24 @@ public class BulkExample {
                 .logFailedTracking(true)
                 .build();
 
-        MatomoTracker tracker = new MatomoTracker(configuration);
-
-        VisitorId visitorId = VisitorId.fromString("customer@mail.com");
-        tracker.sendBulkRequestAsync(
-                MatomoRequests.siteSearch("Running shoes", "Running", 120L)
-                        .visitorId(visitorId).build(),
-                MatomoRequests.pageView("VelocityStride ProX Running Shoes")
-                        .visitorId(visitorId).build(),
-                MatomoRequests.ecommerceOrder("QXZ-789LMP", 100.0, 124.0, 19.0, 10.0, 5.0)
-                        .visitorId(visitorId)
-                        .build()
-        );
+        try (MatomoTracker tracker = new MatomoTracker(configuration)) {
+            VisitorId visitorId = VisitorId.fromString("customer@mail.com");
+            tracker.sendBulkRequestAsync(
+                    MatomoRequests.siteSearch("Running shoes", "Running", 120L)
+                            .visitorId(visitorId).build(),
+                    MatomoRequests.pageView("VelocityStride ProX Running Shoes")
+                            .visitorId(visitorId).build(),
+                    MatomoRequests.ecommerceOrder("QXZ-789LMP", 100.0, 124.0, 19.0, 10.0, 5.0)
+                            .visitorId(visitorId)
+                            .build()
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Could not close tracker", e);
+        }
 
     }
 
 }
-
 ```
 
 This will send two requests in a single HTTP call. The requests will be sent asynchronously.
@@ -410,9 +438,7 @@ a unique identifier, e.g. an email address. If you do not provide a visitor id, 
 Ecommerce requests contain ecommerce items, that can be fluently build:
 
 ```java
-
 import java.net.URI;
-import org.matomo.java.tracking.MatomoRequest;
 import org.matomo.java.tracking.MatomoRequests;
 import org.matomo.java.tracking.MatomoTracker;
 import org.matomo.java.tracking.TrackerConfiguration;
@@ -420,8 +446,16 @@ import org.matomo.java.tracking.parameters.EcommerceItem;
 import org.matomo.java.tracking.parameters.EcommerceItems;
 import org.matomo.java.tracking.parameters.VisitorId;
 
+/**
+ * Example for sending an ecommerce request.
+ */
 public class EcommerceExample {
 
+    /**
+     * Example for sending an ecommerce request.
+     *
+     * @param args ignored
+     */
     public static void main(String[] args) {
 
         TrackerConfiguration configuration = TrackerConfiguration
@@ -432,37 +466,38 @@ public class EcommerceExample {
                 .logFailedTracking(true)
                 .build();
 
-        MatomoTracker tracker = new MatomoTracker(configuration);
-
-        tracker.sendBulkRequestAsync(MatomoRequests
-                .ecommerceCartUpdate(50.0)
-                .ecommerceItems(EcommerceItems
-                        .builder()
-                        .item(EcommerceItem
-                                .builder()
-                                .sku("XYZ12345")
-                                .name("Matomo - The big book about web analytics")
-                                .category("Education & Teaching")
-                                .price(23.1)
-                                .quantity(2)
-                                .build())
-                        .item(EcommerceItem
-                                .builder()
-                                .sku("B0C2WV3MRJ")
-                                .name("Matomo for data visualization")
-                                .category("Education & Teaching")
-                                .price(15.0)
-                                .quantity(1)
-                                .build())
-                        .build())
-                .visitorId(VisitorId.fromString("customer@mail.com"))
-                .build()
-        );
+        try (MatomoTracker tracker = new MatomoTracker(configuration)) {
+            tracker.sendBulkRequestAsync(MatomoRequests
+                    .ecommerceCartUpdate(50.0)
+                    .ecommerceItems(EcommerceItems
+                            .builder()
+                            .item(EcommerceItem
+                                    .builder()
+                                    .sku("XYZ12345")
+                                    .name("Matomo - The big book about web analytics")
+                                    .category("Education & Teaching")
+                                    .price(23.1)
+                                    .quantity(2)
+                                    .build())
+                            .item(EcommerceItem
+                                    .builder()
+                                    .sku("B0C2WV3MRJ")
+                                    .name("Matomo for data visualization")
+                                    .category("Education & Teaching")
+                                    .price(15.0)
+                                    .quantity(1)
+                                    .build())
+                            .build())
+                    .visitorId(VisitorId.fromString("customer@mail.com"))
+                    .build()
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Could not close tracker", e);
+        }
 
     }
 
 }
-
 ```
 
 Note that if you want to be able to track campaigns using *Referrers &gt; Campaigns*, you must add the correct
@@ -640,11 +675,10 @@ the Maven goal `install, a snapshot
 version can be used in your local Maven repository for testing purposes, e.g.
 
 ```xml
-
 <dependency>
     <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker</artifactId>
-    <version>3.2.1-SNAPSHOT</version>
+    <version>3.3.1-SNAPSHOT</version>
 </dependency>
 ```
 

@@ -6,6 +6,7 @@ import java.net.InetSocketAddress;
 import java.net.ProxySelector;
 import java.net.http.HttpClient;
 import java.security.SecureRandom;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -22,19 +23,25 @@ public class Java11SenderProvider implements SenderProvider {
       TrackerConfiguration trackerConfiguration, QueryCreator queryCreator
   ) {
     CookieManager cookieManager = new CookieManager();
+    ExecutorService executorService = Executors.newFixedThreadPool(
+        trackerConfiguration.getThreadPoolSize(),
+        new DaemonThreadFactory()
+    );
     HttpClient.Builder builder = HttpClient
         .newBuilder()
         .cookieHandler(cookieManager)
-        .executor(Executors.newFixedThreadPool(trackerConfiguration.getThreadPoolSize(), new DaemonThreadFactory()))
-    ;
-    if (trackerConfiguration.getConnectTimeout() != null && trackerConfiguration.getConnectTimeout().toMillis() > 0L) {
+        .executor(executorService);
+    if (trackerConfiguration.getConnectTimeout() != null
+        && trackerConfiguration.getConnectTimeout().toMillis() > 0L) {
       builder.connectTimeout(trackerConfiguration.getConnectTimeout());
     }
     if (!isEmpty(trackerConfiguration.getProxyHost()) && trackerConfiguration.getProxyPort() > 0) {
-      builder.proxy(ProxySelector.of(new InetSocketAddress(trackerConfiguration.getProxyHost(),
+      builder.proxy(ProxySelector.of(new InetSocketAddress(
+          trackerConfiguration.getProxyHost(),
           trackerConfiguration.getProxyPort()
       )));
-      if (!isEmpty(trackerConfiguration.getProxyUsername()) && !isEmpty(trackerConfiguration.getProxyPassword())) {
+      if (!isEmpty(trackerConfiguration.getProxyUsername())
+          && !isEmpty(trackerConfiguration.getProxyPassword())) {
         builder.authenticator(new ProxyAuthenticator(
             trackerConfiguration.getProxyUsername(),
             trackerConfiguration.getProxyPassword()
@@ -54,7 +61,13 @@ public class Java11SenderProvider implements SenderProvider {
       throw new MatomoException("Please disable SSL hostname verification manually using the system parameter -Djdk.internal.httpclient.disableHostnameVerification=true");
     }
 
-    return new Java11Sender(trackerConfiguration, queryCreator, builder.build(), cookieManager.getCookieStore());
+    return new Java11Sender(
+        trackerConfiguration,
+        queryCreator,
+        builder.build(),
+        cookieManager.getCookieStore(),
+        executorService
+    );
   }
 
   private static boolean isEmpty(

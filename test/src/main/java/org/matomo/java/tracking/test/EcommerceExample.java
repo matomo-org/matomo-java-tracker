@@ -28,32 +28,34 @@ public class EcommerceExample {
         .logFailedTracking(true)
         .build();
 
-    MatomoTracker tracker = new MatomoTracker(configuration);
-
-    tracker.sendBulkRequestAsync(MatomoRequests
-        .ecommerceCartUpdate(50.0)
-        .ecommerceItems(EcommerceItems
-            .builder()
-            .item(EcommerceItem
-                .builder()
-                .sku("XYZ12345")
-                .name("Matomo - The big book about web analytics")
-                .category("Education & Teaching")
-                .price(23.1)
-                .quantity(2)
-                .build())
-            .item(EcommerceItem
-                .builder()
-                .sku("B0C2WV3MRJ")
-                .name("Matomo for data visualization")
-                .category("Education & Teaching")
-                .price(15.0)
-                .quantity(1)
-                .build())
-            .build())
-        .visitorId(VisitorId.fromString("customer@mail.com"))
-        .build()
-    );
+    try (MatomoTracker tracker = new MatomoTracker(configuration)) {
+      tracker.sendBulkRequestAsync(MatomoRequests
+          .ecommerceCartUpdate(50.0)
+          .ecommerceItems(EcommerceItems
+              .builder()
+              .item(EcommerceItem
+                  .builder()
+                  .sku("XYZ12345")
+                  .name("Matomo - The big book about web analytics")
+                  .category("Education & Teaching")
+                  .price(23.1)
+                  .quantity(2)
+                  .build())
+              .item(EcommerceItem
+                  .builder()
+                  .sku("B0C2WV3MRJ")
+                  .name("Matomo for data visualization")
+                  .category("Education & Teaching")
+                  .price(15.0)
+                  .quantity(1)
+                  .build())
+              .build())
+          .visitorId(VisitorId.fromString("customer@mail.com"))
+          .build()
+      );
+    } catch (Exception e) {
+      throw new RuntimeException("Could not close tracker", e);
+    }
 
   }
 

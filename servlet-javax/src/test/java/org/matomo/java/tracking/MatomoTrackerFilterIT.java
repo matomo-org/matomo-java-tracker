@@ -58,6 +58,8 @@ class MatomoTrackerFilterIT {
       );
     });
 
+    tracker.close();
+
   }
 
 }

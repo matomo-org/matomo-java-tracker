@@ -4,7 +4,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
-interface Sender {
+interface Sender extends AutoCloseable {
   @NonNull
   CompletableFuture<MatomoRequest> sendSingleAsync(
       @NonNull MatomoRequest request

@@ -25,7 +25,7 @@ import org.matomo.java.tracking.parameters.UniqueId;
 import org.matomo.java.tracking.parameters.VisitorId;
 
 @Slf4j
-class MatomoTrackerTester {
+class MatomoTrackerTester implements AutoCloseable {
 
   private final MatomoTracker tracker;
 
@@ -39,7 +39,7 @@ class MatomoTrackerTester {
     }
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
 
     TrackerConfiguration configuration = TrackerConfiguration
         .builder()
@@ -49,12 +49,12 @@ class MatomoTrackerTester {
         .logFailedTracking(true)
         .build();
 
-    MatomoTrackerTester matomoTrackerTester = new MatomoTrackerTester(configuration);
-
-    matomoTrackerTester.sendRequestAsync();
-    matomoTrackerTester.sendBulkRequestsAsync();
-    matomoTrackerTester.sendRequest();
-    matomoTrackerTester.sendBulkRequests();
+    try (MatomoTrackerTester matomoTrackerTester = new MatomoTrackerTester(configuration)) {
+      matomoTrackerTester.sendRequestAsync();
+      matomoTrackerTester.sendBulkRequestsAsync();
+      matomoTrackerTester.sendRequest();
+      matomoTrackerTester.sendBulkRequests();
+    }
 
   }
 
@@ -186,5 +186,10 @@ class MatomoTrackerTester {
         .dimensions(Map.of(1L, faker.artist().name(), 2L, faker.dog().name()))
         .debug(true)
         .build();
+  }
+
+  @Override
+  public void close() throws Exception {
+    tracker.close();
   }
 }
