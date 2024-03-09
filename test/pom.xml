@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.piwik.java.tracking</groupId>
         <artifactId>matomo-java-tracker-parent</artifactId>
-        <version>3.3.0</version>
+        <version>3.3.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
