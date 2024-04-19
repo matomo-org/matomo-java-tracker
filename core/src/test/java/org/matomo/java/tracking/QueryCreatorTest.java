@@ -538,4 +538,16 @@ class QueryCreatorTest {
         .hasRootCauseMessage("Invalid value for long. Must be less or equal than 180");
   }
 
+  @Test
+  void tracksEvent() {
+    matomoRequestBuilder.eventName("Event Name")
+                        .eventValue(23.456)
+                        .eventAction("Event Action")
+                        .eventCategory("Event Category");
+
+    whenCreatesQuery();
+
+    assertThat(query).isEqualTo("idsite=42&token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&e_c=Event+Category&e_a=Event+Action&e_n=Event+Name&e_v=23.456&send_image=0&rand=random-value");
+  }
+
 }

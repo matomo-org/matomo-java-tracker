@@ -433,7 +433,7 @@ public class MatomoRequest {
   /**
    * Some numeric value that represents the event value.
    */
-  @TrackingParameter(name = "e_n")
+  @TrackingParameter(name = "e_v")
   private Double eventValue;
 
   /**
