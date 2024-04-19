@@ -11,6 +11,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import java.net.URI;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -135,7 +136,7 @@ public class MatomoTracker implements AutoCloseable {
    *
    * <p>Use this method if you want to send a single request. If you want to send multiple requests at once, use
    * {@link #sendBulkRequest(Iterable)} instead. If you want to send multiple requests asynchronously, use
-   * {@link #sendRequestAsync(MatomoRequest)} or {@link #sendBulkRequestAsync(Iterable)} instead.
+   * {@link #sendRequestAsync(MatomoRequest)} or {@link #sendBulkRequestAsync(Collection)} instead.
    *
    * @param request request to send. must not be null
    */
@@ -160,7 +161,7 @@ public class MatomoTracker implements AutoCloseable {
    * Send a request asynchronously via HTTP GET.
    *
    * <p>Use this method if you want to send a single request. If you want to send multiple requests at once, use
-   * {@link #sendBulkRequestAsync(Iterable)} instead. If you want to send multiple requests synchronously, use
+   * {@link #sendBulkRequestAsync(Collection)} instead. If you want to send multiple requests synchronously, use
    * {@link #sendRequest(MatomoRequest)} or {@link #sendBulkRequest(Iterable)} instead.
    *
    * @param request request to send
@@ -176,8 +177,8 @@ public class MatomoTracker implements AutoCloseable {
    * Send a request asynchronously via HTTP GET and specify a callback that gets executed when the response arrives.
    *
    * <p>Use this method if you want to send a single request. If you want to send multiple requests at once, use
-   * {@link #sendBulkRequestAsync(Iterable, Consumer)} instead. If you want to send multiple requests synchronously, use
-   * {@link #sendRequest(MatomoRequest)} or {@link #sendBulkRequest(Iterable)} instead.
+   * {@link #sendBulkRequestAsync(Collection, Consumer)} instead. If you want to send multiple requests synchronously,
+   * use {@link #sendRequest(MatomoRequest)} or {@link #sendBulkRequest(Iterable)} instead.
    *
    * @param request  request to send
    * @param callback callback that gets executed when response arrives, must not be null
@@ -223,7 +224,7 @@ public class MatomoTracker implements AutoCloseable {
    *
    * <p>More efficient than sending several individual requests. If you want to send a single request, use
    * {@link #sendRequest(MatomoRequest)} instead. If you want to send multiple requests asynchronously, use
-   * {@link #sendBulkRequestAsync(Iterable)} instead.
+   * {@link #sendBulkRequestAsync(Collection)} instead.
    *
    * @param requests the requests to send
    */
@@ -236,7 +237,7 @@ public class MatomoTracker implements AutoCloseable {
    *
    * <p>More efficient than sending several individual requests. If you want to send a single request, use
    * {@link #sendRequest(MatomoRequest)} instead. If you want to send multiple requests asynchronously, use
-   * {@link #sendBulkRequestAsync(Iterable)} instead.
+   * {@link #sendBulkRequestAsync(Collection)} instead.
    *
    * @param requests the requests to send
    */
@@ -250,7 +251,7 @@ public class MatomoTracker implements AutoCloseable {
    *
    * <p>Specify the AuthToken if parameters that require an auth token is used. If you want to send a single request,
    * use {@link #sendRequest(MatomoRequest)} instead. If you want to send multiple requests asynchronously, use
-   * {@link #sendBulkRequestAsync(Iterable)} instead.
+   * {@link #sendBulkRequestAsync(Collection)} instead.
    *
    * @param requests  the requests to send
    * @param authToken specify if any of the parameters use require AuthToken, if null the default auth token from the
@@ -293,7 +294,7 @@ public class MatomoTracker implements AutoCloseable {
    * @return completable future to let you know when the request is done
    */
   public CompletableFuture<Void> sendBulkRequestAsync(
-      @NonNull Iterable<? extends MatomoRequest> requests
+      @NonNull Collection<? extends MatomoRequest> requests
   ) {
     return sendBulkRequestAsync(requests, null, null);
   }
@@ -313,7 +314,7 @@ public class MatomoTracker implements AutoCloseable {
    */
   @Deprecated
   public CompletableFuture<Void> sendBulkRequestAsync(
-      @NonNull Iterable<? extends MatomoRequest> requests,
+      @NonNull Collection<? extends MatomoRequest> requests,
       @Nullable String authToken,
       @Nullable Consumer<Void> callback
   ) {
@@ -342,7 +343,7 @@ public class MatomoTracker implements AutoCloseable {
    * @return completable future to let you know when the request is done
    */
   public CompletableFuture<Void> sendBulkRequestAsync(
-      @NonNull Iterable<? extends MatomoRequest> requests,
+      @NonNull Collection<? extends MatomoRequest> requests,
       @Nullable Consumer<Void> callback
   ) {
     return sendBulkRequestAsync(requests, null, callback);
@@ -357,10 +358,10 @@ public class MatomoTracker implements AutoCloseable {
    * @param authToken specify if any of the parameters use require AuthToken, null allowed
    * @return completable future to let you know when the request is done
    * @deprecated Please set the auth token in the tracker configuration or the requests directly and use
-   * {@link #sendBulkRequestAsync(Iterable)} instead.
+   * {@link #sendBulkRequestAsync(Collection)} instead.
    */
   public CompletableFuture<Void> sendBulkRequestAsync(
-      @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String authToken
+      @NonNull Collection<? extends MatomoRequest> requests, @Nullable String authToken
   ) {
     return sendBulkRequestAsync(requests, authToken, null);
   }

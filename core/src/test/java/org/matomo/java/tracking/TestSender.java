@@ -53,7 +53,7 @@ class TestSender implements Sender {
   @NonNull
   @Override
   public CompletableFuture<Void> sendBulkAsync(
-      @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken
+      @NonNull Collection<? extends MatomoRequest> requests, @Nullable String overrideAuthToken
   ) {
     for (MatomoRequest request : requests) {
       createQueryAndAddRequest(request, overrideAuthToken);

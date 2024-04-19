@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
@@ -60,7 +61,6 @@ class Java8Sender implements Sender {
   private final QueryCreator queryCreator;
 
   private final ExecutorService executorService;
-  private final Collection<String> queries = new ArrayList<>(16);
 
   @Override
   @NonNull
@@ -322,39 +322,37 @@ class Java8Sender implements Sender {
   @Override
   @NonNull
   public CompletableFuture<Void> sendBulkAsync(
-      @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken
+      @NonNull Collection<? extends MatomoRequest> requests, @Nullable String overrideAuthToken
   ) {
     String authToken = AuthToken.determineAuthToken(overrideAuthToken, requests, trackerConfiguration);
     Map<String, String> headers = new LinkedHashMap<>();
     String headerUserAgent = findHeaderUserAgent(requests);
     String sessionId = findSessionId(requests);
     Map<String, String> cookies = findCookies(requests);
-    synchronized (queries) {
-      for (MatomoRequest request : requests) {
-        RequestValidator.validate(request, authToken);
-        if (request.getHeaders() != null && !request.getHeaders().isEmpty()) {
-          headers.putAll(request.getHeaders());
-        }
-        String query = queryCreator.createQuery(request, null);
-        queries.add(query);
+    List<String> queries = new ArrayList<>(requests.size());
+    for (MatomoRequest request : requests) {
+      RequestValidator.validate(request, authToken);
+      if (request.getHeaders() != null && !request.getHeaders().isEmpty()) {
+        headers.putAll(request.getHeaders());
       }
+      queries.add(queryCreator.createQuery(request, null));
     }
     return CompletableFuture.supplyAsync(() ->
-        sendBulkAsync(authToken, headers, headerUserAgent, sessionId, cookies), executorService);
+        sendBulkAsync(queries, authToken, headers, headerUserAgent, sessionId, cookies),
+        executorService);
   }
 
   @Nullable
   private Void sendBulkAsync(
-      @Nullable String authToken, Map<String, String> headers, String headerUserAgent, String sessionId,
+      List<String> queries,
+      @Nullable String authToken,
+      Map<String, String> headers,
+      String headerUserAgent,
+      String sessionId,
       Map<String, String> cookies
   ) {
-    synchronized (queries) {
-      if (!queries.isEmpty()) {
-        sendBulk(queries, authToken, headers, headerUserAgent, sessionId, cookies);
-        queries.clear();
-      }
-      return null;
-    }
+    sendBulk(queries, authToken, headers, headerUserAgent, sessionId, cookies);
+    return null;
   }
 
   @Nullable

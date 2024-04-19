@@ -115,7 +115,7 @@ public class Java11Sender implements Sender {
   @NonNull
   @Override
   public CompletableFuture<Void> sendBulkAsync(
-      @NonNull @lombok.NonNull Iterable<? extends MatomoRequest> requests,
+      @NonNull @lombok.NonNull Collection<? extends MatomoRequest> requests,
       @Nullable String overrideAuthToken
   ) {
     return sendAsyncAndCheckResponse(buildHttpPostRequest(requests, overrideAuthToken), null);

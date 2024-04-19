@@ -69,13 +69,22 @@ Projects that use Matomo Java Tracker:
 
 ## What Is New?
 
+### Version 3.4.x
+
+We fixed a synchronization issue in the Java 8 sender (https://github.com/matomo-org/matomo-java-tracker/issues/168). 
+To consume the exact amount of space needed for the queries to send to Matomo, we need the collection size of the incoming
+requests. So we changed `Iterable` to `Collection` in some `MatomoTracker`. This could affect users, that use parameters
+of type `Iterable` in the tracker. Please use `Collection` instead.
+
+### Version 3.3.x
+
 Do you still use Matomo Java Tracker 2.x? We created version 3, that is compatible with Matomo 4 and 5 and contains
 fewer
 dependencies. Release notes can be found here: https://github.com/matomo-org/matomo-java-tracker/releases
 
 Here are the most important changes:
 
-* Matomo Java Tracker 3.3.0 is compatible with Matomo 4 and 5
+* Matomo Java Tracker 3.4.0 is compatible with Matomo 4 and 5
 * less dependencies
 * new dimension parameter
 * special types allow to provide valid parameters now
@@ -140,7 +149,7 @@ Add a dependency on Matomo Java Tracker using Maven. For Java 8:
 <dependency>
     <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker</artifactId>
-    <version>3.3.0</version>
+    <version>3.4.0</version>
 </dependency>
 ```
 
@@ -151,7 +160,7 @@ For Java 11:
 <dependency>
     <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker-java11</artifactId>
-    <version>3.3.0</version>
+    <version>3.4.0</version>
 </dependency>
 ```
 
@@ -159,7 +168,7 @@ or Gradle (Java 8):
 
 ```groovy
 dependencies {
-    implementation("org.piwik.java.tracking:matomo-java-tracker:3.3.0")
+    implementation("org.piwik.java.tracking:matomo-java-tracker:3.4.0")
 }
 ```
 
@@ -167,20 +176,20 @@ or Gradle (Java 11):
 
 ```groovy
 dependencies {
-    implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.3.0")
+    implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.4.0")
 }
 ```
 
 or Gradle with Kotlin DSL (Java 8)
 
 ```kotlin
-implementation("org.piwik.java.tracking:matomo-java-tracker:3.3.0")
+implementation("org.piwik.java.tracking:matomo-java-tracker:3.4.0")
 ```
 
 or Gradle with Kotlin DSL (Java 11)
 
 ```kotlin
-implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.3.0")
+implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.4.0")
 ```
 
 ### Spring Boot Module
@@ -193,7 +202,7 @@ and allows you to configure the tracker via application properties. Add the foll
 <dependency>
     <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker-spring-boot-starter</artifactId>
-    <version>3.3.0</version>
+    <version>3.4.0</version>
 </dependency>
 ```
 
@@ -201,14 +210,14 @@ or Gradle:
 
 ```groovy
 dependencies {
-    implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:3.3.0")
+    implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:3.4.0")
 }
 ```
 
 or Gradle with Kotlin DSL
 
 ```kotlin
-implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:3.3.0")
+implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:3.4.0")
 ```
 
 The following properties are supported:
@@ -678,7 +687,7 @@ version can be used in your local Maven repository for testing purposes, e.g.
 <dependency>
     <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker</artifactId>
-    <version>3.3.1-SNAPSHOT</version>
+    <version>3.4.1-SNAPSHOT</version>
 </dependency>
 ```
 
