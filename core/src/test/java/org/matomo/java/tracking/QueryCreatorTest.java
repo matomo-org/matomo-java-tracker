@@ -550,4 +550,55 @@ class QueryCreatorTest {
     assertThat(query).isEqualTo("idsite=42&token_auth=876de1876fb2cda2816c362a61bfc712&rec=1&apiv=1&_id=112210f47de98115&e_c=Event+Category&e_a=Event+Action&e_n=Event+Name&e_v=23.456&send_image=0&rand=random-value");
   }
 
+  @Test
+  void allowsZeroForEventValue() {
+    matomoRequestBuilder.eventName("Event Name")
+                        .eventValue(0.0)
+                        .eventAction("Event Action")
+                        .eventCategory("Event Category");
+
+    whenCreatesQuery();
+
+    assertThat(query)
+        .isEqualTo("idsite=42&" +
+            "token_auth=876de1876fb2cda2816c362a61bfc712&" +
+            "rec=1&" +
+            "apiv=1&" +
+            "_id=112210f47de98115&" +
+            "e_c=Event+Category&" +
+            "e_a=Event+Action&" +
+            "e_n=Event+Name&" +
+            "e_v=0.0&" +
+            "send_image=0&" +
+            "rand=random-value"
+        );
+  }
+
+  @Test
+  void allowsZeroForEcommerceValues() {
+    matomoRequestBuilder
+        .ecommerceRevenue(0.0)
+        .ecommerceSubtotal(0.0)
+        .ecommerceTax(0.0)
+        .ecommerceShippingCost(0.0)
+        .ecommerceDiscount(0.0);
+
+    whenCreatesQuery();
+
+    assertThat(query)
+        .isEqualTo("idsite=42&" +
+            "token_auth=876de1876fb2cda2816c362a61bfc712&" +
+            "rec=1&" +
+            "apiv=1&" +
+            "_id=112210f47de98115&" +
+            "revenue=0.0&" +
+            "ec_st=0.0&" +
+            "ec_tx=0.0&" +
+            "ec_sh=0.0&" +
+            "ec_dt=0.0&" +
+            "send_image=0&" +
+            "rand=random-value"
+        );
+  }
+
 }
