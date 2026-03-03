@@ -355,7 +355,7 @@ public class MatomoRequest {
   /**
    * The grand total for the ecommerce order (required when tracking an ecommerce order).
    */
-  @TrackingParameter(name = "revenue")
+  @TrackingParameter(name = "revenue", min = 0)
   private Double ecommerceRevenue;
 
   /**
@@ -433,7 +433,7 @@ public class MatomoRequest {
   /**
    * Some numeric value that represents the event value.
    */
-  @TrackingParameter(name = "e_v")
+  @TrackingParameter(name = "e_v", min = 0)
   private Double eventValue;
 
   /**
@@ -476,25 +476,25 @@ public class MatomoRequest {
   /**
    * The subtotal of the order; excludes shipping.
    */
-  @TrackingParameter(name = "ec_st")
+  @TrackingParameter(name = "ec_st", min = 0)
   private Double ecommerceSubtotal;
 
   /**
    * Tax amount of the order.
    */
-  @TrackingParameter(name = "ec_tx")
+  @TrackingParameter(name = "ec_tx", min = 0)
   private Double ecommerceTax;
 
   /**
    * Shipping cost of the order.
    */
-  @TrackingParameter(name = "ec_sh")
+  @TrackingParameter(name = "ec_sh", min = 0)
   private Double ecommerceShippingCost;
 
   /**
    * Discount offered.
    */
-  @TrackingParameter(name = "ec_dt")
+  @TrackingParameter(name = "ec_dt", min = 0)
   private Double ecommerceDiscount;
 
   /**
