@@ -21,33 +21,13 @@ jobs:
           git config user.name "Matomo Java Tracker"
       - id: version
         run: |
-          VERSION=$(mvn -B help:evaluate -Dexpression=project.version -q -DforceStdout)
-          echo "version=${VERSION%-SNAPSHOT}" >> $GITHUB_OUTPUT
+          VERSION=$( mvn -B help:evaluate -Dexpression=project.version -q -DforceStdout )
+          echo "::set-output name=version::${VERSION%-SNAPSHOT}"
       - run: mvn -B release:prepare release:perform
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-      - name: Update README.md with release version
-        env:
-          RELEASE_VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          # Update <version> tags in Maven XML snippets.
-          # The pattern intentionally excludes -SNAPSHOT versions because the regex
-          # requires </version> to follow immediately after the numeric version.
-          sed -i -E \
-            "s|<version>[0-9]+\.[0-9]+\.[0-9]+</version>|<version>${RELEASE_VERSION}</version>|g" \
-            README.md
-          # Update version in Gradle dependency snippets (Groovy and Kotlin DSL).
-          # Matches the groupId:artifactId:version pattern for this project's artifacts.
-          sed -i -E \
-            "s|(org\.piwik\.java\.tracking:[^:\"]+:)[0-9]+\.[0-9]+\.[0-9]+|\1${RELEASE_VERSION}|g" \
-            README.md
-          git add README.md
-          # Only commit if the file actually changed (idempotent on re-runs).
-          git diff --cached --quiet || \
-            git commit -m "[ci skip] Update README.md dependency snippets to ${RELEASE_VERSION}"
-          git push
       - uses: release-drafter/release-drafter@v7
         with:
           version: ${{ steps.version.outputs.version }}
