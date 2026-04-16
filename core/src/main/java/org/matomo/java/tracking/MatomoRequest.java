@@ -211,6 +211,16 @@ public class MatomoRequest {
   private String headerUserAgent;
 
   /**
+   * JSON-encoded <a
+   * href="https://developer.chrome.com/docs/privacy-security/user-agent-client-hints">User Agent
+   * Client Hints</a> collected by JavaScript. Used to enrich the detected user agent data.
+   *
+   * <p>Example: {@code {"brands":[{"brand":"Chromium","version":"110"}],"mobile":false}}
+   */
+  @TrackingParameter(name = "uadata")
+  private String clientHints;
+
+  /**
    * An override value for the Accept-Language HTTP header field. This value is used to detect the
    * visitor's country if GeoIP is not enabled.
    */
@@ -408,6 +418,40 @@ public class MatomoRequest {
   private Instant ecommerceLastOrderTimestamp;
 
   /**
+   * The SKU of the product being viewed. Used for ecommerce product page tracking.
+   *
+   * <p>Requires {@code idgoal=0} and {@code _pks} to be set.
+   */
+  @TrackingParameter(name = "_pks")
+  private String ecommerceProductSku;
+
+  /**
+   * The name of the product being viewed. Used for ecommerce product page tracking.
+   *
+   * <p>Requires {@code idgoal=0} and {@code _pks} to be set.
+   */
+  @TrackingParameter(name = "_pkn")
+  private String ecommerceProductName;
+
+  /**
+   * The category of the product being viewed. Used for ecommerce product page tracking.
+   *
+   * <p>Can be a string or a JSON-encoded array of up to five category names.
+   *
+   * <p>Requires {@code idgoal=0} and {@code _pks} to be set.
+   */
+  @TrackingParameter(name = "_pkc")
+  private String ecommerceProductCategory;
+
+  /**
+   * The price of the product being viewed. Used for ecommerce product page tracking.
+   *
+   * <p>Requires {@code idgoal=0} and {@code _pks} to be set.
+   */
+  @TrackingParameter(name = "_pkp", min = 0)
+  private Double ecommerceProductPrice;
+
+  /**
    * 32 character authorization key used to authenticate the API request. We recommend to create a
    * user specifically for accessing the Tracking API, and give the user only write permission on
    * the website(s).
@@ -487,6 +531,34 @@ public class MatomoRequest {
   private Boolean trackBotRequests;
 
   /**
+   * When {@code bots=1} is set, this specifies the recording mode for bot requests.
+   *
+   * <p>Set to {@code 1} to record bot requests without triggering any goals, events or actions.
+   */
+  @TrackingParameter(name = "recMode")
+  private Integer botRecordingMode;
+
+  /**
+   * The HTTP status code of the tracked request. Used with bot tracking.
+   *
+   * <p>When tracking a bot visit, this can be set to the HTTP status code of the bot's request.
+   */
+  @TrackingParameter(name = "http_status")
+  private Integer httpStatusCode;
+
+  /** The bandwidth used for the tracked request in bytes. Used with bot tracking. */
+  @TrackingParameter(name = "bw_bytes", min = 0)
+  private Long bandwidthBytes;
+
+  /**
+   * Defines the source of the tracking request (e.g., {@code "backend"} or {@code "mobile-app"}).
+   *
+   * <p>Used to classify where the tracking hit originated.
+   */
+  @TrackingParameter(name = "source")
+  private String sourceLabel;
+
+  /**
    * Meant to hold a random value that is generated before each request. Using it helps avoid the
    * tracking request being cached by the browser or a proxy.
    */
@@ -500,6 +572,99 @@ public class MatomoRequest {
    */
   @TrackingParameter(name = "debug")
   private Boolean debug;
+
+  /**
+   * A unique ID used to identify the media. Part of the <a
+   * href="https://plugins.matomo.org/MediaAnalytics">Media Analytics</a> plugin.
+   */
+  @TrackingParameter(name = "ma_id")
+  private String mediaId;
+
+  /**
+   * The title of the media resource. Part of the <a
+   * href="https://plugins.matomo.org/MediaAnalytics">Media Analytics</a> plugin.
+   */
+  @TrackingParameter(name = "ma_ti")
+  private String mediaTitle;
+
+  /**
+   * The URL of the media resource. Part of the <a
+   * href="https://plugins.matomo.org/MediaAnalytics">Media Analytics</a> plugin.
+   */
+  @TrackingParameter(name = "ma_re")
+  private String mediaResource;
+
+  /**
+   * The type of media, e.g. {@code "video"} or {@code "audio"}. Part of the <a
+   * href="https://plugins.matomo.org/MediaAnalytics">Media Analytics</a> plugin.
+   */
+  @TrackingParameter(name = "ma_mt")
+  private String mediaType;
+
+  /**
+   * The name of the media player used to play the media, e.g. {@code "html5"}. Part of the <a
+   * href="https://plugins.matomo.org/MediaAnalytics">Media Analytics</a> plugin.
+   */
+  @TrackingParameter(name = "ma_pn")
+  private String mediaPlayerName;
+
+  /**
+   * The number of seconds the visitor has spent playing/watching the media resource so far. Part of
+   * the <a href="https://plugins.matomo.org/MediaAnalytics">Media Analytics</a> plugin.
+   */
+  @TrackingParameter(name = "ma_st", min = 0)
+  private Integer mediaTimeSpent;
+
+  /**
+   * The total duration / length of the media resource in seconds. Part of the <a
+   * href="https://plugins.matomo.org/MediaAnalytics">Media Analytics</a> plugin.
+   */
+  @TrackingParameter(name = "ma_le", min = 0)
+  private Integer mediaLength;
+
+  /**
+   * The current progress of the media in percent (0–100). Part of the <a
+   * href="https://plugins.matomo.org/MediaAnalytics">Media Analytics</a> plugin.
+   */
+  @TrackingParameter(name = "ma_ps", min = 0, max = 100)
+  private Integer mediaProgressPercent;
+
+  /**
+   * How many seconds it took before the media started playing. Part of the <a
+   * href="https://plugins.matomo.org/MediaAnalytics">Media Analytics</a> plugin.
+   */
+  @TrackingParameter(name = "ma_ttp", min = 0)
+  private Integer mediaTimeToPlay;
+
+  /**
+   * The width of the media player in pixels. Part of the <a
+   * href="https://plugins.matomo.org/MediaAnalytics">Media Analytics</a> plugin.
+   */
+  @TrackingParameter(name = "ma_w", min = 0)
+  private Integer mediaWidth;
+
+  /**
+   * The height of the media player in pixels. Part of the <a
+   * href="https://plugins.matomo.org/MediaAnalytics">Media Analytics</a> plugin.
+   */
+  @TrackingParameter(name = "ma_h", min = 0)
+  private Integer mediaHeight;
+
+  /**
+   * Whether the media is currently displayed in fullscreen. Part of the <a
+   * href="https://plugins.matomo.org/MediaAnalytics">Media Analytics</a> plugin.
+   */
+  @TrackingParameter(name = "ma_fs")
+  private Boolean mediaFullscreen;
+
+  /**
+   * A JSON-encoded array of which positions in the media were viewed by the visitor. Part of the <a
+   * href="https://plugins.matomo.org/MediaAnalytics">Media Analytics</a> plugin.
+   *
+   * <p>Example: {@code [[0,15],[30,44]]} means the visitor watched segments 0–15s and 30–44s.
+   */
+  @TrackingParameter(name = "ma_se")
+  private String mediaSegmentsViewed;
 
   /**
    * Contains an error message describing the error that occurred during the last tracking request.

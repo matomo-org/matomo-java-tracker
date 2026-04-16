@@ -618,4 +618,205 @@ class QueryCreatorTest {
                 + "send_image=0&"
                 + "rand=random-value");
   }
+
+  @Test
+  void includesClientHints() {
+    matomoRequestBuilder.clientHints(
+        "{\"brands\":[{\"brand\":\"Chromium\",\"version\":\"110\"}],\"mobile\":false}");
+
+    whenCreatesQuery();
+
+    assertThat(query)
+        .contains(
+            "uadata=%7B%22brands%22%3A%5B%7B%22brand%22%3A%22Chromium%22%2C%22version%22%3A%22110%22%7D%5D%2C%22mobile%22%3Afalse%7D");
+  }
+
+  @Test
+  void includesEcommerceProductView() {
+    matomoRequestBuilder
+        .ecommerceProductSku("SKU-123")
+        .ecommerceProductName("Blue Widget")
+        .ecommerceProductCategory("Widgets")
+        .ecommerceProductPrice(9.99);
+
+    whenCreatesQuery();
+
+    assertThat(query)
+        .contains("_pks=SKU-123")
+        .contains("_pkn=Blue+Widget")
+        .contains("_pkc=Widgets")
+        .contains("_pkp=9.99");
+  }
+
+  @Test
+  void allowsZeroForEcommerceProductPrice() {
+    matomoRequestBuilder.ecommerceProductSku("SKU-FREE").ecommerceProductPrice(0.0);
+
+    whenCreatesQuery();
+
+    assertThat(query).contains("_pks=SKU-FREE").contains("_pkp=0.0");
+  }
+
+  @Test
+  void failsIfEcommerceProductPriceIsNegative() {
+    matomoRequestBuilder.ecommerceProductPrice(-1.0);
+
+    assertThatThrownBy(this::whenCreatesQuery)
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseMessage("Invalid value for _pkp. Must be greater or equal than 0");
+  }
+
+  @Test
+  void includesBotTrackingParameters() {
+    matomoRequestBuilder
+        .trackBotRequests(true)
+        .botRecordingMode(1)
+        .httpStatusCode(200)
+        .bandwidthBytes(1024L)
+        .sourceLabel("backend");
+
+    whenCreatesQuery();
+
+    assertThat(query)
+        .contains("bots=1")
+        .contains("recMode=1")
+        .contains("http_status=200")
+        .contains("bw_bytes=1024")
+        .contains("source=backend");
+  }
+
+  @Test
+  void allowsZeroForBandwidthBytes() {
+    matomoRequestBuilder.bandwidthBytes(0L);
+
+    whenCreatesQuery();
+
+    assertThat(query).contains("bw_bytes=0");
+  }
+
+  @Test
+  void failsIfBandwidthBytesIsNegative() {
+    matomoRequestBuilder.bandwidthBytes(-1L);
+
+    assertThatThrownBy(this::whenCreatesQuery)
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseMessage("Invalid value for bw_bytes. Must be greater or equal than 0");
+  }
+
+  @Test
+  void includesMediaAnalyticsParameters() {
+    matomoRequestBuilder
+        .mediaId("media-abc123")
+        .mediaTitle("My Video")
+        .mediaResource("https://example.com/video.mp4")
+        .mediaType("video")
+        .mediaPlayerName("html5")
+        .mediaTimeSpent(42)
+        .mediaLength(120)
+        .mediaProgressPercent(35)
+        .mediaTimeToPlay(3)
+        .mediaWidth(1280)
+        .mediaHeight(720)
+        .mediaFullscreen(false)
+        .mediaSegmentsViewed("[[0,42]]");
+
+    whenCreatesQuery();
+
+    assertThat(query)
+        .contains("ma_id=media-abc123")
+        .contains("ma_ti=My+Video")
+        .contains("ma_re=https%3A%2F%2Fexample.com%2Fvideo.mp4")
+        .contains("ma_mt=video")
+        .contains("ma_pn=html5")
+        .contains("ma_st=42")
+        .contains("ma_le=120")
+        .contains("ma_ps=35")
+        .contains("ma_ttp=3")
+        .contains("ma_w=1280")
+        .contains("ma_h=720")
+        .contains("ma_fs=0")
+        .contains("ma_se=%5B%5B0%2C42%5D%5D");
+  }
+
+  @Test
+  void allowsZeroForMediaTimeValues() {
+    matomoRequestBuilder.mediaTimeSpent(0).mediaLength(0).mediaTimeToPlay(0);
+
+    whenCreatesQuery();
+
+    assertThat(query).contains("ma_st=0").contains("ma_le=0").contains("ma_ttp=0");
+  }
+
+  @Test
+  void failsIfMediaTimeSpentIsNegative() {
+    matomoRequestBuilder.mediaTimeSpent(-1);
+
+    assertThatThrownBy(this::whenCreatesQuery)
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseMessage("Invalid value for ma_st. Must be greater or equal than 0");
+  }
+
+  @Test
+  void failsIfMediaLengthIsNegative() {
+    matomoRequestBuilder.mediaLength(-1);
+
+    assertThatThrownBy(this::whenCreatesQuery)
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseMessage("Invalid value for ma_le. Must be greater or equal than 0");
+  }
+
+  @Test
+  void failsIfMediaProgressPercentIsNegative() {
+    matomoRequestBuilder.mediaProgressPercent(-1);
+
+    assertThatThrownBy(this::whenCreatesQuery)
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseMessage("Invalid value for ma_ps. Must be greater or equal than 0");
+  }
+
+  @Test
+  void failsIfMediaProgressPercentExceeds100() {
+    matomoRequestBuilder.mediaProgressPercent(101);
+
+    assertThatThrownBy(this::whenCreatesQuery)
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseMessage("Invalid value for ma_ps. Must be less or equal than 100");
+  }
+
+  @Test
+  void allowsZeroAndMaxForMediaProgressPercent() {
+    matomoRequestBuilder.mediaProgressPercent(0);
+    whenCreatesQuery();
+    assertThat(query).contains("ma_ps=0");
+
+    matomoRequestBuilder.mediaProgressPercent(100);
+    whenCreatesQuery();
+    assertThat(query).contains("ma_ps=100");
+  }
+
+  @Test
+  void failsIfMediaWidthIsNegative() {
+    matomoRequestBuilder.mediaWidth(-1);
+
+    assertThatThrownBy(this::whenCreatesQuery)
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseMessage("Invalid value for ma_w. Must be greater or equal than 0");
+  }
+
+  @Test
+  void failsIfMediaHeightIsNegative() {
+    matomoRequestBuilder.mediaHeight(-1);
+
+    assertThatThrownBy(this::whenCreatesQuery)
+        .isInstanceOf(MatomoException.class)
+        .hasMessage("Could not append parameter")
+        .hasRootCauseMessage("Invalid value for ma_h. Must be greater or equal than 0");
+  }
 }

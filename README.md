@@ -71,6 +71,9 @@ Projects that use Matomo Java Tracker:
 
 ### Version 3.5.x
 
+Added more tracking parameters for user agent data, ecommerce product, bot recording mode, HTTP status, bandwidth,
+source label and media attributes.
+
 The Spring Boot Starter now requires Spring Boot 4. The `@NonNull` annotation has been migrated from
 `org.springframework.lang.NonNull` to `org.jspecify.annotations.NonNull` across the Spring module. The
 `PropertyMapper` usage was updated to align with the Spring Boot 4 API (`alwaysApplyingWhenNonNull()` was removed).
