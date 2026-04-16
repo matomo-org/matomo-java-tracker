@@ -126,18 +126,19 @@ public final class ServletMatomoRequest {
       @edu.umd.cs.findbugs.annotations.NonNull Map<String, String> cookies,
       @edu.umd.cs.findbugs.annotations.NonNull String cookieName,
       @edu.umd.cs.findbugs.annotations.NonNull String cookieValue) {
-    if (cookieName.toLowerCase(Locale.ROOT).startsWith("_pk_id")) {
+    String lowerCookieName = cookieName.toLowerCase(Locale.ROOT);
+    if (lowerCookieName.startsWith("_pk_id")) {
       extractVisitorId(builder, cookies, cookieValue, cookieName);
     }
-    if (cookieName.toLowerCase(Locale.ROOT).equalsIgnoreCase("MATOMO_SESSID")) {
+    if (lowerCookieName.equals("matomo_sessid")) {
       builder.sessionId(cookieValue);
     }
-    if (cookieName.toLowerCase(Locale.ROOT).startsWith("_pk_ses")
-        || cookieName.toLowerCase(Locale.ROOT).startsWith("_pk_ref")
-        || cookieName.toLowerCase(Locale.ROOT).startsWith("_pk_hsr")) {
+    if (lowerCookieName.startsWith("_pk_ses")
+        || lowerCookieName.startsWith("_pk_ref")
+        || lowerCookieName.startsWith("_pk_hsr")) {
       cookies.put(cookieName, cookieValue);
     }
-    if (cookieName.toLowerCase(Locale.ROOT).startsWith("_pk_cvar")) {
+    if (lowerCookieName.startsWith("_pk_cvar")) {
       builder.visitCustomVariables(CustomVariables.parse(cookieValue));
     }
   }

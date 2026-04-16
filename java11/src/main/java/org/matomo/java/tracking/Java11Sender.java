@@ -193,7 +193,9 @@ public class Java11Sender implements Sender {
     }
     if (headers != null) {
       for (Map.Entry<String, String> entry : headers.entrySet()) {
-        if ("User-Agent".equalsIgnoreCase(entry.getKey()) && entry.getValue() != null && !entry.getValue().isBlank()) {
+        if ("User-Agent".equalsIgnoreCase(entry.getKey())
+            && entry.getValue() != null
+            && !entry.getValue().isBlank()) {
           return;
         }
       }

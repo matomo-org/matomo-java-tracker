@@ -11,6 +11,8 @@ import lombok.NonNull;
 
 final class Hex {
 
+  private static final char[] HEX_CHARS = "0123456789abcdef".toCharArray();
+
   private Hex() {
     // utility class
   }
@@ -18,7 +20,7 @@ final class Hex {
   static String fromBytes(@NonNull byte[] bytes) {
     StringBuilder result = new StringBuilder(bytes.length * 2);
     for (byte b : bytes) {
-      result.append(String.format("%02x", b));
+      result.append(HEX_CHARS[(b >> 4) & 0xF]).append(HEX_CHARS[b & 0xF]);
     }
     return result.toString();
   }

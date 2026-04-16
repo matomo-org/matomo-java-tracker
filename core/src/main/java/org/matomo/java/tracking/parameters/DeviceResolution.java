@@ -48,6 +48,6 @@ public class DeviceResolution {
 
   @Override
   public String toString() {
-    return String.format("%dx%d", width, height);
+    return width + "x" + height;
   }
 }

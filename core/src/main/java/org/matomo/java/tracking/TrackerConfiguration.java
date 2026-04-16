@@ -124,7 +124,7 @@ public class TrackerConfiguration {
       throw new IllegalArgumentException("API endpoint must not be null");
     }
     if (defaultAuthToken != null) {
-      if (defaultAuthToken.trim().length() != 32) {
+      if (defaultAuthToken.length() != 32) {
         throw new IllegalArgumentException("Auth token must be exactly 32 characters long");
       }
       if (!AUTH_TOKEN_PATTERN.matcher(defaultAuthToken).matches()) {

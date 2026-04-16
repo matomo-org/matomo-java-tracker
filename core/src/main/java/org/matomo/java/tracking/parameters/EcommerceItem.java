@@ -30,6 +30,6 @@ public class EcommerceItem {
   @Builder.Default private Integer quantity = 0;
 
   public String toString() {
-    return String.format("[\"%s\",\"%s\",\"%s\",%s,%d]", sku, name, category, price, quantity);
+    return "[\"" + sku + "\",\"" + name + "\",\"" + category + "\"," + price + "," + quantity + "]";
   }
 }

@@ -64,6 +64,6 @@ public class AcceptLanguage {
   private static String format(@NonNull LanguageRange languageRange) {
     return languageRange.getWeight() == LanguageRange.MAX_WEIGHT
         ? languageRange.getRange()
-        : String.format("%s;q=%s", languageRange.getRange(), languageRange.getWeight());
+        : languageRange.getRange() + ";q=" + languageRange.getWeight();
   }
 }

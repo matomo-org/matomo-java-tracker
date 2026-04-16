@@ -10,8 +10,7 @@ class DaemonThreadFactory implements ThreadFactory {
 
   @Override
   public Thread newThread(@NonNull Runnable r) {
-    Thread thread =
-        new Thread(null, r, String.format("MatomoJavaTracker-%d", count.getAndIncrement()));
+    Thread thread = new Thread(null, r, "MatomoJavaTracker-" + count.getAndIncrement());
     thread.setDaemon(true);
     return thread;
   }
