@@ -78,7 +78,18 @@ The Spring Boot Starter now requires Spring Boot 4. The `@NonNull` annotation ha
 Fixed a Java 8 compatibility issue in `JavaxHttpServletWrapper` where `Enumeration.asIterator()` (introduced in
 Java 9) was used to iterate over HTTP header names. It has been replaced with a standard `while` loop.
 
-Dependency updates: Spring Boot 3.4.2 → 4.0.5, Jetty EE10 12.0.16 → 12.1.8, Jetty (javax) 10.0.24 → 10.0.26.
+Zero is now accepted as a valid value for numeric tracking parameters such as `idGoal`, `revenue`, and ecommerce
+fields, where it was previously treated as absent and omitted from requests.
+
+Several performance improvements were made to `Java11Sender`: URL construction no longer uses `String.format`,
+the case-insensitive `User-Agent` header lookup no longer allocates a `TreeMap`, `.trim().isEmpty()` checks were
+replaced with the Java 11 `.isBlank()` method, and debug log statements are now guarded to avoid allocating
+cookie list copies when debug logging is disabled.
+
+Spotless now automatically removes unused imports during the build.
+
+Dependency updates: Spring Boot 3.4.2 → 4.0.5, JUnit Jupiter 5.11.4 → 6.0.3, SLF4J 2.0.16 → 2.0.17,
+Jetty EE10 12.0.16 → 12.1.8, Jetty (javax) 10.0.24 → 10.0.26.
 
 The local testing Docker setup now uses MariaDB 12 and Matomo 5.
 

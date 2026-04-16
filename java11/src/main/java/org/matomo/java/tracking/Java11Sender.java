@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -77,7 +76,7 @@ public class Java11Sender implements Sender {
       if (request.getHeaders() != null && !request.getHeaders().isEmpty()) {
         headers.putAll(request.getHeaders());
       }
-      if (request.getHeaderUserAgent() != null && !request.getHeaderUserAgent().trim().isEmpty()) {
+      if (request.getHeaderUserAgent() != null && !request.getHeaderUserAgent().isBlank()) {
         headerUserAgent = request.getHeaderUserAgent();
       }
       queries.add(queryCreator.createQuery(request, null));
@@ -131,9 +130,7 @@ public class Java11Sender implements Sender {
         HttpRequest.newBuilder()
             .uri(
                 apiEndpoint.resolve(
-                    String.format(
-                        "%s?%s",
-                        apiEndpoint.getPath(), queryCreator.createQuery(request, authToken))));
+                    apiEndpoint.getPath() + "?" + queryCreator.createQuery(request, authToken)));
     applyTrackerConfiguration(builder);
     setUserAgentHeader(builder, request.getHeaderUserAgent(), request.getHeaders());
     addHeaders(builder, request.getHeaders());
@@ -142,9 +139,11 @@ public class Java11Sender implements Sender {
 
   private <T> T send(@NonNull HttpRequest httpRequest, @NonNull Callable<T> callable) {
     try {
-      log.debug("Sending request to Matomo: {}", httpRequest);
-      log.debug("Headers: {}", httpRequest.headers());
-      log.debug("Cookies: {}", cookieStore.getCookies());
+      if (log.isDebugEnabled()) {
+        log.debug("Sending request to Matomo: {}", httpRequest);
+        log.debug("Headers: {}", httpRequest.headers());
+        log.debug("Cookies: {}", cookieStore.getCookies());
+      }
       return callable.call();
     } catch (Exception e) {
       if (trackerConfiguration.isLogFailedTracking()) {
@@ -188,15 +187,18 @@ public class Java11Sender implements Sender {
       HttpRequest.Builder builder,
       @Nullable String headerUserAgent,
       @Nullable Map<String, String> headers) {
-    String userAgentHeader = null;
-    if ((headerUserAgent == null || headerUserAgent.trim().isEmpty()) && headers != null) {
-      TreeMap<String, String> caseInsensitiveMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-      caseInsensitiveMap.putAll(headers);
-      userAgentHeader = caseInsensitiveMap.get("User-Agent");
+    boolean noExplicitUserAgent = headerUserAgent == null || headerUserAgent.isBlank();
+    if (!noExplicitUserAgent) {
+      return;
     }
-    if ((userAgentHeader == null || userAgentHeader.trim().isEmpty())
-        && (headerUserAgent == null || headerUserAgent.trim().isEmpty())
-        && trackerConfiguration.getUserAgent() != null
+    if (headers != null) {
+      for (Map.Entry<String, String> entry : headers.entrySet()) {
+        if ("User-Agent".equalsIgnoreCase(entry.getKey()) && entry.getValue() != null && !entry.getValue().isBlank()) {
+          return;
+        }
+      }
+    }
+    if (trackerConfiguration.getUserAgent() != null
         && !trackerConfiguration.getUserAgent().isEmpty()) {
       builder.header("User-Agent", trackerConfiguration.getUserAgent());
     }
