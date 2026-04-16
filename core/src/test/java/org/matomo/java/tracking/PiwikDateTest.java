@@ -6,12 +6,9 @@ import java.util.TimeZone;
 import org.junit.jupiter.api.Test;
 import org.piwik.java.tracking.PiwikDate;
 
-
 class PiwikDateTest {
 
-  /**
-   * Test of constructor, of class PiwikDate.
-   */
+  /** Test of constructor, of class PiwikDate. */
   @Test
   void testConstructor0() {
     PiwikDate date = new PiwikDate();
@@ -31,9 +28,7 @@ class PiwikDateTest {
     assertThat(date.getTime()).isEqualTo(1467437553000L);
   }
 
-  /**
-   * Test of setTimeZone method, of class PiwikDate.
-   */
+  /** Test of setTimeZone method, of class PiwikDate. */
   @Test
   void testSetTimeZone() {
     PiwikDate date = new PiwikDate(1433186085092L);

@@ -40,14 +40,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * A {@link Sender} implementation that uses Java 8 {@link HttpURLConnection} to send requests to the Matomo.
+ * A {@link Sender} implementation that uses Java 8 {@link HttpURLConnection} to send requests to
+ * the Matomo.
  *
- * <p>This implementation uses a thread pool to send requests asynchronously. The thread pool is configured using
- * {@link TrackerConfiguration#getThreadPoolSize()}. The thread pool uses daemon threads. This means that the JVM will
- * exit even if the thread pool is not shut down.
+ * <p>This implementation uses a thread pool to send requests asynchronously. The thread pool is
+ * configured using {@link TrackerConfiguration#getThreadPoolSize()}. The thread pool uses daemon
+ * threads. This means that the JVM will exit even if the thread pool is not shut down.
  *
- * <p>If you use a newer Java version, please use the newer Java implementation from the Matomo Java Tracker for
- * Java 11.
+ * <p>If you use a newer Java version, please use the newer Java implementation from the Matomo Java
+ * Tracker for Java 11.
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -64,27 +65,30 @@ class Java8Sender implements Sender {
 
   @Override
   @NonNull
-  public CompletableFuture<MatomoRequest> sendSingleAsync(
-      @NonNull MatomoRequest request
-  ) {
-    return CompletableFuture.supplyAsync(() -> {
-      sendSingle(request);
-      return request;
-    }, executorService);
+  public CompletableFuture<MatomoRequest> sendSingleAsync(@NonNull MatomoRequest request) {
+    return CompletableFuture.supplyAsync(
+        () -> {
+          sendSingle(request);
+          return request;
+        },
+        executorService);
   }
 
   @Override
-  public void sendSingle(
-      @NonNull MatomoRequest request
-  ) {
+  public void sendSingle(@NonNull MatomoRequest request) {
     String authToken = AuthToken.determineAuthToken(null, singleton(request), trackerConfiguration);
     RequestValidator.validate(request, authToken);
     HttpURLConnection connection;
     URI apiEndpoint = trackerConfiguration.getApiEndpoint();
     try {
-      connection = openConnection(apiEndpoint
-          .resolve(String.format("%s?%s", apiEndpoint.getPath(), queryCreator.createQuery(request, authToken)))
-          .toURL());
+      connection =
+          openConnection(
+              apiEndpoint
+                  .resolve(
+                      String.format(
+                          "%s?%s",
+                          apiEndpoint.getPath(), queryCreator.createQuery(request, authToken)))
+                  .toURL());
     } catch (MalformedURLException e) {
       throw new InvalidUrlException(e);
     }
@@ -106,7 +110,8 @@ class Java8Sender implements Sender {
   private HttpURLConnection openConnection(URL url) {
     HttpURLConnection connection;
     try {
-      if (isEmpty(trackerConfiguration.getProxyHost()) || trackerConfiguration.getProxyPort() <= 0) {
+      if (isEmpty(trackerConfiguration.getProxyHost())
+          || trackerConfiguration.getProxyPort() <= 0) {
         log.debug("Proxy host or proxy port not configured. Will create connection without proxy");
         connection = (HttpURLConnection) url.openConnection();
       } else {
@@ -132,22 +137,25 @@ class Java8Sender implements Sender {
   }
 
   private void setUserAgentProperty(
-      @NonNull HttpURLConnection connection, @Nullable String headerUserAgent, @Nullable Map<String, String> headers
-  ) {
+      @NonNull HttpURLConnection connection,
+      @Nullable String headerUserAgent,
+      @Nullable Map<String, String> headers) {
     String userAgentHeader = null;
     if ((headerUserAgent == null || headerUserAgent.trim().isEmpty()) && headers != null) {
       TreeMap<String, String> caseInsensitiveMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
       caseInsensitiveMap.putAll(headers);
       userAgentHeader = caseInsensitiveMap.get("User-Agent");
     }
-    if ((userAgentHeader == null || userAgentHeader.trim().isEmpty()) && (
-        headerUserAgent == null || headerUserAgent.trim().isEmpty())
-        && trackerConfiguration.getUserAgent() != null && !trackerConfiguration.getUserAgent().isEmpty()) {
+    if ((userAgentHeader == null || userAgentHeader.trim().isEmpty())
+        && (headerUserAgent == null || headerUserAgent.trim().isEmpty())
+        && trackerConfiguration.getUserAgent() != null
+        && !trackerConfiguration.getUserAgent().isEmpty()) {
       connection.setRequestProperty("User-Agent", trackerConfiguration.getUserAgent());
     }
   }
 
-  private void addHeaders(@NonNull HttpURLConnection connection, @Nullable Map<String, String> headers) {
+  private void addHeaders(
+      @NonNull HttpURLConnection connection, @Nullable Map<String, String> headers) {
     if (headers != null) {
       for (Map.Entry<String, String> header : headers.entrySet()) {
         connection.setRequestProperty(header.getKey(), header.getValue());
@@ -156,8 +164,7 @@ class Java8Sender implements Sender {
   }
 
   private static void addCookies(
-      HttpURLConnection connection, String sessionId, Map<String, String> cookies
-  ) {
+      HttpURLConnection connection, String sessionId, Map<String, String> cookies) {
     StringBuilder cookiesValue = new StringBuilder();
     if (sessionId != null && !sessionId.isEmpty()) {
       cookiesValue.append("MATOMO_SESSID=").append(sessionId);
@@ -166,7 +173,8 @@ class Java8Sender implements Sender {
       }
     }
     if (cookies != null) {
-      for (Iterator<Map.Entry<String, String>> iterator = cookies.entrySet().iterator(); iterator.hasNext(); ) {
+      for (Iterator<Map.Entry<String, String>> iterator = cookies.entrySet().iterator();
+          iterator.hasNext(); ) {
         Map.Entry<String, String> entry = iterator.next();
         cookiesValue.append(entry.getKey()).append("=").append(entry.getValue());
         if (iterator.hasNext()) {
@@ -185,38 +193,39 @@ class Java8Sender implements Sender {
       if (trackerConfiguration.isLogFailedTracking()) {
         log.error("Received HTTP error code {} for URL {}", responseCode, connection.getURL());
       }
-      throw new MatomoException(String.format("Tracking endpoint responded with code %d", responseCode));
+      throw new MatomoException(
+          String.format("Tracking endpoint responded with code %d", responseCode));
     }
   }
 
-  private static boolean isEmpty(
-      @Nullable String str
-  ) {
+  private static boolean isEmpty(@Nullable String str) {
     return str == null || str.isEmpty() || str.trim().isEmpty();
   }
 
-  private HttpURLConnection openProxiedConnection(
-      @NonNull @lombok.NonNull URL url
-  ) throws IOException {
+  private HttpURLConnection openProxiedConnection(@NonNull @lombok.NonNull URL url)
+      throws IOException {
     requireNonNull(trackerConfiguration.getProxyHost(), "Proxy host must not be null");
     if (trackerConfiguration.getProxyPort() <= 0) {
       throw new IllegalArgumentException("Proxy port must be configured");
     }
     InetSocketAddress proxyAddress =
-        new InetSocketAddress(trackerConfiguration.getProxyHost(), trackerConfiguration.getProxyPort());
+        new InetSocketAddress(
+            trackerConfiguration.getProxyHost(), trackerConfiguration.getProxyPort());
     Proxy proxy = new Proxy(Proxy.Type.HTTP, proxyAddress);
-    if (!isEmpty(trackerConfiguration.getProxyUsername()) && !isEmpty(trackerConfiguration.getProxyPassword())) {
-      Authenticator.setDefault(new ProxyAuthenticator(trackerConfiguration.getProxyUsername(),
-          trackerConfiguration.getProxyPassword()
-      ));
+    if (!isEmpty(trackerConfiguration.getProxyUsername())
+        && !isEmpty(trackerConfiguration.getProxyPassword())) {
+      Authenticator.setDefault(
+          new ProxyAuthenticator(
+              trackerConfiguration.getProxyUsername(), trackerConfiguration.getProxyPassword()));
     }
-    log.debug("Using proxy {} on port {}", trackerConfiguration.getProxyHost(), trackerConfiguration.getProxyPort());
+    log.debug(
+        "Using proxy {} on port {}",
+        trackerConfiguration.getProxyHost(),
+        trackerConfiguration.getProxyPort());
     return (HttpURLConnection) url.openConnection(proxy);
   }
 
-  private void applySslConfiguration(
-      @NonNull @lombok.NonNull HttpsURLConnection connection
-  ) {
+  private void applySslConfiguration(@NonNull @lombok.NonNull HttpsURLConnection connection) {
     if (trackerConfiguration.isDisableSslCertValidation()) {
       try {
         SSLContext sslContext = SSLContext.getInstance("SSL");
@@ -233,9 +242,10 @@ class Java8Sender implements Sender {
 
   @Override
   public void sendBulk(
-      @NonNull @lombok.NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken
-  ) {
-    String authToken = AuthToken.determineAuthToken(overrideAuthToken, requests, trackerConfiguration);
+      @NonNull @lombok.NonNull Iterable<? extends MatomoRequest> requests,
+      @Nullable String overrideAuthToken) {
+    String authToken =
+        AuthToken.determineAuthToken(overrideAuthToken, requests, trackerConfiguration);
     Collection<String> queries = new ArrayList<>();
     Map<String, String> headers = new LinkedHashMap<>();
     String headerUserAgent = null;
@@ -246,10 +256,9 @@ class Java8Sender implements Sender {
       if (request.getHeaders() != null && !request.getHeaders().isEmpty()) {
         headers.putAll(request.getHeaders());
       }
-      if (headerUserAgent == null && request.getHeaderUserAgent() != null && !request
-          .getHeaderUserAgent()
-          .trim()
-          .isEmpty()) {
+      if (headerUserAgent == null
+          && request.getHeaderUserAgent() != null
+          && !request.getHeaderUserAgent().trim().isEmpty()) {
         headerUserAgent = request.getHeaderUserAgent();
       }
       queries.add(queryCreator.createQuery(request, null));
@@ -269,8 +278,7 @@ class Java8Sender implements Sender {
       Map<String, String> headers,
       String headerUserAgent,
       String sessionId,
-      Map<String, String> cookies
-  ) {
+      Map<String, String> cookies) {
     if (queries.isEmpty()) {
       throw new IllegalArgumentException("Queries must not be empty");
     }
@@ -285,12 +293,14 @@ class Java8Sender implements Sender {
     setUserAgentProperty(connection, headerUserAgent, headers);
     addHeaders(connection, headers);
     addCookies(connection, sessionId, cookies);
-    log.debug("Sending bulk request using URI {} asynchronously", trackerConfiguration.getApiEndpoint());
+    log.debug(
+        "Sending bulk request using URI {} asynchronously", trackerConfiguration.getApiEndpoint());
     OutputStream outputStream = null;
     try {
       connection.connect();
       outputStream = connection.getOutputStream();
-      outputStream.write(BulkRequest.builder().queries(queries).authToken(authToken).build().toBytes());
+      outputStream.write(
+          BulkRequest.builder().queries(queries).authToken(authToken).build().toBytes());
       outputStream.flush();
       checkResponse(connection);
     } catch (IOException e) {
@@ -316,15 +326,14 @@ class Java8Sender implements Sender {
     connection.setDoOutput(true);
     connection.setRequestProperty("Accept", "*/*");
     connection.setRequestProperty("Content-Type", "application/json");
-
   }
 
   @Override
   @NonNull
   public CompletableFuture<Void> sendBulkAsync(
-      @NonNull Collection<? extends MatomoRequest> requests, @Nullable String overrideAuthToken
-  ) {
-    String authToken = AuthToken.determineAuthToken(overrideAuthToken, requests, trackerConfiguration);
+      @NonNull Collection<? extends MatomoRequest> requests, @Nullable String overrideAuthToken) {
+    String authToken =
+        AuthToken.determineAuthToken(overrideAuthToken, requests, trackerConfiguration);
     Map<String, String> headers = new LinkedHashMap<>();
     String headerUserAgent = findHeaderUserAgent(requests);
     String sessionId = findSessionId(requests);
@@ -337,8 +346,8 @@ class Java8Sender implements Sender {
       }
       queries.add(queryCreator.createQuery(request, null));
     }
-    return CompletableFuture.supplyAsync(() ->
-        sendBulkAsync(queries, authToken, headers, headerUserAgent, sessionId, cookies),
+    return CompletableFuture.supplyAsync(
+        () -> sendBulkAsync(queries, authToken, headers, headerUserAgent, sessionId, cookies),
         executorService);
   }
 
@@ -349,8 +358,7 @@ class Java8Sender implements Sender {
       Map<String, String> headers,
       String headerUserAgent,
       String sessionId,
-      Map<String, String> cookies
-  ) {
+      Map<String, String> cookies) {
     sendBulk(queries, authToken, headers, headerUserAgent, sessionId, cookies);
     return null;
   }

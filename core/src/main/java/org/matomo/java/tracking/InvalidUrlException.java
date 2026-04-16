@@ -7,9 +7,7 @@
 
 package org.matomo.java.tracking;
 
-/**
- * Thrown when an invalid URL is passed to the tracker.
- */
+/** Thrown when an invalid URL is passed to the tracker. */
 public class InvalidUrlException extends RuntimeException {
 
   InvalidUrlException(Throwable cause) {

@@ -59,10 +59,7 @@ public class MatomoRequest {
    * The ID of the website we're tracking a visit/action for. Only needed, if no default site id is
    * configured.
    */
-  @TrackingParameter(
-      name = "idsite",
-      min = 1
-  )
+  @TrackingParameter(name = "idsite", min = 1)
   private Integer siteId;
 
   /**
@@ -74,15 +71,11 @@ public class MatomoRequest {
   @TrackingParameter(name = "action_name")
   private String actionName;
 
-  /**
-   * The full URL for the current action.
-   */
+  /** The full URL for the current action. */
   @TrackingParameter(name = "url")
   private String actionUrl;
 
-  /**
-   * Defines the API version to use (default: 1).
-   */
+  /** Defines the API version to use (default: 1). */
   @TrackingParameter(name = "apiv")
   @Default
   private String apiVersion = "1";
@@ -91,9 +84,9 @@ public class MatomoRequest {
    * The unique visitor ID. See {@link VisitorId}. Default is {@link VisitorId#random()}
    *
    * <p>Since version 3.0.0 this parameter is of type {@link VisitorId} and not a String anymore.
-   * Use {@link VisitorId#fromHex(String)} to create a VisitorId from a hex string,
-   * {@link VisitorId#fromUUID(UUID)} to create it from a UUID or {@link VisitorId#fromHash(long)}
-   * to create it from a long value.
+   * Use {@link VisitorId#fromHex(String)} to create a VisitorId from a hex string, {@link
+   * VisitorId#fromUUID(UUID)} to create it from a UUID or {@link VisitorId#fromHash(long)} to
+   * create it from a long value.
    */
   @TrackingParameter(name = "_id")
   @Default
@@ -144,121 +137,76 @@ public class MatomoRequest {
   @TrackingParameter(name = "_idts")
   private Instant visitorFirstVisitTimestamp;
 
-  /**
-   * The campaign name. This parameter will only be used for the first pageview of a visit.
-   */
+  /** The campaign name. This parameter will only be used for the first pageview of a visit. */
   @TrackingParameter(name = "_rcn")
   private String campaignName;
 
   /**
-   * The campaign keyword (see
-   * <a href="https://matomo.org/docs/tracking-campaigns/">Tracking Campaigns</a>). Used to
-   * populate the <em>Referrers &gt; Campaigns</em> report (clicking on a campaign loads all
-   * keywords for this campaign). This parameter will only be used for the first pageview of a
-   * visit.
+   * The campaign keyword (see <a href="https://matomo.org/docs/tracking-campaigns/">Tracking
+   * Campaigns</a>). Used to populate the <em>Referrers &gt; Campaigns</em> report (clicking on a
+   * campaign loads all keywords for this campaign). This parameter will only be used for the first
+   * pageview of a visit.
    */
   @TrackingParameter(name = "_rck")
   private String campaignKeyword;
 
-  /**
-   * The resolution of the device the visitor is using.
-   */
+  /** The resolution of the device the visitor is using. */
   @TrackingParameter(name = "res")
   private DeviceResolution deviceResolution;
 
-  /**
-   * The current hour (local time).
-   */
-  @TrackingParameter(
-      name = "h",
-      min = 0,
-      max = 23
-  )
+  /** The current hour (local time). */
+  @TrackingParameter(name = "h", min = 0, max = 23)
   private Integer currentHour;
 
-  /**
-   * The current minute (local time).
-   */
-  @TrackingParameter(
-      name = "m",
-      min = 0,
-      max = 59
-  )
+  /** The current minute (local time). */
+  @TrackingParameter(name = "m", min = 0, max = 59)
   private Integer currentMinute;
 
-  /**
-   * The current second (local time).
-   */
-  @TrackingParameter(
-      name = "s",
-      min = 0,
-      max = 59
-  )
+  /** The current second (local time). */
+  @TrackingParameter(name = "s", min = 0, max = 59)
   private Integer currentSecond;
 
-  /**
-   * Does the visitor use the Adobe Flash Plugin.
-   */
+  /** Does the visitor use the Adobe Flash Plugin. */
   @TrackingParameter(name = "fla")
   private Boolean pluginFlash;
 
-  /**
-   * Does the visitor use the Java plugin.
-   */
+  /** Does the visitor use the Java plugin. */
   @TrackingParameter(name = "java")
   private Boolean pluginJava;
 
-  /**
-   * Does the visitor use Director plugin.
-   */
+  /** Does the visitor use Director plugin. */
   @TrackingParameter(name = "dir")
   private Boolean pluginDirector;
 
-  /**
-   * Does the visitor use Quicktime plugin.
-   */
+  /** Does the visitor use Quicktime plugin. */
   @TrackingParameter(name = "qt")
   private Boolean pluginQuicktime;
 
-  /**
-   * Does the visitor use Realplayer plugin.
-   */
+  /** Does the visitor use Realplayer plugin. */
   @TrackingParameter(name = "realp")
   private Boolean pluginRealPlayer;
 
-  /**
-   * Does the visitor use a PDF plugin.
-   */
+  /** Does the visitor use a PDF plugin. */
   @TrackingParameter(name = "pdf")
   private Boolean pluginPDF;
 
-  /**
-   * Does the visitor use a Windows Media plugin.
-   */
+  /** Does the visitor use a Windows Media plugin. */
   @TrackingParameter(name = "wma")
   private Boolean pluginWindowsMedia;
 
-  /**
-   * Does the visitor use a Gears plugin.
-   */
+  /** Does the visitor use a Gears plugin. */
   @TrackingParameter(name = "gears")
   private Boolean pluginGears;
 
-  /**
-   * Does the visitor use a Silverlight plugin.
-   */
+  /** Does the visitor use a Silverlight plugin. */
   @TrackingParameter(name = "ag")
   private Boolean pluginSilverlight;
 
-  /**
-   * Does the visitor's client is known to support cookies.
-   */
+  /** Does the visitor's client is known to support cookies. */
   @TrackingParameter(name = "cookie")
   private Boolean supportsCookies;
 
-  /**
-   * An override value for the User-Agent HTTP header field.
-   */
+  /** An override value for the User-Agent HTTP header field. */
   @TrackingParameter(name = "ua")
   private String headerUserAgent;
 
@@ -279,15 +227,11 @@ public class MatomoRequest {
   @TrackingParameter(name = "uid")
   private String userId;
 
-  /**
-   * defines the visitor ID for this request.
-   */
+  /** defines the visitor ID for this request. */
   @TrackingParameter(name = "cid")
   private VisitorId visitorCustomId;
 
-  /**
-   * will force a new visit to be created for this action.
-   */
+  /** will force a new visit to be created for this action. */
   @TrackingParameter(name = "new_visit")
   private Boolean newVisit;
 
@@ -319,9 +263,7 @@ public class MatomoRequest {
   @TrackingParameter(name = "search")
   private String searchQuery;
 
-  /**
-   * When search is specified, you can optionally specify a search category with this parameter.
-   */
+  /** When search is specified, you can optionally specify a search category with this parameter. */
   @TrackingParameter(name = "search_cat")
   private String searchCategory;
 
@@ -330,10 +272,7 @@ public class MatomoRequest {
    * results displayed on the results page. When keywords are tracked with &search_count=0 they will
    * appear in the "No Result Search Keyword" report.
    */
-  @TrackingParameter(
-      name = "search_count",
-      min = 0
-  )
+  @TrackingParameter(name = "search_count", min = 0)
   private Long searchResultsCount;
 
   /**
@@ -352,9 +291,7 @@ public class MatomoRequest {
   @TrackingParameter(name = "idgoal", min = 0)
   private Integer goalId;
 
-  /**
-   * The grand total for the ecommerce order (required when tracking an ecommerce order).
-   */
+  /** The grand total for the ecommerce order (required when tracking an ecommerce order). */
   @TrackingParameter(name = "revenue", min = 0)
   private Double ecommerceRevenue;
 
@@ -374,21 +311,15 @@ public class MatomoRequest {
   @TrackingParameter(name = "ca")
   private Boolean customAction;
 
-  /**
-   * How long it took to connect to server.
-   */
+  /** How long it took to connect to server. */
   @TrackingParameter(name = "pf_net", min = 0)
   private Long networkTime;
 
-  /**
-   * How long it took the server to generate page.
-   */
+  /** How long it took the server to generate page. */
   @TrackingParameter(name = "pf_srv", min = 0)
   private Long serverTime;
 
-  /**
-   * How long it takes the browser to download the response from the server.
-   */
+  /** How long it takes the browser to download the response from the server. */
   @TrackingParameter(name = "pf_tfr", min = 0)
   private Long transferTime;
 
@@ -406,57 +337,39 @@ public class MatomoRequest {
   @TrackingParameter(name = "pf_dm2", min = 0)
   private Long domCompletionTime;
 
-  /**
-   * How long it takes the browser to execute Javascript code waiting for the window.load event.
-   */
+  /** How long it takes the browser to execute Javascript code waiting for the window.load event. */
   @TrackingParameter(name = "pf_onl", min = 0)
   private Long onloadTime;
 
-  /**
-   * eg. Videos, Music, Games...
-   */
+  /** eg. Videos, Music, Games... */
   @TrackingParameter(name = "e_c")
   private String eventCategory;
 
-  /**
-   * An event action like Play, Pause, Duration, Add Playlist, Downloaded, Clicked...
-   */
+  /** An event action like Play, Pause, Duration, Add Playlist, Downloaded, Clicked... */
   @TrackingParameter(name = "e_a")
   private String eventAction;
 
-  /**
-   * The event name for example a Movie name, or Song name, or File name...
-   */
+  /** The event name for example a Movie name, or Song name, or File name... */
   @TrackingParameter(name = "e_n")
   private String eventName;
 
-  /**
-   * Some numeric value that represents the event value.
-   */
+  /** Some numeric value that represents the event value. */
   @TrackingParameter(name = "e_v", min = 0)
   private Double eventValue;
 
-  /**
-   * The name of the content. For instance 'Ad Foo Bar'
-   */
+  /** The name of the content. For instance 'Ad Foo Bar' */
   @TrackingParameter(name = "c_n")
   private String contentName;
 
-  /**
-   * The actual content piece. For instance the path to an image, video, audio, any text
-   */
+  /** The actual content piece. For instance the path to an image, video, audio, any text */
   @TrackingParameter(name = "c_p")
   private String contentPiece;
 
-  /**
-   * The target of the content. For instance the URL of a landing page
-   */
+  /** The target of the content. For instance the URL of a landing page */
   @TrackingParameter(name = "c_t")
   private String contentTarget;
 
-  /**
-   * The name of the interaction with the content. For instance a 'click'
-   */
+  /** The name of the interaction with the content. For instance a 'click' */
   @TrackingParameter(name = "c_i")
   private String contentInteraction;
 
@@ -467,33 +380,23 @@ public class MatomoRequest {
   @TrackingParameter(name = "ec_id")
   private String ecommerceId;
 
-  /**
-   * Items in the Ecommerce order.
-   */
+  /** Items in the Ecommerce order. */
   @TrackingParameter(name = "ec_items")
   private EcommerceItems ecommerceItems;
 
-  /**
-   * The subtotal of the order; excludes shipping.
-   */
+  /** The subtotal of the order; excludes shipping. */
   @TrackingParameter(name = "ec_st", min = 0)
   private Double ecommerceSubtotal;
 
-  /**
-   * Tax amount of the order.
-   */
+  /** Tax amount of the order. */
   @TrackingParameter(name = "ec_tx", min = 0)
   private Double ecommerceTax;
 
-  /**
-   * Shipping cost of the order.
-   */
+  /** Shipping cost of the order. */
   @TrackingParameter(name = "ec_sh", min = 0)
   private Double ecommerceShippingCost;
 
-  /**
-   * Discount offered.
-   */
+  /** Discount offered. */
   @TrackingParameter(name = "ec_dt", min = 0)
   private Double ecommerceDiscount;
 
@@ -509,16 +412,10 @@ public class MatomoRequest {
    * user specifically for accessing the Tracking API, and give the user only write permission on
    * the website(s).
    */
-  @TrackingParameter(
-      name = "token_auth",
-      regex = "[a-z0-9]{32}"
-  )
+  @TrackingParameter(name = "token_auth", regex = "[a-z0-9]{32}")
   private String authToken;
 
-
-  /**
-   * Override value for the visitor IP (both IPv4 and IPv6 notations supported).
-   */
+  /** Override value for the visitor IP (both IPv4 and IPv6 notations supported). */
   @TrackingParameter(name = "cip")
   private String visitorIp;
 
@@ -529,40 +426,26 @@ public class MatomoRequest {
   @TrackingParameter(name = "cdt")
   private Instant requestTimestamp;
 
-  /**
-   * An override value for the country. Must be a two-letter ISO 3166 Alpha-2 country code.
-   */
-  @TrackingParameter(
-      name = "country",
-      maxLength = 2
-  )
+  /** An override value for the country. Must be a two-letter ISO 3166 Alpha-2 country code. */
+  @TrackingParameter(name = "country", maxLength = 2)
   private Country visitorCountry;
 
   /**
    * An override value for the region. Should be set to a ISO 3166-2 region code, which are used by
    * MaxMind's and DB-IP's GeoIP2 databases. See here for a list of them for every country.
    */
-  @TrackingParameter(
-      name = "region",
-      maxLength = 2
-  )
+  @TrackingParameter(name = "region", maxLength = 2)
   private String visitorRegion;
 
-  /**
-   * An override value for the city. The name of the city the visitor is located in, eg, Tokyo.
-   */
+  /** An override value for the city. The name of the city the visitor is located in, eg, Tokyo. */
   @TrackingParameter(name = "city")
   private String visitorCity;
 
-  /**
-   * An override value for the visitor's latitude, eg 22.456.
-   */
+  /** An override value for the visitor's latitude, eg 22.456. */
   @TrackingParameter(name = "lat", min = -90, max = 90)
   private Double visitorLatitude;
 
-  /**
-   * An override value for the visitor's longitude, eg 22.456.
-   */
+  /** An override value for the visitor's longitude, eg 22.456. */
   @TrackingParameter(name = "long", min = -180, max = 180)
   private Double visitorLongitude;
 
@@ -603,7 +486,6 @@ public class MatomoRequest {
   @TrackingParameter(name = "bots")
   private Boolean trackBotRequests;
 
-
   /**
    * Meant to hold a random value that is generated before each request. Using it helps avoid the
    * tracking request being cached by the browser or a proxy.
@@ -634,8 +516,8 @@ public class MatomoRequest {
    *
    * <p>Custom action must be enabled for this.
    *
-   * <p>Typically a fully qualified class name of the exception, e.g.
-   * {@code java.lang.NullPointerException}.
+   * <p>Typically a fully qualified class name of the exception, e.g. {@code
+   * java.lang.NullPointerException}.
    *
    * <p>Optional for crash analytics
    */
@@ -695,8 +577,8 @@ public class MatomoRequest {
   /**
    * The Matomo session ID sent as a cookie {@code MATOMO_SESSID}.
    *
-   * <p>If not null a cookie with the name {@code MATOMO_SESSID} will be sent with the value of
-   * this parameter.
+   * <p>If not null a cookie with the name {@code MATOMO_SESSID} will be sent with the value of this
+   * parameter.
    */
   private String sessionId;
 
@@ -704,9 +586,8 @@ public class MatomoRequest {
    * Custom Dimension values for specific Custom Dimension IDs.
    *
    * <p><a href="https://plugins.matomo.org/CustomDimensions">Custom Dimensions plugin</a> must be
-   * installed. See the
-   * <a href="https://matomo.org/docs/custom-dimensions/">Custom Dimensions guide</a>. Requires
-   * Matomo at least 2.15.1
+   * installed. See the <a href="https://matomo.org/docs/custom-dimensions/">Custom Dimensions
+   * guide</a>. Requires Matomo at least 2.15.1
    */
   private Map<Long, Object> dimensions;
 
@@ -736,21 +617,15 @@ public class MatomoRequest {
 
   /**
    * Create a new request from the id of the site being tracked and the full url for the current
-   * action.  This constructor also sets:
-   * <pre>
-   * {@code
-   * Required = true
-   * Visior Id = random 16 character hex string
-   * Random Value = random 20 character hex string
-   * API version = 1
-   * Response as Image = false
-   * }
-   * </pre>
-   * Overwrite these values yourself as desired.
+   * action. This constructor also sets:
    *
-   * @param siteId    the id of the website we're tracking a visit/action for
+   * <p>{@code Required = true Visior Id = random 16 character hex string Random Value = random 20
+   * character hex string API version = 1 Response as Image = false }
+   *
+   * <p>Overwrite these values yourself as desired.
+   *
+   * @param siteId the id of the website we're tracking a visit/action for
    * @param actionUrl the full URL for the current action
-   *
    * @deprecated Please use {@link MatomoRequest#request()}
    */
   @Deprecated
@@ -765,11 +640,10 @@ public class MatomoRequest {
   }
 
   /**
-   * Gets the list of objects currently stored at the specified custom tracking parameter.  An empty
+   * Gets the list of objects currently stored at the specified custom tracking parameter. An empty
    * list will be returned if there are no objects set at that key.
    *
-   * @param key the key of the parameter whose list of objects to get.  Cannot be null
-   *
+   * @param key the key of the parameter whose list of objects to get. Cannot be null
    * @return the parameter at the specified key, null if nothing at this key
    */
   @Nullable
@@ -786,15 +660,12 @@ public class MatomoRequest {
    * overwrite or clear named Matomo parameters with this method. A custom parameter that has the
    * same name as a named Matomo parameter will be sent in addition to that named parameter.
    *
-   * @param key   the parameter's key.  Cannot be null
-   * @param value the parameter's value.  Removes the parameter if null
-   *
+   * @param key the parameter's key. Cannot be null
+   * @param value the parameter's value. Removes the parameter if null
    * @deprecated Use {@link MatomoRequest.MatomoRequestBuilder#additionalParameters(Map)} instead.
    */
   @Deprecated
-  public void setCustomTrackingParameter(
-      @NonNull String key, @Nullable Object value
-  ) {
+  public void setCustomTrackingParameter(@NonNull String key, @Nullable Object value) {
 
     if (value == null) {
       if (additionalParameters != null) {
@@ -809,12 +680,11 @@ public class MatomoRequest {
   }
 
   /**
-   * Add a custom tracking parameter to the specified key.  If there is already a parameter at this
+   * Add a custom tracking parameter to the specified key. If there is already a parameter at this
    * key, the new value replaces the old value.
    *
-   * @param key   the parameter's key.  Cannot be null
-   * @param value the parameter's value.  May be null
-   *
+   * @param key the parameter's key. Cannot be null
+   * @param value the parameter's value. May be null
    * @deprecated Use {@link MatomoRequest.MatomoRequestBuilder#additionalParameters(Map)} instead.
    */
   @Deprecated
@@ -829,7 +699,7 @@ public class MatomoRequest {
    * Removes all custom tracking parameters.
    *
    * @deprecated Please use {@link MatomoRequest.MatomoRequestBuilder#additionalParameters(Map)}
-   * instead so that you can manage the map yourself.
+   *     instead so that you can manage the map yourself.
    */
   @Deprecated
   public void clearCustomTrackingParameter() {
@@ -851,10 +721,9 @@ public class MatomoRequest {
    * Get the {@link EcommerceItem} at the specified index.
    *
    * @param index the index of the {@link EcommerceItem} to return
-   *
    * @return the {@link EcommerceItem} at the specified index
    * @deprecated Use @link {@link MatomoRequest.MatomoRequestBuilder#ecommerceItems(EcommerceItems)}
-   * instead
+   *     instead
    */
   @Nullable
   @Deprecated
@@ -866,13 +735,12 @@ public class MatomoRequest {
   }
 
   /**
-   * Add an {@link EcommerceItem} to this order.  Ecommerce must be enabled, and EcommerceId and
+   * Add an {@link EcommerceItem} to this order. Ecommerce must be enabled, and EcommerceId and
    * EcommerceRevenue must first be set.
    *
-   * @param item the {@link EcommerceItem} to add.  Cannot be null
-   *
+   * @param item the {@link EcommerceItem} to add. Cannot be null
    * @deprecated Use @link {@link MatomoRequest.MatomoRequestBuilder#ecommerceItems(EcommerceItems)}
-   * instead
+   *     instead
    */
   @Deprecated
   public void addEcommerceItem(@NonNull EcommerceItem item) {
@@ -886,7 +754,7 @@ public class MatomoRequest {
    * Clears all {@link EcommerceItem} from this order.
    *
    * @deprecated Use @link {@link MatomoRequest.MatomoRequestBuilder#ecommerceItems(EcommerceItems)}
-   * instead
+   *     instead
    */
   @Deprecated
   public void clearEcommerceItems() {
@@ -897,7 +765,6 @@ public class MatomoRequest {
    * Get the page custom variable at the specified key.
    *
    * @param key the key of the variable to get
-   *
    * @return the variable at the specified key, null if key is not present
    * @deprecated Use the {@link #getPageCustomVariables()} method instead.
    */
@@ -913,8 +780,7 @@ public class MatomoRequest {
   /**
    * Get the page custom variable at the specified index.
    *
-   * @param index the index of the variable to get.  Must be greater than 0
-   *
+   * @param index the index of the variable to get. Must be greater than 0
    * @return the variable at the specified key, null if nothing at this index
    * @deprecated Use {@link MatomoRequest#getPageCustomVariables()} instead
    */
@@ -937,16 +803,13 @@ public class MatomoRequest {
    * Set a page custom variable with the specified key and value at the first available index. All
    * page custom variables with this key will be overwritten or deleted
    *
-   * @param key   the key of the variable to set
-   * @param value the value of the variable to set at the specified key.  A null value will remove
-   *              this custom variable
-   *
+   * @param key the key of the variable to set
+   * @param value the value of the variable to set at the specified key. A null value will remove
+   *     this custom variable
    * @deprecated Use {@link MatomoRequest#getPageCustomVariables()} instead
    */
   @Deprecated
-  public void setPageCustomVariable(
-      @NonNull String key, @Nullable String value
-  ) {
+  public void setPageCustomVariable(@NonNull String key, @Nullable String value) {
     if (value == null) {
       if (pageCustomVariables == null) {
         return;
@@ -964,16 +827,13 @@ public class MatomoRequest {
   /**
    * Set a page custom variable at the specified index.
    *
-   * @param customVariable the CustomVariable to set.  A null value will remove the CustomVariable
-   *                       at the specified index
-   * @param index          the index of he CustomVariable to set
-   *
+   * @param customVariable the CustomVariable to set. A null value will remove the CustomVariable at
+   *     the specified index
+   * @param index the index of he CustomVariable to set
    * @deprecated Use {@link #getPageCustomVariables()} instead
    */
   @Deprecated
-  public void setPageCustomVariable(
-      @Nullable CustomVariable customVariable, int index
-  ) {
+  public void setPageCustomVariable(@Nullable CustomVariable customVariable, int index) {
     if (pageCustomVariables == null) {
       if (customVariable == null) {
         return;
@@ -985,8 +845,7 @@ public class MatomoRequest {
 
   @Deprecated
   private static void setCustomVariable(
-      CustomVariables customVariables, @Nullable CustomVariable customVariable, int index
-  ) {
+      CustomVariables customVariables, @Nullable CustomVariable customVariable, int index) {
     if (customVariable == null) {
       customVariables.remove(index);
     } else {
@@ -1012,12 +871,10 @@ public class MatomoRequest {
    * record data in the past, you will need to <a href="https://matomo.org/faq/how-to/faq_59">force
    * Matomo to re-process reports for the past dates</a>.</em> If you set the <em>Request
    * Datetime</em> to a datetime older than four hours then <em>Auth Token</em> must be set. If you
-   * set
-   * <em>Request Datetime</em> with a datetime in the last four hours then you
-   * don't need to pass <em>Auth Token</em>.
+   * set <em>Request Datetime</em> with a datetime in the last four hours then you don't need to
+   * pass <em>Auth Token</em>.
    *
-   * @param matomoDate the datetime of the request to set.  A null value will remove this parameter
-   *
+   * @param matomoDate the datetime of the request to set. A null value will remove this parameter
    * @deprecated Use {@link #setRequestTimestamp(Instant)} instead
    */
   @Deprecated
@@ -1029,12 +886,10 @@ public class MatomoRequest {
     }
   }
 
-
   /**
    * Get the visit custom variable at the specified key.
    *
    * @param key the key of the variable to get
-   *
    * @return the variable at the specified key, null if key is not present
    * @deprecated Use the {@link #getVisitCustomVariables()} method instead.
    */
@@ -1051,7 +906,6 @@ public class MatomoRequest {
    * Get the visit custom variable at the specified index.
    *
    * @param index the index of the variable to get
-   *
    * @return the variable at the specified index, null if nothing at this index
    * @deprecated Use {@link #getVisitCustomVariables()} instead
    */
@@ -1065,16 +919,13 @@ public class MatomoRequest {
    * Set a visit custom variable with the specified key and value at the first available index. All
    * visit custom variables with this key will be overwritten or deleted
    *
-   * @param key   the key of the variable to set
-   * @param value the value of the variable to set at the specified key.  A null value will remove
-   *              this parameter
-   *
+   * @param key the key of the variable to set
+   * @param value the value of the variable to set at the specified key. A null value will remove
+   *     this parameter
    * @deprecated Use {@link #setVisitCustomVariables(CustomVariables)} instead
    */
   @Deprecated
-  public void setUserCustomVariable(
-      @NonNull String key, @Nullable String value
-  ) {
+  public void setUserCustomVariable(@NonNull String key, @Nullable String value) {
     if (value == null) {
       if (visitCustomVariables == null) {
         return;
@@ -1092,16 +943,13 @@ public class MatomoRequest {
   /**
    * Set a user custom variable at the specified key.
    *
-   * @param customVariable the CustomVariable to set.  A null value will remove the custom variable
-   *                       at the specified index
-   * @param index          the index to set the customVariable at.
-   *
+   * @param customVariable the CustomVariable to set. A null value will remove the custom variable
+   *     at the specified index
+   * @param index the index to set the customVariable at.
    * @deprecated Use {@link #setVisitCustomVariables(CustomVariables)} instead
    */
   @Deprecated
-  public void setVisitCustomVariable(
-      @Nullable CustomVariable customVariable, int index
-  ) {
+  public void setVisitCustomVariable(@Nullable CustomVariable customVariable, int index) {
     if (visitCustomVariables == null) {
       if (customVariable == null) {
         return;
@@ -1117,11 +965,9 @@ public class MatomoRequest {
    * <p>Attention: If a parameter with the same name already exists, it will be appended twice!
    *
    * @param parameterName The name of the query parameter to append. Must not be null or empty.
-   * @param value         The value of the query parameter to append. To remove the parameter, pass
-   *                      null.
-   *
+   * @param value The value of the query parameter to append. To remove the parameter, pass null.
    * @deprecated Use @link {@link MatomoRequest.MatomoRequestBuilder#additionalParameters(Map)}
-   * instead
+   *     instead
    */
   @Deprecated
   public void setParameter(@NonNull String parameterName, Object value) {
@@ -1155,7 +1001,6 @@ public class MatomoRequest {
    * Parses the given device resolution string and sets the {@link #deviceResolution} field.
    *
    * @param deviceResolution the device resolution string to parse. Format: "WIDTHxHEIGHT"
-   *
    * @deprecated Use {@link #setDeviceResolution(DeviceResolution)} instead.
    */
   @Tolerate
@@ -1167,5 +1012,4 @@ public class MatomoRequest {
       this.deviceResolution = DeviceResolution.fromString(deviceResolution);
     }
   }
-
 }

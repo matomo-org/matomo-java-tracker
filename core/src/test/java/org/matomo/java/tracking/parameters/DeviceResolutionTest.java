@@ -20,7 +20,6 @@ class DeviceResolutionTest {
     DeviceResolution deviceResolution = DeviceResolution.builder().width(1280).height(1080).build();
 
     assertThat(deviceResolution).hasToString("1280x1080");
-
   }
 
   @Test
@@ -29,7 +28,6 @@ class DeviceResolutionTest {
     DeviceResolution deviceResolution = DeviceResolution.fromString(null);
 
     assertThat(deviceResolution).isNull();
-
   }
 
   @Test
@@ -50,5 +48,4 @@ class DeviceResolutionTest {
   void returnsNullIfDeviceResolutionIsEmpty() {
     assertThat(DeviceResolution.fromString("")).isNull();
   }
-
 }

@@ -27,11 +27,10 @@ class JakartaHttpServletWrapperTest {
         .containsEntry("accept-language", "en-US,en;q=0.9,de;q=0.8");
     assertThat(httpServletRequestWrapper.getCookies())
         .hasSize(1)
-        .satisfiesExactly(cookieWrapper -> {
-          assertThat(cookieWrapper.getName()).isEqualTo("foo");
-          assertThat(cookieWrapper.getValue()).isEqualTo("bar");
-        });
+        .satisfiesExactly(
+            cookieWrapper -> {
+              assertThat(cookieWrapper.getName()).isEqualTo("foo");
+              assertThat(cookieWrapper.getValue()).isEqualTo("bar");
+            });
   }
-
 }
-

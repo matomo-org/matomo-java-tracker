@@ -17,13 +17,13 @@ class MatomoTrackerIT {
       "rec=1&idsite=1&action_name=test&apiv=1&_id=00000000343efaf5&send_image=0&rand=test-random";
   private MatomoTracker matomoTracker;
   private final TestSenderFactory senderFactory = new TestSenderFactory();
-  private final MatomoRequest request = MatomoRequest
-      .request()
-      .siteId(1)
-      .visitorId(VisitorId.fromString("test-visitor-id"))
-      .randomValue(RandomValue.fromString("test-random"))
-      .actionName("test")
-      .build();
+  private final MatomoRequest request =
+      MatomoRequest.request()
+          .siteId(1)
+          .visitorId(VisitorId.fromString("test-visitor-id"))
+          .randomValue(RandomValue.fromString("test-random"))
+          .actionName("test")
+          .build();
 
   @Test
   void sendsRequest() {
@@ -36,7 +36,6 @@ class MatomoTrackerIT {
     TestSender testSender = senderFactory.getTestSender();
     thenContainsRequest(testSender, QUERY);
     assertThat(testSender.getTrackerConfiguration().getApiEndpoint()).hasToString(HOST_URL);
-
   }
 
   @Test
@@ -51,20 +50,22 @@ class MatomoTrackerIT {
         .hasMessageContaining("No default site ID and no request site ID is given");
 
     assertThat(senderFactory.getTestSender()).isNull();
-
   }
 
   @Test
   void doesNotSendRequestIfNotEnabled() {
 
     matomoTracker =
-        new MatomoTracker(TrackerConfiguration.builder().apiEndpoint(URI.create(HOST_URL)).enabled(false).build());
+        new MatomoTracker(
+            TrackerConfiguration.builder()
+                .apiEndpoint(URI.create(HOST_URL))
+                .enabled(false)
+                .build());
     matomoTracker.setSenderFactory(senderFactory);
 
     matomoTracker.sendRequest(request);
 
     assertThat(senderFactory.getTestSender()).isNull();
-
   }
 
   @Test
@@ -80,7 +81,6 @@ class MatomoTrackerIT {
     TrackerConfiguration trackerConfiguration = testSender.getTrackerConfiguration();
     assertThat(trackerConfiguration.getProxyHost()).isEqualTo("localhost");
     assertThat(trackerConfiguration.getProxyPort()).isEqualTo(8081);
-
   }
 
   @Test
@@ -94,7 +94,6 @@ class MatomoTrackerIT {
     TestSender testSender = senderFactory.getTestSender();
     thenContainsRequest(testSender, QUERY);
     assertThat(testSender.getTrackerConfiguration().getApiEndpoint()).hasToString(HOST_URL);
-
   }
 
   @Test
@@ -103,30 +102,34 @@ class MatomoTrackerIT {
     matomoTracker = new MatomoTracker(HOST_URL, 1000);
     matomoTracker.setSenderFactory(senderFactory);
     AtomicBoolean callbackCalled = new AtomicBoolean();
-    matomoTracker.sendRequestAsync(request, request -> {
-      assertThat(request).isEqualTo(request);
-      callbackCalled.set(true);
-      return null;
-    });
+    matomoTracker.sendRequestAsync(
+        request,
+        request -> {
+          assertThat(request).isEqualTo(request);
+          callbackCalled.set(true);
+          return null;
+        });
 
     TestSender testSender = senderFactory.getTestSender();
     thenContainsRequest(testSender, QUERY);
     assertThat(testSender.getTrackerConfiguration().getApiEndpoint()).hasToString(HOST_URL);
     assertThat(callbackCalled).isTrue();
-
   }
 
   @Test
   void doesNotSendRequestAsyncIfNotEnabled() {
 
     matomoTracker =
-        new MatomoTracker(TrackerConfiguration.builder().apiEndpoint(URI.create(HOST_URL)).enabled(false).build());
+        new MatomoTracker(
+            TrackerConfiguration.builder()
+                .apiEndpoint(URI.create(HOST_URL))
+                .enabled(false)
+                .build());
     matomoTracker.setSenderFactory(senderFactory);
 
     matomoTracker.sendRequestAsync(request);
 
     assertThat(senderFactory.getTestSender()).isNull();
-
   }
 
   @Test
@@ -140,20 +143,22 @@ class MatomoTrackerIT {
     TestSender testSender = senderFactory.getTestSender();
     thenContainsRequest(testSender, QUERY);
     assertThat(testSender.getTrackerConfiguration().getApiEndpoint()).hasToString(HOST_URL);
-
   }
 
   @Test
   void doesNotSendBulkRequestsIfNotEnabled() {
 
     matomoTracker =
-        new MatomoTracker(TrackerConfiguration.builder().apiEndpoint(URI.create(HOST_URL)).enabled(false).build());
+        new MatomoTracker(
+            TrackerConfiguration.builder()
+                .apiEndpoint(URI.create(HOST_URL))
+                .enabled(false)
+                .build());
     matomoTracker.setSenderFactory(senderFactory);
 
     matomoTracker.sendBulkRequest(request);
 
     assertThat(senderFactory.getTestSender()).isNull();
-
   }
 
   @Test
@@ -167,20 +172,22 @@ class MatomoTrackerIT {
     TestSender testSender = senderFactory.getTestSender();
     thenContainsRequest(testSender, QUERY);
     assertThat(testSender.getTrackerConfiguration().getApiEndpoint()).hasToString(HOST_URL);
-
   }
 
   @Test
   void doesNotSendBulkRequestsAsyncIfNotEnabled() {
 
     matomoTracker =
-        new MatomoTracker(TrackerConfiguration.builder().apiEndpoint(URI.create(HOST_URL)).enabled(false).build());
+        new MatomoTracker(
+            TrackerConfiguration.builder()
+                .apiEndpoint(URI.create(HOST_URL))
+                .enabled(false)
+                .build());
     matomoTracker.setSenderFactory(senderFactory);
 
     matomoTracker.sendBulkRequestAsync(request);
 
     assertThat(senderFactory.getTestSender()).isNull();
-
   }
 
   @Test
@@ -195,7 +202,6 @@ class MatomoTrackerIT {
     thenContainsRequest(testSender, QUERY);
     assertThat(testSender.getTrackerConfiguration().getApiEndpoint()).hasToString(HOST_URL);
     assertThat(callbackCalled).isTrue();
-
   }
 
   @Test
@@ -206,9 +212,10 @@ class MatomoTrackerIT {
     matomoTracker.sendBulkRequestAsync(singleton(request), "abc123def456abc123def456abc123de");
 
     TestSender testSender = senderFactory.getTestSender();
-    thenContainsRequest(testSender, "token_auth=abc123def456abc123def456abc123de&rec=1&idsite=1&action_name=test&apiv=1&_id=00000000343efaf5&send_image=0&rand=test-random");
+    thenContainsRequest(
+        testSender,
+        "token_auth=abc123def456abc123def456abc123de&rec=1&idsite=1&action_name=test&apiv=1&_id=00000000343efaf5&send_image=0&rand=test-random");
     assertThat(testSender.getTrackerConfiguration().getApiEndpoint()).hasToString(HOST_URL);
-
   }
 
   @Test
@@ -221,14 +228,14 @@ class MatomoTrackerIT {
     matomoTracker.sendRequest(request);
 
     TestSender testSender = senderFactory.getTestSender();
-    thenContainsRequest(testSender, "rec=1&idsite=1&action_name=test&apiv=1&_id=00000000343efaf5&idgoal=0&ec_id=some-id&send_image=0&rand=test-random");
+    thenContainsRequest(
+        testSender,
+        "rec=1&idsite=1&action_name=test&apiv=1&_id=00000000343efaf5&idgoal=0&ec_id=some-id&send_image=0&rand=test-random");
     assertThat(testSender.getTrackerConfiguration().getApiEndpoint()).hasToString(HOST_URL);
-
   }
 
   private void thenContainsRequest(TestSender testSender, String query) {
     assertThat(testSender.getRequests()).containsExactly(request);
     assertThat(testSender.getQueries()).containsExactly(query);
   }
-
 }

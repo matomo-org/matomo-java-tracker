@@ -47,23 +47,24 @@ class QueryCreator {
   private static void addMethods(
       Collection<TrackingParameterMethod> methods,
       Member member,
-      TrackingParameter trackingParameter
-  ) {
+      TrackingParameter trackingParameter) {
     try {
-      for (PropertyDescriptor pd : Introspector.getBeanInfo(MatomoRequest.class)
-                                               .getPropertyDescriptors()) {
+      for (PropertyDescriptor pd :
+          Introspector.getBeanInfo(MatomoRequest.class).getPropertyDescriptors()) {
         if (member.getName().equals(pd.getName())) {
           String regex = trackingParameter.regex();
-          methods.add(TrackingParameterMethod
-              .builder()
-              .parameterName(trackingParameter.name())
-              .min(trackingParameter.min())
-              .max(trackingParameter.max())
-              .maxLength(trackingParameter.maxLength())
-              .method(pd.getReadMethod())
-              .pattern(regex == null || regex.isEmpty() || regex.trim().isEmpty() ? null :
-                  Pattern.compile(trackingParameter.regex()))
-              .build());
+          methods.add(
+              TrackingParameterMethod.builder()
+                  .parameterName(trackingParameter.name())
+                  .min(trackingParameter.min())
+                  .max(trackingParameter.max())
+                  .maxLength(trackingParameter.maxLength())
+                  .method(pd.getReadMethod())
+                  .pattern(
+                      regex == null || regex.isEmpty() || regex.trim().isEmpty()
+                          ? null
+                          : Pattern.compile(trackingParameter.regex()))
+                  .build());
         }
       }
     } catch (IntrospectionException e) {
@@ -71,9 +72,7 @@ class QueryCreator {
     }
   }
 
-  String createQuery(
-      @NonNull MatomoRequest request, @Nullable String authToken
-  ) {
+  String createQuery(@NonNull MatomoRequest request, @Nullable String authToken) {
     StringBuilder query = new StringBuilder(100);
     if (request.getSiteId() == null) {
       appendAmpersand(query);
@@ -102,10 +101,11 @@ class QueryCreator {
       for (Entry<Long, Object> entry : request.getDimensions().entrySet()) {
         if (entry.getKey() != null && entry.getValue() != null) {
           appendAmpersand(query);
-          query.append("dimension")
-               .append(entry.getKey())
-               .append('=')
-               .append(encode(entry.getValue().toString()));
+          query
+              .append("dimension")
+              .append(entry.getKey())
+              .append('=')
+              .append(encode(entry.getValue().toString()));
         }
       }
     }
@@ -119,8 +119,7 @@ class QueryCreator {
   }
 
   private static void appendParameter(
-      TrackingParameterMethod method, MatomoRequest request, StringBuilder query
-  ) {
+      TrackingParameterMethod method, MatomoRequest request, StringBuilder query) {
     try {
       Object parameterValue = method.getMethod().invoke(request);
       if (parameterValue != null) {
@@ -146,15 +145,11 @@ class QueryCreator {
   }
 
   @NonNull
-  private static String encode(
-      @NonNull String parameterValue
-  ) {
+  private static String encode(@NonNull String parameterValue) {
     try {
       return URLEncoder.encode(parameterValue, "UTF-8");
     } catch (UnsupportedEncodingException e) {
       throw new MatomoException("Could not encode parameter", e);
     }
   }
-
-
 }

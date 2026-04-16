@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker-parent</artifactId>
-    <version>3.4.1-SNAPSHOT</version>
+    <version>3.5.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Matomo Java Tracker Parent</name>
@@ -37,22 +38,32 @@
         </developer>
     </developers>
 
+    <modules>
+        <module>core</module>
+        <module>java8</module>
+        <module>java11</module>
+        <module>servlet-jakarta</module>
+        <module>servlet-javax</module>
+        <module>spring</module>
+        <module>test</module>
+    </modules>
+
     <scm>
         <connection>scm:git:https://@github.com/matomo-org/matomo-java-tracker.git</connection>
         <developerConnection>scm:git:https://github.com/matomo-org/matomo-java-tracker.git</developerConnection>
-        <url>https://github.com/matomo-org/matomo-java-tracker</url>
         <tag>HEAD</tag>
+        <url>https://github.com/matomo-org/matomo-java-tracker</url>
     </scm>
 
     <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
         <repository>
             <id>ossrh</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <properties>
@@ -178,10 +189,10 @@
                     <executions>
                         <execution>
                             <id>sign-artifacts</id>
-                            <phase>verify</phase>
                             <goals>
                                 <goal>sign</goal>
                             </goals>
+                            <phase>verify</phase>
                         </execution>
                     </executions>
                 </plugin>
@@ -229,6 +240,11 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok-maven-plugin</artifactId>
                 <version>1.18.20.0</version>
+                <configuration>
+                    <sourceDirectory>src/main/java</sourceDirectory>
+                    <outputDirectory>${delombok.output}</outputDirectory>
+                    <addOutputDirectory>false</addOutputDirectory>
+                </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>org.projectlombok</groupId>
@@ -236,17 +252,12 @@
                         <version>${lombok.version}</version>
                     </dependency>
                 </dependencies>
-                <configuration>
-                    <sourceDirectory>src/main/java</sourceDirectory>
-                    <outputDirectory>${delombok.output}</outputDirectory>
-                    <addOutputDirectory>false</addOutputDirectory>
-                </configuration>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
                         <goals>
                             <goal>delombok</goal>
                         </goals>
+                        <phase>generate-sources</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -342,12 +353,10 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <phase>
-                            validate
-                        </phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
+                        <phase>validate</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -363,6 +372,48 @@
                 <configuration>
                     <failOnError>true</failOnError>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>2.44.3</version>
+                <configuration>
+                    <java>
+                        <removeUnusedImports />
+                        <googleJavaFormat>
+                            <version>1.24.0</version>
+                            <style>GOOGLE</style>
+                            <reflowLongStrings>true</reflowLongStrings>
+                            <formatJavadoc>true</formatJavadoc>
+                        </googleJavaFormat>
+                    </java>
+                    <markdown>
+                        <includes>
+                            <include>**/*.md</include>
+                        </includes>
+                        <flexmark />
+                    </markdown>
+                    <pom>
+                        <includes>
+                            <include>pom.xml</include>
+                            <include>*/pom.xml</include>
+                        </includes>
+                        <sortPom>
+                            <expandEmptyElements>false</expandEmptyElements>
+                            <spaceBeforeCloseEmptyElement>true</spaceBeforeCloseEmptyElement>
+                            <nrOfIndentSpace>4</nrOfIndentSpace>
+                        </sortPom>
+                    </pom>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>spotless-apply</id>
+                        <goals>
+                            <goal>apply</goal>
+                        </goals>
+                        <phase>process-sources</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -384,14 +435,4 @@
             </build>
         </profile>
     </profiles>
-
-    <modules>
-        <module>core</module>
-        <module>java8</module>
-        <module>java11</module>
-        <module>servlet-jakarta</module>
-        <module>servlet-javax</module>
-        <module>spring</module>
-        <module>test</module>
-    </modules>
 </project>

@@ -20,5 +20,4 @@ class MatomoLocaleTest {
         .isInstanceOf(NullPointerException.class)
         .hasMessage("Locale must not be null");
   }
-
 }

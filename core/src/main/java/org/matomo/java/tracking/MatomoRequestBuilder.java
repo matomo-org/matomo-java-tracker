@@ -5,24 +5,23 @@ import java.util.Map;
 import org.matomo.java.tracking.parameters.AcceptLanguage;
 
 /**
- * The former MatomoRequestBuilder class has been moved to MatomoRequest.MatomoRequestBuilder.
- * This class is only here for backwards compatibility.
+ * The former MatomoRequestBuilder class has been moved to MatomoRequest.MatomoRequestBuilder. This
+ * class is only here for backwards compatibility.
  *
  * @deprecated Use {@link MatomoRequest.MatomoRequestBuilder} instead.
  */
 @Deprecated
 public class MatomoRequestBuilder extends MatomoRequest.MatomoRequestBuilder {
 
-
   /**
    * Sets the tracking parameter for the accept languages of a user. Only here for backwards
    * compatibility.
    *
    * @param headerAcceptLanguage The accept language header of a user. Must be in the format
-   *                             specified in RFC 2616.
+   *     specified in RFC 2616.
    * @return This builder
    * @deprecated Use {@link MatomoRequest.MatomoRequestBuilder#headerAcceptLanguage(AcceptLanguage)}
-   * in combination with {@link AcceptLanguage#fromHeader(String)} instead.
+   *     in combination with {@link AcceptLanguage#fromHeader(String)} instead.
    */
   @Deprecated
   public MatomoRequestBuilder headerAcceptLanguage(@Nullable String headerAcceptLanguage) {
@@ -45,5 +44,4 @@ public class MatomoRequestBuilder extends MatomoRequest.MatomoRequestBuilder {
     additionalParameters(parameters);
     return this;
   }
-
 }

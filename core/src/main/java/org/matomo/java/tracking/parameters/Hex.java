@@ -22,5 +22,4 @@ final class Hex {
     }
     return result.toString();
   }
-
 }

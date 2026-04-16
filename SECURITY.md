@@ -5,10 +5,10 @@
 The following versions of this library are
 currently being supported with security updates.
 
-| Version | Supported              |
+| Version |       Supported        |
 |---------|------------------------|
 | >3      | :white_check_mark: yes |
-| <=2     | ✖️ no                   |
+| <=2     | ✖️ no                  |
 
 ## Reporting a Vulnerability
 

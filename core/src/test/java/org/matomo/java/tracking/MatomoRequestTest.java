@@ -32,8 +32,8 @@ class MatomoRequestTest {
 
   @Test
   void setPageCustomVariableRequiresNonNullKey() {
-    assertThatThrownBy(() -> request.setPageCustomVariable(null, "bar")).isInstanceOf(
-        NullPointerException.class);
+    assertThatThrownBy(() -> request.setPageCustomVariable(null, "bar"))
+        .isInstanceOf(NullPointerException.class);
   }
 
   @Test
@@ -62,7 +62,8 @@ class MatomoRequestTest {
   }
 
   @Test
-  void setPageCustomVariableInitializesPageCustomVariablesIfCustomVariableParameterIsNullAndIndexIsPositive() {
+  void
+      setPageCustomVariableInitializesPageCustomVariablesIfCustomVariableParameterIsNullAndIndexIsPositive() {
     request.setPageCustomVariable(new CustomVariable("key", "value"), 1);
     assertThat(request.getPageCustomVariables()).isNotNull();
   }
@@ -87,7 +88,8 @@ class MatomoRequestTest {
   }
 
   @Test
-  void setVisitCustomVariableInitializesVisitCustomVariablesIfCustomVariableParameterIsNullAndIndexIsPositive() {
+  void
+      setVisitCustomVariableInitializesVisitCustomVariablesIfCustomVariableParameterIsNullAndIndexIsPositive() {
     request.setVisitCustomVariable(new CustomVariable("key", "value"), 1);
     assertThat(request.getVisitCustomVariables()).isNotNull();
   }
@@ -100,10 +102,8 @@ class MatomoRequestTest {
 
   @Test
   void failsToSetCustomParameterIfKeyIsNull() {
-    assertThatThrownBy(() -> request.setParameter(
-        null,
-        1
-    )).isInstanceOf(NullPointerException.class);
+    assertThatThrownBy(() -> request.setParameter(null, 1))
+        .isInstanceOf(NullPointerException.class);
   }
 
   @Test
@@ -127,8 +127,7 @@ class MatomoRequestTest {
 
   @Test
   void failsIfSetParameterParameterNameIsBlank() {
-    assertThatThrownBy(() -> request.setParameter(" ", "bar")).isInstanceOf(
-        IllegalArgumentException.class);
+    assertThatThrownBy(() -> request.setParameter(" ", "bar"))
+        .isInstanceOf(IllegalArgumentException.class);
   }
-
 }

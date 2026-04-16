@@ -13,16 +13,12 @@ class TrustingX509TrustManager implements X509TrustManager {
   }
 
   @Override
-  public void checkClientTrusted(
-      @Nullable X509Certificate[] chain, @Nullable String authType
-  ) {
+  public void checkClientTrusted(@Nullable X509Certificate[] chain, @Nullable String authType) {
     // no operation
   }
 
   @Override
-  public void checkServerTrusted(
-      @Nullable X509Certificate[] chain, @Nullable String authType
-  ) {
+  public void checkServerTrusted(@Nullable X509Certificate[] chain, @Nullable String authType) {
     // no operation
   }
 }

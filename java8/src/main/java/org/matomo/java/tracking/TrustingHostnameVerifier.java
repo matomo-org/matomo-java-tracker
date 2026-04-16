@@ -7,12 +7,7 @@ import javax.net.ssl.SSLSession;
 class TrustingHostnameVerifier implements HostnameVerifier {
 
   @Override
-  public boolean verify(
-      @Nullable
-      String hostname,
-      @Nullable
-      SSLSession session
-  ) {
+  public boolean verify(@Nullable String hostname, @Nullable SSLSession session) {
     return true;
   }
 }

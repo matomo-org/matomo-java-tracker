@@ -10,18 +10,21 @@ class DaemonThreadFactoryTest {
 
   @Test
   void createsNewThreadAsDaemonThread() {
-    Thread thread = daemonThreadFactory.newThread(() -> {
-      // do nothing
-    });
+    Thread thread =
+        daemonThreadFactory.newThread(
+            () -> {
+              // do nothing
+            });
     assertThat(thread.isDaemon()).isTrue();
   }
 
   @Test
   void createsNewThreadWithMatomoJavaTrackerName() {
-    Thread thread = daemonThreadFactory.newThread(() -> {
-      // do nothing
-    });
+    Thread thread =
+        daemonThreadFactory.newThread(
+            () -> {
+              // do nothing
+            });
     assertThat(thread.getName()).startsWith("MatomoJavaTracker-");
   }
-
 }

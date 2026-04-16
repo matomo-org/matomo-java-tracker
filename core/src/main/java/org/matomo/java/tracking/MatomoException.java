@@ -8,7 +8,8 @@
 package org.matomo.java.tracking;
 
 /**
- * Thrown when an error occurs while communicating with the Matomo server or when the request is invalid.
+ * Thrown when an error occurs while communicating with the Matomo server or when the request is
+ * invalid.
  */
 public class MatomoException extends RuntimeException {
 
@@ -21,5 +22,4 @@ public class MatomoException extends RuntimeException {
   MatomoException(String message, Throwable cause) {
     super(message, cause);
   }
-
 }

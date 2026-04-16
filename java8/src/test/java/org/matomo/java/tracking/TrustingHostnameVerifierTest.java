@@ -13,5 +13,4 @@ class TrustingHostnameVerifierTest {
 
     assertThat(verified).isTrue();
   }
-
 }

@@ -5,5 +5,4 @@ class TestThrowable extends Throwable {
   TestThrowable() {
     super("message", null, false, false);
   }
-
 }

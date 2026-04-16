@@ -11,14 +11,17 @@ class BulkRequestTest {
 
   @Test
   void formatsQueriesAsJson() {
-    BulkRequest bulkRequest = BulkRequest.builder()
-        .queries(singleton("idsite=1&rec=1&action_name=TestBulkRequest"))
-        .authToken("token")
-        .build();
+    BulkRequest bulkRequest =
+        BulkRequest.builder()
+            .queries(singleton("idsite=1&rec=1&action_name=TestBulkRequest"))
+            .authToken("token")
+            .build();
 
     byte[] bytes = bulkRequest.toBytes();
 
-    assertThat(new String(bytes)).isEqualTo("{\"requests\":[\"?idsite=1&rec=1&action_name=TestBulkRequest\"],\"token_auth\":\"token\"}");
+    assertThat(new String(bytes))
+        .isEqualTo(
+            "{\"requests\":[\"?idsite=1&rec=1&action_name=TestBulkRequest\"],\"token_auth\":\"token\"}");
   }
 
   @Test
@@ -29,7 +32,5 @@ class BulkRequestTest {
     assertThatThrownBy(bulkRequest::toBytes)
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Queries must not be empty");
-
   }
-
 }

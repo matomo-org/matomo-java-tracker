@@ -14,9 +14,7 @@ import java.util.stream.IntStream;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
-/**
- * A six character unique ID consisting of the characters [0-9a-Z].
- */
+/** A six character unique ID consisting of the characters [0-9a-Z]. */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class UniqueId {
 
@@ -48,11 +46,9 @@ public final class UniqueId {
 
   @Override
   public String toString() {
-    return IntStream
-        .range(0, 6)
+    return IntStream.range(0, 6)
         .map(i -> (int) (value >> i * 8))
         .mapToObj(codePoint -> String.valueOf(CHARS.charAt(Math.abs(codePoint % CHARS.length()))))
         .collect(Collectors.joining());
   }
-
 }

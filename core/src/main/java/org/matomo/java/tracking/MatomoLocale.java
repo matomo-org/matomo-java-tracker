@@ -33,11 +33,7 @@ public class MatomoLocale extends Country {
    * @deprecated Please use {@link Country}
    */
   @Deprecated
-  public MatomoLocale(
-      @NonNull
-      Locale locale
-  ) {
+  public MatomoLocale(@NonNull Locale locale) {
     super(requireNonNull(locale, "Locale must not be null"));
   }
-
 }

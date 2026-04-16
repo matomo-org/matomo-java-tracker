@@ -11,9 +11,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
-/**
- * The resolution (width and height) of the user's output device (monitor / phone).
- */
+/** The resolution (width and height) of the user's output device (monitor / phone). */
 @Builder
 @RequiredArgsConstructor
 public class DeviceResolution {
@@ -31,10 +29,7 @@ public class DeviceResolution {
    * @return The device resolution representation
    */
   @Nullable
-  public static DeviceResolution fromString(
-      @Nullable
-      String deviceResolution
-  ) {
+  public static DeviceResolution fromString(@Nullable String deviceResolution) {
     if (deviceResolution == null || deviceResolution.trim().isEmpty()) {
       return null;
     }
@@ -55,5 +50,4 @@ public class DeviceResolution {
   public String toString() {
     return String.format("%dx%d", width, height);
   }
-
 }

@@ -14,9 +14,7 @@ import java.util.regex.Pattern;
 import lombok.Builder;
 import lombok.Value;
 
-/**
- * Defines configuration settings for the Matomo tracking.
- */
+/** Defines configuration settings for the Matomo tracking. */
 @Builder
 @Value
 public class TrackerConfiguration {
@@ -24,78 +22,63 @@ public class TrackerConfiguration {
   private static final Pattern AUTH_TOKEN_PATTERN = Pattern.compile("[a-z0-9]+");
 
   /**
-   * The Matomo Tracking HTTP API endpoint, for example https://your-matomo-domain.example/matomo.php
+   * The Matomo Tracking HTTP API endpoint. Example: https://your-matomo-domain.example/matomo.php
    */
   URI apiEndpoint;
 
-  /**
-   * The default ID of the website that will be used if not specified explicitly.
-   */
+  /** The default ID of the website that will be used if not specified explicitly. */
   Integer defaultSiteId;
 
-  /**
-   * The authorization token (parameter token_auth) to use if not specified explicitly.
-   */
+  /** The authorization token (parameter token_auth) to use if not specified explicitly. */
   String defaultAuthToken;
 
-  /**
-   * Allows to stop the tracker to send requests to the Matomo endpoint.
-   */
-  @Builder.Default
-  boolean enabled = true;
+  /** Allows to stop the tracker to send requests to the Matomo endpoint. */
+  @Builder.Default boolean enabled = true;
 
   /**
    * The timeout until a connection is established.
    *
-   * <p>A timeout value of zero is interpreted as an infinite timeout.
-   * A `null` value is interpreted as undefined (system default if applicable).</p>
+   * <p>A timeout value of zero is interpreted as an infinite timeout. A `null` value is interpreted
+   * as undefined (system default if applicable).
    *
-   * <p>Default: 5 seconds</p>
+   * <p>Default: 5 seconds
    */
-  @Builder.Default
-  Duration connectTimeout = Duration.ofSeconds(5L);
+  @Builder.Default Duration connectTimeout = Duration.ofSeconds(5L);
 
   /**
-   * The socket timeout ({@code SO_TIMEOUT}), which is the timeout for waiting for data or, put differently, a maximum
-   * period inactivity between two consecutive data packets.
+   * The socket timeout ({@code SO_TIMEOUT}), which is the timeout for waiting for data or, put
+   * differently, a maximum period inactivity between two consecutive data packets.
    *
-   * <p>A timeout value of zero is interpreted as an infinite timeout.
-   * A `null value is interpreted as undefined (system default if applicable).</p>
+   * <p>A timeout value of zero is interpreted as an infinite timeout. A `null value is interpreted
+   * as undefined (system default if applicable).
    *
-   * <p>Default: 5 seconds</p>
+   * <p>Default: 5 seconds
    */
-  @Builder.Default
-  Duration socketTimeout = Duration.ofSeconds(5L);
+  @Builder.Default Duration socketTimeout = Duration.ofSeconds(5L);
 
   /**
-   * The hostname or IP address of an optional HTTP proxy. {@code proxyPort} must be configured as well
+   * The hostname or IP address of an optional HTTP proxy. {@code proxyPort} must be configured as
+   * well
    */
-  @Nullable
-  String proxyHost;
+  @Nullable String proxyHost;
 
-  /**
-   * The port of an HTTP proxy. {@code proxyHost} must be configured as well.
-   */
+  /** The port of an HTTP proxy. {@code proxyHost} must be configured as well. */
   int proxyPort;
 
   /**
-   * If the HTTP proxy requires a username for basic authentication, it can be configured here. Proxy host, port and
-   * password must also be set.
+   * If the HTTP proxy requires a username for basic authentication, it can be configured here.
+   * Proxy host, port and password must also be set.
    */
-  @Nullable
-  String proxyUsername;
+  @Nullable String proxyUsername;
 
   /**
-   * The corresponding password for the basic auth proxy user. The proxy host, port and username must be set as well.
+   * The corresponding password for the basic auth proxy user. The proxy host, port and username
+   * must be set as well.
    */
-  @Nullable
-  String proxyPassword;
+  @Nullable String proxyPassword;
 
-  /**
-   * A custom user agent to be set. Defaults to "MatomoJavaClient"
-   */
-  @Builder.Default
-  String userAgent = "MatomoJavaClient";
+  /** A custom user agent to be set. Defaults to "MatomoJavaClient" */
+  @Builder.Default String userAgent = "MatomoJavaClient";
 
   /**
    * Logs if the Matomo Tracking API endpoint responds with an erroneous HTTP code. Defaults to
@@ -108,7 +91,7 @@ public class TrackerConfiguration {
    * Do not use in production environments. Defaults to false.
    *
    * <p>Attention: This slows down performance
-
+   *
    * @see #disableSslHostVerification
    */
   boolean disableSslCertValidation;
@@ -119,8 +102,8 @@ public class TrackerConfiguration {
    *
    * <p>If you use the Java 11 of the Matomo Java Tracker, this setting is ignored. Instead, you
    * have to set the system property {@code jdk.internal.httpclient.disableHostnameVerification} as
-   * described in the
-   * <a href="https://download.java.net/java/early_access/jdk22/docs/api/java.net.http/module-summary.html">Module
+   * described in the <a
+   * href="https://download.java.net/java/early_access/jdk22/docs/api/java.net.http/module-summary.html">Module
    * java.net.http</a>.
    *
    * @see #disableSslCertValidation
@@ -131,15 +114,11 @@ public class TrackerConfiguration {
    * The thread pool size for the async sender. Defaults to 2.
    *
    * <p>Attention: If you use this library in a web application, make sure that this thread pool
-   * does not exceed the thread pool of the web application. Otherwise, you might run into
-   * problems.
+   * does not exceed the thread pool of the web application. Otherwise, you might run into problems.
    */
-  @Builder.Default
-  int threadPoolSize = 2;
+  @Builder.Default int threadPoolSize = 2;
 
-  /**
-   * Validates the auth token. The auth token must be exactly 32 characters long.
-   */
+  /** Validates the auth token. The auth token must be exactly 32 characters long. */
   public void validate() {
     if (apiEndpoint == null) {
       throw new IllegalArgumentException("API endpoint must not be null");

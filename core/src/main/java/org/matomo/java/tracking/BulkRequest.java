@@ -12,15 +12,12 @@ import lombok.Value;
 @Value
 class BulkRequest {
 
-  @NonNull
-  Collection<String> queries;
+  @NonNull Collection<String> queries;
 
-  @Nullable
-  String authToken;
+  @Nullable String authToken;
 
-  byte[] toBytes(
+  byte[] toBytes() {
 
-  ) {
     if (queries.isEmpty()) {
       throw new IllegalArgumentException("Queries must not be empty");
     }
@@ -39,5 +36,4 @@ class BulkRequest {
     }
     return payload.append('}').toString().getBytes(StandardCharsets.UTF_8);
   }
-
 }

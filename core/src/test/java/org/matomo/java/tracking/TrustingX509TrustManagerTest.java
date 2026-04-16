@@ -24,5 +24,4 @@ class TrustingX509TrustManagerTest {
   void checkServerTrustedDoesNothing() {
     trustingX509TrustManager.checkServerTrusted(null, null);
   }
-
 }

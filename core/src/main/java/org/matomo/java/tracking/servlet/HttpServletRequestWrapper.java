@@ -9,27 +9,20 @@ import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
 
-/**
- * Wraps a HttpServletRequest to be compatible with both the Jakarta and the Java EE API.
- */
+/** Wraps a HttpServletRequest to be compatible with both the Jakarta and the Java EE API. */
 @Builder
 @Value
 public class HttpServletRequestWrapper {
 
-  @Nullable
-  StringBuffer requestURL;
+  @Nullable StringBuffer requestURL;
 
-  @Nullable
-  String remoteAddr;
+  @Nullable String remoteAddr;
 
-  @Nullable
-  String remoteUser;
+  @Nullable String remoteUser;
 
-  @Nullable
-  Map<String, String> headers;
+  @Nullable Map<String, String> headers;
 
-  @Nullable
-  CookieWrapper[] cookies;
+  @Nullable CookieWrapper[] cookies;
 
   /**
    * Returns an enumeration of all the header names this request contains. If the request has no
@@ -38,8 +31,9 @@ public class HttpServletRequestWrapper {
    * @return an enumeration of all the header names sent with this request
    */
   public Enumeration<String> getHeaderNames() {
-    return headers == null ? Collections.emptyEnumeration() :
-        Collections.enumeration(headers.keySet());
+    return headers == null
+        ? Collections.emptyEnumeration()
+        : Collections.enumeration(headers.keySet());
   }
 
   /**
@@ -50,11 +44,10 @@ public class HttpServletRequestWrapper {
    *
    * @param name a String specifying the header name (case insensitive) - must not be {@code null}.
    * @return a String containing the value of the requested header, or null if the request does not
-   *        have a header of that name
+   *     have a header of that name
    */
   @Nullable
   public String getHeader(@NonNull String name) {
     return headers == null ? null : headers.get(name.toLowerCase(Locale.ROOT));
   }
-
 }

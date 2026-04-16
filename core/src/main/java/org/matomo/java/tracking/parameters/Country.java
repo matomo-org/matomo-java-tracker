@@ -18,24 +18,22 @@ import lombok.RequiredArgsConstructor;
 /**
  * A two-letter country code representing a country.
  *
- * <p>See <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166-1 alpha-2</a> for a list of valid codes.
+ * <p>See <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166-1 alpha-2</a> for a
+ * list of valid codes.
  */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class Country {
 
-  @NonNull
-  private String code;
+  @NonNull private String code;
 
   /**
-   * Only for internal use to grant downwards compatibility to {@link org.matomo.java.tracking.MatomoLocale}.
+   * Only for internal use to grant downwards compatibility to {@link
+   * org.matomo.java.tracking.MatomoLocale}.
    *
    * @param locale A locale that must contain a country code
    */
   @Deprecated
-  protected Country(
-      @edu.umd.cs.findbugs.annotations.NonNull
-      Locale locale
-  ) {
+  protected Country(@edu.umd.cs.findbugs.annotations.NonNull Locale locale) {
     setLocale(locale);
   }
 
@@ -46,10 +44,7 @@ public class Country {
    * @return The country or null if code was null
    */
   @Nullable
-  public static Country fromCode(
-      @Nullable
-      String code
-  ) {
+  public static Country fromCode(@Nullable String code) {
     if (code == null || code.isEmpty() || code.trim().isEmpty()) {
       return null;
     }
@@ -66,10 +61,7 @@ public class Country {
    * @return The country or null if ranges was null
    */
   @Nullable
-  public static Country fromLanguageRanges(
-      @Nullable
-      String ranges
-  ) {
+  public static Country fromLanguageRanges(@Nullable String ranges) {
     if (ranges == null || ranges.isEmpty() || ranges.trim().isEmpty()) {
       return null;
     }
@@ -89,8 +81,8 @@ public class Country {
    *
    * @return The locale for this country
    * @see Locale#forLanguageTag(String)
-   * @deprecated Since you instantiate this class, you can determine the language on your own
-   * using {@link Locale#forLanguageTag(String)}
+   * @deprecated Since you instantiate this class, you can determine the language on your own using
+   *     {@link Locale#forLanguageTag(String)}
    */
   @Deprecated
   public Locale getLocale() {
@@ -102,8 +94,8 @@ public class Country {
    *
    * @param locale A locale that must contain a country code
    * @see Locale#getCountry()
-   * @deprecated Since you instantiate this class, you can determine the language on your own
-   * using {@link Locale#getCountry()}
+   * @deprecated Since you instantiate this class, you can determine the language on your own using
+   *     {@link Locale#getCountry()}
    */
   @Deprecated
   public final void setLocale(Locale locale) {
@@ -117,5 +109,4 @@ public class Country {
   public String toString() {
     return code;
   }
-
 }

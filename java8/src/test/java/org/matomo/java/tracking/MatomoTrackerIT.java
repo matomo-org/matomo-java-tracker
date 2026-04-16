@@ -47,12 +47,13 @@ class MatomoTrackerIT {
 
   private static final int SITE_ID = 42;
 
-  private final TrackerConfigurationBuilder trackerConfigurationBuilder = TrackerConfiguration.builder();
+  private final TrackerConfigurationBuilder trackerConfigurationBuilder =
+      TrackerConfiguration.builder();
 
-  private final MatomoRequestBuilder requestBuilder = MatomoRequest
-      .builder()
-      .visitorId(VisitorId.fromHex("bbccddeeff1122"))
-      .randomValue(RandomValue.fromString("someRandom"));
+  private final MatomoRequestBuilder requestBuilder =
+      MatomoRequest.builder()
+          .visitorId(VisitorId.fromHex("bbccddeeff1122"))
+          .randomValue(RandomValue.fromString("someRandom"));
 
   private CompletableFuture<?> future;
 
@@ -80,12 +81,13 @@ class MatomoTrackerIT {
   @Test
   void requiresSiteId() {
 
-    trackerConfigurationBuilder.apiEndpoint(URI.create(wireMockServer.baseUrl() + "/matomo.php")).build();
+    trackerConfigurationBuilder
+        .apiEndpoint(URI.create(wireMockServer.baseUrl() + "/matomo.php"))
+        .build();
 
     assertThatThrownBy(this::whenSendsRequestAsync)
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("No default site ID and no request site ID is given");
-
   }
 
   private void whenSendsRequestAsync() {
@@ -101,7 +103,6 @@ class MatomoTrackerIT {
     whenSendsRequestAsync();
 
     thenGetsRequest("idsite=42&rec=1&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom");
-
   }
 
   private void givenTrackerConfigurationWithDefaultSiteId() {
@@ -111,12 +112,14 @@ class MatomoTrackerIT {
   }
 
   private void thenGetsRequest(String expectedQuery) {
-    assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
-      wireMockServer.verify(getRequestedFor(urlEqualTo(
-          String.format("/matomo.php?%s", expectedQuery))).withHeader("User-Agent",
-          equalTo("MatomoJavaClient")
-      ));
-    });
+    assertThat(future)
+        .succeedsWithin(1, MINUTES)
+        .satisfies(
+            v -> {
+              wireMockServer.verify(
+                  getRequestedFor(urlEqualTo(String.format("/matomo.php?%s", expectedQuery)))
+                      .withHeader("User-Agent", equalTo("MatomoJavaClient")));
+            });
   }
 
   @Test
@@ -128,7 +131,6 @@ class MatomoTrackerIT {
     whenSendsRequestAsync();
 
     thenGetsRequest("rec=1&idsite=123&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom");
-
   }
 
   @Test
@@ -145,7 +147,6 @@ class MatomoTrackerIT {
         .havingRootCause()
         .isInstanceOf(IllegalArgumentException.class)
         .withMessage("Auth token must be exactly 32 characters long");
-
   }
 
   @Test
@@ -156,8 +157,8 @@ class MatomoTrackerIT {
 
     whenSendsRequestAsync();
 
-    thenGetsRequest("idsite=42&rec=1&apiv=1&_id=00bbccddeeff1122&fla=1&send_image=0&rand=someRandom");
-
+    thenGetsRequest(
+        "idsite=42&rec=1&apiv=1&_id=00bbccddeeff1122&fla=1&send_image=0&rand=someRandom");
   }
 
   @Test
@@ -168,8 +169,8 @@ class MatomoTrackerIT {
 
     whenSendsRequestAsync();
 
-    thenGetsRequest("idsite=42&rec=1&apiv=1&_id=00bbccddeeff1122&java=0&send_image=0&rand=someRandom");
-
+    thenGetsRequest(
+        "idsite=42&rec=1&apiv=1&_id=00bbccddeeff1122&java=0&send_image=0&rand=someRandom");
   }
 
   @Test
@@ -182,7 +183,6 @@ class MatomoTrackerIT {
 
     thenGetsRequest(
         "idsite=42&rec=1&url=https%3A%2F%2Fwww.daniel-heid.de%2Fsome%2Fpage%3Ffoo%3Dbar&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom");
-
   }
 
   @Test
@@ -195,7 +195,6 @@ class MatomoTrackerIT {
 
     thenGetsRequest(
         "idsite=42&rec=1&apiv=1&_id=00bbccddeeff1122&urlref=https%3A%2F%2Fwww.daniel-heid.de%2Fsome%2Freferrer%3Ffoo2%3Dbar2&send_image=0&rand=someRandom");
-
   }
 
   @Test
@@ -208,9 +207,7 @@ class MatomoTrackerIT {
 
     thenPostsRequestWithoutAuthToken(
         "idsite=42&rec=1&apiv=1&_id=00bbccddeeff1122&link=https%3A%2F%2Fwww.daniel-heid.de%2Fsome%2Fexternal%2Flink%23&send_image=0&rand=someRandom",
-        "156"
-    );
-
+        "156");
   }
 
   @Test
@@ -221,25 +218,29 @@ class MatomoTrackerIT {
 
     future = matomoTracker.sendBulkRequestAsync(requestBuilder.build());
 
-    thenPostsRequestWithoutAuthToken("idsite=42&rec=1&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom", "90");
-
+    thenPostsRequestWithoutAuthToken(
+        "idsite=42&rec=1&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom", "90");
   }
 
   private void whenSendsBulkRequestAsync() {
     future =
-        new MatomoTracker(trackerConfigurationBuilder.build()).sendBulkRequestAsync(singleton(requestBuilder.build()));
+        new MatomoTracker(trackerConfigurationBuilder.build())
+            .sendBulkRequestAsync(singleton(requestBuilder.build()));
   }
 
   private void thenPostsRequestWithoutAuthToken(String expectedQuery, String contentLength) {
-    assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
-      wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php"))
-          .withHeader("Content-Length", equalTo(contentLength))
-          .withHeader("Accept", equalTo("*/*"))
-          .withHeader("Content-Type", equalTo("application/json"))
-          .withHeader("User-Agent", equalTo("MatomoJavaClient"))
-          .withRequestBody(equalToJson("{\"requests\":[\"?" + expectedQuery + "\"]}")));
-    });
-
+    assertThat(future)
+        .succeedsWithin(1, MINUTES)
+        .satisfies(
+            v -> {
+              wireMockServer.verify(
+                  postRequestedFor(urlEqualTo("/matomo.php"))
+                      .withHeader("Content-Length", equalTo(contentLength))
+                      .withHeader("Accept", equalTo("*/*"))
+                      .withHeader("Content-Type", equalTo("application/json"))
+                      .withHeader("User-Agent", equalTo("MatomoJavaClient"))
+                      .withRequestBody(equalToJson("{\"requests\":[\"?" + expectedQuery + "\"]}")));
+            });
   }
 
   @Test
@@ -252,9 +253,7 @@ class MatomoTrackerIT {
 
     thenPostsRequestWithoutAuthToken(
         "idsite=42&rec=1&apiv=1&_id=00bbccddeeff1122&download=https%3A%2F%2Fwww.daniel-heid.de%2Fsome%2Fdownload.pdf&send_image=0&rand=someRandom",
-        "154"
-    );
-
+        "154");
   }
 
   @Test
@@ -264,12 +263,14 @@ class MatomoTrackerIT {
 
     whenSendsRequestAsync();
 
-    assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
-      wireMockServer.verify(getRequestedFor(urlPathEqualTo("/matomo.php")).withHeader("User-Agent",
-          equalTo("MatomoJavaClient")
-      ));
-    });
-
+    assertThat(future)
+        .succeedsWithin(1, MINUTES)
+        .satisfies(
+            v -> {
+              wireMockServer.verify(
+                  getRequestedFor(urlPathEqualTo("/matomo.php"))
+                      .withHeader("User-Agent", equalTo("MatomoJavaClient")));
+            });
   }
 
   @Test
@@ -279,14 +280,17 @@ class MatomoTrackerIT {
 
     whenSendsBulkRequestAsync();
 
-    assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
-      wireMockServer.verify(postRequestedFor(urlPathEqualTo("/matomo.php"))
-          .withHeader("Accept", equalTo("*/*"))
-          .withHeader("Content-Length", equalTo("90"))
-          .withHeader("Content-Type", equalTo("application/json"))
-          .withHeader("User-Agent", equalTo("MatomoJavaClient")));
-    });
-
+    assertThat(future)
+        .succeedsWithin(1, MINUTES)
+        .satisfies(
+            v -> {
+              wireMockServer.verify(
+                  postRequestedFor(urlPathEqualTo("/matomo.php"))
+                      .withHeader("Accept", equalTo("*/*"))
+                      .withHeader("Content-Length", equalTo("90"))
+                      .withHeader("Content-Type", equalTo("application/json"))
+                      .withHeader("User-Agent", equalTo("MatomoJavaClient")));
+            });
   }
 
   @Test
@@ -297,12 +301,14 @@ class MatomoTrackerIT {
 
     whenSendsRequestAsync();
 
-    assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
-      wireMockServer.verify(getRequestedFor(urlPathEqualTo("/matomo.php")).withHeader("User-Agent",
-          equalTo("Mozilla/5.0")
-      ));
-    });
-
+    assertThat(future)
+        .succeedsWithin(1, MINUTES)
+        .satisfies(
+            v -> {
+              wireMockServer.verify(
+                  getRequestedFor(urlPathEqualTo("/matomo.php"))
+                      .withHeader("User-Agent", equalTo("Mozilla/5.0")));
+            });
   }
 
   @Test
@@ -314,43 +320,57 @@ class MatomoTrackerIT {
         .actionUrl("https://www.daniel-heid.de/portfolio")
         .visitorId(VisitorId.fromHash(3434343434343434343L))
         .referrerUrl("https://www.daniel-heid.de/referrer")
-        .visitCustomVariables(new CustomVariables()
-            .add(new CustomVariable("customVariable1Key", "customVariable1Value"), 4)
-            .add(new CustomVariable("customVariable2Key", "customVariable2Value"), 5))
+        .visitCustomVariables(
+            new CustomVariables()
+                .add(new CustomVariable("customVariable1Key", "customVariable1Value"), 4)
+                .add(new CustomVariable("customVariable2Key", "customVariable2Value"), 5))
         .visitorVisitCount(2)
-        .visitorFirstVisitTimestamp(LocalDateTime.of(2022, 8, 9, 18, 34, 12).toInstant(ZoneOffset.UTC))
+        .visitorFirstVisitTimestamp(
+            LocalDateTime.of(2022, 8, 9, 18, 34, 12).toInstant(ZoneOffset.UTC))
         .deviceResolution(DeviceResolution.builder().width(1024).height(768).build())
-        .headerAcceptLanguage(AcceptLanguage
-            .builder()
-            .languageRange(new LanguageRange("de"))
-            .languageRange(new LanguageRange("de-DE", 0.9))
-            .languageRange(new LanguageRange("en", 0.8))
-            .build())
+        .headerAcceptLanguage(
+            AcceptLanguage.builder()
+                .languageRange(new LanguageRange("de"))
+                .languageRange(new LanguageRange("de-DE", 0.9))
+                .languageRange(new LanguageRange("en", 0.8))
+                .build())
         .pageViewId(UniqueId.fromValue(999999999999999999L))
         .goalId(0)
         .ecommerceRevenue(12.34)
-        .ecommerceItems(EcommerceItems
-            .builder()
-            .item(org.matomo.java.tracking.parameters.EcommerceItem.builder().sku("SKU").build())
-            .item(EcommerceItem.builder().sku("SKU").name("NAME").category("CATEGORY").price(123.4).build())
-            .build())
+        .ecommerceItems(
+            EcommerceItems.builder()
+                .item(
+                    org.matomo.java.tracking.parameters.EcommerceItem.builder().sku("SKU").build())
+                .item(
+                    EcommerceItem.builder()
+                        .sku("SKU")
+                        .name("NAME")
+                        .category("CATEGORY")
+                        .price(123.4)
+                        .build())
+                .build())
         .authToken("fdf6e8461ea9de33176b222519627f78")
-        .visitorCountry(Country.fromLanguageRanges("en-GB;q=0.7,de,de-DE;q=0.9,en;q=0.8,en-US;q=0.6"));
+        .visitorCountry(
+            Country.fromLanguageRanges("en-GB;q=0.7,de,de-DE;q=0.9,en;q=0.8,en-US;q=0.6"));
 
     whenSendsBulkRequestAsync();
 
-    assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
-      wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php"))
-          .withHeader("Content-Length", equalTo("711"))
-          .withHeader("Accept", equalTo("*/*"))
-          .withHeader("Content-Type", equalTo("application/json"))
-          .withHeader("User-Agent", equalTo("MatomoJavaClient"))
-          .withRequestBody(equalToJson("{\"requests\":[\"?"
-              + "idsite=42&rec=1&action_name=Help+%2F+Feedback&url=https%3A%2F%2Fwww.daniel-heid.de%2Fportfolio&apiv=1&_id=2fa93d2858bc4867&urlref=https%3A%2F%2Fwww.daniel-heid.de%2Freferrer&_cvar=%7B%224%22%3A%5B%22customVariable1Key%22%2C%22customVariable1Value%22%5D%2C%225%22%3A%5B%22customVariable2Key%22%2C%22customVariable2Value%22%5D%7D&_idvc=2&_idts=1660070052&res=1024x768&lang=de%2Cde-de%3Bq%3D0.9%2Cen%3Bq%3D0.8&pv_id=lbBbxG&idgoal=0&revenue=12.34&ec_items=%5B%5B%22SKU%22%2C%22%22%2C%22%22%2C0.0%2C0%5D%2C%5B%22SKU%22%2C%22NAME%22%2C%22CATEGORY%22%2C123.4%2C0%5D%5D&token_auth=fdf6e8461ea9de33176b222519627f78&country=de&send_image=0&rand=someRandom"
-              + "\"],\"token_auth\" : \"" + "fdf6e8461ea9de33176b222519627f78" + "\"}")));
-
-    });
-
+    assertThat(future)
+        .succeedsWithin(1, MINUTES)
+        .satisfies(
+            v -> {
+              wireMockServer.verify(
+                  postRequestedFor(urlEqualTo("/matomo.php"))
+                      .withHeader("Content-Length", equalTo("711"))
+                      .withHeader("Accept", equalTo("*/*"))
+                      .withHeader("Content-Type", equalTo("application/json"))
+                      .withHeader("User-Agent", equalTo("MatomoJavaClient"))
+                      .withRequestBody(
+                          equalToJson(
+                              "{\"requests\":[\"?"
+                                  + "idsite=42&rec=1&action_name=Help+%2F+Feedback&url=https%3A%2F%2Fwww.daniel-heid.de%2Fportfolio&apiv=1&_id=2fa93d2858bc4867&urlref=https%3A%2F%2Fwww.daniel-heid.de%2Freferrer&_cvar=%7B%224%22%3A%5B%22customVariable1Key%22%2C%22customVariable1Value%22%5D%2C%225%22%3A%5B%22customVariable2Key%22%2C%22customVariable2Value%22%5D%7D&_idvc=2&_idts=1660070052&res=1024x768&lang=de%2Cde-de%3Bq%3D0.9%2Cen%3Bq%3D0.8&pv_id=lbBbxG&idgoal=0&revenue=12.34&ec_items=%5B%5B%22SKU%22%2C%22%22%2C%22%22%2C0.0%2C0%5D%2C%5B%22SKU%22%2C%22NAME%22%2C%22CATEGORY%22%2C123.4%2C0%5D%5D&token_auth=fdf6e8461ea9de33176b222519627f78&country=de&send_image=0&rand=someRandom\"],\"token_auth\""
+                                  + " : \"fdf6e8461ea9de33176b222519627f78\"}")));
+            });
   }
 
   @Test
@@ -364,14 +384,15 @@ class MatomoTrackerIT {
     future.get();
 
     wireMockServer.verify(0, postRequestedFor(urlPathEqualTo("/matomo.php")));
-
   }
 
   @Test
   void reportsErrors() {
 
     wireMockServer.stubFor(get(urlPathEqualTo("/failing")).willReturn(status(500)));
-    trackerConfigurationBuilder.apiEndpoint(URI.create(wireMockServer.baseUrl() + "/failing")).defaultSiteId(SITE_ID);
+    trackerConfigurationBuilder
+        .apiEndpoint(URI.create(wireMockServer.baseUrl() + "/failing"))
+        .defaultSiteId(SITE_ID);
 
     whenSendsRequestAsync();
 
@@ -381,7 +402,6 @@ class MatomoTrackerIT {
         .havingRootCause()
         .isInstanceOf(MatomoException.class)
         .withMessage("Tracking endpoint responded with code 500");
-
   }
 
   @Test
@@ -392,13 +412,16 @@ class MatomoTrackerIT {
 
     whenSendsRequestAsync();
 
-    assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
-      wireMockServer.verify(getRequestedFor(urlEqualTo(
-          "/matomo.php?idsite=42&token_auth=fdf6e8461ea9de33176b222519627f78&rec=1&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom")).withHeader("User-Agent",
-          equalTo("MatomoJavaClient")
-      ));
-    });
-
+    assertThat(future)
+        .succeedsWithin(1, MINUTES)
+        .satisfies(
+            v -> {
+              wireMockServer.verify(
+                  getRequestedFor(
+                          urlEqualTo(
+                              "/matomo.php?idsite=42&token_auth=fdf6e8461ea9de33176b222519627f78&rec=1&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom"))
+                      .withHeader("User-Agent", equalTo("MatomoJavaClient")));
+            });
   }
 
   @Test
@@ -407,21 +430,31 @@ class MatomoTrackerIT {
     givenTrackerConfigurationWithDefaultSiteId();
     matomoTracker = new MatomoTracker(trackerConfigurationBuilder.build());
 
-    future = matomoTracker.sendBulkRequestAsync(Arrays.asList(requestBuilder.actionName("First").build(),
-        requestBuilder.actionName("Second").build(),
-        requestBuilder.actionName("Third").build()
-    ));
+    future =
+        matomoTracker.sendBulkRequestAsync(
+            Arrays.asList(
+                requestBuilder.actionName("First").build(),
+                requestBuilder.actionName("Second").build(),
+                requestBuilder.actionName("Third").build()));
 
-    assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
-      wireMockServer.verify(postRequestedFor(urlEqualTo("/matomo.php"))
-          .withHeader("Content-Length", equalTo("297"))
-          .withHeader("Accept", equalTo("*/*"))
-          .withHeader("Content-Type", equalTo("application/json"))
-          .withHeader("User-Agent", equalTo("MatomoJavaClient"))
-          .withRequestBody(equalToJson(
-              "{\"requests\" : [ \"?idsite=42&rec=1&action_name=First&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom\", \"?idsite=42&rec=1&action_name=Second&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom\", \"?idsite=42&rec=1&action_name=Third&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom\" ]}")));
-    });
-
+    assertThat(future)
+        .succeedsWithin(1, MINUTES)
+        .satisfies(
+            v -> {
+              wireMockServer.verify(
+                  postRequestedFor(urlEqualTo("/matomo.php"))
+                      .withHeader("Content-Length", equalTo("297"))
+                      .withHeader("Accept", equalTo("*/*"))
+                      .withHeader("Content-Type", equalTo("application/json"))
+                      .withHeader("User-Agent", equalTo("MatomoJavaClient"))
+                      .withRequestBody(
+                          equalToJson(
+                              "{\"requests\" : ["
+                                  + " \"?idsite=42&rec=1&action_name=First&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom\","
+                                  + " \"?idsite=42&rec=1&action_name=Second&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom\","
+                                  + " \"?idsite=42&rec=1&action_name=Third&apiv=1&_id=00bbccddeeff1122&send_image=0&rand=someRandom\""
+                                  + " ]}")));
+            });
   }
 
   @Test
@@ -451,7 +484,6 @@ class MatomoTrackerIT {
     future.get();
 
     wireMockServer.verify(0, getRequestedFor(urlPathEqualTo("/matomo.php")));
-
   }
 
   @Test
@@ -479,7 +511,8 @@ class MatomoTrackerIT {
   }
 
   private void whenSendsBulkRequest() {
-    new MatomoTracker(trackerConfigurationBuilder.build()).sendBulkRequest(singleton(requestBuilder.build()));
+    new MatomoTracker(trackerConfigurationBuilder.build())
+        .sendBulkRequest(singleton(requestBuilder.build()));
   }
 
   @Test
@@ -498,13 +531,19 @@ class MatomoTrackerIT {
     givenTrackerConfigurationWithDefaultSiteId();
     matomoTracker = new MatomoTracker(trackerConfigurationBuilder.build());
     AtomicBoolean success = new AtomicBoolean();
-    future = matomoTracker.sendRequestAsync(requestBuilder.build(), request -> {
-      success.set(true);
-      return null;
-    });
-    assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
-      wireMockServer.verify(getRequestedFor(urlPathEqualTo("/matomo.php")));
-    });
+    future =
+        matomoTracker.sendRequestAsync(
+            requestBuilder.build(),
+            request -> {
+              success.set(true);
+              return null;
+            });
+    assertThat(future)
+        .succeedsWithin(1, MINUTES)
+        .satisfies(
+            v -> {
+              wireMockServer.verify(getRequestedFor(urlPathEqualTo("/matomo.php")));
+            });
     assertThat(success).isTrue();
   }
 
@@ -513,13 +552,18 @@ class MatomoTrackerIT {
     givenTrackerConfigurationWithDefaultSiteId();
     matomoTracker = new MatomoTracker(trackerConfigurationBuilder.build());
     AtomicBoolean success = new AtomicBoolean();
-    future = matomoTracker.sendBulkRequestAsync(singleton(requestBuilder.build()), v -> {
-      success.set(true);
-    });
-    assertThat(future).succeedsWithin(1, MINUTES).satisfies(v -> {
-      wireMockServer.verify(postRequestedFor(urlPathEqualTo("/matomo.php")));
-    });
+    future =
+        matomoTracker.sendBulkRequestAsync(
+            singleton(requestBuilder.build()),
+            v -> {
+              success.set(true);
+            });
+    assertThat(future)
+        .succeedsWithin(1, MINUTES)
+        .satisfies(
+            v -> {
+              wireMockServer.verify(postRequestedFor(urlPathEqualTo("/matomo.php")));
+            });
     assertThat(success).isTrue();
   }
-
 }

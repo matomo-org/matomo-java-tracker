@@ -11,7 +11,6 @@ class RequestValidatorTest {
 
   private final MatomoRequest request = new MatomoRequest();
 
-
   @Test
   void testSearchResultsCount() {
 
@@ -20,7 +19,6 @@ class RequestValidatorTest {
     assertThatThrownBy(() -> RequestValidator.validate(request, null))
         .isInstanceOf(MatomoException.class)
         .hasMessage("Search query must be set if search results count is set");
-
   }
 
   @Test
@@ -30,7 +28,8 @@ class RequestValidatorTest {
     assertThatThrownBy(() -> RequestValidator.validate(request, null))
         .isInstanceOf(MatomoException.class)
         .hasMessage(
-            "Auth token must be present if visitor longitude, latitude, region, city, country or IP are set");
+            "Auth token must be present if visitor longitude, latitude, region, city, country or IP"
+                + " are set");
   }
 
   @Test
@@ -40,7 +39,8 @@ class RequestValidatorTest {
     assertThatThrownBy(() -> RequestValidator.validate(request, null))
         .isInstanceOf(MatomoException.class)
         .hasMessage(
-            "Auth token must be present if visitor longitude, latitude, region, city, country or IP are set");
+            "Auth token must be present if visitor longitude, latitude, region, city, country or IP"
+                + " are set");
   }
 
   @Test
@@ -50,7 +50,8 @@ class RequestValidatorTest {
     assertThatThrownBy(() -> RequestValidator.validate(request, null))
         .isInstanceOf(MatomoException.class)
         .hasMessage(
-            "Auth token must be present if visitor longitude, latitude, region, city, country or IP are set");
+            "Auth token must be present if visitor longitude, latitude, region, city, country or IP"
+                + " are set");
   }
 
   @Test
@@ -60,7 +61,8 @@ class RequestValidatorTest {
     assertThatThrownBy(() -> RequestValidator.validate(request, null))
         .isInstanceOf(MatomoException.class)
         .hasMessage(
-            "Auth token must be present if visitor longitude, latitude, region, city, country or IP are set");
+            "Auth token must be present if visitor longitude, latitude, region, city, country or IP"
+                + " are set");
   }
 
   @Test
@@ -68,11 +70,11 @@ class RequestValidatorTest {
     PiwikLocale country = new PiwikLocale(Locale.US);
     request.setVisitorCountry(country);
 
-
     assertThatThrownBy(() -> RequestValidator.validate(request, null))
         .isInstanceOf(MatomoException.class)
         .hasMessage(
-            "Auth token must be present if visitor longitude, latitude, region, city, country or IP are set");
+            "Auth token must be present if visitor longitude, latitude, region, city, country or IP"
+                + " are set");
   }
 
   @Test
@@ -84,7 +86,6 @@ class RequestValidatorTest {
     assertThatThrownBy(() -> RequestValidator.validate(request, null))
         .isInstanceOf(MatomoException.class)
         .hasMessage("Auth token must be present if request timestamp is more than four hours ago");
-
   }
 
   @Test
@@ -93,5 +94,4 @@ class RequestValidatorTest {
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Auth token must be exactly 32 characters long");
   }
-
 }

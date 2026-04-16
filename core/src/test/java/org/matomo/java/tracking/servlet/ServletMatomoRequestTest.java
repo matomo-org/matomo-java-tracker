@@ -12,16 +12,14 @@ import org.matomo.java.tracking.MatomoRequest;
 class ServletMatomoRequestTest {
 
   private MatomoRequest.MatomoRequestBuilder requestBuilder;
-  
-  private HttpServletRequestWrapper.HttpServletRequestWrapperBuilder wrapperBuilder = 
+
+  private HttpServletRequestWrapper.HttpServletRequestWrapperBuilder wrapperBuilder =
       HttpServletRequestWrapper.builder();
 
   @Test
   void addsServletRequestHeaders() {
 
-    wrapperBuilder
-        .headers(singletonMap("headername", "headerValue"))
-        .build();
+    wrapperBuilder.headers(singletonMap("headername", "headerValue")).build();
 
     whenBuildsRequest();
 
@@ -32,37 +30,29 @@ class ServletMatomoRequestTest {
   @Test
   void skipsEmptyHeaderNames() {
 
-    wrapperBuilder
-        .headers(singletonMap("", "headerValue"))
-        .build();
+    wrapperBuilder.headers(singletonMap("", "headerValue")).build();
 
     whenBuildsRequest();
 
     MatomoRequest matomoRequest = requestBuilder.build();
     assertThat(matomoRequest.getHeaders()).isEmpty();
-
   }
 
   @Test
   void skipsBlankHeaderNames() {
 
-    wrapperBuilder
-        .headers(singletonMap(" ", "headerValue"))
-        .build();
+    wrapperBuilder.headers(singletonMap(" ", "headerValue")).build();
 
     whenBuildsRequest();
 
     MatomoRequest matomoRequest = requestBuilder.build();
     assertThat(matomoRequest.getHeaders()).isEmpty();
-
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"connection", "content-length", "expect", "host", "upgrade"})
   void doesNotAddRestrictedHeaders(String restrictedHeader) {
-    wrapperBuilder
-        .headers(singletonMap(restrictedHeader, "headerValue"))
-        .build();
+    wrapperBuilder.headers(singletonMap(restrictedHeader, "headerValue")).build();
 
     whenBuildsRequest();
 
@@ -79,10 +69,10 @@ class ServletMatomoRequestTest {
 
   @Test
   void failsIfBuilderIsNull() {
-    assertThatThrownBy(() -> ServletMatomoRequest.addServletRequestHeaders(
-        null,
-        HttpServletRequestWrapper.builder().build()
-    ))
+    assertThatThrownBy(
+            () ->
+                ServletMatomoRequest.addServletRequestHeaders(
+                    null, HttpServletRequestWrapper.builder().build()))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("builder is marked non-null but is null");
   }
@@ -90,9 +80,10 @@ class ServletMatomoRequestTest {
   @Test
   void extractsVisitorIdFromCookie() {
     wrapperBuilder
-        .cookies(new CookieWrapper[] {
-          new CookieWrapper("_pk_id.1.1fff", "be40d677d6c7270b.1699801331.")
-        })
+        .cookies(
+            new CookieWrapper[] {
+              new CookieWrapper("_pk_id.1.1fff", "be40d677d6c7270b.1699801331.")
+            })
         .build();
 
     whenBuildsRequest();
@@ -105,13 +96,9 @@ class ServletMatomoRequestTest {
   }
 
   @ParameterizedTest
-  @ValueSource(
-      strings = {"_pk_ses.1.1fff", "_pk_ref.1.1fff", "_pk_hsr.1.1fff"}
-  )
+  @ValueSource(strings = {"_pk_ses.1.1fff", "_pk_ref.1.1fff", "_pk_hsr.1.1fff"})
   void extractsMatomoCookies(String cookieName) {
-    wrapperBuilder
-        .cookies(new CookieWrapper[] {new CookieWrapper(cookieName, "anything")})
-        .build();
+    wrapperBuilder.cookies(new CookieWrapper[] {new CookieWrapper(cookieName, "anything")}).build();
 
     whenBuildsRequest();
 
@@ -122,12 +109,10 @@ class ServletMatomoRequestTest {
   @Test
   void extractsSessionIdFromMatomoSessIdCookie() {
     wrapperBuilder
-        .cookies(new CookieWrapper[] {
-          new CookieWrapper(
-              "MATOMO_SESSID",
-              "2cbf8b5ba00fbf9ba70853308cd0944a"
-          )
-        })
+        .cookies(
+            new CookieWrapper[] {
+              new CookieWrapper("MATOMO_SESSID", "2cbf8b5ba00fbf9ba70853308cd0944a")
+            })
         .build();
 
     whenBuildsRequest();
@@ -139,30 +124,28 @@ class ServletMatomoRequestTest {
   @Test
   void parsesVisitCustomVariablesFromCookie() {
     wrapperBuilder
-        .cookies(new CookieWrapper[] {
-          new CookieWrapper(
-              "_pk_cvar.1.1fff",
-              "{\"1\":[\"VAR 1 set, var 2 not set\",\"yes\"],\"3\":[\"var 3 set\",\"yes!!!!\"]}"
-          )
-        })
+        .cookies(
+            new CookieWrapper[] {
+              new CookieWrapper(
+                  "_pk_cvar.1.1fff",
+                  "{\"1\":[\"VAR 1 set, var 2 not set\",\"yes\"],\"3\":[\"var 3"
+                      + " set\",\"yes!!!!\"]}")
+            })
         .build();
 
     whenBuildsRequest();
 
     MatomoRequest matomoRequest = requestBuilder.build();
-    assertThat(matomoRequest.getVisitCustomVariables().get(1).getKey()).isEqualTo(
-        "VAR 1 set, var 2 not set");
+    assertThat(matomoRequest.getVisitCustomVariables().get(1).getKey())
+        .isEqualTo("VAR 1 set, var 2 not set");
     assertThat(matomoRequest.getVisitCustomVariables().get(1).getValue()).isEqualTo("yes");
     assertThat(matomoRequest.getVisitCustomVariables().get(3).getKey()).isEqualTo("var 3 set");
     assertThat(matomoRequest.getVisitCustomVariables().get(3).getValue()).isEqualTo("yes!!!!");
-
   }
 
   @Test
   void determinerVisitorIpFromXForwardedForHeader() {
-    wrapperBuilder
-        .headers(singletonMap("x-forwarded-for", "44.55.66.77"))
-        .build();
+    wrapperBuilder.headers(singletonMap("x-forwarded-for", "44.55.66.77")).build();
 
     whenBuildsRequest();
 
@@ -172,9 +155,7 @@ class ServletMatomoRequestTest {
 
   @Test
   void setsActionUrlFromRequestURL() {
-    wrapperBuilder
-        .requestURL(new StringBuffer("https://localhost/test"))
-        .build();
+    wrapperBuilder.requestURL(new StringBuffer("https://localhost/test")).build();
 
     whenBuildsRequest();
 
@@ -184,9 +165,7 @@ class ServletMatomoRequestTest {
 
   @Test
   void setsUserIdFromRemoteUser() {
-    wrapperBuilder
-        .remoteUser("remote-user")
-        .build();
+    wrapperBuilder.remoteUser("remote-user").build();
 
     whenBuildsRequest();
 
@@ -197,5 +176,4 @@ class ServletMatomoRequestTest {
   private void whenBuildsRequest() {
     requestBuilder = ServletMatomoRequest.fromServletRequest(wrapperBuilder.build());
   }
-
 }

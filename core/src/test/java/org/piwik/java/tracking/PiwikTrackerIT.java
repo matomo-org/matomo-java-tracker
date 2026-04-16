@@ -14,7 +14,6 @@ class PiwikTrackerIT {
     piwikTracker = new PiwikTracker("http://localhost:8080");
 
     assertThat(piwikTracker).isNotNull();
-
   }
 
   @Test
@@ -23,7 +22,6 @@ class PiwikTrackerIT {
     piwikTracker = new PiwikTracker("http://localhost:8080", 1000);
 
     assertThat(piwikTracker).isNotNull();
-
   }
 
   @Test
@@ -32,7 +30,6 @@ class PiwikTrackerIT {
     piwikTracker = new PiwikTracker("http://localhost:8080", "localhost", 8080);
 
     assertThat(piwikTracker).isNotNull();
-
   }
 
   @Test
@@ -41,7 +38,5 @@ class PiwikTrackerIT {
     piwikTracker = new PiwikTracker("http://localhost:8080", "localhost", 8080, 1000);
 
     assertThat(piwikTracker).isNotNull();
-
   }
-
 }

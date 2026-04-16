@@ -11,8 +11,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class HexTest {
 
-
-
   @Test
   void failsIfBytesAreNull() {
     assertThatThrownBy(() -> Hex.fromBytes(null))
@@ -24,8 +22,7 @@ class HexTest {
     return Stream.of(
         Arguments.of(new byte[] {0x00, 0x01, 0x02, 0x03}, "00010203"),
         Arguments.of(new byte[] {(byte) 0xFF, (byte) 0xFE, (byte) 0xFD, (byte) 0xFC}, "fffefdfc"),
-        Arguments.of(new byte[0], "")
-    );
+        Arguments.of(new byte[0], ""));
   }
 
   @ParameterizedTest
@@ -33,5 +30,4 @@ class HexTest {
   void convertsBytesIntoHex(byte[] bytes, String expected) {
     assertThat(Hex.fromBytes(bytes)).isEqualTo(expected);
   }
-
 }

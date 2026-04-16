@@ -23,11 +23,12 @@ public class MatomoTrackerFilter extends HttpFilter {
   private final MatomoTracker tracker;
 
   @Override
-  protected void doFilter(@NonNull HttpServletRequest req, @NonNull HttpServletResponse res,
-      @NonNull FilterChain chain)
-         throws IOException, ServletException {
-    MatomoRequest matomoRequest = ServletMatomoRequest
-        .fromServletRequest(JavaxHttpServletWrapper.fromHttpServletRequest(req)).build();
+  protected void doFilter(
+      @NonNull HttpServletRequest req, @NonNull HttpServletResponse res, @NonNull FilterChain chain)
+      throws IOException, ServletException {
+    MatomoRequest matomoRequest =
+        ServletMatomoRequest.fromServletRequest(JavaxHttpServletWrapper.fromHttpServletRequest(req))
+            .build();
     log.debug("Sending request {}", matomoRequest);
     tracker.sendRequestAsync(matomoRequest);
     super.doFilter(req, res, chain);

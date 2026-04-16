@@ -13,7 +13,8 @@ import java.util.TimeZone;
 import org.matomo.java.tracking.MatomoDate;
 
 /**
- * A date object that can be used to send dates to Matomo. This class is deprecated and will be removed in a future.
+ * A date object that can be used to send dates to Matomo. This class is deprecated and will be
+ * removed in a future.
  *
  * @author brettcsorba
  * @deprecated Please use {@link Instant}
@@ -27,11 +28,11 @@ public class PiwikDate extends MatomoDate {
    * @deprecated Use {@link Instant} instead.
    */
   @Deprecated
-  public PiwikDate() {
-  }
+  public PiwikDate() {}
 
   /**
-   * Creates a new date object with the specified time. The time is specified in milliseconds since the epoch.
+   * Creates a new date object with the specified time. The time is specified in milliseconds since
+   * the epoch.
    *
    * @param epochMilli The time in milliseconds since the epoch
    * @deprecated Use {@link Instant} instead.
@@ -42,7 +43,8 @@ public class PiwikDate extends MatomoDate {
   }
 
   /**
-   * Sets the time zone for this date object. This is used to convert the date to UTC before sending it to Matomo.
+   * Sets the time zone for this date object. This is used to convert the date to UTC before sending
+   * it to Matomo.
    *
    * @param zone the time zone to use
    * @deprecated Use {@link ZonedDateTime#toInstant()} instead.
@@ -51,5 +53,4 @@ public class PiwikDate extends MatomoDate {
   public void setTimeZone(TimeZone zone) {
     setTimeZone(zone.toZoneId());
   }
-
 }

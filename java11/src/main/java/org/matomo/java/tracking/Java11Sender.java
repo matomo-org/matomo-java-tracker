@@ -21,33 +21,25 @@ import java.util.concurrent.ExecutorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * A {@link Sender} implementation that uses the Java 11 HTTP client.
- */
+/** A {@link Sender} implementation that uses the Java 11 HTTP client. */
 @RequiredArgsConstructor
 @Slf4j
 public class Java11Sender implements Sender {
 
-  @lombok.NonNull
-  private final TrackerConfiguration trackerConfiguration;
+  @lombok.NonNull private final TrackerConfiguration trackerConfiguration;
 
-  @lombok.NonNull
-  private final QueryCreator queryCreator;
+  @lombok.NonNull private final QueryCreator queryCreator;
 
-  @lombok.NonNull
-  private final HttpClient httpClient;
+  @lombok.NonNull private final HttpClient httpClient;
 
-  @lombok.NonNull
-  private final CookieStore cookieStore;
+  @lombok.NonNull private final CookieStore cookieStore;
 
-  @lombok.NonNull
-  private final ExecutorService executorService;
+  @lombok.NonNull private final ExecutorService executorService;
 
   @NonNull
   @Override
   public CompletableFuture<MatomoRequest> sendSingleAsync(
-      @NonNull @lombok.NonNull MatomoRequest request
-  ) {
+      @NonNull @lombok.NonNull MatomoRequest request) {
     return sendAsyncAndCheckResponse(buildHttpGetRequest(request), request);
   }
 
@@ -60,24 +52,20 @@ public class Java11Sender implements Sender {
     checkResponse(
         send(
             httpRequest,
-            () -> httpClient.send(httpRequest, HttpResponse.BodyHandlers.discarding())
-        ),
-        httpRequest
-    );
+            () -> httpClient.send(httpRequest, HttpResponse.BodyHandlers.discarding())),
+        httpRequest);
   }
 
   @Override
   public void sendBulk(
       @NonNull @lombok.NonNull Iterable<? extends MatomoRequest> requests,
-      @Nullable String overrideAuthToken
-  ) {
+      @Nullable String overrideAuthToken) {
     sendAndCheckResponse(buildHttpPostRequest(requests, overrideAuthToken));
   }
 
   @NonNull
   private HttpRequest buildHttpPostRequest(
-      @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken
-  ) {
+      @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken) {
     String authToken =
         AuthToken.determineAuthToken(overrideAuthToken, requests, trackerConfiguration);
     Collection<String> queries = new ArrayList<>();
@@ -95,17 +83,14 @@ public class Java11Sender implements Sender {
       queries.add(queryCreator.createQuery(request, null));
       addCookies(request);
     }
-    HttpRequest.Builder builder = HttpRequest
-        .newBuilder()
-        .uri(trackerConfiguration.getApiEndpoint())
-        .header("Accept", "*/*")
-        .header("Content-Type", "application/json")
-        .POST(HttpRequest.BodyPublishers.ofByteArray(BulkRequest
-            .builder()
-            .queries(queries)
-            .authToken(authToken)
-            .build()
-            .toBytes()));
+    HttpRequest.Builder builder =
+        HttpRequest.newBuilder()
+            .uri(trackerConfiguration.getApiEndpoint())
+            .header("Accept", "*/*")
+            .header("Content-Type", "application/json")
+            .POST(
+                HttpRequest.BodyPublishers.ofByteArray(
+                    BulkRequest.builder().queries(queries).authToken(authToken).build().toBytes()));
     applyTrackerConfiguration(builder);
     setUserAgentHeader(builder, headerUserAgent, headers);
     addHeaders(builder, headers);
@@ -116,23 +101,23 @@ public class Java11Sender implements Sender {
   @Override
   public CompletableFuture<Void> sendBulkAsync(
       @NonNull @lombok.NonNull Collection<? extends MatomoRequest> requests,
-      @Nullable String overrideAuthToken
-  ) {
+      @Nullable String overrideAuthToken) {
     return sendAsyncAndCheckResponse(buildHttpPostRequest(requests, overrideAuthToken), null);
   }
 
   @NonNull
   private <T> CompletableFuture<T> sendAsyncAndCheckResponse(
-      @NonNull HttpRequest httpRequest, @Nullable T result
-  ) {
+      @NonNull HttpRequest httpRequest, @Nullable T result) {
     return send(
         httpRequest,
-        () -> httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.discarding())
-                        .thenApply(response -> {
-                          checkResponse(response, httpRequest);
-                          return result;
-                        })
-    );
+        () ->
+            httpClient
+                .sendAsync(httpRequest, HttpResponse.BodyHandlers.discarding())
+                .thenApply(
+                    response -> {
+                      checkResponse(response, httpRequest);
+                      return result;
+                    }));
   }
 
   @NonNull
@@ -142,22 +127,20 @@ public class Java11Sender implements Sender {
     cookieStore.removeAll();
     addCookies(request);
     URI apiEndpoint = trackerConfiguration.getApiEndpoint();
-    HttpRequest.Builder builder = HttpRequest
-        .newBuilder()
-        .uri(apiEndpoint.resolve(String.format(
-            "%s?%s",
-            apiEndpoint.getPath(),
-            queryCreator.createQuery(request, authToken)
-        )));
+    HttpRequest.Builder builder =
+        HttpRequest.newBuilder()
+            .uri(
+                apiEndpoint.resolve(
+                    String.format(
+                        "%s?%s",
+                        apiEndpoint.getPath(), queryCreator.createQuery(request, authToken))));
     applyTrackerConfiguration(builder);
     setUserAgentHeader(builder, request.getHeaderUserAgent(), request.getHeaders());
     addHeaders(builder, request.getHeaders());
     return builder.build();
   }
 
-  private <T> T send(
-      @NonNull HttpRequest httpRequest, @NonNull Callable<T> callable
-  ) {
+  private <T> T send(@NonNull HttpRequest httpRequest, @NonNull Callable<T> callable) {
     try {
       log.debug("Sending request to Matomo: {}", httpRequest);
       log.debug("Headers: {}", httpRequest.headers());
@@ -172,21 +155,14 @@ public class Java11Sender implements Sender {
   }
 
   private void checkResponse(
-      @NonNull HttpResponse<Void> response,
-      @NonNull HttpRequest httpRequest
-  ) {
+      @NonNull HttpResponse<Void> response, @NonNull HttpRequest httpRequest) {
     if (response.statusCode() > 399) {
       if (trackerConfiguration.isLogFailedTracking()) {
         log.error(
-            "Received HTTP error code {} for URL {}",
-            response.statusCode(),
-            httpRequest.uri()
-        );
+            "Received HTTP error code {} for URL {}", response.statusCode(), httpRequest.uri());
       }
-      throw new MatomoException(String.format(
-          "Tracking endpoint responded with code %d",
-          response.statusCode()
-      ));
+      throw new MatomoException(
+          String.format("Tracking endpoint responded with code %d", response.statusCode()));
     }
   }
 
@@ -211,25 +187,23 @@ public class Java11Sender implements Sender {
   private void setUserAgentHeader(
       HttpRequest.Builder builder,
       @Nullable String headerUserAgent,
-      @Nullable Map<String, String> headers
-  ) {
+      @Nullable Map<String, String> headers) {
     String userAgentHeader = null;
     if ((headerUserAgent == null || headerUserAgent.trim().isEmpty()) && headers != null) {
       TreeMap<String, String> caseInsensitiveMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
       caseInsensitiveMap.putAll(headers);
       userAgentHeader = caseInsensitiveMap.get("User-Agent");
     }
-    if ((userAgentHeader == null || userAgentHeader.trim().isEmpty()) && (
-        headerUserAgent == null || headerUserAgent.trim().isEmpty())
-        && trackerConfiguration.getUserAgent() != null && !trackerConfiguration.getUserAgent().isEmpty()) {
+    if ((userAgentHeader == null || userAgentHeader.trim().isEmpty())
+        && (headerUserAgent == null || headerUserAgent.trim().isEmpty())
+        && trackerConfiguration.getUserAgent() != null
+        && !trackerConfiguration.getUserAgent().isEmpty()) {
       builder.header("User-Agent", trackerConfiguration.getUserAgent());
     }
   }
 
   private void addHeaders(
-      @NonNull HttpRequest.Builder builder,
-      @Nullable Map<String, String> headers
-  ) {
+      @NonNull HttpRequest.Builder builder, @Nullable Map<String, String> headers) {
     if (headers != null) {
       for (Map.Entry<String, String> header : headers.entrySet()) {
         builder.header(header.getKey(), header.getValue());

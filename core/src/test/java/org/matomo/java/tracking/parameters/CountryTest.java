@@ -23,7 +23,6 @@ class CountryTest {
     Country country = Country.fromCode("DE");
 
     assertThat(country).hasToString("de");
-
   }
 
   @Test
@@ -32,7 +31,6 @@ class CountryTest {
     Country country = Country.fromLanguageRanges("en-GB;q=0.7,de,de-DE;q=0.9,en;q=0.8,en-US;q=0.6");
 
     assertThat(country).hasToString("de");
-
   }
 
   @ParameterizedTest
@@ -42,7 +40,6 @@ class CountryTest {
     Country country = Country.fromLanguageRanges(ranges);
 
     assertThat(country).isNull();
-
   }
 
   @Test
@@ -51,7 +48,6 @@ class CountryTest {
     assertThatThrownBy(() -> Country.fromCode("invalid"))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Invalid country code");
-
   }
 
   @Test
@@ -60,7 +56,6 @@ class CountryTest {
     assertThatThrownBy(() -> Country.fromCode("invalid"))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Invalid country code");
-
   }
 
   @Test
@@ -69,7 +64,6 @@ class CountryTest {
     Country country = Country.fromCode(null);
 
     assertThat(country).isNull();
-
   }
 
   @Test
@@ -78,7 +72,6 @@ class CountryTest {
     Country country = Country.fromCode("");
 
     assertThat(country).isNull();
-
   }
 
   @Test
@@ -87,7 +80,6 @@ class CountryTest {
     Country country = Country.fromCode(" ");
 
     assertThat(country).isNull();
-
   }
 
   @Test
@@ -96,7 +88,6 @@ class CountryTest {
     Country country = Country.fromLanguageRanges(null);
 
     assertThat(country).isNull();
-
   }
 
   @Test
@@ -105,7 +96,6 @@ class CountryTest {
     Country country = Country.fromLanguageRanges(" ");
 
     assertThat(country).isNull();
-
   }
 
   @Test
@@ -114,7 +104,6 @@ class CountryTest {
     assertThatThrownBy(() -> Country.fromLanguageRanges("invalid"))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Invalid country code");
-
   }
 
   @Test
@@ -123,7 +112,6 @@ class CountryTest {
     assertThatThrownBy(() -> new Country(Locale.forLanguageTag("de")))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Invalid locale");
-
   }
 
   @Test
@@ -132,23 +120,23 @@ class CountryTest {
     assertThatThrownBy(() -> new Country(Locale.forLanguageTag("de")).setLocale(null))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Invalid locale");
-
   }
 
   @Test
   void setLocaleFailsOnNullCountryCode() {
 
-    assertThatThrownBy(() -> new Country(Locale.forLanguageTag("de")).setLocale(Locale.forLanguageTag(
-        "de"))).isInstanceOf(IllegalArgumentException.class).hasMessage("Invalid locale");
-
+    assertThatThrownBy(
+            () -> new Country(Locale.forLanguageTag("de")).setLocale(Locale.forLanguageTag("de")))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Invalid locale");
   }
 
   @Test
   void setLocaleFailsOnEmptyCountryCode() {
 
-    assertThatThrownBy(() -> new Country(Locale.forLanguageTag("de")).setLocale(Locale.forLanguageTag(
-        "de"))).isInstanceOf(IllegalArgumentException.class).hasMessage("Invalid locale");
-
+    assertThatThrownBy(
+            () -> new Country(Locale.forLanguageTag("de")).setLocale(Locale.forLanguageTag("de")))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Invalid locale");
   }
-
 }

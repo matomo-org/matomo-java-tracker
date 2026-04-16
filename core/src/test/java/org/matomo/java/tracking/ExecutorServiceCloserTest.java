@@ -17,30 +17,30 @@ class ExecutorServiceCloserTest {
 
     assertThat(executorService.isTerminated()).isTrue();
     assertThat(executorService.isShutdown()).isTrue();
-
   }
 
   @Test
   void shutsDownExecutorServiceImmediately() throws Exception {
 
     ExecutorService executorService = Executors.newSingleThreadExecutor();
-    executorService.submit(() -> {
-      try {
-        Thread.sleep(10000L);
-      } catch (InterruptedException e) {
-        throw new RuntimeException(e);
-      }
-    });
+    executorService.submit(
+        () -> {
+          try {
+            Thread.sleep(10000L);
+          } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+          }
+        });
 
-    Thread thread = new Thread(() -> {
-      ExecutorServiceCloser.close(executorService);
-    });
+    Thread thread =
+        new Thread(
+            () -> {
+              ExecutorServiceCloser.close(executorService);
+            });
     thread.start();
     Thread.sleep(1000L);
     thread.interrupt();
 
     assertThat(executorService.isShutdown()).isTrue();
-
   }
-
 }

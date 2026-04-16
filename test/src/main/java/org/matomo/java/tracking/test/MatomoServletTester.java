@@ -18,25 +18,27 @@ class MatomoServletTester {
     ServletHolder servletHolder = new ServletHolder("default", new DefaultServlet());
     servletHolder.setInitParameter(
         "resourceBase",
-        MatomoServletTester.class.getClassLoader().getResource("web").toExternalForm()
-    );
+        MatomoServletTester.class.getClassLoader().getResource("web").toExternalForm());
 
     ServletContextHandler context = new ServletContextHandler();
     context.setContextPath("/");
     context.addServlet(servletHolder, "/");
-    context.addFilter(new FilterHolder(new MatomoTrackerFilter(new MatomoTracker(
-        TrackerConfiguration
-            .builder()
-            .apiEndpoint(URI.create("http://localhost:8080/matomo.php"))
-            .defaultSiteId(1)
-            .defaultAuthToken("ee6e3dd9ed1b61f5328cf5978b5a8c71")
-            .logFailedTracking(true)
-            .build()))), "/*", null);
+    context.addFilter(
+        new FilterHolder(
+            new MatomoTrackerFilter(
+                new MatomoTracker(
+                    TrackerConfiguration.builder()
+                        .apiEndpoint(URI.create("http://localhost:8080/matomo.php"))
+                        .defaultSiteId(1)
+                        .defaultAuthToken("ee6e3dd9ed1b61f5328cf5978b5a8c71")
+                        .logFailedTracking(true)
+                        .build()))),
+        "/*",
+        null);
 
     Server server = new Server(8090);
     server.setHandler(context);
     server.start();
     server.join();
-
   }
 }

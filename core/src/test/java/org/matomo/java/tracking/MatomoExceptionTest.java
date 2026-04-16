@@ -21,5 +21,4 @@ class MatomoExceptionTest {
     assertEquals("message", matomoException.getMessage());
     assertEquals(cause, matomoException.getCause());
   }
-
 }

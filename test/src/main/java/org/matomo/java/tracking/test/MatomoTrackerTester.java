@@ -41,13 +41,13 @@ class MatomoTrackerTester implements AutoCloseable {
 
   public static void main(String[] args) throws Exception {
 
-    TrackerConfiguration configuration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create("http://localhost:8080/matomo.php"))
-        .defaultSiteId(1)
-        .defaultAuthToken("ee6e3dd9ed1b61f5328cf5978b5a8c71")
-        .logFailedTracking(true)
-        .build();
+    TrackerConfiguration configuration =
+        TrackerConfiguration.builder()
+            .apiEndpoint(URI.create("http://localhost:8080/matomo.php"))
+            .defaultSiteId(1)
+            .defaultAuthToken("124caba9946005ce0be2bf16e05d019f")
+            .logFailedTracking(true)
+            .build();
 
     try (MatomoTrackerTester matomoTrackerTester = new MatomoTrackerTester(configuration)) {
       matomoTrackerTester.sendRequestAsync();
@@ -55,7 +55,6 @@ class MatomoTrackerTester implements AutoCloseable {
       matomoTrackerTester.sendRequest();
       matomoTrackerTester.sendBulkRequests();
     }
-
   }
 
   private void sendRequest() {
@@ -73,44 +72,45 @@ class MatomoTrackerTester implements AutoCloseable {
   private void sendRequestAsync() {
     MatomoRequest request = randomRequest();
     CompletableFuture<?> future = tracker.sendRequestAsync(request);
-    future.thenAccept(v -> log.info("Successfully sent async single request to Matomo server: {}", request));
+    future.thenAccept(
+        v -> log.info("Successfully sent async single request to Matomo server: {}", request));
   }
 
   private void sendBulkRequestsAsync() {
     List<MatomoRequest> requests = randomRequests();
     tracker
         .sendBulkRequestAsync(requests)
-        .thenAccept(v -> log.info("Successfully sent async bulk requests to Matomo server: {}", requests));
+        .thenAccept(
+            v -> log.info("Successfully sent async bulk requests to Matomo server: {}", requests));
   }
 
   private List<MatomoRequest> randomRequests() {
-    return IntStream
-        .range(0, 5)
+    return IntStream.range(0, 5)
         .mapToObj(i -> randomRequest())
         .collect(Collectors.toCollection(() -> new ArrayList<>(10)));
   }
 
   private MatomoRequest randomRequest() {
     Country country = faker.country();
-    return MatomoRequest
-        .request()
+    return MatomoRequest.request()
         .actionName(faker.funnyName().name())
         .actionUrl("https://" + faker.internet().url())
         .visitorId(vistors.get(faker.random().nextInt(vistors.size())))
         .referrerUrl("https://" + faker.internet().url())
-        .visitCustomVariables(new CustomVariables()
-            .add(new CustomVariable("color", faker.color().hex()))
-            .add(new CustomVariable("beer", faker.beer().name())))
+        .visitCustomVariables(
+            new CustomVariables()
+                .add(new CustomVariable("color", faker.color().hex()))
+                .add(new CustomVariable("beer", faker.beer().name())))
         .visitorVisitCount(faker.random().nextInt(10))
         .visitorPreviousVisitTimestamp(Instant.now().minusSeconds(faker.random().nextInt(10000)))
         .visitorFirstVisitTimestamp(Instant.now().minusSeconds(faker.random().nextInt(10000)))
         .campaignName(faker.dragonBall().character())
         .campaignKeyword(faker.buffy().celebrities())
-        .deviceResolution(DeviceResolution
-            .builder()
-            .width(faker.random().nextInt(1920))
-            .height(faker.random().nextInt(1280))
-            .build())
+        .deviceResolution(
+            DeviceResolution.builder()
+                .width(faker.random().nextInt(1920))
+                .height(faker.random().nextInt(1280))
+                .build())
         .currentHour(faker.random().nextInt(24))
         .currentMinute(faker.random().nextInt(60))
         .currentSecond(faker.random().nextInt(60))
@@ -128,9 +128,10 @@ class MatomoTrackerTester implements AutoCloseable {
         .userId(faker.random().hex())
         .visitorCustomId(VisitorId.random())
         .newVisit(true)
-        .pageCustomVariables(new CustomVariables()
-            .add(new CustomVariable("job", faker.job().position()))
-            .add(new CustomVariable("team", faker.team().name())))
+        .pageCustomVariables(
+            new CustomVariables()
+                .add(new CustomVariable("job", faker.job().position()))
+                .add(new CustomVariable("team", faker.team().name())))
         .outlinkUrl("https://" + faker.internet().url())
         .downloadUrl("https://" + faker.internet().url())
         .searchQuery(faker.cat().name())
@@ -140,30 +141,31 @@ class MatomoTrackerTester implements AutoCloseable {
         .goalId(0)
         .ecommerceRevenue(faker.random().nextInt(50) + faker.random().nextDouble())
         .ecommerceId(faker.random().hex())
-        .ecommerceItems(EcommerceItems
-            .builder()
-            .item(EcommerceItem
-                .builder()
-                .sku(faker.random().hex())
-                .name(faker.commerce().productName())
-                .quantity(faker.random().nextInt(10))
-                .price(faker.random().nextInt(100) + faker.random().nextDouble())
+        .ecommerceItems(
+            EcommerceItems.builder()
+                .item(
+                    EcommerceItem.builder()
+                        .sku(faker.random().hex())
+                        .name(faker.commerce().productName())
+                        .quantity(faker.random().nextInt(10))
+                        .price(faker.random().nextInt(100) + faker.random().nextDouble())
+                        .build())
+                .item(
+                    EcommerceItem.builder()
+                        .sku(faker.random().hex())
+                        .name(faker.commerce().productName())
+                        .quantity(faker.random().nextInt(10))
+                        .price(faker.random().nextInt(100) + faker.random().nextDouble())
+                        .build())
                 .build())
-            .item(EcommerceItem
-                .builder()
-                .sku(faker.random().hex())
-                .name(faker.commerce().productName())
-                .quantity(faker.random().nextInt(10))
-                .price(faker.random().nextInt(100) + faker.random().nextDouble())
-                .build())
-            .build())
         .ecommerceSubtotal(faker.random().nextInt(1000) + faker.random().nextDouble())
         .ecommerceTax(faker.random().nextInt(100) + faker.random().nextDouble())
         .ecommerceDiscount(faker.random().nextInt(100) + faker.random().nextDouble())
         .ecommerceLastOrderTimestamp(Instant.now())
         .visitorIp(faker.internet().ipV4Address())
         .requestTimestamp(Instant.now())
-        .visitorCountry(org.matomo.java.tracking.parameters.Country.fromCode(faker.address().countryCode()))
+        .visitorCountry(
+            org.matomo.java.tracking.parameters.Country.fromCode(faker.address().countryCode()))
         .visitorCity(faker.address().cityName())
         .visitorLatitude(faker.random().nextDouble() * 180 - 90)
         .visitorLongitude(faker.random().nextDouble() * 360 - 180)

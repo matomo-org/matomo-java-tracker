@@ -11,8 +11,8 @@ import java.util.Locale;
 import org.matomo.java.tracking.parameters.Country;
 
 /**
- * A locale object that can be used to send visitor country to Matomo. This class is deprecated and will be removed in
- * the future.
+ * A locale object that can be used to send visitor country to Matomo. This class is deprecated and
+ * will be removed in the future.
  *
  * @author brettcsorba
  * @deprecated Use {@link Country} instead.

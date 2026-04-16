@@ -67,7 +67,9 @@ class MockHttpServletRequest implements HttpServletRequest {
 
   @Override
   public Enumeration<String> getHeaderNames() {
-    return headers == null ? Collections.emptyEnumeration() : Collections.enumeration(headers.keySet());
+    return headers == null
+        ? Collections.emptyEnumeration()
+        : Collections.enumeration(headers.keySet());
   }
 
   @Override
@@ -161,14 +163,10 @@ class MockHttpServletRequest implements HttpServletRequest {
   }
 
   @Override
-  public void login(String username, String password) throws ServletException {
-
-  }
+  public void login(String username, String password) throws ServletException {}
 
   @Override
-  public void logout() throws ServletException {
-
-  }
+  public void logout() throws ServletException {}
 
   @Override
   public Collection<Part> getParts() throws IOException, ServletException {
@@ -181,7 +179,8 @@ class MockHttpServletRequest implements HttpServletRequest {
   }
 
   @Override
-  public <T extends HttpUpgradeHandler> T upgrade(Class<T> handlerClass) throws IOException, ServletException {
+  public <T extends HttpUpgradeHandler> T upgrade(Class<T> handlerClass)
+      throws IOException, ServletException {
     return null;
   }
 
@@ -201,9 +200,7 @@ class MockHttpServletRequest implements HttpServletRequest {
   }
 
   @Override
-  public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
-
-  }
+  public void setCharacterEncoding(String env) throws UnsupportedEncodingException {}
 
   @Override
   public int getContentLength() {
@@ -281,14 +278,10 @@ class MockHttpServletRequest implements HttpServletRequest {
   }
 
   @Override
-  public void setAttribute(String name, Object o) {
-
-  }
+  public void setAttribute(String name, Object o) {}
 
   @Override
-  public void removeAttribute(String name) {
-
-  }
+  public void removeAttribute(String name) {}
 
   @Override
   public Locale getLocale() {
@@ -342,7 +335,7 @@ class MockHttpServletRequest implements HttpServletRequest {
 
   @Override
   public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse)
-        throws IllegalStateException {
+      throws IllegalStateException {
     return null;
   }
 

@@ -45,15 +45,14 @@ class Java8SenderIT {
         .hasRootCause(new MalformedURLException("unknown protocol: telnet"));
   }
 
-
   @Test
   void failsIfEndpointReturnsNotFound() {
-    trackerConfiguration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create(wireMockServer.baseUrl()))
-        .disableSslHostVerification(true)
-        .disableSslCertValidation(true)
-        .build();
+    trackerConfiguration =
+        TrackerConfiguration.builder()
+            .apiEndpoint(URI.create(wireMockServer.baseUrl()))
+            .disableSslHostVerification(true)
+            .disableSslCertValidation(true)
+            .build();
 
     givenSender();
 
@@ -76,14 +75,14 @@ class Java8SenderIT {
 
   @Test
   void connectsViaProxy() {
-    trackerConfiguration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create(wireMockServer.baseUrl()))
-        .disableSslCertValidation(true)
-        .disableSslHostVerification(true)
-        .proxyHost("localhost")
-        .proxyPort(wireMockServer.port())
-        .build();
+    trackerConfiguration =
+        TrackerConfiguration.builder()
+            .apiEndpoint(URI.create(wireMockServer.baseUrl()))
+            .disableSslCertValidation(true)
+            .disableSslHostVerification(true)
+            .proxyHost("localhost")
+            .proxyPort(wireMockServer.port())
+            .build();
 
     givenSender();
 
@@ -94,16 +93,16 @@ class Java8SenderIT {
 
   @Test
   void connectsViaProxyWithProxyUserNameAndPassword() {
-    trackerConfiguration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create(wireMockServer.baseUrl()))
-        .disableSslCertValidation(true)
-        .disableSslHostVerification(true)
-        .proxyHost("localhost")
-        .proxyPort(wireMockServer.port())
-        .proxyUsername("user")
-        .proxyPassword("password")
-        .build();
+    trackerConfiguration =
+        TrackerConfiguration.builder()
+            .apiEndpoint(URI.create(wireMockServer.baseUrl()))
+            .disableSslCertValidation(true)
+            .disableSslHostVerification(true)
+            .proxyHost("localhost")
+            .proxyPort(wireMockServer.port())
+            .proxyUsername("user")
+            .proxyPassword("password")
+            .build();
 
     givenSender();
 
@@ -114,13 +113,13 @@ class Java8SenderIT {
 
   @Test
   void logsFailedTracking() {
-    trackerConfiguration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create(wireMockServer.baseUrl()))
-        .disableSslCertValidation(true)
-        .disableSslHostVerification(true)
-        .logFailedTracking(true)
-        .build();
+    trackerConfiguration =
+        TrackerConfiguration.builder()
+            .apiEndpoint(URI.create(wireMockServer.baseUrl()))
+            .disableSslCertValidation(true)
+            .disableSslHostVerification(true)
+            .logFailedTracking(true)
+            .build();
 
     givenSender();
 
@@ -132,119 +131,102 @@ class Java8SenderIT {
   @Test
   void skipSslCertificationValidation() {
     wireMockServer.stubFor(get(urlPathEqualTo("/matomo_ssl.php")).willReturn(status(204)));
-    trackerConfiguration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create(String.format(
-            "https://localhost:%d/matomo_ssl.php",
-            wireMockServer.httpsPort()
-        )))
-        .disableSslCertValidation(true)
-        .disableSslHostVerification(true)
-        .build();
+    trackerConfiguration =
+        TrackerConfiguration.builder()
+            .apiEndpoint(
+                URI.create(
+                    String.format(
+                        "https://localhost:%d/matomo_ssl.php", wireMockServer.httpsPort())))
+            .disableSslCertValidation(true)
+            .disableSslHostVerification(true)
+            .build();
 
     givenSender();
 
     sender.sendSingle(MatomoRequests.pageView("Join Us").build());
 
     wireMockServer.verify(getRequestedFor(urlPathEqualTo("/matomo_ssl.php")));
-
   }
 
   @Test
   void addsHeadersToSingleRequest() {
     wireMockServer.stubFor(get(urlPathEqualTo("/matomo.php")).willReturn(status(204)));
-    trackerConfiguration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create(String.format(
-            "http://localhost:%d/matomo.php",
-            wireMockServer.port()
-        )))
-        .disableSslCertValidation(true)
-        .disableSslHostVerification(true)
-        .build();
+    trackerConfiguration =
+        TrackerConfiguration.builder()
+            .apiEndpoint(
+                URI.create(String.format("http://localhost:%d/matomo.php", wireMockServer.port())))
+            .disableSslCertValidation(true)
+            .disableSslHostVerification(true)
+            .build();
 
     givenSender();
 
-    sender.sendSingle(MatomoRequests
-        .action("http://localhost/example", ActionType.LINK)
-        .headers(singletonMap(
-            "headerName",
-            "headerValue"
-        ))
-        .build());
+    sender.sendSingle(
+        MatomoRequests.action("http://localhost/example", ActionType.LINK)
+            .headers(singletonMap("headerName", "headerValue"))
+            .build());
 
-    wireMockServer.verify(getRequestedFor(urlPathEqualTo("/matomo.php")).withHeader(
-        "headerName",
-        equalTo("headerValue")
-    ));
-
+    wireMockServer.verify(
+        getRequestedFor(urlPathEqualTo("/matomo.php"))
+            .withHeader("headerName", equalTo("headerValue")));
   }
 
   @Test
   void addsHeadersToBulkRequest() {
     wireMockServer.stubFor(post(urlPathEqualTo("/matomo.php")).willReturn(status(204)));
-    trackerConfiguration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create(String.format(
-            "http://localhost:%d/matomo.php",
-            wireMockServer.port()
-        )))
-        .disableSslCertValidation(true)
-        .disableSslHostVerification(true)
-        .build();
+    trackerConfiguration =
+        TrackerConfiguration.builder()
+            .apiEndpoint(
+                URI.create(String.format("http://localhost:%d/matomo.php", wireMockServer.port())))
+            .disableSslCertValidation(true)
+            .disableSslHostVerification(true)
+            .build();
 
     givenSender();
 
     sender.sendBulk(
-        singleton(MatomoRequests.ecommerceCartUpdate(50.0).goalId(0)
-                               .headers(singletonMap("headerName", "headerValue"))
-                               .build()),
-        null
-    );
+        singleton(
+            MatomoRequests.ecommerceCartUpdate(50.0)
+                .goalId(0)
+                .headers(singletonMap("headerName", "headerValue"))
+                .build()),
+        null);
 
-    wireMockServer.verify(postRequestedFor(urlPathEqualTo("/matomo.php")).withHeader(
-        "headerName",
-        equalTo("headerValue")
-    ));
-
+    wireMockServer.verify(
+        postRequestedFor(urlPathEqualTo("/matomo.php"))
+            .withHeader("headerName", equalTo("headerValue")));
   }
-
 
   @Test
   void addsHeadersToBulkAsyncRequest() {
     wireMockServer.stubFor(post(urlPathEqualTo("/matomo.php")).willReturn(status(204)));
-    trackerConfiguration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create(String.format(
-            "http://localhost:%d/matomo.php",
-            wireMockServer.port()
-        )))
-        .disableSslCertValidation(true)
-        .disableSslHostVerification(true)
-        .build();
+    trackerConfiguration =
+        TrackerConfiguration.builder()
+            .apiEndpoint(
+                URI.create(String.format("http://localhost:%d/matomo.php", wireMockServer.port())))
+            .disableSslCertValidation(true)
+            .disableSslHostVerification(true)
+            .build();
 
     givenSender();
 
-    CompletableFuture<Void> future = sender.sendBulkAsync(singleton(MatomoRequest
-        .request()
-        .headers(singletonMap("headerName", "headerValue"))
-        .build()), null);
+    CompletableFuture<Void> future =
+        sender.sendBulkAsync(
+            singleton(
+                MatomoRequest.request().headers(singletonMap("headerName", "headerValue")).build()),
+            null);
 
     future.join();
-    wireMockServer.verify(postRequestedFor(urlPathEqualTo("/matomo.php")).withHeader(
-        "headerName",
-        equalTo("headerValue")
-    ));
-
+    wireMockServer.verify(
+        postRequestedFor(urlPathEqualTo("/matomo.php"))
+            .withHeader("headerName", equalTo("headerValue")));
   }
-
 
   private void givenSender() {
-    sender = new Java8Sender(
-        trackerConfiguration,
-        new QueryCreator(trackerConfiguration),
-        Executors.newFixedThreadPool(2, new DaemonThreadFactory())
-    );
+    sender =
+        new Java8Sender(
+            trackerConfiguration,
+            new QueryCreator(trackerConfiguration),
+            Executors.newFixedThreadPool(2, new DaemonThreadFactory()));
   }
-
 }

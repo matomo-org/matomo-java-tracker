@@ -8,12 +8,13 @@
 package org.matomo.java.tracking.spring;
 
 import java.net.URI;
+import org.jspecify.annotations.NonNull;
 import org.matomo.java.tracking.TrackerConfiguration;
 import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.core.Ordered;
-import org.springframework.lang.NonNull;
 
-class StandardTrackerConfigurationBuilderCustomizer implements TrackerConfigurationBuilderCustomizer, Ordered {
+class StandardTrackerConfigurationBuilderCustomizer
+    implements TrackerConfigurationBuilderCustomizer, Ordered {
 
   private final MatomoTrackerProperties properties;
 
@@ -27,8 +28,8 @@ class StandardTrackerConfigurationBuilderCustomizer implements TrackerConfigurat
   }
 
   @Override
-  public void customize(@NonNull TrackerConfiguration.TrackerConfigurationBuilder builder) {
-    PropertyMapper map = PropertyMapper.get().alwaysApplyingWhenNonNull();
+  public void customize(TrackerConfiguration.@NonNull TrackerConfigurationBuilder builder) {
+    PropertyMapper map = PropertyMapper.get();
     map.from(properties::getApiEndpoint).as(URI::create).to(builder::apiEndpoint);
     map.from(properties::getDefaultSiteId).to(builder::defaultSiteId);
     map.from(properties::getDefaultAuthToken).to(builder::defaultAuthToken);
@@ -45,6 +46,4 @@ class StandardTrackerConfigurationBuilderCustomizer implements TrackerConfigurat
     map.from(properties::getDisableSslHostVerification).to(builder::disableSslHostVerification);
     map.from(properties::getThreadPoolSize).to(builder::threadPoolSize);
   }
-
-
 }

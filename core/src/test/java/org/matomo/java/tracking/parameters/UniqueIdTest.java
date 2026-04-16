@@ -12,7 +12,6 @@ class UniqueIdTest {
     UniqueId uniqueId = UniqueId.random();
 
     assertThat(uniqueId.toString()).matches("[0-9a-zA-Z]{6}");
-
   }
 
   @Test
@@ -22,7 +21,5 @@ class UniqueIdTest {
     UniqueId uniqueId2 = UniqueId.fromValue(868686868);
 
     assertThat(uniqueId1).hasToString(uniqueId2.toString());
-
   }
-
 }

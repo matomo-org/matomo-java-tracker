@@ -10,9 +10,7 @@ package org.matomo.java.tracking.parameters;
 import java.security.SecureRandom;
 import java.util.Random;
 
-/**
- * A random value to avoid the tracking request being cached by the browser or a proxy.
- */
+/** A random value to avoid the tracking request being cached by the browser or a proxy. */
 public class RandomValue {
 
   private static final Random RANDOM = new SecureRandom();
@@ -33,7 +31,8 @@ public class RandomValue {
   }
 
   /**
-   * Static factory to generate a random value from a given string. The string will be used as is and not hashed.
+   * Static factory to generate a random value from a given string. The string will be used as is
+   * and not hashed.
    *
    * @param override The string to use as random value
    * @return A random value from the given string
@@ -51,5 +50,4 @@ public class RandomValue {
     }
     return Hex.fromBytes(representation);
   }
-
 }

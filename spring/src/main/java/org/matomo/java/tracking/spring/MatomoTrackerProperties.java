@@ -17,6 +17,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * Configuration properties for the Matomo Tracker.
  *
  * <p>These properties can be configured in the application.properties file. For example:
+ *
  * <pre>
  *   matomo.tracker.api-endpoint=https://your-matomo-domain.example/matomo.php
  *   matomo.tracker.default-site-id=1
@@ -44,70 +45,62 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class MatomoTrackerProperties {
 
   /**
-   * The Matomo Tracking HTTP API endpoint, for example https://your-matomo-domain.example/matomo.php
+   * The Matomo Tracking HTTP API endpoint. Example: https://your-matomo-domain.example/matomo.php
    */
   private String apiEndpoint;
 
-  /**
-   * The default ID of the website that will be used if not specified explicitly.
-   */
+  /** The default ID of the website that will be used if not specified explicitly. */
   private Integer defaultSiteId;
 
-  /**
-   * The authorization token (parameter token_auth) to use if not specified explicitly.
-   */
+  /** The authorization token (parameter token_auth) to use if not specified explicitly. */
   private String defaultAuthToken;
 
-  /**
-   * Allows to stop the tracker to send requests to the Matomo endpoint.
-   */
+  /** Allows to stop the tracker to send requests to the Matomo endpoint. */
   private Boolean enabled = true;
 
   /**
    * The timeout until a connection is established.
    *
-   * <p>A timeout value of zero is interpreted as an infinite timeout.
-   * A `null` value is interpreted as undefined (system default if applicable).</p>
+   * <p>A timeout value of zero is interpreted as an infinite timeout. A `null` value is interpreted
+   * as undefined (system default if applicable).
    *
-   * <p>Default: 10 seconds</p>
+   * <p>Default: 10 seconds
    */
   private Duration connectTimeout = Duration.ofSeconds(5L);
 
   /**
-   * The socket timeout ({@code SO_TIMEOUT}), which is the timeout for waiting for data or, put differently, a maximum
-   * period inactivity between two consecutive data packets.
+   * The socket timeout ({@code SO_TIMEOUT}), which is the timeout for waiting for data or, put
+   * differently, a maximum period inactivity between two consecutive data packets.
    *
-   * <p>A timeout value of zero is interpreted as an infinite timeout.
-   * A `null value is interpreted as undefined (system default if applicable).</p>
+   * <p>A timeout value of zero is interpreted as an infinite timeout. A `null value is interpreted
+   * as undefined (system default if applicable).
    *
-   * <p>Default: 30 seconds</p>
+   * <p>Default: 30 seconds
    */
   private Duration socketTimeout = Duration.ofSeconds(5L);
 
   /**
-   * The hostname or IP address of an optional HTTP proxy. {@code proxyPort} must be configured as well
+   * The hostname or IP address of an optional HTTP proxy. {@code proxyPort} must be configured as
+   * well
    */
   private String proxyHost;
 
-  /**
-   * The port of an HTTP proxy. {@code proxyHost} must be configured as well.
-   */
+  /** The port of an HTTP proxy. {@code proxyHost} must be configured as well. */
   private Integer proxyPort;
 
   /**
-   * If the HTTP proxy requires a username for basic authentication, it can be configured here. Proxy host, port and
-   * password must also be set.
+   * If the HTTP proxy requires a username for basic authentication, it can be configured here.
+   * Proxy host, port and password must also be set.
    */
   private String proxyUsername;
 
   /**
-   * The corresponding password for the basic auth proxy user. The proxy host, port and username must be set as well.
+   * The corresponding password for the basic auth proxy user. The proxy host, port and username
+   * must be set as well.
    */
   private String proxyPassword;
 
-  /**
-   * A custom user agent to be set. Defaults to "MatomoJavaClient"
-   */
+  /** A custom user agent to be set. Defaults to "MatomoJavaClient" */
   private String userAgent = "MatomoJavaClient";
 
   /**
@@ -121,7 +114,7 @@ public class MatomoTrackerProperties {
    * Do not use in production environments. Defaults to false.
    *
    * <p>Attention: This slows down performance
-
+   *
    * @see #disableSslHostVerification
    */
   private Boolean disableSslCertValidation;
@@ -140,9 +133,7 @@ public class MatomoTrackerProperties {
    * The thread pool size for the async sender. Defaults to 2.
    *
    * <p>Attention: If you use this library in a web application, make sure that this thread pool
-   * does not exceed the thread pool of the web application. Otherwise, you might run into
-   * problems.
+   * does not exceed the thread pool of the web application. Otherwise, you might run into problems.
    */
   private Integer threadPoolSize = 2;
-
 }

@@ -13,9 +13,9 @@ import lombok.RequiredArgsConstructor;
 /**
  * A {@link Sender} implementation that does not send anything but stores the requests and queries.
  *
- * <p>This class is intended for testing purposes only. It does not send anything to the Matomo server. Instead, it
- * stores the requests and queries in collections that can be accessed via {@link #getRequests()} and {@link
- * #getQueries()}.
+ * <p>This class is intended for testing purposes only. It does not send anything to the Matomo
+ * server. Instead, it stores the requests and queries in collections that can be accessed via
+ * {@link #getRequests()} and {@link #getQueries()}.
  */
 @RequiredArgsConstructor
 @Getter
@@ -43,8 +43,7 @@ class TestSender implements Sender {
 
   @Override
   public void sendBulk(
-      @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken
-  ) {
+      @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken) {
     for (MatomoRequest request : requests) {
       createQueryAndAddRequest(request, overrideAuthToken);
     }
@@ -53,18 +52,17 @@ class TestSender implements Sender {
   @NonNull
   @Override
   public CompletableFuture<Void> sendBulkAsync(
-      @NonNull Collection<? extends MatomoRequest> requests, @Nullable String overrideAuthToken
-  ) {
+      @NonNull Collection<? extends MatomoRequest> requests, @Nullable String overrideAuthToken) {
     for (MatomoRequest request : requests) {
       createQueryAndAddRequest(request, overrideAuthToken);
     }
     return CompletableFuture.completedFuture(null);
   }
 
-
-
-  private void createQueryAndAddRequest(@lombok.NonNull MatomoRequest request, @Nullable String overrideAuthToken) {
-    String authToken = AuthToken.determineAuthToken(overrideAuthToken, singleton(request), trackerConfiguration);
+  private void createQueryAndAddRequest(
+      @lombok.NonNull MatomoRequest request, @Nullable String overrideAuthToken) {
+    String authToken =
+        AuthToken.determineAuthToken(overrideAuthToken, singleton(request), trackerConfiguration);
     queries.add(queryCreator.createQuery(request, authToken));
     requests.add(request);
   }

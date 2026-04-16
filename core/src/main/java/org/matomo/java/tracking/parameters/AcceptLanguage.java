@@ -18,8 +18,9 @@ import lombok.Singular;
 import lombok.Value;
 
 /**
- * Describes the content for the Accept-Language header field that can be overridden by a custom parameter. The format
- * is specified in the corresponding <a href="https://tools.ietf.org/html/rfc4647">RFC 4647 Matching of Language Tags</a>
+ * Describes the content for the Accept-Language header field that can be overridden by a custom
+ * parameter. The format is specified in the corresponding <a
+ * href="https://tools.ietf.org/html/rfc4647">RFC 4647 Matching of Language Tags</a>
  *
  * <p>Example: "en-US,en;q=0.8,de;q=0.6"
  */
@@ -27,23 +28,20 @@ import lombok.Value;
 @Value
 public class AcceptLanguage {
 
-  @Singular
-  List<LanguageRange> languageRanges;
+  @Singular List<LanguageRange> languageRanges;
 
   /**
    * Creates the Accept-Language definition for a given header.
    *
-   * <p>Please see {@link LanguageRange#parse(String)} for more information. Example: "en-US,en;q=0.8,de;q=0.6"
+   * <p>Please see {@link LanguageRange#parse(String)} for more information. Example:
+   * "en-US,en;q=0.8,de;q=0.6"
    *
    * @param header A header that can be null
    * @return The parsed header (probably reformatted). null if the header is null.
    * @see LanguageRange#parse(String)
    */
   @Nullable
-  public static AcceptLanguage fromHeader(
-      @Nullable
-      String header
-  ) {
+  public static AcceptLanguage fromHeader(@Nullable String header) {
     if (header == null || header.trim().isEmpty()) {
       return null;
     }
@@ -57,19 +55,15 @@ public class AcceptLanguage {
    */
   @NonNull
   public String toString() {
-    return languageRanges
-        .stream()
+    return languageRanges.stream()
         .filter(Objects::nonNull)
         .map(AcceptLanguage::format)
         .collect(Collectors.joining(","));
   }
 
-  private static String format(
-      @NonNull
-      LanguageRange languageRange
-  ) {
-    return languageRange.getWeight() == LanguageRange.MAX_WEIGHT ? languageRange.getRange() :
-        String.format("%s;q=%s", languageRange.getRange(), languageRange.getWeight());
+  private static String format(@NonNull LanguageRange languageRange) {
+    return languageRange.getWeight() == LanguageRange.MAX_WEIGHT
+        ? languageRange.getRange()
+        : String.format("%s;q=%s", languageRange.getRange(), languageRange.getWeight());
   }
-
 }

@@ -11,8 +11,9 @@ import lombok.RequiredArgsConstructor;
 /**
  * A {@link Sender} implementation that does not send anything but stores the requests.
  *
- * <p>This class is intended for testing purposes only. It does not send anything to the Matomo server. Instead, it
- * stores the requests and queries in collections that can be accessed via {@link #getRequests()}.
+ * <p>This class is intended for testing purposes only. It does not send anything to the Matomo
+ * server. Instead, it stores the requests and queries in collections that can be accessed via
+ * {@link #getRequests()}.
  */
 @RequiredArgsConstructor
 @Getter
@@ -38,16 +39,14 @@ class TestSender implements Sender {
 
   @Override
   public void sendBulk(
-      @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken
-  ) {
+      @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken) {
     throw new UnsupportedOperationException();
   }
 
   @NonNull
   @Override
   public CompletableFuture<Void> sendBulkAsync(
-      @NonNull Collection<? extends MatomoRequest> requests, @Nullable String overrideAuthToken
-  ) {
+      @NonNull Collection<? extends MatomoRequest> requests, @Nullable String overrideAuthToken) {
     throw new UnsupportedOperationException();
   }
 

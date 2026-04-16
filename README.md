@@ -69,9 +69,22 @@ Projects that use Matomo Java Tracker:
 
 ## What Is New?
 
+### Version 3.5.x
+
+The Spring Boot Starter now requires Spring Boot 4. The `@NonNull` annotation has been migrated from
+`org.springframework.lang.NonNull` to `org.jspecify.annotations.NonNull` across the Spring module. The
+`PropertyMapper` usage was updated to align with the Spring Boot 4 API (`alwaysApplyingWhenNonNull()` was removed).
+
+Fixed a Java 8 compatibility issue in `JavaxHttpServletWrapper` where `Enumeration.asIterator()` (introduced in
+Java 9) was used to iterate over HTTP header names. It has been replaced with a standard `while` loop.
+
+Dependency updates: Spring Boot 3.4.2 → 4.0.5, Jetty EE10 12.0.16 → 12.1.8, Jetty (javax) 10.0.24 → 10.0.26.
+
+The local testing Docker setup now uses MariaDB 12 and Matomo 5.
+
 ### Version 3.4.x
 
-We fixed a synchronization issue in the Java 8 sender (https://github.com/matomo-org/matomo-java-tracker/issues/168). 
+We fixed a synchronization issue in the Java 8 sender (https://github.com/matomo-org/matomo-java-tracker/issues/168).
 To consume the exact amount of space needed for the queries to send to Matomo, we need the collection size of the incoming
 requests. So we changed `Iterable` to `Collection` in some `MatomoTracker`. This could affect users, that use parameters
 of type `Iterable` in the tracker. Please use `Collection` instead.
@@ -84,7 +97,7 @@ dependencies. Release notes can be found here: https://github.com/matomo-org/mat
 
 Here are the most important changes:
 
-* Matomo Java Tracker 3.4.0 is compatible with Matomo 4 and 5
+* Matomo Java Tracker is compatible with Matomo 4 and 5
 * less dependencies
 * new dimension parameter
 * special types allow to provide valid parameters now
@@ -149,7 +162,7 @@ Add a dependency on Matomo Java Tracker using Maven. For Java 8:
 <dependency>
     <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker</artifactId>
-    <version>3.4.0</version>
+    <version>3.5.0</version>
 </dependency>
 ```
 
@@ -160,7 +173,7 @@ For Java 11:
 <dependency>
     <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker-java11</artifactId>
-    <version>3.4.0</version>
+    <version>3.5.0</version>
 </dependency>
 ```
 
@@ -168,7 +181,7 @@ or Gradle (Java 8):
 
 ```groovy
 dependencies {
-    implementation("org.piwik.java.tracking:matomo-java-tracker:3.4.0")
+    implementation("org.piwik.java.tracking:matomo-java-tracker:3.5.0")
 }
 ```
 
@@ -176,25 +189,25 @@ or Gradle (Java 11):
 
 ```groovy
 dependencies {
-    implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.4.0")
+    implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.5.0")
 }
 ```
 
 or Gradle with Kotlin DSL (Java 8)
 
 ```kotlin
-implementation("org.piwik.java.tracking:matomo-java-tracker:3.4.0")
+implementation("org.piwik.java.tracking:matomo-java-tracker:3.5.0")
 ```
 
 or Gradle with Kotlin DSL (Java 11)
 
 ```kotlin
-implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.4.0")
+implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.5.0")
 ```
 
 ### Spring Boot Module
 
-If you use Spring Boot 3, you can use the Spring Boot Starter artifact. It will create a MatomoTracker bean for you
+If you use Spring Boot 4, you can use the Spring Boot Starter artifact. It will create a MatomoTracker bean for you
 and allows you to configure the tracker via application properties. Add the following dependency to your build:
 
 ```xml
@@ -202,7 +215,7 @@ and allows you to configure the tracker via application properties. Add the foll
 <dependency>
     <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker-spring-boot-starter</artifactId>
-    <version>3.4.0</version>
+    <version>3.5.0</version>
 </dependency>
 ```
 
@@ -210,19 +223,19 @@ or Gradle:
 
 ```groovy
 dependencies {
-    implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:3.4.0")
+    implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:3.5.0")
 }
 ```
 
 or Gradle with Kotlin DSL
 
 ```kotlin
-implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:3.4.0")
+implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:3.5.0")
 ```
 
 The following properties are supported:
 
-| Property Name                                | Description                                                                                                                                            |
+|                Property Name                 |                                                                      Description                                                                       |
 |----------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
 | matomo.tracker.api-endpoint (required)       | The URL to the Matomo Tracking API endpoint. Must be set.                                                                                              |
 | matomo.tracker.default-site-id               | If you provide a default site id, it will be taken if the action does not contain a site id.                                                           |
@@ -319,9 +332,8 @@ public class SendExample {
 
 ```
 
-This will send a request to the Matomo instance at https://www.yourdomain.com/matomo.php and track a page view for the
-visitor customer@mail.com with the action name "Checkout" and action URL "https://www.yourdomain.com/checkout" for
-the site with id 1. The request will be sent asynchronously, that means the method will return immediately and your
+This will send a request to the Matomo instance at https://www.yourdomain.com/matomo.php and track an event in the
+category "Training" with action "Workout completed" for the visitor customer@mail.com for the site with id 1. The request will be sent asynchronously, that means the method will return immediately and your
 application will not wait for the response of the Matomo server. In the configuration we set the default site id to 1
 and configure the default auth token. With `logFailedTracking` we enable logging of failed tracking requests.
 
@@ -429,11 +441,11 @@ public class BulkExample {
 }
 ```
 
-This will send two requests in a single HTTP call. The requests will be sent asynchronously.
+This will send three requests in a single HTTP call. The requests will be sent asynchronously.
 
 Per default every request has the following default parameters:
 
-| Parameter Name  | Default Value                  |
+| Parameter Name  |         Default Value          |
 |-----------------|--------------------------------|
 | required        | true                           |
 | visitorId       | random 16 character hex string |
@@ -687,7 +699,7 @@ version can be used in your local Maven repository for testing purposes, e.g.
 <dependency>
     <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker</artifactId>
-    <version>3.4.1-SNAPSHOT</version>
+    <version>3.5.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -700,34 +712,13 @@ Start the docker containers with
 docker-compose up -d
 ```
 
-You need to adapt your config.ini.php file and change
-the following line:
-
-```ini
-[General]
-trusted_hosts[] = "localhost:8080"
-```
-
-to
-
-```ini
-[General]
-trusted_hosts[] = "localhost:8080"
-```
-
 After that you can access Matomo at http://localhost:8080. You have to set up Matomo first. The database credentials are
 `matomo` and `matomo`. The database name is `matomo`. The (internal) database host address is `database`. The database
-port is `3306`. Set the URL to http://localhost and enable ecommerce.
+port is `3306`. Set the URL to http://localhost and enable ecommerce. Configure an auth token using the user interface
+without HTTPS encryption enabled.
 
-The following snippets helps you to do this quickly:
-
-```shell
-docker-compose exec matomo sed -i 's/localhost/localhost:8080/g' /var/www/html/config/config.ini.php
-```
-
-After the installation you can run `MatomoTrackerTester` in the module `test` to test the tracker. It will send
-multiple randomized
-requests to the local Matomo instance.
+After the installation you can run `MatomoTrackerTester` in the module `test` to test the tracker. Configure a valid
+auth token before running the tests. The tester will send multiple randomized requests to the local Matomo instance.
 
 To enable debug logging, you append the following line to the `config.ini.php` file:
 
@@ -780,7 +771,7 @@ provide tests for your changes. We use JUnit 5 for testing. Coverage should be a
 
 * [The original Piwik Java Tracker Implementation](https://github.com/summitsystemsinc/piwik-java-tracking)
 * [Matomo SDK for Android](https://github.com/matomo-org/matomo-sdk-android)
-* [Piwik SDK Android]( https://github.com/lkogler/piwik-sdk-android)
+* [Piwik SDK Android](https://github.com/lkogler/piwik-sdk-android)
 * [piwik-tracking](https://github.com/ralscha/piwik-tracking)
 * [Matomo Tracking API Java Client](https://github.com/dheid/matomo-tracker) -> Most of the code was integrated in the
   official Matomo Java Tracker
@@ -792,5 +783,4 @@ This software is released under the BSD 3-Clause license. See [LICENSE](LICENSE)
 ## Copyright
 
 Copyright (c) 2015 General Electric Company. All rights reserved.
-
 

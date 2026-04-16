@@ -44,12 +44,11 @@ class StandardTrackerConfigurationBuilderCustomizerIT {
     assertThat(configuration.getProxyPort()).isEqualTo(8080);
     assertThat(configuration.getProxyUsername()).isEqualTo("user");
     assertThat(configuration.getProxyPassword()).isEqualTo("password");
-    assertThat(configuration.getUserAgent()).isEqualTo(
-        "Mozilla/5.0 (compatible; AcmeInc/1.0; +https://example.com/bot.html)");
+    assertThat(configuration.getUserAgent())
+        .isEqualTo("Mozilla/5.0 (compatible; AcmeInc/1.0; +https://example.com/bot.html)");
     assertThat(configuration.isLogFailedTracking()).isTrue();
     assertThat(configuration.isDisableSslCertValidation()).isTrue();
     assertThat(configuration.isDisableSslHostVerification()).isTrue();
     assertThat(configuration.getThreadPoolSize()).isEqualTo(10);
   }
-
 }

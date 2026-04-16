@@ -65,5 +65,4 @@ class CustomVariableTest {
     assertThat(variableA).isNotEqualTo(d);
     assertThat(variableA.hashCode()).isNotEqualTo(d.hashCode());
   }
-
 }

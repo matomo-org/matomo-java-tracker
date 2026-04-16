@@ -1,5 +1,4 @@
 <!-- Please describe your pull request here. -->
-
 - [ ] Ensure that the pull request title represents the desired changelog entry
 - [ ] Please describe what you did
 - [ ] Link to relevant issues in GitHub

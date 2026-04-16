@@ -9,9 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.NonNull;
 
-/**
- * Converts a Jakarta {@link HttpServletRequest} to a {@link HttpServletRequestWrapper}.
- */
+/** Converts a Jakarta {@link HttpServletRequest} to a {@link HttpServletRequestWrapper}. */
 public final class JakartaHttpServletWrapper {
 
   private JakartaHttpServletWrapper() {
@@ -19,26 +17,29 @@ public final class JakartaHttpServletWrapper {
   }
 
   /**
-   * Takes a Jakarta {@link HttpServletRequest} and converts it to a
-   * {@link HttpServletRequestWrapper}.
+   * Takes a Jakarta {@link HttpServletRequest} and converts it to a {@link
+   * HttpServletRequestWrapper}.
    *
    * @param request the request to convert to a wrapper object (must not be {@code null}).
    * @return the wrapper object (never {@code null}).
    */
   @edu.umd.cs.findbugs.annotations.NonNull
-  public static HttpServletRequestWrapper fromHttpServletRequest(@NonNull HttpServletRequest request) {
+  public static HttpServletRequestWrapper fromHttpServletRequest(
+      @NonNull HttpServletRequest request) {
     Map<String, String> headers = new LinkedHashMap<>();
-    request.getHeaderNames()
-           .asIterator()
-           .forEachRemaining(name -> headers.put(name.toLowerCase(Locale.ROOT), request.getHeader(name)));
+    request
+        .getHeaderNames()
+        .asIterator()
+        .forEachRemaining(
+            name -> headers.put(name.toLowerCase(Locale.ROOT), request.getHeader(name)));
     List<CookieWrapper> cookies = null;
     if (request.getCookies() != null) {
-      cookies = Stream.of(request.getCookies())
-                      .map(cookie -> new CookieWrapper(cookie.getName(), cookie.getValue()))
-                      .collect(Collectors.toList());
+      cookies =
+          Stream.of(request.getCookies())
+              .map(cookie -> new CookieWrapper(cookie.getName(), cookie.getValue()))
+              .collect(Collectors.toList());
     }
-    return HttpServletRequestWrapper
-        .builder()
+    return HttpServletRequestWrapper.builder()
         .requestURL(request.getRequestURL())
         .remoteAddr(request.getRemoteAddr())
         .remoteUser(request.getRemoteUser())
@@ -46,5 +47,4 @@ public final class JakartaHttpServletWrapper {
         .cookies(cookies == null ? null : cookies.toArray(new CookieWrapper[0]))
         .build();
   }
-
 }

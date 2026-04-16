@@ -15,9 +15,9 @@ import java.util.regex.Pattern;
 import lombok.NonNull;
 
 /**
- * The unique visitor ID, must be a 16 characters hexadecimal string. Every unique visitor must be assigned a different
- * ID and this ID must not change after it is assigned. If this value is not set Matomo will still track visits, but the
- * unique visitors metric might be less accurate.
+ * The unique visitor ID, must be a 16 characters hexadecimal string. Every unique visitor must be
+ * assigned a different ID and this ID must not change after it is assigned. If this value is not
+ * set Matomo will still track visits, but the unique visitors metric might be less accurate.
  */
 public class VisitorId {
 
@@ -29,8 +29,9 @@ public class VisitorId {
   /**
    * Static factory to generate a random visitor id.
    *
-   * <p>Please consider creating a fixed id for each visitor by getting a hash code from e.g. the username and
-   * using {@link #fromHash(long)} or {@link #fromString(String)} instead of using this method.
+   * <p>Please consider creating a fixed id for each visitor by getting a hash code from e.g. the
+   * username and using {@link #fromHash(long)} or {@link #fromString(String)} instead of using this
+   * method.
    *
    * @return A randomly generated visitor id
    */
@@ -44,8 +45,8 @@ public class VisitorId {
   /**
    * Creates always the same visitor id for the given input.
    *
-   * <p>You can use e.g. {@link Object#hashCode()} to generate a hash code for an object, e.g. a username
-   * string as input.
+   * <p>You can use e.g. {@link Object#hashCode()} to generate a hash code for an object, e.g. a
+   * username string as input.
    *
    * @param hash A number (a hash code) to create the visitor id from
    * @return Always the same visitor id for the same input
@@ -77,8 +78,8 @@ public class VisitorId {
   /**
    * Creates a visitor id from a hexadecimal string.
    *
-   * <p>The input must be a valid hexadecimal string with a maximum length of 16 characters. If the input is shorter
-   * than 16 characters it will be padded with zeros.</p>
+   * <p>The input must be a valid hexadecimal string with a maximum length of 16 characters. If the
+   * input is shorter than 16 characters it will be padded with zeros.
    *
    * @param inputHex A hexadecimal string to create the visitor id from
    * @return The visitor id for the given input
@@ -95,10 +96,10 @@ public class VisitorId {
       throw new IllegalArgumentException("Input must be a valid hex string");
     }
     VisitorId visitorId = new VisitorId();
-    for (int charIndex = inputHex.length() - 1, representationIndex =
-         visitorId.representation.length - 1;
-         charIndex >= 0;
-         charIndex -= 2, representationIndex--) {
+    for (int charIndex = inputHex.length() - 1,
+            representationIndex = visitorId.representation.length - 1;
+        charIndex >= 0;
+        charIndex -= 2, representationIndex--) {
       String hex = inputHex.substring(Math.max(0, charIndex - 1), charIndex + 1);
       try {
         visitorId.representation[representationIndex] = (byte) Integer.parseInt(hex, 16);
@@ -128,5 +129,4 @@ public class VisitorId {
   public String toString() {
     return Hex.fromBytes(representation);
   }
-
 }

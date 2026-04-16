@@ -26,8 +26,7 @@ class VisitorIdTest {
         Arguments.of("1a2b3c4d5e", "0000001a2b3c4d5e"),
         Arguments.of("1A2B3C4D5E", "0000001a2b3c4d5e"),
         Arguments.of("1a2b3c4d5e6f", "00001a2b3c4d5e6f"),
-        Arguments.of("1a2b3c4d5e6f7a", "001a2b3c4d5e6f7a")
-    );
+        Arguments.of("1a2b3c4d5e6f7a", "001a2b3c4d5e6f7a"));
   }
 
   @Test
@@ -36,7 +35,6 @@ class VisitorIdTest {
     VisitorId visitorId = VisitorId.random();
 
     assertThat(visitorId.toString()).matches("^[a-z0-9]{16}$");
-
   }
 
   @Test
@@ -46,7 +44,6 @@ class VisitorIdTest {
     VisitorId second = VisitorId.random();
 
     assertThat(first).doesNotHaveToString(second.toString());
-
   }
 
   @Test
@@ -55,7 +52,6 @@ class VisitorIdTest {
     VisitorId visitorId = VisitorId.fromHash(987654321098765432L);
 
     assertThat(visitorId).hasToString("0db4da5f49f8b478");
-
   }
 
   @Test
@@ -64,7 +60,6 @@ class VisitorIdTest {
     VisitorId visitorId = VisitorId.fromHash(777777777);
 
     assertThat(visitorId).hasToString("000000002e5bf271");
-
   }
 
   @Test
@@ -74,7 +69,6 @@ class VisitorIdTest {
     VisitorId second = VisitorId.fromHash(1234567890);
 
     assertThat(first).hasToString(second.toString());
-
   }
 
   @Test
@@ -83,7 +77,6 @@ class VisitorIdTest {
     VisitorId visitorId = VisitorId.random();
 
     assertThat(visitorId).hasToString(visitorId.toString());
-
   }
 
   @Test
@@ -92,7 +85,6 @@ class VisitorIdTest {
     VisitorId visitorId = VisitorId.fromHex("1234567890abcdef");
 
     assertThat(visitorId).hasToString("1234567890abcdef");
-
   }
 
   @Test
@@ -101,7 +93,6 @@ class VisitorIdTest {
     VisitorId visitorId = VisitorId.fromHex("a");
 
     assertThat(visitorId).hasToString("000000000000000a");
-
   }
 
   @Test
@@ -110,7 +101,6 @@ class VisitorIdTest {
     VisitorId visitorId = VisitorId.fromHex("12");
 
     assertThat(visitorId).hasToString("0000000000000012");
-
   }
 
   @Test
@@ -119,12 +109,22 @@ class VisitorIdTest {
     assertThatThrownBy(() -> VisitorId.fromHex("invalid123456789"))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Input must be a valid hex string");
-
   }
 
   @ParameterizedTest
-  @ValueSource(strings =
-      {"g", "gh", "ghi", "ghij", "ghijk", "ghijkl", "ghijklm", "ghijklmn", "ghijklmn", "-1"})
+  @ValueSource(
+      strings = {
+        "g",
+        "gh",
+        "ghi",
+        "ghij",
+        "ghijk",
+        "ghijkl",
+        "ghijklm",
+        "ghijklmn",
+        "ghijklmn",
+        "-1"
+      })
   void failsOnInvalidHexString(String hex) {
     assertThatThrownBy(() -> VisitorId.fromHex(hex))
         .isInstanceOf(IllegalArgumentException.class)
@@ -133,14 +133,11 @@ class VisitorIdTest {
 
   @ParameterizedTest
   @MethodSource("validHexStrings")
-  void createsVisitorIdFromHex(
-      String hex, String expected
-  ) {
+  void createsVisitorIdFromHex(String hex, String expected) {
 
     VisitorId visitorId = VisitorId.fromHex(hex);
 
     assertThat(visitorId).hasToString(expected);
-
   }
 
   @ParameterizedTest
@@ -162,12 +159,10 @@ class VisitorIdTest {
   @Test
   void createsVisitorIdFromUUID() {
 
-    VisitorId visitorId = VisitorId.fromUUID(
-        java.util.UUID.fromString("12345678-90ab-cdef-1234-567890abcdef")
-    );
+    VisitorId visitorId =
+        VisitorId.fromUUID(java.util.UUID.fromString("12345678-90ab-cdef-1234-567890abcdef"));
 
     assertThat(visitorId).hasToString("1234567890abcdef");
-
   }
 
   @Test
@@ -183,7 +178,5 @@ class VisitorIdTest {
     VisitorId visitorId = VisitorId.fromString("test");
 
     assertThat(visitorId).hasToString("0000000000364492");
-
   }
-
 }

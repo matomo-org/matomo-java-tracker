@@ -12,7 +12,5 @@ class InvalidUrlExceptionTest {
 
     assertThat(invalidUrlException).isNotNull();
     assertThat(invalidUrlException.getCause()).isNotNull();
-
   }
-
 }

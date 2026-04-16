@@ -4,8 +4,7 @@ import lombok.Getter;
 
 class TestSenderFactory implements SenderFactory {
 
-  @Getter
-  private TestSender testSender;
+  @Getter private TestSender testSender;
 
   @Override
   public Sender createSender(TrackerConfiguration trackerConfiguration, QueryCreator queryCreator) {

@@ -26,8 +26,8 @@ public class MatomoDate {
   private ZonedDateTime zonedDateTime;
 
   /**
-   * Allocates a Date object and initializes it so that it represents the time
-   * at which it was allocated, measured to the nearest millisecond.
+   * Allocates a Date object and initializes it so that it represents the time at which it was
+   * allocated, measured to the nearest millisecond.
    */
   @Deprecated
   public MatomoDate() {
@@ -35,9 +35,8 @@ public class MatomoDate {
   }
 
   /**
-   * Allocates a Date object and initializes it to represent the specified number
-   * of milliseconds since the standard base time known as "the epoch", namely
-   * January 1, 1970, 00:00:00 GMT.
+   * Allocates a Date object and initializes it to represent the specified number of milliseconds
+   * since the standard base time known as "the epoch", namely January 1, 1970, 00:00:00 GMT.
    *
    * @param epochMilli the milliseconds since January 1, 1970, 00:00:00 GMT.
    */
@@ -47,8 +46,7 @@ public class MatomoDate {
   }
 
   /**
-   * Sets the time zone of the String that will be returned by {@link #toString()}.
-   * Defaults to UTC.
+   * Sets the time zone of the String that will be returned by {@link #toString()}. Defaults to UTC.
    *
    * @param zone the TimeZone to set
    */
@@ -57,8 +55,7 @@ public class MatomoDate {
   }
 
   /**
-   * Converts this datetime to the number of milliseconds from the epoch
-   * of 1970-01-01T00:00:00Z.
+   * Converts this datetime to the number of milliseconds from the epoch of 1970-01-01T00:00:00Z.
    *
    * @return the number of milliseconds since the epoch of 1970-01-01T00:00:00Z
    * @throws ArithmeticException if numeric overflow occurs

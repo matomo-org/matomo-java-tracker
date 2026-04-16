@@ -13,5 +13,4 @@ class CustomVariableTest {
     assertThat(customVariable.getKey()).isEqualTo("key");
     assertThat(customVariable.getValue()).isEqualTo("value");
   }
-
 }

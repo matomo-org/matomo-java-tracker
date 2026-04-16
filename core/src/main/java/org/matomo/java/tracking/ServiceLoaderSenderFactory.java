@@ -12,17 +12,19 @@ class ServiceLoaderSenderFactory implements SenderFactory {
   @Override
   public Sender createSender(TrackerConfiguration trackerConfiguration, QueryCreator queryCreator) {
     ServiceLoader<SenderProvider> serviceLoader = ServiceLoader.load(SenderProvider.class);
-    Map<String, SenderProvider> senderProviders = StreamSupport
-        .stream(serviceLoader.spliterator(), false)
-        .collect(toMap(senderProvider -> senderProvider.getClass().getName(), Function.identity()));
-    SenderProvider senderProvider = senderProviders.get("org.matomo.java.tracking.Java11SenderProvider");
+    Map<String, SenderProvider> senderProviders =
+        StreamSupport.stream(serviceLoader.spliterator(), false)
+            .collect(
+                toMap(senderProvider -> senderProvider.getClass().getName(), Function.identity()));
+    SenderProvider senderProvider =
+        senderProviders.get("org.matomo.java.tracking.Java11SenderProvider");
     if (senderProvider == null) {
       senderProvider = senderProviders.get("org.matomo.java.tracking.Java8SenderProvider");
     }
     if (senderProvider == null) {
       throw new MatomoException("No SenderProvider found");
     }
-    return senderProvider.provideSender(trackerConfiguration, new QueryCreator(trackerConfiguration));
+    return senderProvider.provideSender(
+        trackerConfiguration, new QueryCreator(trackerConfiguration));
   }
-
 }

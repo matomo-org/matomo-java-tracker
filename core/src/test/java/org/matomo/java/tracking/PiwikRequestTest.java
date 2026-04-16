@@ -42,9 +42,7 @@ class PiwikRequestTest {
     assertThat(request.getResponseAsImage()).isFalse();
   }
 
-  /**
-   * Test of getActionName method, of class PiwikRequest.
-   */
+  /** Test of getActionName method, of class PiwikRequest. */
   @Test
   void testActionName() {
     request.setActionName("action");
@@ -53,9 +51,7 @@ class PiwikRequestTest {
     assertThat(request.getActionName()).isNull();
   }
 
-  /**
-   * Test of getActionUrl method, of class PiwikRequest.
-   */
+  /** Test of getActionUrl method, of class PiwikRequest. */
   @Test
   void testActionUrl() {
     request.setActionUrl(null);
@@ -64,9 +60,7 @@ class PiwikRequestTest {
     assertThat(request.getActionUrl()).isEqualTo("https://action.com");
   }
 
-  /**
-   * Test of getApiVersion method, of class PiwikRequest.
-   */
+  /** Test of getApiVersion method, of class PiwikRequest. */
   @Test
   void testApiVersion() {
     request.setApiVersion("2");
@@ -86,27 +80,21 @@ class PiwikRequestTest {
     assertThat(request.getAuthToken()).isNull();
   }
 
-  /**
-   * Test of getCampaignKeyword method, of class PiwikRequest.
-   */
+  /** Test of getCampaignKeyword method, of class PiwikRequest. */
   @Test
   void testCampaignKeyword() {
     request.setCampaignKeyword("keyword");
     assertThat(request.getCampaignKeyword()).isEqualTo("keyword");
   }
 
-  /**
-   * Test of getCampaignName method, of class PiwikRequest.
-   */
+  /** Test of getCampaignName method, of class PiwikRequest. */
   @Test
   void testCampaignName() {
     request.setCampaignName("name");
     assertThat(request.getCampaignName()).isEqualTo("name");
   }
 
-  /**
-   * Test of getCharacterSet method, of class PiwikRequest.
-   */
+  /** Test of getCharacterSet method, of class PiwikRequest. */
   @Test
   void testCharacterSet() {
     Charset charset = Charset.defaultCharset();
@@ -114,72 +102,56 @@ class PiwikRequestTest {
     assertThat(request.getCharacterSet()).isEqualTo(charset);
   }
 
-  /**
-   * Test of getContentInteraction method, of class PiwikRequest.
-   */
+  /** Test of getContentInteraction method, of class PiwikRequest. */
   @Test
   void testContentInteraction() {
     request.setContentInteraction("interaction");
     assertThat(request.getContentInteraction()).isEqualTo("interaction");
   }
 
-  /**
-   * Test of getContentName method, of class PiwikRequest.
-   */
+  /** Test of getContentName method, of class PiwikRequest. */
   @Test
   void testContentName() {
     request.setContentName("name");
     assertThat(request.getContentName()).isEqualTo("name");
   }
 
-  /**
-   * Test of getContentPiece method, of class PiwikRequest.
-   */
+  /** Test of getContentPiece method, of class PiwikRequest. */
   @Test
   void testContentPiece() {
     request.setContentPiece("piece");
     assertThat(request.getContentPiece()).isEqualTo("piece");
   }
 
-  /**
-   * Test of getContentTarget method, of class PiwikRequest.
-   */
+  /** Test of getContentTarget method, of class PiwikRequest. */
   @Test
   void testContentTarget() {
     request.setContentTarget("https://target.com");
     assertThat(request.getContentTarget()).isEqualTo("https://target.com");
   }
 
-  /**
-   * Test of getCurrentHour method, of class PiwikRequest.
-   */
+  /** Test of getCurrentHour method, of class PiwikRequest. */
   @Test
   void testCurrentHour() {
     request.setCurrentHour(1);
     assertThat(request.getCurrentHour()).isEqualTo(Integer.valueOf(1));
   }
 
-  /**
-   * Test of getCurrentMinute method, of class PiwikRequest.
-   */
+  /** Test of getCurrentMinute method, of class PiwikRequest. */
   @Test
   void testCurrentMinute() {
     request.setCurrentMinute(2);
     assertThat(request.getCurrentMinute()).isEqualTo(Integer.valueOf(2));
   }
 
-  /**
-   * Test of getCurrentSecond method, of class PiwikRequest.
-   */
+  /** Test of getCurrentSecond method, of class PiwikRequest. */
   @Test
   void testCurrentSecond() {
     request.setCurrentSecond(3);
     assertThat(request.getCurrentSecond()).isEqualTo(Integer.valueOf(3));
   }
 
-  /**
-   * Test of getCustomTrackingParameter method, of class PiwikRequest.
-   */
+  /** Test of getCustomTrackingParameter method, of class PiwikRequest. */
   @Test
   void testGetCustomTrackingParameter_T() {
     try {
@@ -263,18 +235,14 @@ class PiwikRequestTest {
     assertThat(l).isNull();
   }
 
-  /**
-   * Test of getDeviceResolution method, of class PiwikRequest.
-   */
+  /** Test of getDeviceResolution method, of class PiwikRequest. */
   @Test
   void testDeviceResolution() {
     request.setDeviceResolution(DeviceResolution.fromString("100x200"));
     assertThat(request.getDeviceResolution()).hasToString("100x200");
   }
 
-  /**
-   * Test of getDownloadUrl method, of class PiwikRequest.
-   */
+  /** Test of getDownloadUrl method, of class PiwikRequest. */
   @Test
   void testDownloadUrl() {
 
@@ -282,18 +250,14 @@ class PiwikRequestTest {
     assertThat(request.getDownloadUrl()).isEqualTo("https://download.com");
   }
 
-  /**
-   * Test of enableEcommerce method, of class PiwikRequest.
-   */
+  /** Test of enableEcommerce method, of class PiwikRequest. */
   @Test
   void testEnableEcommerce() {
     request.enableEcommerce();
     assertThat(request.getGoalId()).isEqualTo(Integer.valueOf(0));
   }
 
-  /**
-   * Test of getEcommerceDiscount method, of class PiwikRequest.
-   */
+  /** Test of getEcommerceDiscount method, of class PiwikRequest. */
   @Test
   void testEcommerceDiscountT() {
     request.enableEcommerce();
@@ -303,16 +267,13 @@ class PiwikRequestTest {
     assertThat(request.getEcommerceDiscount()).isEqualTo(Double.valueOf(1.0));
   }
 
-
   @Test
   void testEcommerceDiscountF() {
     request.setEcommerceDiscount(null);
     assertThat(request.getEcommerceDiscount()).isNull();
   }
 
-  /**
-   * Test of getEcommerceId method, of class PiwikRequest.
-   */
+  /** Test of getEcommerceId method, of class PiwikRequest. */
   @Test
   void testEcommerceIdT() {
     request.enableEcommerce();
@@ -352,9 +313,7 @@ class PiwikRequestTest {
     assertThat(request.getEcommerceItem(0)).isNull();
   }
 
-  /**
-   * Test of getEcommerceLastOrderTimestamp method, of class PiwikRequest.
-   */
+  /** Test of getEcommerceLastOrderTimestamp method, of class PiwikRequest. */
   @Test
   void testEcommerceLastOrderTimestampT() {
     request.enableEcommerce();
@@ -370,9 +329,7 @@ class PiwikRequestTest {
     assertThat(request.getEcommerceLastOrderTimestamp()).isNull();
   }
 
-  /**
-   * Test of getEcommerceRevenue method, of class PiwikRequest.
-   */
+  /** Test of getEcommerceRevenue method, of class PiwikRequest. */
   @Test
   void testEcommerceRevenueT() {
     request.enableEcommerce();
@@ -381,16 +338,13 @@ class PiwikRequestTest {
     assertThat(request.getEcommerceRevenue()).isEqualTo(Double.valueOf(20.0));
   }
 
-
   @Test
   void testEcommerceRevenueF() {
     request.setEcommerceRevenue(null);
     assertThat(request.getEcommerceRevenue()).isNull();
   }
 
-  /**
-   * Test of getEcommerceShippingCost method, of class PiwikRequest.
-   */
+  /** Test of getEcommerceShippingCost method, of class PiwikRequest. */
   @Test
   void testEcommerceShippingCostT() {
     request.enableEcommerce();
@@ -406,9 +360,7 @@ class PiwikRequestTest {
     assertThat(request.getEcommerceShippingCost()).isNull();
   }
 
-  /**
-   * Test of getEcommerceSubtotal method, of class PiwikRequest.
-   */
+  /** Test of getEcommerceSubtotal method, of class PiwikRequest. */
   @Test
   void testEcommerceSubtotalT() {
     request.enableEcommerce();
@@ -424,9 +376,7 @@ class PiwikRequestTest {
     assertThat(request.getEcommerceSubtotal()).isNull();
   }
 
-  /**
-   * Test of getEcommerceTax method, of class PiwikRequest.
-   */
+  /** Test of getEcommerceTax method, of class PiwikRequest. */
   @Test
   void testEcommerceTaxT() {
     request.enableEcommerce();
@@ -442,9 +392,7 @@ class PiwikRequestTest {
     assertThat(request.getEcommerceTax()).isNull();
   }
 
-  /**
-   * Test of getEventAction method, of class PiwikRequest.
-   */
+  /** Test of getEventAction method, of class PiwikRequest. */
   @Test
   void testEventAction() {
     request.setEventAction("action");
@@ -453,63 +401,49 @@ class PiwikRequestTest {
     assertThat(request.getEventAction()).isNull();
   }
 
-  /**
-   * Test of getEventCategory method, of class PiwikRequest.
-   */
+  /** Test of getEventCategory method, of class PiwikRequest. */
   @Test
   void testEventCategory() {
     request.setEventCategory("category");
     assertThat(request.getEventCategory()).isEqualTo("category");
   }
 
-  /**
-   * Test of getEventName method, of class PiwikRequest.
-   */
+  /** Test of getEventName method, of class PiwikRequest. */
   @Test
   void testEventName() {
     request.setEventName("name");
     assertThat(request.getEventName()).isEqualTo("name");
   }
 
-  /**
-   * Test of getEventValue method, of class PiwikRequest.
-   */
+  /** Test of getEventValue method, of class PiwikRequest. */
   @Test
   void testEventValue() {
     request.setEventValue(1.0);
     assertThat(request.getEventValue()).isOne();
   }
 
-  /**
-   * Test of getGoalId method, of class PiwikRequest.
-   */
+  /** Test of getGoalId method, of class PiwikRequest. */
   @Test
   void testGoalId() {
     request.setGoalId(1);
     assertThat(request.getGoalId()).isEqualTo(Integer.valueOf(1));
   }
 
-  /**
-   * Test of getHeaderAcceptLanguage method, of class PiwikRequest.
-   */
+  /** Test of getHeaderAcceptLanguage method, of class PiwikRequest. */
   @Test
   void testHeaderAcceptLanguage() {
     request.setHeaderAcceptLanguage(AcceptLanguage.fromHeader("en"));
     assertThat(request.getHeaderAcceptLanguage()).hasToString("en");
   }
 
-  /**
-   * Test of getHeaderUserAgent method, of class PiwikRequest.
-   */
+  /** Test of getHeaderUserAgent method, of class PiwikRequest. */
   @Test
   void testHeaderUserAgent() {
     request.setHeaderUserAgent("agent");
     assertThat(request.getHeaderUserAgent()).isEqualTo("agent");
   }
 
-  /**
-   * Test of getNewVisit method, of class PiwikRequest.
-   */
+  /** Test of getNewVisit method, of class PiwikRequest. */
   @Test
   void testNewVisit() {
     request.setNewVisit(true);
@@ -518,18 +452,14 @@ class PiwikRequestTest {
     assertThat(request.getNewVisit()).isNull();
   }
 
-  /**
-   * Test of getOutlinkUrl method, of class PiwikRequest.
-   */
+  /** Test of getOutlinkUrl method, of class PiwikRequest. */
   @Test
   void testOutlinkUrl() {
     request.setOutlinkUrl("https://outlink.com");
     assertThat(request.getOutlinkUrl()).isEqualTo("https://outlink.com");
   }
 
-  /**
-   * Test of getPageCustomVariable method, of class PiwikRequest.
-   */
+  /** Test of getPageCustomVariable method, of class PiwikRequest. */
   @Test
   void testPageCustomVariableStringStringE() {
     assertThatThrownBy(() -> request.setPageCustomVariable(null, null));
@@ -552,108 +482,84 @@ class PiwikRequestTest {
     assertThat(request.getPageCustomVariable(2)).isEqualTo(cv);
   }
 
-  /**
-   * Test of getPluginDirector method, of class PiwikRequest.
-   */
+  /** Test of getPluginDirector method, of class PiwikRequest. */
   @Test
   void testPluginDirector() {
     request.setPluginDirector(true);
     assertThat(request.getPluginDirector()).isTrue();
   }
 
-  /**
-   * Test of getPluginFlash method, of class PiwikRequest.
-   */
+  /** Test of getPluginFlash method, of class PiwikRequest. */
   @Test
   void testPluginFlash() {
     request.setPluginFlash(true);
     assertThat(request.getPluginFlash()).isTrue();
   }
 
-  /**
-   * Test of getPluginGears method, of class PiwikRequest.
-   */
+  /** Test of getPluginGears method, of class PiwikRequest. */
   @Test
   void testPluginGears() {
     request.setPluginGears(true);
     assertThat(request.getPluginGears()).isTrue();
   }
 
-  /**
-   * Test of getPluginJava method, of class PiwikRequest.
-   */
+  /** Test of getPluginJava method, of class PiwikRequest. */
   @Test
   void testPluginJava() {
     request.setPluginJava(true);
     assertThat(request.getPluginJava()).isTrue();
   }
 
-  /**
-   * Test of getPluginPDF method, of class PiwikRequest.
-   */
+  /** Test of getPluginPDF method, of class PiwikRequest. */
   @Test
   void testPluginPDF() {
     request.setPluginPDF(true);
     assertThat(request.getPluginPDF()).isTrue();
   }
 
-  /**
-   * Test of getPluginQuicktime method, of class PiwikRequest.
-   */
+  /** Test of getPluginQuicktime method, of class PiwikRequest. */
   @Test
   void testPluginQuicktime() {
     request.setPluginQuicktime(true);
     assertThat(request.getPluginQuicktime()).isTrue();
   }
 
-  /**
-   * Test of getPluginRealPlayer method, of class PiwikRequest.
-   */
+  /** Test of getPluginRealPlayer method, of class PiwikRequest. */
   @Test
   void testPluginRealPlayer() {
     request.setPluginRealPlayer(true);
     assertThat(request.getPluginRealPlayer()).isTrue();
   }
 
-  /**
-   * Test of getPluginSilverlight method, of class PiwikRequest.
-   */
+  /** Test of getPluginSilverlight method, of class PiwikRequest. */
   @Test
   void testPluginSilverlight() {
     request.setPluginSilverlight(true);
     assertThat(request.getPluginSilverlight()).isTrue();
   }
 
-  /**
-   * Test of getPluginWindowsMedia method, of class PiwikRequest.
-   */
+  /** Test of getPluginWindowsMedia method, of class PiwikRequest. */
   @Test
   void testPluginWindowsMedia() {
     request.setPluginWindowsMedia(true);
     assertThat(request.getPluginWindowsMedia()).isTrue();
   }
 
-  /**
-   * Test of getRandomValue method, of class PiwikRequest.
-   */
+  /** Test of getRandomValue method, of class PiwikRequest. */
   @Test
   void testRandomValue() {
     request.setRandomValue(RandomValue.fromString("value"));
     assertThat(request.getRandomValue()).hasToString("value");
   }
 
-  /**
-   * Test of setReferrerUrl method, of class PiwikRequest.
-   */
+  /** Test of setReferrerUrl method, of class PiwikRequest. */
   @Test
   void testReferrerUrl() {
     request.setReferrerUrl("https://referrer.com");
     assertThat(request.getReferrerUrl()).isEqualTo("https://referrer.com");
   }
 
-  /**
-   * Test of getRequestDatetime method, of class PiwikRequest.
-   */
+  /** Test of getRequestDatetime method, of class PiwikRequest. */
   @Test
   void testRequestDatetimeTTT() {
     request.setAuthToken("12345678901234567890123456789012");
@@ -662,14 +568,11 @@ class PiwikRequestTest {
     assertThat(request.getRequestDatetime().getTime()).isEqualTo(1000L);
   }
 
-
   @Test
   void testRequestDatetimeTF() {
     request.setRequestDatetime(new PiwikDate());
-    assertThat(request.getRequestDatetime().getZonedDateTime()).isCloseTo(
-        ZonedDateTime.now(),
-        within(2, MINUTES)
-    );
+    assertThat(request.getRequestDatetime().getZonedDateTime())
+        .isCloseTo(ZonedDateTime.now(), within(2, MINUTES));
   }
 
   @Test
@@ -680,18 +583,14 @@ class PiwikRequestTest {
     assertThat(request.getRequestDatetime()).isNull();
   }
 
-  /**
-   * Test of getRequired method, of class PiwikRequest.
-   */
+  /** Test of getRequired method, of class PiwikRequest. */
   @Test
   void testRequired() {
     request.setRequired(false);
     assertThat(request.getRequired()).isFalse();
   }
 
-  /**
-   * Test of getResponseAsImage method, of class PiwikRequest.
-   */
+  /** Test of getResponseAsImage method, of class PiwikRequest. */
   @Test
   void testResponseAsImage() {
     request.setResponseAsImage(true);
@@ -711,9 +610,7 @@ class PiwikRequestTest {
     assertThat(request.getSearchCategory()).isNull();
   }
 
-  /**
-   * Test of getSearchQuery method, of class PiwikRequest.
-   */
+  /** Test of getSearchQuery method, of class PiwikRequest. */
   @Test
   void testSearchQuery() {
     request.setSearchQuery("query");
@@ -733,46 +630,35 @@ class PiwikRequestTest {
     assertThat(request.getSearchResultsCount()).isNull();
   }
 
-  /**
-   * Test of getSiteId method, of class PiwikRequest.
-   */
+  /** Test of getSiteId method, of class PiwikRequest. */
   @Test
   void testSiteId() {
     request.setSiteId(2);
     assertThat(request.getSiteId()).isEqualTo(Integer.valueOf(2));
   }
 
-  /**
-   * Test of setTrackBotRequest method, of class PiwikRequest.
-   */
+  /** Test of setTrackBotRequest method, of class PiwikRequest. */
   @Test
   void testTrackBotRequests() {
     request.setTrackBotRequests(true);
     assertThat(request.getTrackBotRequests()).isTrue();
   }
 
-  /**
-   * Test of getUserCustomVariable method, of class PiwikRequest.
-   */
+  /** Test of getUserCustomVariable method, of class PiwikRequest. */
   @Test
   void testUserCustomVariableStringString() {
     request.setUserCustomVariable("userKey", "userValue");
     assertThat(request.getUserCustomVariable("userKey")).isEqualTo("userValue");
   }
 
-
-  /**
-   * Test of getUserId method, of class PiwikRequest.
-   */
+  /** Test of getUserId method, of class PiwikRequest. */
   @Test
   void testUserId() {
     request.setUserId("id");
     assertThat(request.getUserId()).isEqualTo("id");
   }
 
-  /**
-   * Test of getVisitorCity method, of class PiwikRequest.
-   */
+  /** Test of getVisitorCity method, of class PiwikRequest. */
   @Test
   void testVisitorCityT() {
     request.setAuthToken("12345678901234567890123456789012");
@@ -786,9 +672,7 @@ class PiwikRequestTest {
     assertThat(request.getVisitorCity()).isNull();
   }
 
-  /**
-   * Test of getVisitorCountry method, of class PiwikRequest.
-   */
+  /** Test of getVisitorCountry method, of class PiwikRequest. */
   @Test
   void testVisitorCountryT() {
     PiwikLocale country = new PiwikLocale(Locale.US);
@@ -816,9 +700,7 @@ class PiwikRequestTest {
     assertThat(request.getVisitorCustomId()).isNull();
   }
 
-  /**
-   * Test of getVisitorFirstVisitTimestamp method, of class PiwikRequest.
-   */
+  /** Test of getVisitorFirstVisitTimestamp method, of class PiwikRequest. */
   @Test
   void testVisitorFirstVisitTimestamp() {
     request.setVisitorFirstVisitTimestamp(Instant.parse("2021-03-10T10:22:22.123Z"));
@@ -848,9 +730,7 @@ class PiwikRequestTest {
     assertThat(request.getVisitorId()).isNull();
   }
 
-  /**
-   * Test of getVisitorIp method, of class PiwikRequest.
-   */
+  /** Test of getVisitorIp method, of class PiwikRequest. */
   @Test
   void testVisitorIpT() {
     request.setAuthToken("12345678901234567890123456789012");
@@ -864,9 +744,7 @@ class PiwikRequestTest {
     assertThat(request.getVisitorIp()).isNull();
   }
 
-  /**
-   * Test of getVisitorLatitude method, of class PiwikRequest.
-   */
+  /** Test of getVisitorLatitude method, of class PiwikRequest. */
   @Test
   void testVisitorLatitudeT() {
     request.setAuthToken("12345678901234567890123456789012");
@@ -880,9 +758,7 @@ class PiwikRequestTest {
     assertThat(request.getVisitorLatitude()).isNull();
   }
 
-  /**
-   * Test of getVisitorLongitude method, of class PiwikRequest.
-   */
+  /** Test of getVisitorLongitude method, of class PiwikRequest. */
   @Test
   void testVisitorLongitudeT() {
     request.setAuthToken("12345678901234567890123456789012");
@@ -896,18 +772,14 @@ class PiwikRequestTest {
     assertThat(request.getVisitorLongitude()).isNull();
   }
 
-  /**
-   * Test of getVisitorPreviousVisitTimestamp method, of class PiwikRequest.
-   */
+  /** Test of getVisitorPreviousVisitTimestamp method, of class PiwikRequest. */
   @Test
   void testVisitorPreviousVisitTimestamp() {
     request.setVisitorPreviousVisitTimestamp(Instant.ofEpochSecond(1000L));
     assertThat(request.getVisitorPreviousVisitTimestamp()).isEqualTo("1970-01-01T00:16:40Z");
   }
 
-  /**
-   * Test of getVisitorRegion method, of class PiwikRequest.
-   */
+  /** Test of getVisitorRegion method, of class PiwikRequest. */
   @Test
   void testVisitorRegionT() {
     request.setAuthToken("12345678901234567890123456789012");
@@ -921,9 +793,7 @@ class PiwikRequestTest {
     assertThat(request.getVisitorRegion()).isNull();
   }
 
-  /**
-   * Test of getVisitorVisitCount method, of class PiwikRequest.
-   */
+  /** Test of getVisitorVisitCount method, of class PiwikRequest. */
   @Test
   void testVisitorVisitCount() {
     request.setVisitorVisitCount(100);
@@ -936,5 +806,4 @@ class PiwikRequestTest {
         .isInstanceOf(NullPointerException.class)
         .hasMessage("Action URL must not be null");
   }
-
 }

@@ -7,20 +7,14 @@ import java.util.concurrent.CompletableFuture;
 
 interface Sender extends AutoCloseable {
   @NonNull
-  CompletableFuture<MatomoRequest> sendSingleAsync(
-      @NonNull MatomoRequest request
-  );
+  CompletableFuture<MatomoRequest> sendSingleAsync(@NonNull MatomoRequest request);
 
-  void sendSingle(
-      @NonNull MatomoRequest request
-  );
+  void sendSingle(@NonNull MatomoRequest request);
 
   void sendBulk(
-      @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken
-  );
+      @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken);
 
   @NonNull
   CompletableFuture<Void> sendBulkAsync(
-      @NonNull Collection<? extends MatomoRequest> requests, @Nullable String overrideAuthToken
-  );
+      @NonNull Collection<? extends MatomoRequest> requests, @Nullable String overrideAuthToken);
 }

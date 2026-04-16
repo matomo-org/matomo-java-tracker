@@ -1,6 +1,5 @@
 package org.matomo.java.tracking;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
@@ -13,8 +12,7 @@ class MatomoRequestsTest {
     MatomoRequest.MatomoRequestBuilder builder =
         MatomoRequests.action("https://example.com", ActionType.DOWNLOAD);
     MatomoRequest request = builder.build();
-    assertThat(request.getDownloadUrl())
-        .isEqualTo("https://example.com");
+    assertThat(request.getDownloadUrl()).isEqualTo("https://example.com");
   }
 
   @Test
@@ -22,8 +20,7 @@ class MatomoRequestsTest {
     MatomoRequest.MatomoRequestBuilder builder =
         MatomoRequests.action("https://example.com", ActionType.LINK);
     MatomoRequest request = builder.build();
-    assertThat(request.getOutlinkUrl())
-        .isEqualTo("https://example.com");
+    assertThat(request.getOutlinkUrl()).isEqualTo("https://example.com");
   }
 
   @Test
@@ -36,19 +33,15 @@ class MatomoRequestsTest {
         .extracting(
             MatomoRequest::getContentName,
             MatomoRequest::getContentPiece,
-            MatomoRequest::getContentTarget
-        )
+            MatomoRequest::getContentTarget)
         .containsExactly("Product", "Smartphone", "https://example.com/product");
   }
 
   @Test
   void contentInteractionRequestBuilderContainsInteractionAndContentInformation() {
-    MatomoRequest.MatomoRequestBuilder builder = MatomoRequests.contentInteraction(
-        "click",
-        "Product",
-        "Smartphone",
-        "https://example.com/product"
-    );
+    MatomoRequest.MatomoRequestBuilder builder =
+        MatomoRequests.contentInteraction(
+            "click", "Product", "Smartphone", "https://example.com/product");
     MatomoRequest request = builder.build();
     assertThat(request)
         .isNotNull()
@@ -56,22 +49,21 @@ class MatomoRequestsTest {
             MatomoRequest::getContentInteraction,
             MatomoRequest::getContentName,
             MatomoRequest::getContentPiece,
-            MatomoRequest::getContentTarget
-        )
+            MatomoRequest::getContentTarget)
         .containsExactly("click", "Product", "Smartphone", "https://example.com/product");
   }
 
   @Test
   void crashRequestBuilderContainsCrashInformation() {
-    MatomoRequest.MatomoRequestBuilder builder = MatomoRequests.crash(
-        "Error",
-        "NullPointerException",
-        "payment failure",
-        "stackTrace",
-        "MainActivity.java",
-        42,
-        23
-    );
+    MatomoRequest.MatomoRequestBuilder builder =
+        MatomoRequests.crash(
+            "Error",
+            "NullPointerException",
+            "payment failure",
+            "stackTrace",
+            "MainActivity.java",
+            42,
+            23);
     MatomoRequest request = builder.build();
     assertThat(request)
         .isNotNull()
@@ -82,8 +74,7 @@ class MatomoRequestsTest {
             MatomoRequest::getCrashStackTrace,
             MatomoRequest::getCrashLocation,
             MatomoRequest::getCrashLine,
-            MatomoRequest::getCrashColumn
-        )
+            MatomoRequest::getCrashColumn)
         .containsExactly(
             "Error",
             "NullPointerException",
@@ -91,8 +82,7 @@ class MatomoRequestsTest {
             "stackTrace",
             "MainActivity.java",
             42,
-            23
-      );
+            23);
   }
 
   @Test
@@ -110,10 +100,7 @@ class MatomoRequestsTest {
   void ecommerceCartUpdateRequestBuilderContainsEcommerceRevenue() {
     MatomoRequest.MatomoRequestBuilder builder = MatomoRequests.ecommerceCartUpdate(100.0);
     MatomoRequest request = builder.build();
-    assertThat(request)
-        .isNotNull()
-        .extracting(MatomoRequest::getEcommerceRevenue)
-        .isEqualTo(100.0);
+    assertThat(request).isNotNull().extracting(MatomoRequest::getEcommerceRevenue).isEqualTo(100.0);
   }
 
   @Test
@@ -129,19 +116,14 @@ class MatomoRequestsTest {
             MatomoRequest::getEcommerceSubtotal,
             MatomoRequest::getEcommerceTax,
             MatomoRequest::getEcommerceShippingCost,
-            MatomoRequest::getEcommerceDiscount
-        )
+            MatomoRequest::getEcommerceDiscount)
         .containsExactly("123", 200.0, 180.0, 10.0, 5.0, 5.0);
   }
 
   @Test
   void eventRequestBuilderContainsEventInformation() {
-    MatomoRequest.MatomoRequestBuilder builder = MatomoRequests.event(
-        "Music",
-        "Play",
-        "Edvard Grieg - The Death of Ase",
-        9.99
-    );
+    MatomoRequest.MatomoRequestBuilder builder =
+        MatomoRequests.event("Music", "Play", "Edvard Grieg - The Death of Ase", 9.99);
     MatomoRequest request = builder.build();
     assertThat(request)
         .isNotNull()
@@ -149,24 +131,17 @@ class MatomoRequestsTest {
             MatomoRequest::getEventCategory,
             MatomoRequest::getEventAction,
             MatomoRequest::getEventName,
-            MatomoRequest::getEventValue
-        )
+            MatomoRequest::getEventValue)
         .containsExactly("Music", "Play", "Edvard Grieg - The Death of Ase", 9.99);
   }
 
   @Test
   void goalRequestBuilderContainsGoalInformation() {
-    MatomoRequest.MatomoRequestBuilder builder = MatomoRequests.goal(
-        1,
-        9.99
-    );
+    MatomoRequest.MatomoRequestBuilder builder = MatomoRequests.goal(1, 9.99);
     MatomoRequest request = builder.build();
     assertThat(request)
         .isNotNull()
-        .extracting(
-            MatomoRequest::getGoalId,
-            MatomoRequest::getEcommerceRevenue
-        )
+        .extracting(MatomoRequest::getGoalId, MatomoRequest::getEcommerceRevenue)
         .containsExactly(1, 9.99);
   }
 
@@ -174,8 +149,7 @@ class MatomoRequestsTest {
   void pageViewRequestBuilderContainsPageViewInformation() {
     MatomoRequest.MatomoRequestBuilder builder = MatomoRequests.pageView("About");
     MatomoRequest request = builder.build();
-    assertThat(request.getActionName())
-        .isEqualTo("About");
+    assertThat(request.getActionName()).isEqualTo("About");
   }
 
   @Test
@@ -188,8 +162,7 @@ class MatomoRequestsTest {
         .extracting(
             MatomoRequest::getSearchQuery,
             MatomoRequest::getSearchCategory,
-            MatomoRequest::getSearchResultsCount
-        )
+            MatomoRequest::getSearchResultsCount)
         .containsExactly("Matomo", "Download", 42L);
   }
 
@@ -228,11 +201,9 @@ class MatomoRequestsTest {
   @Test
   void contentImpressionNullNameThrowsNullPointerException() {
     assertThatNullPointerException()
-        .isThrownBy(() -> MatomoRequests.contentImpression(
-            null,
-            "Smartphone",
-            "https://example.com/product"
-        ))
+        .isThrownBy(
+            () ->
+                MatomoRequests.contentImpression(null, "Smartphone", "https://example.com/product"))
         .withMessage("name is marked non-null but is null");
   }
 
@@ -241,15 +212,16 @@ class MatomoRequestsTest {
   @Test
   void crashNullMessageThrowsNullPointerException() {
     assertThatNullPointerException()
-        .isThrownBy(() -> MatomoRequests.crash(
-            null,
-            "NullPointerException",
-            "payment failure",
-            "stackTrace",
-            "MainActivity.java",
-            42,
-            23
-        ))
+        .isThrownBy(
+            () ->
+                MatomoRequests.crash(
+                    null,
+                    "NullPointerException",
+                    "payment failure",
+                    "stackTrace",
+                    "MainActivity.java",
+                    42,
+                    23))
         .withMessage("message is marked non-null but is null");
   }
 
@@ -277,12 +249,8 @@ class MatomoRequestsTest {
   @Test
   void eventNullCategoryThrowsNullPointerException() {
     assertThatNullPointerException()
-        .isThrownBy(() -> MatomoRequests.event(
-            null,
-            "Play",
-            "Edvard Grieg - The Death of Ase",
-            9.99
-        ))
+        .isThrownBy(
+            () -> MatomoRequests.event(null, "Play", "Edvard Grieg - The Death of Ase", 9.99))
         .withMessage("category is marked non-null but is null");
   }
 
@@ -308,11 +276,10 @@ class MatomoRequestsTest {
     assertThat(request.getCrashMessage()).isEqualTo("message");
     assertThat(request.getCrashType()).isEqualTo("org.matomo.java.tracking.TestThrowable");
     assertThat(request.getCrashCategory()).isEqualTo("payment failure");
-    assertThat(request.getCrashStackTrace()).isEqualTo(
-        "org.matomo.java.tracking.TestThrowable: message");
+    assertThat(request.getCrashStackTrace())
+        .isEqualTo("org.matomo.java.tracking.TestThrowable: message");
     assertThat(request.getCrashLocation()).isNull();
     assertThat(request.getCrashLine()).isNull();
     assertThat(request.getCrashColumn()).isNull();
   }
-
 }

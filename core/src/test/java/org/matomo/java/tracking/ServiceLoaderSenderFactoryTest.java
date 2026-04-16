@@ -12,13 +12,15 @@ class ServiceLoaderSenderFactoryTest {
     ServiceLoaderSenderFactory serviceLoaderSenderFactory = new ServiceLoaderSenderFactory();
 
     TrackerConfiguration trackerConfiguration =
-        TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost/matomo.php")).build();
+        TrackerConfiguration.builder()
+            .apiEndpoint(URI.create("http://localhost/matomo.php"))
+            .build();
 
-    assertThatThrownBy(() -> serviceLoaderSenderFactory.createSender(trackerConfiguration,
-        new QueryCreator(trackerConfiguration)
-    ))
+    assertThatThrownBy(
+            () ->
+                serviceLoaderSenderFactory.createSender(
+                    trackerConfiguration, new QueryCreator(trackerConfiguration)))
         .isInstanceOf(MatomoException.class)
         .hasMessage("No SenderProvider found");
   }
-
 }

@@ -16,11 +16,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 class ProxyAuthenticator extends Authenticator {
 
-  @NonNull
-  private final String user;
+  @NonNull private final String user;
 
-  @NonNull
-  private final String password;
+  @NonNull private final String password;
 
   @Nullable
   @Override
@@ -30,5 +28,4 @@ class ProxyAuthenticator extends Authenticator {
     }
     return null;
   }
-
 }

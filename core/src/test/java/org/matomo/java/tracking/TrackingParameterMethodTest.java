@@ -9,11 +9,11 @@ class TrackingParameterMethodTest {
 
   @Test
   void validateParameterValueFailsIfPatternDoesNotMatch() {
-    TrackingParameterMethod trackingParameterMethod = TrackingParameterMethod
-        .builder()
-        .parameterName("foo")
-        .pattern(Pattern.compile("bar"))
-        .build();
+    TrackingParameterMethod trackingParameterMethod =
+        TrackingParameterMethod.builder()
+            .parameterName("foo")
+            .pattern(Pattern.compile("bar"))
+            .build();
 
     assertThatThrownBy(() -> trackingParameterMethod.validateParameterValue("baz"))
         .isInstanceOf(MatomoException.class)
@@ -30,26 +30,26 @@ class TrackingParameterMethodTest {
 
   @Test
   void doNothingIfParameterValueIsNotCharSequence() {
-    TrackingParameterMethod trackingParameterMethod = TrackingParameterMethod
-        .builder()
-        .parameterName("foo")
-        .pattern(Pattern.compile("bar"))
-        .maxLength(255)
-        .min(1)
-        .max(1)
-        .build();
+    TrackingParameterMethod trackingParameterMethod =
+        TrackingParameterMethod.builder()
+            .parameterName("foo")
+            .pattern(Pattern.compile("bar"))
+            .maxLength(255)
+            .min(1)
+            .max(1)
+            .build();
 
     trackingParameterMethod.validateParameterValue(1);
   }
 
   @Test
   void failIfParameterValueIsNull() {
-    TrackingParameterMethod trackingParameterMethod = TrackingParameterMethod
-        .builder()
-        .parameterName("foo")
-        .pattern(Pattern.compile("bar"))
-        .maxLength(255)
-        .build();
+    TrackingParameterMethod trackingParameterMethod =
+        TrackingParameterMethod.builder()
+            .parameterName("foo")
+            .pattern(Pattern.compile("bar"))
+            .maxLength(255)
+            .build();
 
     assertThatThrownBy(() -> trackingParameterMethod.validateParameterValue(null))
         .isInstanceOf(NullPointerException.class)
@@ -85,5 +85,4 @@ class TrackingParameterMethodTest {
         .isInstanceOf(MatomoException.class)
         .hasMessage("Invalid value for foo. Must be less or equal than 3");
   }
-
 }

@@ -40,82 +40,97 @@ class Java11SenderIT {
   @Test
   void failsIfTrackerConfigurationIsNotSet() {
     CookieManager cookieManager = new CookieManager();
-    assertThatThrownBy(() -> new Java11Sender(
-        null,
-        new QueryCreator(TrackerConfiguration.builder()
-                                             .apiEndpoint(URI.create("http://localhost"))
-                                             .build()),
-        HttpClient.newBuilder().cookieHandler(cookieManager).build(),
-        cookieManager.getCookieStore(),
-        Executors.newFixedThreadPool(2, new DaemonThreadFactory())
-    )).isInstanceOf(NullPointerException.class)
-      .hasMessage("trackerConfiguration is marked non-null but is null");
+    assertThatThrownBy(
+            () ->
+                new Java11Sender(
+                    null,
+                    new QueryCreator(
+                        TrackerConfiguration.builder()
+                            .apiEndpoint(URI.create("http://localhost"))
+                            .build()),
+                    HttpClient.newBuilder().cookieHandler(cookieManager).build(),
+                    cookieManager.getCookieStore(),
+                    Executors.newFixedThreadPool(2, new DaemonThreadFactory())))
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("trackerConfiguration is marked non-null but is null");
   }
 
   @Test
   void failsIfQueryCreatorIsNotSet() {
     CookieManager cookieManager = new CookieManager();
-    assertThatThrownBy(() -> new Java11Sender(
-        TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build(),
-        null,
-        HttpClient.newBuilder().cookieHandler(cookieManager).build(),
-        cookieManager.getCookieStore(),
-        Executors.newFixedThreadPool(2, new DaemonThreadFactory())
-    )).isInstanceOf(NullPointerException.class)
-      .hasMessage("queryCreator is marked non-null but is null");
+    assertThatThrownBy(
+            () ->
+                new Java11Sender(
+                    TrackerConfiguration.builder()
+                        .apiEndpoint(URI.create("http://localhost"))
+                        .build(),
+                    null,
+                    HttpClient.newBuilder().cookieHandler(cookieManager).build(),
+                    cookieManager.getCookieStore(),
+                    Executors.newFixedThreadPool(2, new DaemonThreadFactory())))
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("queryCreator is marked non-null but is null");
   }
 
   @Test
   void failsIfHttpClientIsNotSet() {
     CookieManager cookieManager = new CookieManager();
-    assertThatThrownBy(() -> new Java11Sender(
-        TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build(),
-        new QueryCreator(TrackerConfiguration.builder()
-                                             .apiEndpoint(URI.create("http://localhost"))
-                                             .build()),
-        null,
-        cookieManager.getCookieStore(),
-        Executors.newFixedThreadPool(2, new DaemonThreadFactory())
-    )).isInstanceOf(NullPointerException.class)
-      .hasMessage("httpClient is marked non-null but is null");
+    assertThatThrownBy(
+            () ->
+                new Java11Sender(
+                    TrackerConfiguration.builder()
+                        .apiEndpoint(URI.create("http://localhost"))
+                        .build(),
+                    new QueryCreator(
+                        TrackerConfiguration.builder()
+                            .apiEndpoint(URI.create("http://localhost"))
+                            .build()),
+                    null,
+                    cookieManager.getCookieStore(),
+                    Executors.newFixedThreadPool(2, new DaemonThreadFactory())))
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("httpClient is marked non-null but is null");
   }
 
   @Test
   void failsIfCookieStoreIsNotSet() {
     CookieManager cookieManager = new CookieManager();
-    assertThatThrownBy(() -> new Java11Sender(
-        TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost")).build(),
-        new QueryCreator(TrackerConfiguration.builder()
-                                             .apiEndpoint(URI.create("http://localhost"))
-                                             .build()),
-        HttpClient.newBuilder().cookieHandler(cookieManager).build(),
-        null,
-        Executors.newFixedThreadPool(2, new DaemonThreadFactory())
-    )).isInstanceOf(NullPointerException.class)
-      .hasMessage("cookieStore is marked non-null but is null");
+    assertThatThrownBy(
+            () ->
+                new Java11Sender(
+                    TrackerConfiguration.builder()
+                        .apiEndpoint(URI.create("http://localhost"))
+                        .build(),
+                    new QueryCreator(
+                        TrackerConfiguration.builder()
+                            .apiEndpoint(URI.create("http://localhost"))
+                            .build()),
+                    HttpClient.newBuilder().cookieHandler(cookieManager).build(),
+                    null,
+                    Executors.newFixedThreadPool(2, new DaemonThreadFactory())))
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("cookieStore is marked non-null but is null");
   }
 
   @Test
   void sendSingleFailsIfQueryIsMalformedWithSocketTimeout() {
-    trackerConfiguration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create("telnet://localhost"))
-        .socketTimeout(Duration.ofSeconds(30L))
-        .build();
+    trackerConfiguration =
+        TrackerConfiguration.builder()
+            .apiEndpoint(URI.create("telnet://localhost"))
+            .socketTimeout(Duration.ofSeconds(30L))
+            .build();
     givenSender();
 
-    assertThatThrownBy(() -> sender.sendSingle(MatomoRequests.ecommerceCartUpdate(50.0)
-                                                             .goalId(0).build()))
+    assertThatThrownBy(
+            () -> sender.sendSingle(MatomoRequests.ecommerceCartUpdate(50.0).goalId(0).build()))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("invalid URI scheme telnet");
   }
 
   @Test
   void sendSingleFailsIfQueryIsMalformedWithoutSocketTimeout() {
-    trackerConfiguration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create("telnet://localhost"))
-        .build();
+    trackerConfiguration =
+        TrackerConfiguration.builder().apiEndpoint(URI.create("telnet://localhost")).build();
     givenSender();
 
     assertThatThrownBy(() -> sender.sendSingle(new MatomoRequest()))
@@ -124,20 +139,19 @@ class Java11SenderIT {
   }
 
   private void givenSender() {
-    sender = new Java11SenderProvider().provideSender(
-        trackerConfiguration,
-        new QueryCreator(trackerConfiguration)
-    );
+    sender =
+        new Java11SenderProvider()
+            .provideSender(trackerConfiguration, new QueryCreator(trackerConfiguration));
   }
 
   @Test
   void failsIfEndpointReturnsNotFound(WireMockRuntimeInfo wireMockRuntimeInfo) {
-    trackerConfiguration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create(wireMockRuntimeInfo.getHttpBaseUrl()))
-        .disableSslCertValidation(true)
-        .socketTimeout(Duration.ofSeconds(0L))
-        .build();
+    trackerConfiguration =
+        TrackerConfiguration.builder()
+            .apiEndpoint(URI.create(wireMockRuntimeInfo.getHttpBaseUrl()))
+            .disableSslCertValidation(true)
+            .socketTimeout(Duration.ofSeconds(0L))
+            .build();
 
     givenSender();
 
@@ -148,12 +162,12 @@ class Java11SenderIT {
 
   @Test
   void failsAndLogsIfCouldNotConnectToEndpoint() {
-    trackerConfiguration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create("http://localhost:1234"))
-        .userAgent("")
-        .logFailedTracking(true)
-        .build();
+    trackerConfiguration =
+        TrackerConfiguration.builder()
+            .apiEndpoint(URI.create("http://localhost:1234"))
+            .userAgent("")
+            .logFailedTracking(true)
+            .build();
 
     givenSender();
 
@@ -166,9 +180,9 @@ class Java11SenderIT {
   void failsAndDoesNotLogIfCouldNotConnectToEndpoint() {
     trackerConfiguration =
         TrackerConfiguration.builder()
-                            .apiEndpoint(URI.create("http://localhost:1234"))
-                            .userAgent("")
-                            .build();
+            .apiEndpoint(URI.create("http://localhost:1234"))
+            .userAgent("")
+            .build();
 
     givenSender();
 
@@ -179,14 +193,14 @@ class Java11SenderIT {
 
   @Test
   void connectsViaProxy(WireMockRuntimeInfo wireMockRuntimeInfo) {
-    trackerConfiguration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create(wireMockRuntimeInfo.getHttpBaseUrl()))
-        .disableSslCertValidation(true)
-        .proxyHost("localhost")
-        .proxyPort(wireMockRuntimeInfo.getHttpPort())
-        .userAgent(null)
-        .build();
+    trackerConfiguration =
+        TrackerConfiguration.builder()
+            .apiEndpoint(URI.create(wireMockRuntimeInfo.getHttpBaseUrl()))
+            .disableSslCertValidation(true)
+            .proxyHost("localhost")
+            .proxyPort(wireMockRuntimeInfo.getHttpPort())
+            .userAgent(null)
+            .build();
 
     givenSender();
 
@@ -197,15 +211,15 @@ class Java11SenderIT {
 
   @Test
   void connectsViaProxyWithProxyUserNameAndPassword(WireMockRuntimeInfo wireMockRuntimeInfo) {
-    trackerConfiguration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create(wireMockRuntimeInfo.getHttpBaseUrl()))
-        .disableSslCertValidation(true)
-        .proxyHost("localhost")
-        .proxyPort(wireMockRuntimeInfo.getHttpPort())
-        .proxyUsername("user")
-        .proxyPassword("password")
-        .build();
+    trackerConfiguration =
+        TrackerConfiguration.builder()
+            .apiEndpoint(URI.create(wireMockRuntimeInfo.getHttpBaseUrl()))
+            .disableSslCertValidation(true)
+            .proxyHost("localhost")
+            .proxyPort(wireMockRuntimeInfo.getHttpPort())
+            .proxyUsername("user")
+            .proxyPassword("password")
+            .build();
 
     givenSender();
 
@@ -216,12 +230,12 @@ class Java11SenderIT {
 
   @Test
   void logsFailedTracking(WireMockRuntimeInfo wireMockRuntimeInfo) {
-    trackerConfiguration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create(wireMockRuntimeInfo.getHttpsBaseUrl()))
-        .disableSslCertValidation(true)
-        .logFailedTracking(true)
-        .build();
+    trackerConfiguration =
+        TrackerConfiguration.builder()
+            .apiEndpoint(URI.create(wireMockRuntimeInfo.getHttpsBaseUrl()))
+            .disableSslCertValidation(true)
+            .logFailedTracking(true)
+            .build();
 
     givenSender();
 
@@ -233,71 +247,69 @@ class Java11SenderIT {
   @Test
   void skipSslCertificationValidation(WireMockRuntimeInfo wireMockRuntimeInfo) {
     stubFor(get(urlPathEqualTo("/matomo_ssl.php")).willReturn(status(204)));
-    trackerConfiguration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create(String.format(
-            "https://localhost:%d/matomo_ssl.php",
-            wireMockRuntimeInfo.getHttpsPort()
-        )))
-        .disableSslCertValidation(true)
-        .build();
+    trackerConfiguration =
+        TrackerConfiguration.builder()
+            .apiEndpoint(
+                URI.create(
+                    String.format(
+                        "https://localhost:%d/matomo_ssl.php", wireMockRuntimeInfo.getHttpsPort())))
+            .disableSslCertValidation(true)
+            .build();
 
     givenSender();
 
     sender.sendSingle(MatomoRequests.goal(2, 60.0).build());
 
     verify(getRequestedFor(urlPathEqualTo("/matomo_ssl.php")));
-
   }
 
   @Test
   void addsHeadersToSingleRequest(WireMockRuntimeInfo wireMockRuntimeInfo) {
     stubFor(get(urlPathEqualTo("/matomo.php")).willReturn(status(204)));
-    trackerConfiguration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create(wireMockRuntimeInfo.getHttpBaseUrl() + "/matomo.php"))
-        .build();
+    trackerConfiguration =
+        TrackerConfiguration.builder()
+            .apiEndpoint(URI.create(wireMockRuntimeInfo.getHttpBaseUrl() + "/matomo.php"))
+            .build();
 
     givenSender();
 
-    sender.sendSingle(MatomoRequests.ping()
-                                    .headers(singletonMap("headerName", "headerValue"))
-                                    .build());
+    sender.sendSingle(
+        MatomoRequests.ping().headers(singletonMap("headerName", "headerValue")).build());
 
-    verify(getRequestedFor(urlPathEqualTo("/matomo.php")).withHeader(
-        "headerName",
-        equalTo("headerValue")
-    ));
+    verify(
+        getRequestedFor(urlPathEqualTo("/matomo.php"))
+            .withHeader("headerName", equalTo("headerValue")));
   }
 
   @Test
   void addsHeadersToBulkRequest(WireMockRuntimeInfo wireMockRuntimeInfo) {
     stubFor(post(urlPathEqualTo("/matomo.php")).willReturn(status(204)));
-    trackerConfiguration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create(wireMockRuntimeInfo.getHttpBaseUrl() + "/matomo.php"))
-        .build();
+    trackerConfiguration =
+        TrackerConfiguration.builder()
+            .apiEndpoint(URI.create(wireMockRuntimeInfo.getHttpBaseUrl() + "/matomo.php"))
+            .build();
 
     givenSender();
 
-    sender.sendBulk(List.of(MatomoRequests.goal(1, 23.50).headers(singletonMap(
-        "headerName",
-        "headerValue"
-    )).build()), null);
+    sender.sendBulk(
+        List.of(
+            MatomoRequests.goal(1, 23.50)
+                .headers(singletonMap("headerName", "headerValue"))
+                .build()),
+        null);
 
-    verify(postRequestedFor(urlPathEqualTo("/matomo.php")).withHeader(
-        "headerName",
-        equalTo("headerValue")
-    ));
+    verify(
+        postRequestedFor(urlPathEqualTo("/matomo.php"))
+            .withHeader("headerName", equalTo("headerValue")));
   }
 
   @Test
   void doesNotAddEmptyHeaders(WireMockRuntimeInfo wireMockRuntimeInfo) {
     stubFor(post(urlPathEqualTo("/matomo.php")).willReturn(status(204)));
-    trackerConfiguration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create(wireMockRuntimeInfo.getHttpBaseUrl() + "/matomo.php"))
-        .build();
+    trackerConfiguration =
+        TrackerConfiguration.builder()
+            .apiEndpoint(URI.create(wireMockRuntimeInfo.getHttpBaseUrl() + "/matomo.php"))
+            .build();
 
     givenSender();
 
@@ -309,23 +321,23 @@ class Java11SenderIT {
   @Test
   void addsHeadersToBulkAsyncRequest(WireMockRuntimeInfo wireMockRuntimeInfo) {
     stubFor(post(urlPathEqualTo("/matomo.php")).willReturn(status(204)));
-    trackerConfiguration = TrackerConfiguration
-        .builder()
-        .apiEndpoint(URI.create(wireMockRuntimeInfo.getHttpBaseUrl() + "/matomo.php"))
-        .build();
+    trackerConfiguration =
+        TrackerConfiguration.builder()
+            .apiEndpoint(URI.create(wireMockRuntimeInfo.getHttpBaseUrl() + "/matomo.php"))
+            .build();
 
     givenSender();
 
-    CompletableFuture<Void> future = sender.sendBulkAsync(List.of(MatomoRequest
-        .request()
-        .headers(singletonMap("headerName", "headerValue"))
-        .build()), null);
+    CompletableFuture<Void> future =
+        sender.sendBulkAsync(
+            List.of(
+                MatomoRequest.request().headers(singletonMap("headerName", "headerValue")).build()),
+            null);
 
     future.join();
-    verify(postRequestedFor(urlPathEqualTo("/matomo.php")).withHeader(
-        "headerName",
-        equalTo("headerValue")
-    ));
+    verify(
+        postRequestedFor(urlPathEqualTo("/matomo.php"))
+            .withHeader("headerName", equalTo("headerValue")));
   }
 
   @Test
@@ -383,14 +395,12 @@ class Java11SenderIT {
 
     givenSender();
 
-    assertThatThrownBy(() -> sender.sendBulkAsync(
-        List.of(MatomoRequests
-            .siteSearch("Special offers", "Products", 5L).build()),
-        "telnet://localhost"
-    ))
+    assertThatThrownBy(
+            () ->
+                sender.sendBulkAsync(
+                    List.of(MatomoRequests.siteSearch("Special offers", "Products", 5L).build()),
+                    "telnet://localhost"))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Auth token must be exactly 32 characters long");
   }
-
-
 }

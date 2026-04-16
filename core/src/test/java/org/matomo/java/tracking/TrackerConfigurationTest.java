@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 
 class TrackerConfigurationTest {
 
-  private final TrackerConfiguration.TrackerConfigurationBuilder trackerConfigurationBuilder
-      = TrackerConfiguration.builder();
+  private final TrackerConfiguration.TrackerConfigurationBuilder trackerConfigurationBuilder =
+      TrackerConfiguration.builder();
 
   @Test
   void validateDoesNotFailIfDefaultAuthTokenIsNull() {
@@ -73,7 +73,6 @@ class TrackerConfigurationTest {
         .build();
     whenValidates();
   }
-
 
   @Test
   void validateDoesNotFailIfDefaultSiteIdIsPositive() {
@@ -268,7 +267,8 @@ class TrackerConfigurationTest {
   }
 
   @Test
-  void validateFailsIfProxyUsernameIsSetAndProxyPasswordIsNotSetAndProxyHostIsNotSetAndProxyPortIsNotSet() {
+  void
+      validateFailsIfProxyUsernameIsSetAndProxyPasswordIsNotSetAndProxyHostIsNotSetAndProxyPortIsNotSet() {
     trackerConfigurationBuilder
         .apiEndpoint(URI.create("https://matomo.example/matomo.php"))
         .proxyUsername("user")
@@ -279,7 +279,8 @@ class TrackerConfigurationTest {
   }
 
   @Test
-  void validateDoesNotFailIfProxyUsernameIsNotSetAndProxyPasswordIsNotSetAndProxyHostIsNotSetAndProxyPortIsNotSet() {
+  void
+      validateDoesNotFailIfProxyUsernameIsNotSetAndProxyPasswordIsNotSetAndProxyHostIsNotSetAndProxyPortIsNotSet() {
     trackerConfigurationBuilder
         .apiEndpoint(URI.create("https://matomo.example/matomo.php"))
         .defaultSiteId(1)
@@ -289,7 +290,8 @@ class TrackerConfigurationTest {
   }
 
   @Test
-  void validateFailsIfProxyUsernameIsSetAndProxyPasswordIsSetAndProxyHostIsNotSetAndProxyPortIsNotSet() {
+  void
+      validateFailsIfProxyUsernameIsSetAndProxyPasswordIsSetAndProxyHostIsNotSetAndProxyPortIsNotSet() {
     trackerConfigurationBuilder
         .apiEndpoint(URI.create("https://matomo.example/matomo.php"))
         .proxyUsername("user")
@@ -406,7 +408,8 @@ class TrackerConfigurationTest {
   }
 
   private void thenFailsOnValidation(String message) {
-    assertThatThrownBy(this::whenValidates).isInstanceOf(IllegalArgumentException.class).hasMessage(message);
+    assertThatThrownBy(this::whenValidates)
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage(message);
   }
-
 }

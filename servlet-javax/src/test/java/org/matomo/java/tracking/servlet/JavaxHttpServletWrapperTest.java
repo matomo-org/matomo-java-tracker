@@ -4,7 +4,6 @@ import static java.util.Collections.singleton;
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
 import javax.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 
@@ -28,11 +27,10 @@ class JavaxHttpServletWrapperTest {
         .containsEntry("accept-language", "en-US,en;q=0.9,de;q=0.8");
     assertThat(httpServletRequestWrapper.getCookies())
         .hasSize(1)
-        .satisfiesExactly(cookieWrapper -> {
-          assertThat(cookieWrapper.getName()).isEqualTo("foo");
-          assertThat(cookieWrapper.getValue()).isEqualTo("bar");
-        });
+        .satisfiesExactly(
+            cookieWrapper -> {
+              assertThat(cookieWrapper.getName()).isEqualTo("foo");
+              assertThat(cookieWrapper.getValue()).isEqualTo("bar");
+            });
   }
-
 }
-

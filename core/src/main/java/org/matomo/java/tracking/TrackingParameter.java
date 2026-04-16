@@ -25,5 +25,4 @@ import java.lang.annotation.Target;
   double max() default Double.MAX_VALUE;
 
   int maxLength() default Integer.MAX_VALUE;
-
 }

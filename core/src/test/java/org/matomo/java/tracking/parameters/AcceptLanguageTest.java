@@ -22,9 +22,8 @@ class AcceptLanguageTest {
     AcceptLanguage acceptLanguage =
         AcceptLanguage.fromHeader("de,de-DE;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6");
 
-    assertThat(acceptLanguage).hasToString(
-        "de,de-de;q=0.9,de-dd;q=0.9,en;q=0.8,en-gb;q=0.7,en-us;q=0.6");
-
+    assertThat(acceptLanguage)
+        .hasToString("de,de-de;q=0.9,de-dd;q=0.9,en;q=0.8,en-gb;q=0.7,en-us;q=0.6");
   }
 
   @ParameterizedTest
@@ -34,15 +33,11 @@ class AcceptLanguageTest {
     AcceptLanguage acceptLanguage = AcceptLanguage.fromHeader(header);
 
     assertThat(acceptLanguage).isNull();
-
   }
 
   @Test
   void failsOnNullLanguageRange() {
-    assertThat(AcceptLanguage
-        .builder()
-        .languageRanges(singletonList(null))
-        .build()).hasToString("");
+    assertThat(AcceptLanguage.builder().languageRanges(singletonList(null)).build())
+        .hasToString("");
   }
-
 }
