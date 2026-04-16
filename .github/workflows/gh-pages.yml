@@ -15,12 +15,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
       - uses: actions/jekyll-build-pages@v1
         with:
           source: ./
           destination: ./_site
-      - uses: actions/upload-pages-artifact@v4
+      - uses: actions/upload-pages-artifact@v5
   deploy:
     environment:
       name: github-pages
@@ -29,4 +29,4 @@ jobs:
     needs: build
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
