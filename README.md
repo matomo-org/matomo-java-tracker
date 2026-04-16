@@ -16,7 +16,7 @@ Key features:
 * Customization options: Support for custom dimensions and variables.
 * Extensive tracking parameters: Capture data on campaigns, events, downloads, outlinks, site searches, devices, and
   visitors.
-* Java compatibility: Supports Java 8 and higher, with a dedicated artifact (matomo-java-tracker-java11) for Java 11.
+* Java compatibility: Supports Java 8 and higher, with a dedicated artifact (matomo-java-tracker-java11) for Java 11 or newer.
 * SSL certificate flexibility: Option to skip SSL certificate validation (caution: not recommended for production).
 * Minimal runtime dependencies: Relies solely on SLF4J.
 * Asynchronous request support: Permits non-blocking requests.
@@ -28,7 +28,7 @@ Key features:
 * Seamless integration: Easily integrates into frameworks such as Spring by creating the MatomoTracker Spring bean for
   use in other beans.
 
-Please prefer the Java 11 version as the Java 8 will become obsolete in the future.
+Please prefer the Java 11 or newer version as the Java 8 will become obsolete in the future.
 
 You can find our [Developer Guide here](https://developer.matomo.org/api-reference/tracking-java)
 
@@ -101,7 +101,7 @@ Here are the most important changes:
 * less dependencies
 * new dimension parameter
 * special types allow to provide valid parameters now
-* a new implementation for Java 11 uses the HttpClient available since Java 11
+* a new implementation for Java 11 or newer uses the HttpClient available since Java 11
 
 See also the [Developer Guide here](https://developer.matomo.org/api-reference/tracking-java)
 
@@ -136,8 +136,8 @@ This project contains the following Maven artifacts:
 2. **matomo-java-tracker**: This is a specific implementation of the core module designed for Java 8. It provides the
    main functionality of the Matomo Java Tracker and is built upon the core. This artifact is
    specifically designed for applications running on Java 8.
-3. **matomo-java-tracker-java11**: This artifact is a Java 11 implementation of the Matomo Java Tracker. It uses the
-   HttpClient available since Java 11. It is recommended to use this version if you are using Java 11 or higher.
+3. **matomo-java-tracker-java11**: This artifact is a Java 11 or newer implementation of the Matomo Java Tracker. It uses the
+   HttpClient available since Java 11. It is recommended to use this version if you are using Java 11 or newer.
 4. **matomo-java-tracker-spring-boot-starter**: This artifact is a Spring Boot Starter for the Matomo Java Tracker. It
    provides auto-configuration for the Matomo Java Tracker in a Spring Boot application. By including this artifact in
    your project, you can take advantage of Spring Boot's auto-configuration features to automatically set up and
@@ -166,7 +166,7 @@ Add a dependency on Matomo Java Tracker using Maven. For Java 8:
 </dependency>
 ```
 
-For Java 11:
+For Java 11 or newer:
 
 ```xml
 
@@ -185,7 +185,7 @@ dependencies {
 }
 ```
 
-or Gradle (Java 11):
+or Gradle (Java 11 or newer):
 
 ```groovy
 dependencies {
@@ -199,7 +199,7 @@ or Gradle with Kotlin DSL (Java 8)
 implementation("org.piwik.java.tracking:matomo-java-tracker:3.5.0")
 ```
 
-or Gradle with Kotlin DSL (Java 11)
+or Gradle with Kotlin DSL (Java 11 or newer)
 
 ```kotlin
 implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.5.0")
