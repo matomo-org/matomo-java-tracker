@@ -86,6 +86,13 @@ the case-insensitive `User-Agent` header lookup no longer allocates a `TreeMap`,
 replaced with the Java 11 `.isBlank()` method, and debug log statements are now guarded to avoid allocating
 cookie list copies when debug logging is disabled.
 
+Several performance improvements were also made to the core module: hex encoding in `VisitorId` now uses a
+lookup table instead of `String.format` per byte, `String.format` calls in `DeviceResolution`, `AcceptLanguage`,
+`EcommerceItem`, and `DaemonThreadFactory` were replaced with string concatenation, `ServletMatomoRequest` now
+computes `cookieName.toLowerCase()` once per cookie instead of six times, `QueryCreator` caches the
+`value.toString()` result to avoid calling it twice, and redundant double-check patterns such as
+`isEmpty() || trim().isEmpty()` were simplified throughout.
+
 Spotless now automatically removes unused imports during the build.
 
 Dependency updates: Spring Boot 3.4.2 → 4.0.5, JUnit Jupiter 5.11.4 → 6.0.3, SLF4J 2.0.16 → 2.0.17,
