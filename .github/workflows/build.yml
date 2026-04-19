@@ -32,7 +32,7 @@ jobs:
           fail-on-error: false
       - uses: madrapps/jacoco-report@v1.7.2
         with:
-          paths: ${{ github.workspace }}/target/site/jacoco/jacoco.xml
+          paths: ${{ github.workspace }}/**/target/site/jacoco/jacoco.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 80
           min-coverage-changed-files: 80
@@ -40,13 +40,6 @@ jobs:
         if: github.ref == 'refs/heads/main'
       - uses: actions/jekyll-build-pages@v1
         if: github.ref == 'refs/heads/main'
-        with:
-          destination: ./page
-      - if: github.ref == 'refs/heads/main'
-        run: |
-          cp -r page/. _site/
-          mkdir -p _site/coverage
-          cp -r target/site/jacoco/. _site/coverage/
       - uses: actions/upload-pages-artifact@v5
         if: github.ref == 'refs/heads/main'
 
