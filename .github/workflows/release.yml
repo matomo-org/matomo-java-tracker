@@ -6,27 +6,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-        with:
-          token: ${{ secrets.RELEASE_PAT }}
-          persist-credentials: true
       - uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-          server-id: ossrh
+          server-id: central
           server-username: OSSRH_USERNAME
           server-password: OSSRH_PASSWORD
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
-      - run: |
-          git config user.email "matomo-java-tracker@daniel-heid.de"
-          git config user.name "Matomo Java Tracker"
       - id: version
         run: |
           VERSION=$( mvn -B help:evaluate -Dexpression=project.version -q -DforceStdout )
           echo "version=${VERSION%-SNAPSHOT}" >> "$GITHUB_OUTPUT"
-      - run: mvn -B release:prepare release:perform
+      - run: mvn -B versions:set -DnewVersion=${{ steps.version.outputs.version }} -DgenerateBackupPoms=false
+      - run: mvn -B deploy -Prelease
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
@@ -35,5 +30,3 @@ jobs:
         with:
           version: ${{ steps.version.outputs.version }}
           publish: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
