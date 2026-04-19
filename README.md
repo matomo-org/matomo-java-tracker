@@ -265,7 +265,7 @@ The following properties are supported:
 | matomo.tracker.log-failed-tracking           | Will send errors to the log if the Matomo Tracking API responds with an erroneous HTTP code                                                            |
 | matomo.tracker.connect-timeout               | allows you to change the default connection timeout of 10 seconds. 0 is interpreted as infinite, null uses the system default                          |
 | matomo.tracker.socket-timeout                | allows you to change the default socket timeout of 10 seconds. 0 is interpreted as infinite, null uses the system default                              |
-| matomo.tracker.user-agent                    | used by the request made to the endpoint is `MatomoJavaClient` per default. You can change it by using this builder method.                            |
+| matomo.tracker.user-agent                    | The user agent used by the request made to the endpoint. Default: `MatomoJavaClient`                                                                    |
 | matomo.tracker.proxy-host                    | The hostname or IP address of an optional HTTP proxy. `proxyPort` must be configured as well                                                           |
 | matomo.tracker.proxy-port                    | The port of an HTTP proxy. `proxyHost` must be configured as well.                                                                                     |
 | matomo.tracker.proxy-username                | If the HTTP proxy requires a username for basic authentication, it can be configured with this method. Proxy host, port and password must also be set. |
@@ -412,7 +412,7 @@ public class ConsumerExample {
 
 ```
 
-If you have multiple requests to wish to track, it may be more efficient to send them in a single HTTP call. To do this,
+If you have multiple requests you wish to track, it may be more efficient to send them in a single HTTP call. To do this,
 send a bulk request. Place your requests in an _Iterable_ data structure and call
 
 ```java
@@ -474,7 +474,7 @@ Per default every request has the following default parameters:
 | apiVersion      | 1                              |
 | responseAsImage | false                          |
 
-Overwrite these properties as desired. We strongly recommend your to determine the visitor id for every user using
+Overwrite these properties as desired. We strongly recommend you to determine the visitor id for every user using
 a unique identifier, e.g. an email address. If you do not provide a visitor id, a random visitor id will be generated.
 
 Ecommerce requests contain ecommerce items, that can be fluently build:
@@ -667,9 +667,9 @@ following breaking changes:
 * `setEcommerceLastOrderTimestamp` requires an `Instant` parameter
 * `headerAcceptLanguage` is of type `AcceptLanguage`. You can build it easily
   using `AcceptLanguage.fromHeader("de")`
-* `visitorCountry` is of type `Country`. You can build it easily using `AcceptLanguage.fromCode("fr")`
+* `visitorCountry` is of type `Country`. You can build it easily using `Country.fromCode("fr")`
 * `deviceResolution` is of type `DeviceResolution`. You can build it easily
-  using `DeviceResolution.builder.width(...).height(...).build()`. To easy the migration, we added a constructor
+  using `DeviceResolution.builder.width(...).height(...).build()`. To ease the migration, we added a constructor
   method `DeviceResolution.fromString()` that accepts inputs of kind _width_x_height_, e.g. `100x200`
 * `pageViewId` is of type `UniqueId`. You can build it easily using `UniqueId.random()`
 * `randomValue` is of type `RandomValue`. You can build it easily using `RandomValue.random()`. However, if you
@@ -713,7 +713,7 @@ mvn install
 ```
 
 The built jars and javadoc can be found in `target`. By using
-the Maven goal `install, a snapshot
+the Maven goal `install`, a snapshot
 version can be used in your local Maven repository for testing purposes, e.g.
 
 ```xml
@@ -757,7 +757,7 @@ docker-compose exec matomo sh -c 'echo -e "\n\n[Tracker]\ndebug = 1\n" >> /var/w
 To test the servlet integration, run `MatomoServletTester` in your favorite IDE. It starts an embedded Jetty server
 that serves a simple servlet. The servlet sends a request to the local Matomo instance if you call the URL
 http://localhost:8090/track.html. Maybe you need to disable support for the Do Not Track preference in Matomo to get the
-request tracked: Go to _Administration &gt; Privacy &gt; Do Not Track_ and disable the checkbox _Respect Do Not Track.
+request tracked: Go to _Administration &gt; Privacy &gt; Do Not Track_ and disable the checkbox _Respect Do Not Track_.
 We also recommend to install the Custom Variables plugin from Marketplace to the test custom variables feature and
 setup some dimensions.
 
@@ -774,7 +774,7 @@ free to:
 * Fork this project
 * Create a feature branch from the _master_ branch
 * Write awesome code that does awesome things
-* Write awesome test to test your awesome code
+* Write awesome tests to test your awesome code
 * Verify that everything is working as it should by running _mvn test_. If everything passes, you may
   want to make sure that your tests are covering everything you think they are!
   Run `mvn verify` to find out!
