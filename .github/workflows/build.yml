@@ -44,9 +44,8 @@ jobs:
           destination: ./page
       - if: github.ref == 'refs/heads/main'
         run: |
-          mkdir -p _site/apidocs _site/coverage
           cp -r page/. _site/
-          cp -r target/reports/apidocs/. _site/apidocs/
+          mkdir -p _site/coverage
           cp -r target/site/jacoco/. _site/coverage/
       - uses: actions/upload-pages-artifact@v5
         if: github.ref == 'refs/heads/main'
