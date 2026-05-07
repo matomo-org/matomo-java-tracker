@@ -3,7 +3,6 @@ package org.matomo.java.tracking;
 import static java.util.Collections.singleton;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
@@ -32,37 +31,34 @@ class TestSender implements Sender {
   @NonNull
   @Override
   public CompletableFuture<MatomoRequest> sendSingleAsync(@NonNull MatomoRequest request) {
-    createQueryAndAddRequest(request, null);
+    createQueryAndAddRequest(request);
     return CompletableFuture.completedFuture(request);
   }
 
   @Override
   public void sendSingle(@NonNull MatomoRequest request) {
-    createQueryAndAddRequest(request, null);
+    createQueryAndAddRequest(request);
   }
 
   @Override
-  public void sendBulk(
-      @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken) {
+  public void sendBulk(@NonNull Iterable<? extends MatomoRequest> requests) {
     for (MatomoRequest request : requests) {
-      createQueryAndAddRequest(request, overrideAuthToken);
+      createQueryAndAddRequest(request);
     }
   }
 
   @NonNull
   @Override
   public CompletableFuture<Void> sendBulkAsync(
-      @NonNull Collection<? extends MatomoRequest> requests, @Nullable String overrideAuthToken) {
+      @NonNull Collection<? extends MatomoRequest> requests) {
     for (MatomoRequest request : requests) {
-      createQueryAndAddRequest(request, overrideAuthToken);
+      createQueryAndAddRequest(request);
     }
     return CompletableFuture.completedFuture(null);
   }
 
-  private void createQueryAndAddRequest(
-      @lombok.NonNull MatomoRequest request, @Nullable String overrideAuthToken) {
-    String authToken =
-        AuthToken.determineAuthToken(overrideAuthToken, singleton(request), trackerConfiguration);
+  private void createQueryAndAddRequest(@lombok.NonNull MatomoRequest request) {
+    String authToken = AuthToken.determineAuthToken(singleton(request), trackerConfiguration);
     queries.add(queryCreator.createQuery(request, authToken));
     requests.add(request);
   }

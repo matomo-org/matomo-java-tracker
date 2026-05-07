@@ -5,12 +5,13 @@ import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 class BulkRequestTest {
 
   @Test
-  void formatsQueriesAsJson() {
+  void formatsQueryAsJson() {
     BulkRequest bulkRequest =
         BulkRequest.builder()
             .queries(singleton("idsite=1&rec=1&action_name=TestBulkRequest"))
@@ -22,6 +23,24 @@ class BulkRequestTest {
     assertThat(new String(bytes))
         .isEqualTo(
             "{\"requests\":[\"?idsite=1&rec=1&action_name=TestBulkRequest\"],\"token_auth\":\"token\"}");
+  }
+
+  @Test
+  void formatsQueriesAsJson() {
+    BulkRequest bulkRequest =
+        BulkRequest.builder()
+            .queries(
+                Arrays.asList(
+                    "idsite=1&rec=1&action_name=TestBulkRequest1",
+                    "idsite=1&rec=1" + "&action_name=TestBulkRequest2"))
+            .authToken("token")
+            .build();
+
+    byte[] bytes = bulkRequest.toBytes();
+
+    assertThat(new String(bytes))
+        .isEqualTo(
+            "{\"requests\":[\"?idsite=1&rec=1&action_name=TestBulkRequest1\",\"?idsite=1&rec=1&action_name=TestBulkRequest2\"],\"token_auth\":\"token\"}");
   }
 
   @Test

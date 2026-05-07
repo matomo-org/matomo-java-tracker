@@ -17,12 +17,8 @@ final class AuthToken {
 
   @Nullable
   static String determineAuthToken(
-      @Nullable String overrideAuthToken,
       @Nullable Iterable<? extends MatomoRequest> requests,
       @Nullable TrackerConfiguration trackerConfiguration) {
-    if (isNotBlank(overrideAuthToken)) {
-      return overrideAuthToken;
-    }
     if (requests != null) {
       for (MatomoRequest request : requests) {
         if (request != null && isNotBlank(request.getAuthToken())) {

@@ -189,8 +189,7 @@ class Java8SenderIT {
             MatomoRequests.ecommerceCartUpdate(50.0)
                 .goalId(0)
                 .headers(singletonMap("headerName", "headerValue"))
-                .build()),
-        null);
+                .build()));
 
     wireMockServer.verify(
         postRequestedFor(urlPathEqualTo("/matomo.php"))
@@ -213,8 +212,9 @@ class Java8SenderIT {
     CompletableFuture<Void> future =
         sender.sendBulkAsync(
             singleton(
-                MatomoRequest.request().headers(singletonMap("headerName", "headerValue")).build()),
-            null);
+                MatomoRequest.request()
+                    .headers(singletonMap("headerName", "headerValue"))
+                    .build()));
 
     future.join();
     wireMockServer.verify(

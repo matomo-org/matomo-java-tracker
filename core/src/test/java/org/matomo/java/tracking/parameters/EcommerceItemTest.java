@@ -1,4 +1,4 @@
-package org.matomo.java.tracking;
+package org.matomo.java.tracking.parameters;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

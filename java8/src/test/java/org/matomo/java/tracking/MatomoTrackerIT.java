@@ -51,7 +51,7 @@ class MatomoTrackerIT {
       TrackerConfiguration.builder();
 
   private final MatomoRequestBuilder requestBuilder =
-      MatomoRequest.builder()
+      MatomoRequest.request()
           .visitorId(VisitorId.fromHex("bbccddeeff1122"))
           .randomValue(RandomValue.fromString("someRandom"));
 
@@ -532,12 +532,12 @@ class MatomoTrackerIT {
     matomoTracker = new MatomoTracker(trackerConfigurationBuilder.build());
     AtomicBoolean success = new AtomicBoolean();
     future =
-        matomoTracker.sendRequestAsync(
-            requestBuilder.build(),
-            request -> {
-              success.set(true);
-              return null;
-            });
+        matomoTracker
+            .sendRequestAsync(requestBuilder.build())
+            .thenAccept(
+                request -> {
+                  success.set(true);
+                });
     assertThat(future)
         .succeedsWithin(1, MINUTES)
         .satisfies(
@@ -553,11 +553,12 @@ class MatomoTrackerIT {
     matomoTracker = new MatomoTracker(trackerConfigurationBuilder.build());
     AtomicBoolean success = new AtomicBoolean();
     future =
-        matomoTracker.sendBulkRequestAsync(
-            singleton(requestBuilder.build()),
-            v -> {
-              success.set(true);
-            });
+        matomoTracker
+            .sendBulkRequestAsync(singleton(requestBuilder.build()))
+            .thenAccept(
+                v -> {
+                  success.set(true);
+                });
     assertThat(future)
         .succeedsWithin(1, MINUTES)
         .satisfies(

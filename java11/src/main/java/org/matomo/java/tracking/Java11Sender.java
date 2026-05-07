@@ -56,17 +56,13 @@ public class Java11Sender implements Sender {
   }
 
   @Override
-  public void sendBulk(
-      @NonNull @lombok.NonNull Iterable<? extends MatomoRequest> requests,
-      @Nullable String overrideAuthToken) {
-    sendAndCheckResponse(buildHttpPostRequest(requests, overrideAuthToken));
+  public void sendBulk(@NonNull @lombok.NonNull Iterable<? extends MatomoRequest> requests) {
+    sendAndCheckResponse(buildHttpPostRequest(requests));
   }
 
   @NonNull
-  private HttpRequest buildHttpPostRequest(
-      @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken) {
-    String authToken =
-        AuthToken.determineAuthToken(overrideAuthToken, requests, trackerConfiguration);
+  private HttpRequest buildHttpPostRequest(@NonNull Iterable<? extends MatomoRequest> requests) {
+    String authToken = AuthToken.determineAuthToken(requests, trackerConfiguration);
     Collection<String> queries = new ArrayList<>();
     Map<String, String> headers = new LinkedHashMap<>(10);
     String headerUserAgent = null;
@@ -99,9 +95,8 @@ public class Java11Sender implements Sender {
   @NonNull
   @Override
   public CompletableFuture<Void> sendBulkAsync(
-      @NonNull @lombok.NonNull Collection<? extends MatomoRequest> requests,
-      @Nullable String overrideAuthToken) {
-    return sendAsyncAndCheckResponse(buildHttpPostRequest(requests, overrideAuthToken), null);
+      @NonNull @lombok.NonNull Collection<? extends MatomoRequest> requests) {
+    return sendAsyncAndCheckResponse(buildHttpPostRequest(requests), null);
   }
 
   @NonNull
@@ -121,7 +116,7 @@ public class Java11Sender implements Sender {
 
   @NonNull
   private HttpRequest buildHttpGetRequest(@NonNull MatomoRequest request) {
-    String authToken = AuthToken.determineAuthToken(null, singleton(request), trackerConfiguration);
+    String authToken = AuthToken.determineAuthToken(singleton(request), trackerConfiguration);
     RequestValidator.validate(request, authToken);
     cookieStore.removeAll();
     addCookies(request);

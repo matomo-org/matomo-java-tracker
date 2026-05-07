@@ -1,11 +1,12 @@
 package org.matomo.java.tracking;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.Locale;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.Test;
-import org.piwik.java.tracking.PiwikDate;
-import org.piwik.java.tracking.PiwikLocale;
+import org.matomo.java.tracking.parameters.Country;
 
 class RequestValidatorTest {
 
@@ -66,9 +67,8 @@ class RequestValidatorTest {
   }
 
   @Test
-  void testVisitorCountryTE() {
-    PiwikLocale country = new PiwikLocale(Locale.US);
-    request.setVisitorCountry(country);
+  void testVisitorCountry() {
+    request.setVisitorCountry(Country.fromCode("us"));
 
     assertThatThrownBy(() -> RequestValidator.validate(request, null))
         .isInstanceOf(MatomoException.class)
@@ -78,14 +78,36 @@ class RequestValidatorTest {
   }
 
   @Test
-  void testRequestDatetime() {
+  void testVisitorIp() {
+    request.setVisitorIp("192.168.0.1");
 
-    PiwikDate date = new PiwikDate(1000L);
-    request.setRequestDatetime(date);
+    assertThatThrownBy(() -> RequestValidator.validate(request, null))
+        .isInstanceOf(MatomoException.class)
+        .hasMessage(
+            "Auth token must be present if visitor longitude, latitude, region, city, country or IP"
+                + " are set");
+  }
+
+  @Test
+  void testRequestTimestampOlderThanFourHours() {
+    request.setRequestTimestamp(Instant.now().minus(5, ChronoUnit.HOURS));
 
     assertThatThrownBy(() -> RequestValidator.validate(request, null))
         .isInstanceOf(MatomoException.class)
         .hasMessage("Auth token must be present if request timestamp is more than four hours ago");
+  }
+
+  @Test
+  void doesNotFailIfRequestTimestampIsWithinFourHours() {
+    request.setRequestTimestamp(Instant.now().minus(1, ChronoUnit.HOURS));
+
+    assertThatCode(() -> RequestValidator.validate(request, null)).doesNotThrowAnyException();
+  }
+
+  @Test
+  void doesNotFailWithValid32CharAuthToken() {
+    assertThatCode(() -> RequestValidator.validate(request, "12345678901234567890123456789012"))
+        .doesNotThrowAnyException();
   }
 
   @Test

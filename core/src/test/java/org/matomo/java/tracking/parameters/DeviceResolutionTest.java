@@ -23,6 +23,14 @@ class DeviceResolutionTest {
   }
 
   @Test
+  void formatsDeviceResolutionFromString() {
+
+    DeviceResolution deviceResolution = DeviceResolution.fromString("1280x1080");
+
+    assertThat(deviceResolution).hasToString("1280x1080");
+  }
+
+  @Test
   void returnsNullOnNull() {
 
     DeviceResolution deviceResolution = DeviceResolution.fromString(null);

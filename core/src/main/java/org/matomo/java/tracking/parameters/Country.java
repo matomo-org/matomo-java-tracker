@@ -27,17 +27,6 @@ public class Country {
   @NonNull private String code;
 
   /**
-   * Only for internal use to grant downwards compatibility to {@link
-   * org.matomo.java.tracking.MatomoLocale}.
-   *
-   * @param locale A locale that must contain a country code
-   */
-  @Deprecated
-  protected Country(@edu.umd.cs.findbugs.annotations.NonNull Locale locale) {
-    setLocale(locale);
-  }
-
-  /**
    * Creates a country from a given code.
    *
    * @param code Must consist of two lower letters or simply null. Case is ignored
@@ -74,35 +63,6 @@ public class Country {
       }
     }
     throw new IllegalArgumentException("Invalid country code");
-  }
-
-  /**
-   * Returns the locale for this country.
-   *
-   * @return The locale for this country
-   * @see Locale#forLanguageTag(String)
-   * @deprecated Since you instantiate this class, you can determine the language on your own using
-   *     {@link Locale#forLanguageTag(String)}
-   */
-  @Deprecated
-  public Locale getLocale() {
-    return Locale.forLanguageTag(code);
-  }
-
-  /**
-   * Sets the locale for this country.
-   *
-   * @param locale A locale that must contain a country code
-   * @see Locale#getCountry()
-   * @deprecated Since you instantiate this class, you can determine the language on your own using
-   *     {@link Locale#getCountry()}
-   */
-  @Deprecated
-  public final void setLocale(Locale locale) {
-    if (locale == null || locale.getCountry() == null || locale.getCountry().isEmpty()) {
-      throw new IllegalArgumentException("Invalid locale");
-    }
-    code = locale.getCountry().toLowerCase(Locale.ENGLISH);
   }
 
   @Override

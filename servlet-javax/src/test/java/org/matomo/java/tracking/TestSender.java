@@ -1,7 +1,6 @@
 package org.matomo.java.tracking;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
@@ -38,15 +37,14 @@ class TestSender implements Sender {
   }
 
   @Override
-  public void sendBulk(
-      @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken) {
+  public void sendBulk(@NonNull Iterable<? extends MatomoRequest> requests) {
     throw new UnsupportedOperationException();
   }
 
   @NonNull
   @Override
   public CompletableFuture<Void> sendBulkAsync(
-      @NonNull Collection<? extends MatomoRequest> requests, @Nullable String overrideAuthToken) {
+      @NonNull Collection<? extends MatomoRequest> requests) {
     throw new UnsupportedOperationException();
   }
 

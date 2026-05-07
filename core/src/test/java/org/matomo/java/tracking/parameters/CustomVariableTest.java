@@ -8,6 +8,7 @@
 package org.matomo.java.tracking.parameters;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.fail;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -64,5 +65,31 @@ class CustomVariableTest {
     CustomVariable d = new CustomVariable("d", "b");
     assertThat(variableA).isNotEqualTo(d);
     assertThat(variableA.hashCode()).isNotEqualTo(d.hashCode());
+  }
+
+  @Test
+  void createsCustomVariable() {
+    CustomVariable customVariable = new CustomVariable("key", "value");
+
+    assertThat(customVariable.getKey()).isEqualTo("key");
+    assertThat(customVariable.getValue()).isEqualTo("value");
+  }
+
+  @Test
+  void failsOnNullKey() {
+    assertThatThrownBy(() -> new CustomVariable(null, "value"))
+        .isInstanceOf(NullPointerException.class);
+  }
+
+  @Test
+  void failsOnNullValue() {
+    assertThatThrownBy(() -> new CustomVariable("key", null))
+        .isInstanceOf(NullPointerException.class);
+  }
+
+  @Test
+  void failsOnNullKeyAndValue() {
+    assertThatThrownBy(() -> new CustomVariable(null, null))
+        .isInstanceOf(NullPointerException.class);
   }
 }

@@ -295,8 +295,7 @@ class Java11SenderIT {
         List.of(
             MatomoRequests.goal(1, 23.50)
                 .headers(singletonMap("headerName", "headerValue"))
-                .build()),
-        null);
+                .build()));
 
     verify(
         postRequestedFor(urlPathEqualTo("/matomo.php"))
@@ -313,7 +312,7 @@ class Java11SenderIT {
 
     givenSender();
 
-    sender.sendBulk(List.of(MatomoRequests.pageView("Contact").headers(emptyMap()).build()), null);
+    sender.sendBulk(List.of(MatomoRequests.pageView("Contact").headers(emptyMap()).build()));
 
     verify(postRequestedFor(urlPathEqualTo("/matomo.php")).withoutHeader("headerName"));
   }
@@ -331,8 +330,9 @@ class Java11SenderIT {
     CompletableFuture<Void> future =
         sender.sendBulkAsync(
             List.of(
-                MatomoRequest.request().headers(singletonMap("headerName", "headerValue")).build()),
-            null);
+                MatomoRequest.request()
+                    .headers(singletonMap("headerName", "headerValue"))
+                    .build()));
 
     future.join();
     verify(
@@ -371,7 +371,7 @@ class Java11SenderIT {
 
     givenSender();
 
-    assertThatThrownBy(() -> sender.sendBulkAsync(null, null))
+    assertThatThrownBy(() -> sender.sendBulkAsync(null))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("requests is marked non-null but is null");
   }
@@ -383,24 +383,8 @@ class Java11SenderIT {
 
     givenSender();
 
-    assertThatThrownBy(() -> sender.sendBulk(null, null))
+    assertThatThrownBy(() -> sender.sendBulk(null))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("requests is marked non-null but is null");
-  }
-
-  @Test
-  void failsOnSendBulkAsyncIfOverrideAuthTokenIsMalformed() {
-    trackerConfiguration =
-        TrackerConfiguration.builder().apiEndpoint(URI.create("http://localhost:1234")).build();
-
-    givenSender();
-
-    assertThatThrownBy(
-            () ->
-                sender.sendBulkAsync(
-                    List.of(MatomoRequests.siteSearch("Special offers", "Products", 5L).build()),
-                    "telnet://localhost"))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Auth token must be exactly 32 characters long");
   }
 }

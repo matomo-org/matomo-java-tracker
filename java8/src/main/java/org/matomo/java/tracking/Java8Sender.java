@@ -76,7 +76,7 @@ class Java8Sender implements Sender {
 
   @Override
   public void sendSingle(@NonNull MatomoRequest request) {
-    String authToken = AuthToken.determineAuthToken(null, singleton(request), trackerConfiguration);
+    String authToken = AuthToken.determineAuthToken(singleton(request), trackerConfiguration);
     RequestValidator.validate(request, authToken);
     HttpURLConnection connection;
     URI apiEndpoint = trackerConfiguration.getApiEndpoint();
@@ -241,11 +241,8 @@ class Java8Sender implements Sender {
   }
 
   @Override
-  public void sendBulk(
-      @NonNull @lombok.NonNull Iterable<? extends MatomoRequest> requests,
-      @Nullable String overrideAuthToken) {
-    String authToken =
-        AuthToken.determineAuthToken(overrideAuthToken, requests, trackerConfiguration);
+  public void sendBulk(@NonNull @lombok.NonNull Iterable<? extends MatomoRequest> requests) {
+    String authToken = AuthToken.determineAuthToken(requests, trackerConfiguration);
     Collection<String> queries = new ArrayList<>();
     Map<String, String> headers = new LinkedHashMap<>();
     String headerUserAgent = null;
@@ -331,9 +328,8 @@ class Java8Sender implements Sender {
   @Override
   @NonNull
   public CompletableFuture<Void> sendBulkAsync(
-      @NonNull Collection<? extends MatomoRequest> requests, @Nullable String overrideAuthToken) {
-    String authToken =
-        AuthToken.determineAuthToken(overrideAuthToken, requests, trackerConfiguration);
+      @NonNull Collection<? extends MatomoRequest> requests) {
+    String authToken = AuthToken.determineAuthToken(requests, trackerConfiguration);
     Map<String, String> headers = new LinkedHashMap<>();
     String headerUserAgent = findHeaderUserAgent(requests);
     String sessionId = findSessionId(requests);

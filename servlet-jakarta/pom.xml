@@ -3,14 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.piwik.java.tracking</groupId>
+        <groupId>org.matomo.java</groupId>
         <artifactId>matomo-java-tracker-parent</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>matomo-java-tracker-servlet-jakarta</artifactId>
-    <version>3.5.0-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Matomo Java Tracker Servlet Jakarta</name>
@@ -23,7 +23,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.piwik.java.tracking</groupId>
+            <groupId>org.matomo.java</groupId>
             <artifactId>matomo-java-tracker-java11</artifactId>
             <version>${project.version}</version>
         </dependency>

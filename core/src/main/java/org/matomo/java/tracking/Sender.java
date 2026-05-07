@@ -1,7 +1,6 @@
 package org.matomo.java.tracking;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
@@ -11,10 +10,8 @@ interface Sender extends AutoCloseable {
 
   void sendSingle(@NonNull MatomoRequest request);
 
-  void sendBulk(
-      @NonNull Iterable<? extends MatomoRequest> requests, @Nullable String overrideAuthToken);
+  void sendBulk(@NonNull Iterable<? extends MatomoRequest> requests);
 
   @NonNull
-  CompletableFuture<Void> sendBulkAsync(
-      @NonNull Collection<? extends MatomoRequest> requests, @Nullable String overrideAuthToken);
+  CompletableFuture<Void> sendBulkAsync(@NonNull Collection<? extends MatomoRequest> requests);
 }

@@ -56,7 +56,7 @@ class QueryCreatorTest {
             .defaultSiteId(42)
             .defaultAuthToken(defaultAuthToken)
             .build();
-    String authToken = AuthToken.determineAuthToken(null, singleton(request), trackerConfiguration);
+    String authToken = AuthToken.determineAuthToken(singleton(request), trackerConfiguration);
     query = new QueryCreator(trackerConfiguration).createQuery(request, authToken);
   }
 
@@ -362,14 +362,12 @@ class QueryCreatorTest {
         .randomValue(RandomValue.fromString("random"))
         .visitorId(VisitorId.fromHex("1234567890123456"))
         .siteId(3);
-    org.matomo.java.tracking.CustomVariable cv =
-        new org.matomo.java.tracking.CustomVariable("visitKey", "visitVal");
+    CustomVariable cv = new CustomVariable("visitKey", "visitVal");
     matomoRequestBuilder.visitCustomVariables(new CustomVariables().add(cv, 8));
     defaultAuthToken = null;
 
     whenCreatesQuery();
 
-    assertThat(request.getVisitCustomVariable(1)).isNull();
     assertThat(query)
         .isEqualTo(
             "rec=1&idsite=3&apiv=1&_id=1234567890123456&_cvar=%7B%228%22%3A%5B%22visitKey%22%2C%22visitVal%22%5D%7D&send_image=0&rand=random");

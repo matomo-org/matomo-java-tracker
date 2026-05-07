@@ -16,7 +16,7 @@ class AuthTokenTest {
             .authToken("bdeca231a312ab12cde124131bedfa23")
             .build();
 
-    String authToken = AuthToken.determineAuthToken(null, singleton(request), null);
+    String authToken = AuthToken.determineAuthToken(singleton(request), null);
 
     assertThat(authToken).isEqualTo("bdeca231a312ab12cde124131bedfa23");
   }
@@ -30,7 +30,7 @@ class AuthTokenTest {
             .defaultAuthToken("bdeca231a312ab12cde124131bedfa23")
             .build();
 
-    String authToken = AuthToken.determineAuthToken(null, null, trackerConfiguration);
+    String authToken = AuthToken.determineAuthToken(null, trackerConfiguration);
 
     assertThat(authToken).isEqualTo("bdeca231a312ab12cde124131bedfa23");
   }
@@ -46,7 +46,7 @@ class AuthTokenTest {
             .defaultAuthToken("bdeca231a312ab12cde124131bedfa23")
             .build();
 
-    String authToken = AuthToken.determineAuthToken(null, singleton(request), trackerConfiguration);
+    String authToken = AuthToken.determineAuthToken(singleton(request), trackerConfiguration);
 
     assertThat(authToken).isEqualTo("bdeca231a312ab12cde124131bedfa23");
   }
@@ -62,7 +62,7 @@ class AuthTokenTest {
             .defaultAuthToken("bdeca231a312ab12cde124131bedfa23")
             .build();
 
-    String authToken = AuthToken.determineAuthToken(null, singleton(request), trackerConfiguration);
+    String authToken = AuthToken.determineAuthToken(singleton(request), trackerConfiguration);
 
     assertThat(authToken).isEqualTo("bdeca231a312ab12cde124131bedfa23");
   }

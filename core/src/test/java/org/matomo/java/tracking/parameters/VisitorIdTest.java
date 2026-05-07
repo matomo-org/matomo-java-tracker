@@ -179,4 +179,20 @@ class VisitorIdTest {
 
     assertThat(visitorId).hasToString("0000000000364492");
   }
+
+  @Test
+  void fromStringReturnsNullForNull() {
+
+    VisitorId visitorId = VisitorId.fromString(null);
+
+    assertThat(visitorId).isNull();
+  }
+
+  @Test
+  void fromStringReturnsNullForEmpty() {
+
+    VisitorId visitorId = VisitorId.fromString("");
+
+    assertThat(visitorId).isNull();
+  }
 }

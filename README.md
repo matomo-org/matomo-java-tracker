@@ -1,6 +1,6 @@
 # Official Matomo Java Tracker
 
-![Maven Central Version](https://img.shields.io/maven-central/v/org.piwik.java.tracking/matomo-java-tracker-core)
+![Maven Central Version](https://img.shields.io/maven-central/v/org.matomo.java/matomo-java-tracker-core)
 [![Build Status](https://github.com/matomo-org/matomo-java-tracker/actions/workflows/build.yml/badge.svg)](https://github.com/matomo-org/matomo-java-tracker/actions/workflows/build.yml)
 [![Average time to resolve an issue](https://isitmaintained.com/badge/resolution/matomo-org/matomo-java-tracker.svg)](https://isitmaintained.com/project/matomo-org/matomo-java-tracker "Average time to resolve an issue")
 [![Percentage of issues still open](https://isitmaintained.com/badge/open/matomo-org/matomo-java-tracker.svg)](https://isitmaintained.com/project/matomo-org/matomo-java-tracker "Percentage of issues still open")
@@ -69,7 +69,7 @@ Projects that use Matomo Java Tracker:
 
 ## What Is New?
 
-### Version 3.5.x
+### Version 4.0.x
 
 Added more tracking parameters for user agent data, ecommerce product, bot recording mode, HTTP status, bandwidth,
 source label and media attributes.
@@ -103,6 +103,40 @@ Jetty EE10 12.0.16 → 12.1.8, Jetty (javax) 10.0.24 → 10.0.26.
 
 The local testing Docker setup now uses MariaDB 12 and Matomo 5.
 
+The Maven groupId has changed from `org.piwik.java.tracking` to `org.matomo.java`. Update your
+dependency declarations accordingly.
+
+All previously deprecated API has been removed as part of this major release. The following is a
+summary of the breaking changes and the recommended replacements:
+
+- The `org.piwik.java.tracking` compatibility package has been removed entirely (`PiwikRequest`,
+  `PiwikTracker`, `PiwikDate`, `PiwikLocale`, `CustomVariable`, `EcommerceItem`). Use the
+  corresponding classes in `org.matomo.java.tracking` instead.
+- The deprecated `MatomoDate` and `MatomoLocale` classes have been removed. Use `java.time.Instant`
+  and `org.matomo.java.tracking.parameters.Country` respectively.
+- The top-level `MatomoRequestBuilder` class has been removed. Use `MatomoRequest.request()` or
+  `MatomoRequest.MatomoRequestBuilder` instead.
+- The deprecated `MatomoRequest(int siteId, String actionUrl)` constructor has been removed. Use
+  `MatomoRequest.request()` builder instead.
+- Deprecated mutator methods on `MatomoRequest` have been removed: `setCustomTrackingParameter`,
+  `addCustomTrackingParameter`, `clearCustomTrackingParameter`, `enableEcommerce`,
+  `getEcommerceItem`, `addEcommerceItem`, `clearEcommerceItems`, `getPageCustomVariable`,
+  `setPageCustomVariable`, `getUserCustomVariable`, `getVisitCustomVariable`,
+  `setUserCustomVariable`, `setVisitCustomVariable`, `getRequestDatetime`, `setRequestDatetime`,
+  `setParameter`, `builder()`, and `setDeviceResolution(String)`. Use the builder API
+  (`MatomoRequest.request()...build()`) instead.
+- Deprecated constructors on `MatomoTracker` taking `hostUrl`, `proxyHost`, `proxyPort`, and
+  `timeout` as individual arguments have been removed. Use
+  `MatomoTracker(TrackerConfiguration)` instead.
+- The `sendRequestAsync(MatomoRequest, Function)` overload has been removed. Chain
+  `CompletableFuture.thenApply()` on `sendRequestAsync(MatomoRequest)` instead.
+- The `sendBulkRequest(Iterable, String authToken)` and
+  `sendBulkRequestAsync(Collection, String, Consumer)` / `sendBulkRequestAsync(Collection, String)`
+  overloads have been removed. Set the auth token in `TrackerConfiguration` or on the requests
+  directly, and chain `CompletableFuture.thenAccept()` for callbacks.
+- Deprecated `Country(Locale)` constructor and `Country.getLocale()` / `Country.setLocale(Locale)`
+  methods have been removed. Construct `Country` from a country code string instead.
+
 ### Version 3.4.x
 
 We fixed a synchronization issue in the Java 8 sender (https://github.com/matomo-org/matomo-java-tracker/issues/168).
@@ -129,7 +163,7 @@ See also the [Developer Guide here](https://developer.matomo.org/api-reference/t
 ## Javadoc
 
 The Javadoc for all versions can be found
-[at javadoc.io](https://javadoc.io/doc/org.piwik.java.tracking/matomo-java-tracker-core/latest/index.html). Thanks to
+[at javadoc.io](https://javadoc.io/doc/org.matomo.java/matomo-java-tracker-core/latest/index.html). Thanks to
 [javadoc.io](https://javadoc.io) for hosting it.
 
 ## Need help?
@@ -181,9 +215,9 @@ Add a dependency on Matomo Java Tracker using Maven. For Java 8:
 ```xml
 
 <dependency>
-    <groupId>org.piwik.java.tracking</groupId>
+    <groupId>org.matomo.java</groupId>
     <artifactId>matomo-java-tracker</artifactId>
-    <version>3.5.0</version>
+    <version>4.0.0</version>
 </dependency>
 ```
 
@@ -192,9 +226,9 @@ For Java 11 or newer:
 ```xml
 
 <dependency>
-    <groupId>org.piwik.java.tracking</groupId>
+    <groupId>org.matomo.java</groupId>
     <artifactId>matomo-java-tracker-java11</artifactId>
-    <version>3.5.0</version>
+    <version>4.0.0</version>
 </dependency>
 ```
 
@@ -202,7 +236,7 @@ or Gradle (Java 8):
 
 ```groovy
 dependencies {
-    implementation("org.piwik.java.tracking:matomo-java-tracker:3.5.0")
+    implementation("org.matomo.java:matomo-java-tracker:4.0.0")
 }
 ```
 
@@ -210,20 +244,20 @@ or Gradle (Java 11 or newer):
 
 ```groovy
 dependencies {
-    implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.5.0")
+    implementation("org.matomo.java:matomo-java-tracker-java11:4.0.0")
 }
 ```
 
 or Gradle with Kotlin DSL (Java 8)
 
 ```kotlin
-implementation("org.piwik.java.tracking:matomo-java-tracker:3.5.0")
+implementation("org.matomo.java:matomo-java-tracker:4.0.0")
 ```
 
 or Gradle with Kotlin DSL (Java 11 or newer)
 
 ```kotlin
-implementation("org.piwik.java.tracking:matomo-java-tracker-java11:3.5.0")
+implementation("org.matomo.java:matomo-java-tracker-java11:4.0.0")
 ```
 
 ### Spring Boot Module
@@ -234,9 +268,9 @@ and allows you to configure the tracker via application properties. Add the foll
 ```xml
 
 <dependency>
-    <groupId>org.piwik.java.tracking</groupId>
+    <groupId>org.matomo.java</groupId>
     <artifactId>matomo-java-tracker-spring-boot-starter</artifactId>
-    <version>3.5.0</version>
+    <version>4.0.0</version>
 </dependency>
 ```
 
@@ -244,14 +278,14 @@ or Gradle:
 
 ```groovy
 dependencies {
-    implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:3.5.0")
+    implementation("org.matomo.java:matomo-java-tracker-spring-boot-starter:4.0.0")
 }
 ```
 
 or Gradle with Kotlin DSL
 
 ```kotlin
-implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:3.5.0")
+implementation("org.matomo.java:matomo-java-tracker-spring-boot-starter:4.0.0")
 ```
 
 The following properties are supported:
@@ -265,7 +299,7 @@ The following properties are supported:
 | matomo.tracker.log-failed-tracking           | Will send errors to the log if the Matomo Tracking API responds with an erroneous HTTP code                                                            |
 | matomo.tracker.connect-timeout               | allows you to change the default connection timeout of 10 seconds. 0 is interpreted as infinite, null uses the system default                          |
 | matomo.tracker.socket-timeout                | allows you to change the default socket timeout of 10 seconds. 0 is interpreted as infinite, null uses the system default                              |
-| matomo.tracker.user-agent                    | The user agent used by the request made to the endpoint. Default: `MatomoJavaClient`                                                                    |
+| matomo.tracker.user-agent                    | The user agent used by the request made to the endpoint. Default: `MatomoJavaClient`                                                                   |
 | matomo.tracker.proxy-host                    | The hostname or IP address of an optional HTTP proxy. `proxyPort` must be configured as well                                                           |
 | matomo.tracker.proxy-port                    | The port of an HTTP proxy. `proxyHost` must be configured as well.                                                                                     |
 | matomo.tracker.proxy-username                | If the HTTP proxy requires a username for basic authentication, it can be configured with this method. Proxy host, port and password must also be set. |
@@ -718,9 +752,9 @@ version can be used in your local Maven repository for testing purposes, e.g.
 
 ```xml
 <dependency>
-    <groupId>org.piwik.java.tracking</groupId>
+    <groupId>org.matomo.java</groupId>
     <artifactId>matomo-java-tracker</artifactId>
-    <version>3.5.0-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
