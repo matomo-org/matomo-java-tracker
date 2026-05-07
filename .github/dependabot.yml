@@ -4,17 +4,11 @@ updates:
     directory: /
     schedule:
       interval: weekly
-    assignees:
-      - dheid
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
-    assignees:
-      - dheid
   - package-ecosystem: docker
     directory: /
     schedule:
       interval: weekly
-    assignees:
-      - dheid
