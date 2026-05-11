@@ -69,7 +69,7 @@ Projects that use Matomo Java Tracker:
 
 ## What Is New?
 
-### Version 4.0.x
+### Version 4.0.0
 
 Added more tracking parameters for user agent data, ecommerce product, bot recording mode, HTTP status, bandwidth,
 source label and media attributes.
@@ -137,14 +137,14 @@ summary of the breaking changes and the recommended replacements:
 - Deprecated `Country(Locale)` constructor and `Country.getLocale()` / `Country.setLocale(Locale)`
   methods have been removed. Construct `Country` from a country code string instead.
 
-### Version 3.4.x
+### Version 3.4.0
 
 We fixed a synchronization issue in the Java 8 sender (https://github.com/matomo-org/matomo-java-tracker/issues/168).
 To consume the exact amount of space needed for the queries to send to Matomo, we need the collection size of the incoming
 requests. So we changed `Iterable` to `Collection` in some `MatomoTracker`. This could affect users, that use parameters
 of type `Iterable` in the tracker. Please use `Collection` instead.
 
-### Version 3.3.x
+### Version 3.3.1
 
 Do you still use Matomo Java Tracker 2.x? We created version 3, that is compatible with Matomo 4 and 5 and contains
 fewer
@@ -754,7 +754,7 @@ version can be used in your local Maven repository for testing purposes, e.g.
 <dependency>
     <groupId>org.matomo.java</groupId>
     <artifactId>matomo-java-tracker</artifactId>
-    <version>4.0.0-SNAPSHOT</version>
+    <version>4.0.1-SNAPSHOT</version>
 </dependency>
 ```
 
