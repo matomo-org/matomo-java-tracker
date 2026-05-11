@@ -1,6 +1,6 @@
 # Official Matomo Java Tracker
 
-![Maven Central Version](https://img.shields.io/maven-central/v/org.matomo.java/matomo-java-tracker-core)
+![Maven Central Version](https://img.shields.io/maven-central/v/org.piwik.java.tracking/matomo-java-tracker-core)
 [![Build Status](https://github.com/matomo-org/matomo-java-tracker/actions/workflows/build.yml/badge.svg)](https://github.com/matomo-org/matomo-java-tracker/actions/workflows/build.yml)
 [![Average time to resolve an issue](https://isitmaintained.com/badge/resolution/matomo-org/matomo-java-tracker.svg)](https://isitmaintained.com/project/matomo-org/matomo-java-tracker "Average time to resolve an issue")
 [![Percentage of issues still open](https://isitmaintained.com/badge/open/matomo-org/matomo-java-tracker.svg)](https://isitmaintained.com/project/matomo-org/matomo-java-tracker "Percentage of issues still open")
@@ -103,9 +103,6 @@ Jetty EE10 12.0.16 → 12.1.8, Jetty (javax) 10.0.24 → 10.0.26.
 
 The local testing Docker setup now uses MariaDB 12 and Matomo 5.
 
-The Maven groupId has changed from `org.piwik.java.tracking` to `org.matomo.java`. Update your
-dependency declarations accordingly.
-
 All previously deprecated API has been removed as part of this major release. The following is a
 summary of the breaking changes and the recommended replacements:
 
@@ -163,7 +160,7 @@ See also the [Developer Guide here](https://developer.matomo.org/api-reference/t
 ## Javadoc
 
 The Javadoc for all versions can be found
-[at javadoc.io](https://javadoc.io/doc/org.matomo.java/matomo-java-tracker-core/latest/index.html). Thanks to
+[at javadoc.io](https://javadoc.io/doc/org.piwik.java.tracking/matomo-java-tracker-core/latest/index.html). Thanks to
 [javadoc.io](https://javadoc.io) for hosting it.
 
 ## Need help?
@@ -215,7 +212,7 @@ Add a dependency on Matomo Java Tracker using Maven. For Java 8:
 ```xml
 
 <dependency>
-    <groupId>org.matomo.java</groupId>
+    <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker</artifactId>
     <version>4.0.0</version>
 </dependency>
@@ -226,7 +223,7 @@ For Java 11 or newer:
 ```xml
 
 <dependency>
-    <groupId>org.matomo.java</groupId>
+    <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker-java11</artifactId>
     <version>4.0.0</version>
 </dependency>
@@ -236,7 +233,7 @@ or Gradle (Java 8):
 
 ```groovy
 dependencies {
-    implementation("org.matomo.java:matomo-java-tracker:4.0.0")
+    implementation("org.piwik.java.tracking:matomo-java-tracker:4.0.0")
 }
 ```
 
@@ -244,20 +241,20 @@ or Gradle (Java 11 or newer):
 
 ```groovy
 dependencies {
-    implementation("org.matomo.java:matomo-java-tracker-java11:4.0.0")
+    implementation("org.piwik.java.tracking:matomo-java-tracker-java11:4.0.0")
 }
 ```
 
 or Gradle with Kotlin DSL (Java 8)
 
 ```kotlin
-implementation("org.matomo.java:matomo-java-tracker:4.0.0")
+implementation("org.piwik.java.tracking:matomo-java-tracker:4.0.0")
 ```
 
 or Gradle with Kotlin DSL (Java 11 or newer)
 
 ```kotlin
-implementation("org.matomo.java:matomo-java-tracker-java11:4.0.0")
+implementation("org.piwik.java.tracking:matomo-java-tracker-java11:4.0.0")
 ```
 
 ### Spring Boot Module
@@ -268,7 +265,7 @@ and allows you to configure the tracker via application properties. Add the foll
 ```xml
 
 <dependency>
-    <groupId>org.matomo.java</groupId>
+    <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker-spring-boot-starter</artifactId>
     <version>4.0.0</version>
 </dependency>
@@ -278,14 +275,14 @@ or Gradle:
 
 ```groovy
 dependencies {
-    implementation("org.matomo.java:matomo-java-tracker-spring-boot-starter:4.0.0")
+    implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:4.0.0")
 }
 ```
 
 or Gradle with Kotlin DSL
 
 ```kotlin
-implementation("org.matomo.java:matomo-java-tracker-spring-boot-starter:4.0.0")
+implementation("org.piwik.java.tracking:matomo-java-tracker-spring-boot-starter:4.0.0")
 ```
 
 The following properties are supported:
@@ -752,7 +749,7 @@ version can be used in your local Maven repository for testing purposes, e.g.
 
 ```xml
 <dependency>
-    <groupId>org.matomo.java</groupId>
+    <groupId>org.piwik.java.tracking</groupId>
     <artifactId>matomo-java-tracker</artifactId>
     <version>4.0.1-SNAPSHOT</version>
 </dependency>
