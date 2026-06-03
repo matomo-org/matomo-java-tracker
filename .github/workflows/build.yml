@@ -30,7 +30,7 @@ jobs:
           path: '**/target/surefire-reports/TEST-*.xml'
           reporter: java-junit
           fail-on-error: false
-      - uses: madrapps/jacoco-report@v1.7.2
+      - uses: madrapps/jacoco-report@v1.8.0
         with:
           paths: ${{ github.workspace }}/**/target/site/jacoco/jacoco.xml
           token: ${{ secrets.GITHUB_TOKEN }}
