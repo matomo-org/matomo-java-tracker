@@ -282,4 +282,16 @@ class MatomoRequestsTest {
     assertThat(request.getCrashLine()).isNull();
     assertThat(request.getCrashColumn()).isNull();
   }
+
+  @Test
+  void crashWithThrowableHavingStackTraceIncludesLocationAndLine() {
+    RuntimeException throwable = new RuntimeException("real error");
+    MatomoRequest.MatomoRequestBuilder builder = MatomoRequests.crash(throwable, "test category");
+    MatomoRequest request = builder.build();
+    assertThat(request.getCrashMessage()).isEqualTo("real error");
+    assertThat(request.getCrashType()).isEqualTo("java.lang.RuntimeException");
+    assertThat(request.getCrashCategory()).isEqualTo("test category");
+    assertThat(request.getCrashLocation()).isNotNull();
+    assertThat(request.getCrashLine()).isNotNull();
+  }
 }
